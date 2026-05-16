@@ -1,0 +1,11 @@
+{
+  "name": "StreetBoss",
+  "short_name": "StreetBoss",
+  "description": "Control total de tu negocio ambulante",
+  "start_url": "/mesas",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#111111",
+  "theme_color": "#f5b87a",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

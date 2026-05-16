@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+body { background: #111; color: #fff; font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+@keyframes blink-border { 0%,100%{border-color:#ef4444}50%{border-color:transparent} }
+.border-blink { animation: blink-border 1.2s ease-in-out infinite; }
+@media print { body{background:white;color:black} .print-hidden{display:none!important} }
