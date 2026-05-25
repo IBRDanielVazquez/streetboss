@@ -4,16 +4,8 @@ import { Plus, ToggleLeft, ToggleRight, Users, TrendingUp, AlertCircle, Copy, Me
 import { useApp } from '../context/AppContext'
 import ModalPin from '../components/ModalPin'
 
-// Clientes mock para la vista de SuperAdmin
-const CLIENTES_MOCK = [
-  { id:'c1', negocio:'La Vitola',        plan:'Pro',   estado:'activo',  ventas:48200, mesas:8,  desde:'2024-01-15', whatsapp:'9611234567' },
-  { id:'c2', negocio:'Burger Bros',      plan:'Básico',estado:'activo',  ventas:12400, mesas:4,  desde:'2024-03-02', whatsapp:'9617654321' },
-  { id:'c3', negocio:'Hot Dog City',     plan:'Pro',   estado:'prueba',  ventas:3800,  mesas:6,  desde:'2024-05-01', whatsapp:'9611111111' },
-  { id:'c4', negocio:'Tacos El Memo',    plan:'Básico',estado:'moroso',  ventas:8900,  mesas:3,  desde:'2023-11-20', whatsapp:'9612222222' },
-  { id:'c5', negocio:'Pizzas Rápidas',   plan:'Pro',   estado:'activo',  ventas:65000, mesas:10, desde:'2023-09-05', whatsapp:'9613333333' },
-  { id:'c6', negocio:'Antojitos Lupita', plan:'Básico',estado:'prueba',  ventas:1200,  mesas:4,  desde:'2024-04-28', whatsapp:'9614444444' },
-  { id:'c7', negocio:'Sushi Express',    plan:'Pro',   estado:'moroso',  ventas:22000, mesas:6,  desde:'2023-12-10', whatsapp:'9615555555' },
-]
+// Clientes mock para la vista de SuperAdmin (vacío para reinicio limpio)
+const CLIENTES_MOCK = []
 
 const COLOR_ESTADO = {
   activo:  { bg:'bg-green-900/40',  text:'text-green-400',  label:'Activo'  },
@@ -43,7 +35,7 @@ export default function SuperAdmin() {
   const [tab,      setTab]      = useState('clientes')
   const [planes,   setPlanes]   = useState(PLANES_DEFAULT)
   const [promos,   setPromos]   = useState([])
-  const [nuevo,    setNuevo]    = useState({ negocio:'', plan:'Básico', mesas:4, whatsapp:'' })
+  const [nuevo,    setNuevo]    = useState({ negocio:'', dueno:'', plan:'Básico', mesas:4, whatsapp:'' })
   const [formVis,  setFormVis]  = useState(false)
 
   const activos  = clientes.filter(c => c.estado === 'activo').length
@@ -61,25 +53,34 @@ export default function SuperAdmin() {
 
   // Agregar cliente y abrir WhatsApp
   const agregarCliente = () => {
-    if (!nuevo.negocio || !nuevo.whatsapp) return
+    if (!nuevo.negocio || !nuevo.dueno || !nuevo.whatsapp) return
+
+    const slug = nuevo.negocio.toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '')
+
     const nc = {
       id: `c${Date.now()}`,
       negocio: nuevo.negocio,
+      dueno: nuevo.dueno,
       plan: nuevo.plan,
       estado: 'prueba',
       ventas: 0,
       mesas: Number(nuevo.mesas),
       whatsapp: nuevo.whatsapp,
+      slug: slug,
       desde: new Date().toISOString().slice(0,10)
     }
     setClientes(cs => [...cs, nc])
     
-    // Abrir WhatsApp al dueño
-    const link = `${window.location.origin}/${nuevo.negocio.toLowerCase().replace(/\s+/g,'-')}/mesero`
-    const msg = `Hola! Tu acceso a StreetBoss para *${nuevo.negocio}* está listo 🎉\n\n🧾 Mesero: ${link}\nTu PIN admin: 1234\n\n¡Ya puedes empezar a tomar pedidos!`
+    // Abrir WhatsApp al dueño con mensaje de bienvenida y URL: streetboss.vercel.app/[slug]
+    const link = `https://streetboss.vercel.app/${slug}`
+    const msg = `¡Hola *${nuevo.dueno}*! Tu acceso a StreetBoss para *${nuevo.negocio}* está listo 🎉\n\n🚀 Tu portal es: ${link}\n📦 Plan: ${nuevo.plan}\n🪑 Mesas habilitadas: ${nuevo.mesas}\n\n¡Ya puedes empezar a tomar pedidos!`
+    
     window.open(`https://wa.me/52${nuevo.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank')
 
-    setNuevo({ negocio:'', plan:'Básico', mesas:4, whatsapp:'' })
+    setNuevo({ negocio:'', dueno:'', plan:'Básico', mesas:4, whatsapp:'' })
     setFormVis(false)
   }
 
@@ -174,6 +175,9 @@ export default function SuperAdmin() {
                 <input type="text" value={nuevo.negocio} onChange={e=>setNuevo(n=>({...n,negocio:e.target.value}))}
                   placeholder="Nombre del negocio"
                   className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
+                <input type="text" value={nuevo.dueno} onChange={e=>setNuevo(n=>({...n,dueno:e.target.value}))}
+                  placeholder="Nombre del dueño"
+                  className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
                 <input type="tel" inputMode="numeric" value={nuevo.whatsapp}
                   onChange={e=>setNuevo(n=>({...n,whatsapp:e.target.value}))}
                   placeholder="WhatsApp dueño (sin +52)"
@@ -199,39 +203,50 @@ export default function SuperAdmin() {
 
             <div className="space-y-2">
               <p className="text-gray-500 text-xs font-bold uppercase tracking-wider px-1">Lista de Clientes ({clientes.length})</p>
-              {clientes.map(c => {
-                const cfg = COLOR_ESTADO[c.estado] || COLOR_ESTADO.inactivo
-                const actv = c.estado === 'activo'
-                return (
-                  <div key={c.id} className="bg-dark2 rounded-2xl p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="text-white font-bold text-base truncate">{c.negocio}</p>
-                          <span className={`${cfg.bg} ${cfg.text} text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0`}>
-                            {cfg.label}
-                          </span>
+              {clientes.length > 0 ? (
+                clientes.map(c => {
+                  const cfg = COLOR_ESTADO[c.estado] || COLOR_ESTADO.inactivo
+                  const actv = c.estado === 'activo'
+                  return (
+                    <div key={c.id} className="bg-dark2 rounded-2xl p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-white font-bold text-base truncate">{c.negocio}</p>
+                            <span className={`${cfg.bg} ${cfg.text} text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0`}>
+                              {cfg.label}
+                            </span>
+                          </div>
+                          {c.dueno && <p className="text-gray-400 text-xs mb-1">Dueño: {c.dueno}</p>}
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
+                            <span>{c.plan}</span>
+                            <span>·</span>
+                            <span>{c.mesas} mesas</span>
+                            <span>·</span>
+                            <span>{c.whatsapp}</span>
+                          </div>
+                          <p className="text-primary font-bold text-sm mt-1">${c.ventas.toLocaleString()} en ventas</p>
                         </div>
-                        <div className="flex items-center gap-3 text-xs text-gray-500">
-                          <span>{c.plan}</span>
-                          <span>·</span>
-                          <span>{c.mesas} mesas</span>
-                          <span>·</span>
-                          <span>{c.whatsapp}</span>
-                        </div>
-                        <p className="text-primary font-bold text-sm mt-1">${c.ventas.toLocaleString()} en ventas</p>
+                        <button onClick={() => toggleCliente(c.id)}
+                          className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                          {actv
+                            ? <ToggleRight size={28} className="text-primary"/>
+                            : <ToggleLeft  size={28} className="text-gray-600"/>
+                          }
+                        </button>
                       </div>
-                      <button onClick={() => toggleCliente(c.id)}
-                        className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center">
-                        {actv
-                          ? <ToggleRight size={28} className="text-primary"/>
-                          : <ToggleLeft  size={28} className="text-gray-600"/>
-                        }
-                      </button>
                     </div>
-                  </div>
-                )
-              })}
+                  )
+                })
+              ) : (
+                <div className="bg-dark2 rounded-2xl p-8 text-center border border-white/5 space-y-4">
+                  <p className="text-gray-400 text-sm">Aún no tienes clientes. Crea el primero para empezar.</p>
+                  <button onClick={() => setFormVis(true)}
+                    className="bg-primary text-dark font-black px-6 py-3 rounded-xl text-sm min-h-[44px] inline-flex items-center gap-2 hover:scale-105 active:scale-95 transition-all mx-auto">
+                    <Plus size={16}/> Crear Cliente
+                  </button>
+                </div>
+              )}
             </div>
           </>
         )}

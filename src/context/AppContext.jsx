@@ -156,8 +156,9 @@ export function AppProvider({ children, slug }) {
       } else if (!error && !data) {
         const initial = {
           config: CONFIG_DEFAULT, menu: MENU_DEFAULT,
-          mesas: crearMesasMock(), historial: HISTORIAL_MOCK, 
-          turnoActivo: { inicio: new Date().toISOString(), fin: null }
+          mesas: inicializarMesas(CONFIG_DEFAULT.numMesas),
+          historial: [], 
+          turnoActivo: null
         }
         await supabase.from('sb_operation_data').insert([{ client_slug: slug, data: initial }])
         writeLS(slug, initial)
@@ -395,9 +396,9 @@ export function AppProvider({ children, slug }) {
 
   const resetearDemo = useCallback(()=>{
     setConfig(CONFIG_DEFAULT); setMenu(MENU_DEFAULT)
-    setMesas(crearMesasMock())
-    setHistorial(HISTORIAL_MOCK)
-    setTurnoActivo({ inicio: new Date().toISOString(), fin: null })
+    setMesas(inicializarMesas(CONFIG_DEFAULT.numMesas))
+    setHistorial([])
+    setTurnoActivo(null)
   },[])
 
   return (
