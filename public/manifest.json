@@ -2,7 +2,7 @@
   "name": "StreetBoss",
   "short_name": "StreetBoss",
   "description": "Control total de tu negocio ambulante",
-  "start_url": "/mesas",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111111",

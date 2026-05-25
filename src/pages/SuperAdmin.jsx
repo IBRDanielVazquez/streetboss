@@ -97,12 +97,14 @@ export default function SuperAdmin() {
     setNuevaPromo({ codigo:'', descuento:'', tipo:'%', vence:'', usos:100 })
   }
 
+  const PIN_SUPER = import.meta.env.VITE_SUPERADMIN_PIN || 'SBPRO-1512'
+
   // PIN de acceso
   if (pinVis) return (
     <ModalPin
       titulo="Super Admin"
       subtitulo="Acceso restringido — PIN maestro"
-      pinCorrecto={config.pinSuperAdmin || 'SBPRO-1512'}
+      pinCorrecto={PIN_SUPER}
       modo="texto"
       onExito={() => { setAcceso(true); setPinVis(false) }}
       onCerrar={() => navigate(-1)}
