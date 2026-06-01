@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, ToggleLeft, ToggleRight, Users, TrendingUp, AlertCircle, Copy, MessageCircle, Trash2, CheckCircle } from 'lucide-react'
+import { Plus, ToggleLeft, ToggleRight, Users, TrendingUp, AlertCircle, Copy, MessageCircle, Trash2, CheckCircle, Edit, ChevronDown, ChevronUp, Link } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import ModalPin from '../components/ModalPin'
 
@@ -9,7 +9,7 @@ const CLIENTES_MOCK = []
 
 const COLOR_ESTADO = {
   activo:  { bg:'bg-green-900/40',  text:'text-green-400',  label:'Activo'  },
-  prueba:  { bg:'bg-yellow-900/40', text:'text-yellow-400', label:'Prueba'  },
+  prueba:  { bg:'bg-yellow-900/40', text:'text-yellow-400', label:'Trial'  },
   moroso:  { bg:'bg-red-900/40',    text:'text-red-400',    label:'Moroso'  },
   inactivo:{ bg:'bg-gray-800',      text:'text-gray-500',   label:'Inactivo'},
 }
@@ -35,15 +35,18 @@ export default function SuperAdmin() {
   const [tab,      setTab]      = useState('clientes')
   const [planes,   setPlanes]   = useState(PLANES_DEFAULT)
   const [promos,   setPromos]   = useState([])
-  const [nuevo,    setNuevo]    = useState({ negocio:'', dueno:'', plan:'Básico', mesas:4, whatsapp:'' })
+  
+  const [nuevo,    setNuevo]    = useState({ negocio:'', dueno:'', plan:'Trial 14 días', mesas:4, whatsapp:'' })
   const [formVis,  setFormVis]  = useState(false)
+  const [formPaso, setFormPaso] = useState(1)
+  
+  const [expandedClienteId, setExpandedClienteId] = useState(null)
 
   const activos  = clientes.filter(c => c.estado === 'activo').length
   const prueba   = clientes.filter(c => c.estado === 'prueba').length
   const morosos  = clientes.filter(c => c.estado === 'moroso').length
   const mrr      = clientes.filter(c=>c.estado==='activo').length * 299 + clientes.filter(c=>c.estado==='activo'&&c.plan==='Pro').length * 200
 
-  // Toggle estado del cliente
   const toggleCliente = (id) => {
     setClientes(cs => cs.map(c => c.id !== id ? c : {
       ...c,
@@ -51,15 +54,16 @@ export default function SuperAdmin() {
     }))
   }
 
-  // Agregar cliente y abrir WhatsApp
+  const getSlug = (negocio) => negocio.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+
+  const previewLink = `https://streetboss.vercel.app/${getSlug(nuevo.negocio)}`
+  const previewMsg = `Hola ${nuevo.dueno} 👋 Tu sistema StreetBoss para ${nuevo.negocio} está listo 🎉\n👉 ${previewLink}\nÁbrelo en Chrome 📲\nDudas al 9612466204 🔥`
+
   const agregarCliente = () => {
-    if (!nuevo.negocio || !nuevo.dueno || !nuevo.whatsapp) return
-
-    const slug = nuevo.negocio.toLowerCase()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-
+    const slug = getSlug(nuevo.negocio)
     const nc = {
       id: `c${Date.now()}`,
       negocio: nuevo.negocio,
@@ -73,24 +77,17 @@ export default function SuperAdmin() {
       desde: new Date().toISOString().slice(0,10)
     }
     setClientes(cs => [...cs, nc])
-    
-    // Abrir WhatsApp al dueño con mensaje de bienvenida y URL: streetboss.vercel.app/[slug]
-    const link = `https://streetboss.vercel.app/${slug}`
-    const msg = `¡Hola *${nuevo.dueno}*! Tu acceso a StreetBoss para *${nuevo.negocio}* está listo 🎉\n\n🚀 Tu portal es: ${link}\n📦 Plan: ${nuevo.plan}\n🪑 Mesas habilitadas: ${nuevo.mesas}\n\n¡Ya puedes empezar a tomar pedidos!`
-    
-    window.open(`https://wa.me/52${nuevo.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank')
-
-    setNuevo({ negocio:'', dueno:'', plan:'Básico', mesas:4, whatsapp:'' })
+    window.open(`https://wa.me/52${nuevo.whatsapp}?text=${encodeURIComponent(previewMsg)}`, '_blank')
+    setNuevo({ negocio:'', dueno:'', plan:'Trial 14 días', mesas:4, whatsapp:'' })
     setFormVis(false)
+    setFormPaso(1)
   }
 
-  // Tab de cobranza: mensaje morosos
   const cobrarMoroso = (c) => {
     const msg = `Hola ${c.negocio}! Tu suscripción a StreetBoss está vencida. Para continuar usando el sistema realiza tu pago aquí: https://pago.streetboss.mx/${c.id}`
     window.open(`https://wa.me/52${c.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank')
   }
 
-  // Form para promos
   const [nuevaPromo, setNuevaPromo] = useState({ codigo:'', descuento:'', tipo:'%', vence:'', usos:100 })
   const crearPromo = () => {
     if(!nuevaPromo.codigo) return
@@ -100,7 +97,6 @@ export default function SuperAdmin() {
 
   const PIN_SUPER = import.meta.env.VITE_SUPERADMIN_PIN || 'SBPRO-1512'
 
-  // PIN de acceso
   if (pinVis) return (
     <ModalPin
       titulo="Super Admin"
@@ -124,7 +120,7 @@ export default function SuperAdmin() {
           <p className="text-gray-500 text-xs">Panel de control global</p>
         </div>
         {tab === 'clientes' && (
-          <button onClick={() => setFormVis(v=>!v)}
+          <button onClick={() => { setFormVis(v=>!v); setFormPaso(1); }}
             className="bg-primary text-dark font-bold px-3 py-2 rounded-xl text-sm min-h-[40px] flex items-center gap-1">
             <Plus size={14}/> Cliente
           </button>
@@ -143,12 +139,8 @@ export default function SuperAdmin() {
       </div>
 
       <div className="p-4 space-y-4">
-        
-        {/* ── CONTENIDO POR TAB ──────────────────────────────── */}
-
         {tab === 'clientes' && (
           <>
-            {/* Métricas globales */}
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-dark2 rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-2"><Users size={14} className="text-primary"/><p className="text-gray-500 text-xs">Clientes activos</p></div>
@@ -171,33 +163,62 @@ export default function SuperAdmin() {
 
             {formVis && (
               <div className="bg-dark2 rounded-2xl p-4 space-y-3 border border-primary/30">
-                <p className="text-white font-bold">Nuevo cliente</p>
-                <input type="text" value={nuevo.negocio} onChange={e=>setNuevo(n=>({...n,negocio:e.target.value}))}
-                  placeholder="Nombre del negocio"
-                  className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
-                <input type="text" value={nuevo.dueno} onChange={e=>setNuevo(n=>({...n,dueno:e.target.value}))}
-                  placeholder="Nombre del dueño"
-                  className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
-                <input type="tel" inputMode="numeric" value={nuevo.whatsapp}
-                  onChange={e=>setNuevo(n=>({...n,whatsapp:e.target.value}))}
-                  placeholder="WhatsApp dueño (sin +52)"
-                  className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
-                <div className="grid grid-cols-2 gap-2">
-                  <select value={nuevo.plan} onChange={e=>setNuevo(n=>({...n,plan:e.target.value}))}
-                    className="bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]">
-                    <option value="Básico">Básico</option>
-                    <option value="Pro">Pro</option>
-                  </select>
-                  <input type="number" value={nuevo.mesas} onChange={e=>setNuevo(n=>({...n,mesas:e.target.value}))}
-                    placeholder="Mesas" inputMode="numeric"
-                    className="bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={() => setFormVis(false)}
-                    className="flex-1 bg-dark3 text-gray-400 font-bold py-2.5 rounded-xl min-h-[44px]">Cancelar</button>
-                  <button onClick={agregarCliente}
-                    className="flex-[2] bg-primary text-dark font-black py-2.5 rounded-xl min-h-[44px]">Agregar</button>
-                </div>
+                <p className="text-white font-bold">Nuevo cliente - Paso {formPaso} de 2</p>
+                
+                {formPaso === 1 ? (
+                  <>
+                    <input type="text" value={nuevo.negocio} onChange={e=>setNuevo(n=>({...n,negocio:e.target.value}))}
+                      placeholder="Nombre del negocio"
+                      className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
+                    <input type="text" value={nuevo.dueno} onChange={e=>setNuevo(n=>({...n,dueno:e.target.value}))}
+                      placeholder="Nombre del dueño"
+                      className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
+                    <input type="tel" inputMode="numeric" value={nuevo.whatsapp}
+                      onChange={e=>setNuevo(n=>({...n,whatsapp:e.target.value}))}
+                      placeholder="WhatsApp dueño (10 dígitos)"
+                      className="w-full bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
+                    <div className="grid grid-cols-2 gap-2">
+                      <select value={nuevo.plan} onChange={e=>setNuevo(n=>({...n,plan:e.target.value}))}
+                        className="bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]">
+                        <option value="Trial 14 días">Trial 14 días</option>
+                        <option value="Mensual $299">Mensual $299</option>
+                        <option value="Anual $2,499">Anual $2,499</option>
+                      </select>
+                      <input type="number" value={nuevo.mesas} onChange={e=>setNuevo(n=>({...n,mesas:e.target.value}))}
+                        placeholder="Mesas" inputMode="numeric"
+                        className="bg-dark3 border border-gray-700 text-white text-sm px-3 py-2 rounded-xl outline-none focus:border-primary min-h-[44px]"/>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button onClick={() => setFormVis(false)}
+                        className="flex-1 bg-dark3 text-gray-400 font-bold py-2.5 rounded-xl min-h-[44px]">Cancelar</button>
+                      <button onClick={() => {
+                        if(nuevo.negocio && nuevo.dueno && nuevo.whatsapp.length >= 10) setFormPaso(2)
+                        else alert('Completa todos los campos y el WhatsApp a 10 dígitos')
+                      }}
+                        className="flex-[2] bg-primary text-dark font-black py-2.5 rounded-xl min-h-[44px]">Siguiente →</button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-dark3 rounded-xl p-3 space-y-1">
+                      <p className="text-gray-400 text-xs">Resumen</p>
+                      <p className="text-white text-sm font-bold">{nuevo.negocio} ({nuevo.mesas} mesas)</p>
+                      <p className="text-gray-300 text-xs">{nuevo.dueno} · {nuevo.whatsapp}</p>
+                      <p className="text-primary text-xs font-semibold">{nuevo.plan}</p>
+                      <p className="text-green-400 text-[10px] mt-1 break-all">URL: {previewLink}</p>
+                    </div>
+                    <div className="bg-dark3 rounded-xl p-3">
+                      <p className="text-gray-400 text-xs mb-1">Preview WhatsApp</p>
+                      <p className="text-white text-xs italic whitespace-pre-wrap">{previewMsg}</p>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <button onClick={() => setFormPaso(1)}
+                        className="flex-1 bg-dark3 text-gray-400 font-bold py-2.5 rounded-xl min-h-[44px]">← Volver</button>
+                      <button onClick={agregarCliente}
+                        className="flex-[2] bg-green-500 text-dark font-black py-2.5 rounded-xl min-h-[44px]">✅ Crear y enviar WhatsApp</button>
+                    </div>
+                  </>
+                )}
               </div>
             )}
 
@@ -207,9 +228,13 @@ export default function SuperAdmin() {
                 clientes.map(c => {
                   const cfg = COLOR_ESTADO[c.estado] || COLOR_ESTADO.inactivo
                   const actv = c.estado === 'activo'
+                  const link = `https://streetboss.vercel.app/${c.slug}`
+                  const isExpanded = expandedClienteId === c.id
+
                   return (
-                    <div key={c.id} className="bg-dark2 rounded-2xl p-4">
-                      <div className="flex items-start justify-between gap-3">
+                    <div key={c.id} className="bg-dark2 rounded-2xl p-4 border border-white/5 transition-all">
+                      {/* Cabecera Clickable */}
+                      <div className="flex items-start justify-between gap-3 cursor-pointer" onClick={() => setExpandedClienteId(isExpanded ? null : c.id)}>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <p className="text-white font-bold text-base truncate">{c.negocio}</p>
@@ -217,31 +242,88 @@ export default function SuperAdmin() {
                               {cfg.label}
                             </span>
                           </div>
-                          {c.dueno && <p className="text-gray-400 text-xs mb-1">Dueño: {c.dueno}</p>}
+                          <p className="text-gray-400 text-xs mb-1">{c.dueno} · {c.whatsapp}</p>
                           <div className="flex items-center gap-3 text-xs text-gray-500">
                             <span>{c.plan}</span>
                             <span>·</span>
                             <span>{c.mesas} mesas</span>
                             <span>·</span>
-                            <span>{c.whatsapp}</span>
+                            <span>{c.desde}</span>
+                          </div>
+                          <div className="flex items-center gap-1 mt-1">
+                            <Link size={12} className="text-gray-500" />
+                            <p className="text-blue-400 text-[10px] break-all">{link}</p>
                           </div>
                           <p className="text-primary font-bold text-sm mt-1">${c.ventas.toLocaleString()} en ventas</p>
                         </div>
-                        <button onClick={() => toggleCliente(c.id)}
-                          className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center">
-                          {actv
-                            ? <ToggleRight size={28} className="text-primary"/>
-                            : <ToggleLeft  size={28} className="text-gray-600"/>
-                          }
+                        <div className="flex flex-col items-center gap-2">
+                          <button onClick={(e) => { e.stopPropagation(); toggleCliente(c.id); }}
+                            className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                            {actv
+                              ? <ToggleRight size={28} className="text-primary"/>
+                              : <ToggleLeft  size={28} className="text-gray-600"/>
+                            }
+                          </button>
+                          {isExpanded ? <ChevronUp size={16} className="text-gray-500"/> : <ChevronDown size={16} className="text-gray-500"/>}
+                        </div>
+                      </div>
+
+                      {/* Botones de acción principales */}
+                      <div className="flex gap-2 mt-3 pt-3 border-t border-white/5">
+                        <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(link); alert('Link copiado'); }}
+                          className="flex-1 bg-dark3 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1">
+                          <Copy size={14}/> Copiar link
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/52${c.whatsapp}`, '_blank'); }}
+                          className="flex-1 bg-green-900/40 text-green-400 text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1">
+                          <MessageCircle size={14}/> WhatsApp
+                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); alert('Editar en construcción'); }}
+                          className="flex-shrink-0 bg-dark3 text-gray-400 p-2 rounded-xl flex items-center justify-center">
+                          <Edit size={16}/>
                         </button>
                       </div>
+
+                      {/* Expandido: Links por rol */}
+                      {isExpanded && (
+                        <div className="mt-3 bg-dark3 rounded-xl p-3 space-y-2">
+                          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider mb-2">Accesos directos por rol</p>
+                          {[
+                            { name: 'Mesero', path: '/mesero' },
+                            { name: 'Cocina', path: '/cocina' },
+                            { name: 'Caja', path: '/caja' },
+                            { name: 'Admin', path: '/admin' }
+                          ].map(rol => {
+                            const rolLink = `${link}${rol.path}`
+                            const msg = `Hola! Tu link de ${rol.name} para ${c.negocio} es: ${rolLink}`
+                            return (
+                              <div key={rol.name} className="flex items-center justify-between bg-dark border border-white/5 p-2 rounded-lg gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white text-xs font-semibold">{rol.name}</p>
+                                  <p className="text-gray-500 text-[10px] truncate">{rolLink}</p>
+                                </div>
+                                <div className="flex gap-1">
+                                  <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(rolLink); alert(`Copiado: ${rol.name}`); }}
+                                    className="p-1.5 bg-dark3 text-gray-400 rounded-md active:text-white transition-colors">
+                                    <Copy size={12}/>
+                                  </button>
+                                  <button onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); }}
+                                    className="p-1.5 bg-green-900/40 text-green-400 rounded-md active:text-white transition-colors">
+                                    <MessageCircle size={12}/>
+                                  </button>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )}
                     </div>
                   )
                 })
               ) : (
                 <div className="bg-dark2 rounded-2xl p-8 text-center border border-white/5 space-y-4">
                   <p className="text-gray-400 text-sm">Aún no tienes clientes. Crea el primero para empezar.</p>
-                  <button onClick={() => setFormVis(true)}
+                  <button onClick={() => { setFormVis(true); setFormPaso(1); }}
                     className="bg-primary text-dark font-black px-6 py-3 rounded-xl text-sm min-h-[44px] inline-flex items-center gap-2 hover:scale-105 active:scale-95 transition-all mx-auto">
                     <Plus size={16}/> Crear Cliente
                   </button>
