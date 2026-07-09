@@ -2,10 +2,15 @@ import { Plus, Minus, Pencil } from 'lucide-react'
 
 export default function ProductoCard({ producto, cantidad=0, esPlus=false, onAgregar, onQuitar, onNota }) {
   if (producto.agotado) return (
-    <div className={`rounded-2xl p-4 opacity-50 ${esPlus?'col-span-2 bg-amber-950/30':'bg-dark3'}`}>
-      <p className="text-gray-400 font-semibold text-sm line-through">{producto.nombre}</p>
-      <p className="text-gray-600 text-lg font-bold mt-1">${producto.precio}</p>
-      <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full mt-1 inline-block">Agotado</span>
+    <div className={`rounded-2xl p-4 opacity-50 flex flex-col justify-between gap-3 ${esPlus?'col-span-2 bg-amber-950/30 border border-amber-900/30':'bg-dark3'}`}>
+      <div>
+        {esPlus && <div className="flex items-center gap-1.5 mb-1"><span className="text-yellow-700 text-sm">⭐</span><span className="text-yellow-700/50 text-xs font-bold uppercase tracking-wide">Especialidad</span></div>}
+        <p className={`font-semibold text-sm line-through leading-tight ${esPlus ? 'text-amber-700/50' : 'text-gray-400'}`}>{producto.nombre}</p>
+        <p className={`text-lg font-bold mt-1 ${esPlus ? 'text-amber-800/50' : 'text-gray-600'}`}>${producto.precio}</p>
+      </div>
+      <button disabled className={`font-bold py-2.5 rounded-xl min-h-[44px] text-sm flex items-center justify-center gap-1 cursor-not-allowed border ${esPlus ? 'bg-amber-900/20 text-amber-800/50 border-amber-900/30' : 'bg-dark text-gray-600 border-gray-800'}`}>
+        <span className="text-xs uppercase tracking-widest">Agotado</span>
+      </button>
     </div>
   )
 

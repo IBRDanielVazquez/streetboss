@@ -8,6 +8,8 @@ import Reporte from './pages/Reporte'
 import Configuracion from './pages/Configuracion'
 import SuperAdmin from './pages/SuperAdmin'
 import Caja from './pages/Caja'
+import MenuDigital from './pages/MenuDigital'
+import Landing from './pages/Landing'
 
 function NegocioApp() {
   const { slug } = useParams()
@@ -23,6 +25,8 @@ function NegocioApp() {
         <Route path="cocina" element={<Cocina />} />
         <Route path="caja" element={<Caja />} />
         <Route path="caja/:mesa" element={<Cobro />} />
+        <Route path="menu" element={<MenuDigital modo="pedir" />} />
+        <Route path="carta" element={<MenuDigital modo="carta" />} />
         <Route path="admin" element={<Configuracion />} />
         <Route path="admin/config" element={<Configuracion />} />
         <Route path="admin/mesas" element={<Mesas />} />
@@ -40,10 +44,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/superadmin" element={<AppProvider slug={null}><SuperAdmin /></AppProvider>} />
         <Route path="/:slug/*" element={<NegocioApp />} />
-        <Route path="/" element={<Navigate to="/lavitola/mesero" replace />} />
-        <Route path="*" element={<Navigate to="/lavitola/mesero" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from '../supabase'
-import { MENU_DEFAULT } from '../data/menu.js'
+import { MENUS_DEMO } from '../data/menu.js'
 
 // ─── Utilidades ───────────────────────────────────────────────────────────────
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2)
@@ -9,41 +9,36 @@ const LS_KEY  = (s) => `sb_cache_${s}`
 const readLS  = (s) => { try { const v = localStorage.getItem(LS_KEY(s)); return v ? JSON.parse(v) : null } catch { return null } }
 const writeLS = (s, d) => { try { localStorage.setItem(LS_KEY(s), JSON.stringify(d)) } catch {} }
 
-const _d = (d, h) => {
-  const date = new Date();
-  date.setDate(date.getDate() - d);
-  date.setHours(h, Math.floor(Math.random() * 60), 0);
-  return date.toISOString();
-}
 
-const HISTORIAL_MOCK = [
-  { id: 'm1', fecha: _d(0, 14), mesa: 1, productos: [{nombre:'Taco Pastor', precio:25, cantidad:4}], subtotal: 100, total: 110, formaPago: 'efectivo', propina: {monto: 10}, mesero: 'Mesero 1', estado: 'cobrado' },
-  { id: 'm2', fecha: _d(0, 15), mesa: 2, productos: [{nombre:'Gringa', precio:60, cantidad:2}], subtotal: 120, total: 132, formaPago: 'tarjeta', propina: {monto: 12}, mesero: 'Mesero 2', estado: 'cobrado' },
-  { id: 'm3', fecha: _d(0, 17), mesa: 3, productos: [{nombre:'Agua', precio:20, cantidad:3}], subtotal: 60, total: 60, formaPago: 'transferencia', propina: {monto: 0}, mesero: 'Mesero 3', estado: 'cobrado' },
-  { id: 'm4', fecha: _d(1, 14), mesa: 4, productos: [{nombre:'Taco Bistec', precio:30, cantidad:5}], subtotal: 150, total: 165, formaPago: 'efectivo', propina: {monto: 15}, mesero: 'Mesero 1', estado: 'cobrado' },
-  { id: 'm5', fecha: _d(1, 16), mesa: 5, productos: [{nombre:'Mega Burrito', precio:120, cantidad:1}], subtotal: 120, total: 130, formaPago: 'tarjeta', propina: {monto: 10}, mesero: 'Mesero 2', estado: 'cobrado' },
-  { id: 'm6', fecha: _d(1, 19), mesa: 1, productos: [{nombre:'Coca Cola', precio:25, cantidad:2}], subtotal: 50, total: 55, formaPago: 'efectivo', propina: {monto: 5}, mesero: 'Mesero 3', estado: 'cobrado' },
-  { id: 'm7', fecha: _d(1, 21), mesa: 2, productos: [{nombre:'Taco Pastor', precio:25, cantidad:10}], subtotal: 250, total: 275, formaPago: 'tarjeta', propina: {monto: 25}, mesero: 'Mesero 1', estado: 'cobrado' },
-  { id: 'm8', fecha: _d(2, 14), mesa: 3, productos: [{nombre:'Gringa', precio:60, cantidad:3}], subtotal: 180, total: 198, formaPago: 'transferencia', propina: {monto: 18}, mesero: 'Mesero 2', estado: 'cobrado' },
-  { id: 'm9', fecha: _d(2, 15), mesa: 4, productos: [{nombre:'Agua', precio:20, cantidad:2}], subtotal: 40, total: 40, formaPago: 'efectivo', propina: {monto: 0}, mesero: 'Mesero 3', estado: 'cobrado' },
-  { id: 'm10', fecha: _d(2, 18), mesa: 5, productos: [{nombre:'Mega Burrito', precio:120, cantidad:2}], subtotal: 240, total: 264, formaPago: 'tarjeta', propina: {monto: 24}, mesero: 'Mesero 1', estado: 'cobrado' },
-  { id: 'm11', fecha: _d(2, 20), mesa: 1, productos: [{nombre:'Taco Bistec', precio:30, cantidad:6}], subtotal: 180, total: 198, formaPago: 'efectivo', propina: {monto: 18}, mesero: 'Mesero 2', estado: 'cobrado' },
-  { id: 'm12', fecha: _d(2, 21), mesa: 2, productos: [{nombre:'Coca Cola', precio:25, cantidad:4}], subtotal: 100, total: 110, formaPago: 'transferencia', propina: {monto: 10}, mesero: 'Mesero 3', estado: 'cobrado' },
-  { id: 'm13', fecha: _d(0, 19), mesa: 4, productos: [{nombre:'Gringa', precio:60, cantidad:4}], subtotal: 240, total: 264, formaPago: 'efectivo', propina: {monto: 24}, mesero: 'Mesero 1', estado: 'cobrado' },
-  { id: 'm14', fecha: _d(1, 20), mesa: 3, productos: [{nombre:'Taco Pastor', precio:25, cantidad:8}], subtotal: 200, total: 220, formaPago: 'tarjeta', propina: {monto: 20}, mesero: 'Mesero 2', estado: 'cobrado' },
-  { id: 'm15', fecha: _d(0, 21), mesa: 5, productos: [{nombre:'Agua', precio:20, cantidad:5}], subtotal: 100, total: 100, formaPago: 'transferencia', propina: {monto: 0}, mesero: 'Mesero 3', estado: 'cobrado' },
-]
 
 export const CONFIG_DEFAULT = {
-  negocio:'StreetBoss POS', whatsapp:'9611234567', numMesas:8,
+  negocio:'StreetBoss POS', whatsapp:'9612466204', numMesas:8,
   colorMarca:'#f5b87a', logo:null, pinAdmin:'1234', pinSuperAdmin:'SBPRO-1512',
   slug: 'mi-negocio',
   cajeroHabilitado: false,
+  direccion: '',
+  telefono: '',
+  envio: {
+    activo: true,
+    ubicacion: { lat: 16.7521, lng: -93.1152 },
+    zonas: [
+      { hasta: 2, precio: 20 },
+      { hasta: 5, precio: 35 },
+      { hasta: 8, precio: 50 },
+    ],
+    pedidoMinimo: 0,
+  },
+  datosBancarios: { banco:'', titular:'', clabe:'' },
+  formasPago: { efectivo:true, transferencia:false, tarjeta:false },
   meseros: [
     { nombre: 'Mesero 1', slug: 'mesero-1', activo: true },
     { nombre: 'Mesero 2', slug: 'mesero-2', activo: true },
     { nombre: 'Mesero 3', slug: 'mesero-3', activo: true },
   ],
+}
+
+export const getMenuForSlug = (slug) => {
+  return MENUS_DEMO[slug] || []
 }
 
 const crearMesa = (numero) => ({
@@ -61,52 +56,46 @@ const mergeConfig = (saved) => {
   if (!merged.meseros || merged.meseros.length === 0) {
     merged.meseros = CONFIG_DEFAULT.meseros
   }
+  if (!merged.datosBancarios) {
+    merged.datosBancarios = CONFIG_DEFAULT.datosBancarios
+  }
+  if (!merged.envio) {
+    merged.envio = CONFIG_DEFAULT.envio
+  }
+  if (!merged.formasPago) {
+    merged.formasPago = CONFIG_DEFAULT.formasPago
+  }
   return merged
 }
 
-const crearMesasMock = () => {
-  const base = inicializarMesas(8)
-  const menuProds = MENU_DEFAULT.flatMap(c => c.productos)
-  const findP = (name) => menuProds.find(p => p.nombre.toLowerCase().includes(name.toLowerCase())) || menuProds[0]
-
-  return base.map(m => {
-    if (m.numero === 2) {
-      const p1 = findP('Taco Pastor'), p2 = findP('Coca Cola')
-      const peds = [{ ...p1, cantidad: 2 }, { ...p2, cantidad: 1 }]
-      return { ...m, estado: 'ocupada', meseroNombre: 'Mesero 1', pedidos: peds, totalParcial: peds.reduce((s,p)=>s+p.precio*p.cantidad,0), horaAbierta: new Date().toISOString() }
-    }
-    if (m.numero === 3) {
-      const p1 = findP('Gringa'), p2 = findP('Agua'), p3 = findP('Bistec')
-      const peds = [{ ...p1, id: 'mock-g1', cantidad: 1, enviadoACocina: true }, { ...p2, id: 'mock-a1', cantidad: 2, enviadoACocina: true }, { ...p3, id: 'mock-b1', cantidad: 1, enviadoACocina: true }]
-      const grupoMock3 = { id: 'grupo-mock-3', horaEnvio: new Date().toISOString(), productos: peds, entregado: false, meseroNombre: 'Mesero 1' }
-      return { ...m, estado: 'ocupada', enCocina: true, meseroNombre: 'Mesero 1', pedidos: peds, grupos: [grupoMock3], totalParcial: peds.reduce((s,p)=>s+p.precio*p.cantidad,0), horaAbierta: new Date().toISOString(), horaEnvioCocina: new Date().toISOString() }
-    }
-    if (m.numero === 4) {
-      const p1 = findP('Burrito'), p2 = findP('Coca Cola')
-      const peds = [{ ...p1, cantidad: 1 }, { ...p2, cantidad: 2 }]
-      return { ...m, estado: 'lista', meseroNombre: 'Mesero 2', pedidos: peds, totalParcial: peds.reduce((s,p)=>s+p.precio*p.cantidad,0), horaAbierta: new Date().toISOString(), horaLista: new Date().toISOString() }
-    }
-    if (m.numero === 6) {
-      const p1 = findP('Taco Pastor')
-      const peds = [{ ...p1, cantidad: 4 }]
-      return { ...m, estado: 'ocupada', meseroNombre: 'Mesero 2', pedidos: peds, totalParcial: peds.reduce((s,p)=>s+p.precio*p.cantidad,0), horaAbierta: new Date().toISOString() }
-    }
-    if (m.numero === 7) {
-      const p1 = findP('Gringa'), p2 = findP('Coca Cola')
-      const peds = [{ ...p1, id: 'mock-g2', cantidad: 2, enviadoACocina: true }, { ...p2, id: 'mock-c2', cantidad: 2, enviadoACocina: true }]
-      const grupoMock7 = { id: 'grupo-mock-7', horaEnvio: new Date().toISOString(), productos: peds, entregado: false, meseroNombre: 'Mesero 3' }
-      return { ...m, estado: 'ocupada', enCocina: true, meseroNombre: 'Mesero 3', pedidos: peds, grupos: [grupoMock7], totalParcial: peds.reduce((s,p)=>s+p.precio*p.cantidad,0), horaAbierta: new Date().toISOString(), horaEnvioCocina: new Date().toISOString() }
-    }
-    return m
+export const crearDatosInicialesCliente = (cliente = {}) => {
+  const numMesas = Math.max(1, Number(cliente.mesas || cliente.numMesas || CONFIG_DEFAULT.numMesas))
+  const config = mergeConfig({
+    negocio: cliente.negocio || CONFIG_DEFAULT.negocio,
+    whatsapp: cliente.whatsapp || CONFIG_DEFAULT.whatsapp,
+    numMesas,
+    slug: cliente.slug || CONFIG_DEFAULT.slug,
+    pinAdmin: cliente.pinAdmin || CONFIG_DEFAULT.pinAdmin,
+    cajeroHabilitado: cliente.cajeroHabilitado ?? true,
   })
+
+  return {
+    config,
+    menu: getMenuForSlug(config.slug),
+    mesas: inicializarMesas(numMesas),
+    historial: [],
+    turnoActivo: null,
+  }
 }
+
+
 
 // ─── Contexto ─────────────────────────────────────────────────────────────────
 const AppContext = createContext(null)
 
 export function AppProvider({ children, slug }) {
   const [config,      setConfig]      = useState(CONFIG_DEFAULT)
-  const [menu,        setMenu]        = useState(MENU_DEFAULT)
+  const [menu,        setMenu]        = useState(() => getMenuForSlug(slug))
   const [mesas,       setMesas]       = useState(() => inicializarMesas(8))
   const [historial,   setHistorial]   = useState([])
   const [turnoActivo, setTurnoActivo] = useState(null)
@@ -118,14 +107,17 @@ export function AppProvider({ children, slug }) {
 
   // 1. Cargar datos iniciales (LocalStorage + Supabase)
   useEffect(() => {
-    if (!slug) return
+    if (!slug) {
+      setLoading(false)
+      return
+    }
 
     // Paso 1: Cargar localStorage inmediatamente (UI instantánea)
     const cached = readLS(slug)
     if (cached) {
       isRemoteUpdate.current = true
       if (cached.config)    setConfig(mergeConfig(cached.config))
-      if (cached.menu)      setMenu(cached.menu)
+      setMenu(cached.menu || getMenuForSlug(slug)) // Cargar menú de la caché, o fallback si es demo
       if (cached.mesas)     setMesas(cached.mesas)
       if (cached.historial) setHistorial(cached.historial)
       setTurnoActivo(cached.turnoActivo ?? null)
@@ -148,18 +140,14 @@ export function AppProvider({ children, slug }) {
         isRemoteUpdate.current = true
         if (d.config)    setConfig(mergeConfig(d.config))
         if (d.menu)      setMenu(d.menu)
+        else             setMenu(getMenuForSlug(slug))
         if (d.mesas)     setMesas(d.mesas)
         if (d.historial) setHistorial(d.historial)
         setTurnoActivo(d.turnoActivo ?? null)
         writeLS(slug, d) // actualiza caché con datos frescos del servidor
         setTimeout(() => { isRemoteUpdate.current = false }, 200)
       } else if (!error && !data) {
-        const initial = {
-          config: CONFIG_DEFAULT, menu: MENU_DEFAULT,
-          mesas: inicializarMesas(CONFIG_DEFAULT.numMesas),
-          historial: [], 
-          turnoActivo: null
-        }
+        const initial = crearDatosInicialesCliente({ slug })
         await supabase.from('sb_operation_data').insert([{ client_slug: slug, data: initial }])
         writeLS(slug, initial)
       }
@@ -203,10 +191,20 @@ export function AppProvider({ children, slug }) {
     if (isInitialMount.current || !slug) return
     const timer = setTimeout(async () => {
       lastWriteTime.current = Date.now()
-      await supabase
+      // Debug: confirmar qué número se está guardando
+
+      const { error } = await supabase
         .from('sb_operation_data')
-        .update({ data: { config, menu, mesas, historial, turnoActivo }, updated_at: new Date() })
+        .update({ 
+          data: { config, menu, mesas, historial, turnoActivo }, 
+          updated_at: new Date() 
+        })
         .eq('client_slug', slug)
+      if (error) {
+        console.error('[StreetBoss] ❌ Error al guardar en Supabase:', error.message)
+      } else {
+
+      }
     }, 1000)
     return () => clearTimeout(timer)
   }, [config, menu, mesas, historial, turnoActivo, slug])
@@ -394,17 +392,37 @@ export function AppProvider({ children, slug }) {
 
   const actualizarMenu = useCallback((m)=>setMenu(m),[])
 
+  // Fuerza escritura INMEDIATA a Supabase (sin debounce)
+  // Usar cuando el usuario presiona "Guardar" en Configuracion
+  const forzarGuardado = useCallback(async (nuevaConfig) => {
+    const configFinal = nuevaConfig ? { ...config, ...nuevaConfig } : config
+    if (nuevaConfig) setConfig(prev => ({ ...prev, ...nuevaConfig }))
+    lastWriteTime.current = Date.now()
+
+    const { error } = await supabase
+      .from('sb_operation_data')
+      .update({ data: { config: configFinal, menu, mesas, historial, turnoActivo }, updated_at: new Date() })
+      .eq('client_slug', slug)
+    if (error) {
+      console.error('[StreetBoss] ❌ forzarGuardado falló:', error.message)
+      return { ok: false, error: error.message }
+    }
+    writeLS(slug, { config: configFinal, menu, mesas, historial, turnoActivo })
+
+    return { ok: true }
+  }, [config, menu, mesas, historial, turnoActivo, slug])
+
   const resetearDemo = useCallback(()=>{
-    setConfig(CONFIG_DEFAULT); setMenu(MENU_DEFAULT)
+    setConfig(CONFIG_DEFAULT); setMenu(getMenuForSlug(slug))
     setMesas(inicializarMesas(CONFIG_DEFAULT.numMesas))
     setHistorial([])
     setTurnoActivo(null)
-  },[])
+  },[slug])
 
   return (
     <AppContext.Provider value={{
       slug, loading, config, menu, mesas, historial, turnoActivo,
-      actualizarConfig, actualizarMenu, toggleAgotado, resetearDemo,
+      actualizarConfig, actualizarMenu, toggleAgotado, resetearDemo, forzarGuardado,
       abrirTurno, cerrarTurno,
       agregarProductoAMesa, quitarProductoDeMesa, actualizarNota, cancelarProducto,
       enviarACocina, marcarGrupoListo, aplicarDescuento,
