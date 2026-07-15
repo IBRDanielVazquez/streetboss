@@ -305,7 +305,7 @@ export default function Landing() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {DEMOS.map((demo) => {
-              const waUrl = `https://wa.me/529612466204?text=${encodeURIComponent(`Hola, quiero usar el estilo de ${demo.name} para mi restaurante en Street Boss.`)}`
+              const waUrl = `https://wa.me/529612466204?text=${encodeURIComponent(`Hola, me interesa este demo: ${demo.name}`)}`
               
               return (
                 <div 

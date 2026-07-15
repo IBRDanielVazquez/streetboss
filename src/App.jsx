@@ -10,6 +10,8 @@ import SuperAdmin from './pages/SuperAdmin'
 import Caja from './pages/Caja'
 import MenuDigital from './pages/MenuDigital'
 import Landing from './pages/Landing'
+import DemoAdmin from './pages/DemoAdmin'
+import DemoTrialDashboard from './pages/DemoTrialDashboard'
 
 function NegocioApp() {
   const { slug } = useParams()
@@ -45,6 +47,9 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Landing />} />
+        {/* Sistema de pruebas demo: 100% local, sin AppProvider ni Supabase */}
+        <Route path="/demo/admin" element={<DemoAdmin />} />
+        <Route path="/demo/prueba/:trialId" element={<DemoTrialDashboard />} />
         <Route path="/superadmin" element={<AppProvider slug={null}><SuperAdmin /></AppProvider>} />
         <Route path="/:slug/*" element={<NegocioApp />} />
         <Route path="*" element={<Navigate to="/" replace />} />
