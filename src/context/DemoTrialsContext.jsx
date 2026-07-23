@@ -7,9 +7,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { createContext, useContext, useState, useEffect } from 'react'
 import {
-  TRIALS_STORAGE_KEY, trialDataKey, uid,
+  TRIALS_STORAGE_KEY, trialDataKey, trialDeletedKey, uid,
   buscarDemo, buscarDemoPorClave, claveDeTrialId,
-  generarTrialId, crearDatosPrueba,
+  generarTrialId, codigoAccesoDeTrialId, crearDatosPrueba,
 } from '../data/demoTrials'
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -24,11 +24,35 @@ function cargarRegistro() {
       const datos = JSON.parse(raw)
       return {
         prospectos: Array.isArray(datos.prospectos) ? datos.prospectos : [],
-        pruebas: Array.isArray(datos.pruebas) ? datos.pruebas : [],
+        pruebas: Array.isArray(datos.pruebas) ? datos.pruebas.map(p => ({ status: 'activa', ...p })) : [],
       }
     }
   } catch { /* datos corruptos → empezar limpio */ }
   return { prospectos: [], pruebas: [] }
+}
+
+function normalizarDatosPrueba(datos, trialId) {
+  if (!datos) return datos
+  const codigoAcceso = datos.codigoAcceso || codigoAccesoDeTrialId(trialId)
+  return {
+    ...datos,
+    codigoAcceso,
+    status: datos.status || 'activa',
+    negocio: {
+      logo: '',
+      servicioDomicilio: true,
+      modoEnvio: 'pendiente',
+      costoEnvio: 30,
+      costoEnvioKm: 12,
+      ...(datos.negocio || {}),
+      redes: {
+        instagram: '',
+        facebook: '',
+        tiktok: '',
+        ...((datos.negocio && datos.negocio.redes) || {}),
+      },
+    },
+  }
 }
 
 export function DemoTrialsProvider({ children }) {
@@ -40,13 +64,17 @@ export function DemoTrialsProvider({ children }) {
   }, [registro])
 
   // ── Prospectos ──────────────────────────────────────────────────────────
-  // prospecto: { id, nombre, whatsapp, demoId, notas, estado, creado }
+  // prospecto: { id, nombre, whatsapp, nombreNegocio, demoId, notas, estado, creado }
   const crearProspecto = (datos) => {
     const nuevo = {
       id: uid(),
       nombre: datos.nombre.trim(),
       whatsapp: (datos.whatsapp || '').trim(),
+      nombreNegocio: (datos.nombreNegocio || '').trim(),
       demoId: datos.demoId || null,
+      canal: datos.canal || 'WhatsApp',
+      prioridad: datos.prioridad || 'Media',
+      proximoSeguimiento: datos.proximoSeguimiento || '',
       notas: (datos.notas || '').trim(),
       estado: 'Nuevo',
       creado: new Date().toISOString().slice(0, 10),
@@ -61,23 +89,28 @@ export function DemoTrialsProvider({ children }) {
   const cambiarEstadoProspecto = (id, estado) => editarProspecto(id, { estado })
 
   // ── Pruebas ─────────────────────────────────────────────────────────────
-  // prueba (metadata): { trialId, demoId, demoNombre, prospectoId, prospectoNombre, creado }
+  // prueba (metadata): { trialId, demoId, demoNombre, prospectoId, prospectoNombre, nombreNegocio, creado }
   // Los datos EDITABLES viven aparte en sb_demo_trial_data_<trialId>.
   const crearPrueba = (prospectoId, demoId) => {
     const demo = buscarDemo(demoId)
     if (!demo) return null
     const prospecto = registro.prospectos.find(p => p.id === prospectoId) || null
-    const trialId = generarTrialId(demo)
+    const nombreNegocio = prospecto?.nombreNegocio || demo.nombre
+    const trialId = generarTrialId(demo, nombreNegocio)
+    const codigoAcceso = codigoAccesoDeTrialId(trialId)
 
     // Sembrar los datos editables de la prueba
-    try { localStorage.setItem(trialDataKey(trialId), JSON.stringify(crearDatosPrueba(demo))) } catch {}
+    try { localStorage.setItem(trialDataKey(trialId), JSON.stringify(crearDatosPrueba(demo, nombreNegocio, codigoAcceso))) } catch {}
 
     const meta = {
       trialId,
+      codigoAcceso,
       demoId: demo.id,
       demoNombre: demo.nombre,
       prospectoId: prospecto?.id || null,
       prospectoNombre: prospecto?.nombre || 'Sin asignar',
+      nombreNegocio: nombreNegocio,
+      status: 'activa',
       creado: new Date().toISOString().slice(0, 10),
     }
     setRegistro(r => ({
@@ -89,7 +122,38 @@ export function DemoTrialsProvider({ children }) {
     return meta
   }
 
-  const valor = { ...registro, crearProspecto, editarProspecto, cambiarEstadoProspecto, crearPrueba }
+  const cambiarEstadoPrueba = (trialId, status) => {
+    setRegistro(r => ({
+      ...r,
+      pruebas: r.pruebas.map(p => p.trialId === trialId ? { ...p, status } : p),
+    }))
+    try {
+      const key = trialDataKey(trialId)
+      const raw = localStorage.getItem(key)
+      if (raw) {
+        const datos = JSON.parse(raw)
+        localStorage.setItem(key, JSON.stringify({ ...datos, status }))
+      }
+    } catch {}
+  }
+
+  const eliminarPrueba = (trialId) => {
+    setRegistro(r => ({ ...r, pruebas: r.pruebas.filter(p => p.trialId !== trialId) }))
+    try {
+      localStorage.removeItem(trialDataKey(trialId))
+      localStorage.setItem(trialDeletedKey(trialId), '1')
+    } catch {}
+  }
+
+  const valor = {
+    ...registro,
+    crearProspecto,
+    editarProspecto,
+    cambiarEstadoProspecto,
+    crearPrueba,
+    cambiarEstadoPrueba,
+    eliminarPrueba,
+  }
   return <DemoTrialsContext.Provider value={valor}>{children}</DemoTrialsContext.Provider>
 }
 
@@ -107,12 +171,13 @@ export const useDemoTrials = () => {
 export function useTrialData(trialId) {
   const [datos, setDatos] = useState(() => {
     try {
+      if (localStorage.getItem(trialDeletedKey(trialId))) return null
       const raw = localStorage.getItem(trialDataKey(trialId))
-      if (raw) return JSON.parse(raw)
+      if (raw) return normalizarDatosPrueba(JSON.parse(raw), trialId)
     } catch {}
     // Auto-siembra: prueba local no sincronizada entre dispositivos
     const demo = buscarDemoPorClave(claveDeTrialId(trialId))
-    return demo ? crearDatosPrueba(demo) : null
+    return demo ? crearDatosPrueba(demo, '', codigoAccesoDeTrialId(trialId)) : null
   })
 
   // Persistir cada edición
@@ -167,6 +232,9 @@ export function useTrialData(trialId) {
   return {
     valido: true,
     demo: buscarDemo(datos.demoId),
+    trialId,
+    codigoAcceso: datos.codigoAcceso || codigoAccesoDeTrialId(trialId),
+    status: datos.status || 'activa',
     negocio: datos.negocio,
     menu: datos.menu,
     creado: datos.creado,

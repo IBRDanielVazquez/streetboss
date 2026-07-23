@@ -51,17 +51,40 @@ export default function ProspectForm({ prospecto, onCerrar }) {
   const [form, setForm] = useState({
     nombre: prospecto?.nombre || '',
     whatsapp: prospecto?.whatsapp || '',
+    nombreNegocio: prospecto?.nombreNegocio || '',
     demoId: prospecto?.demoId || '',
+    canal: prospecto?.canal || 'WhatsApp',
+    prioridad: prospecto?.prioridad || 'Media',
+    proximoSeguimiento: prospecto?.proximoSeguimiento || '',
     notas: prospecto?.notas || '',
   })
   const [error, setError] = useState('')
 
   const guardar = () => {
     if (!form.nombre.trim()) { setError('El nombre del interesado es obligatorio'); return }
+    if (!form.nombreNegocio.trim()) { setError('El nombre del negocio es obligatorio'); return }
     if (prospecto) {
-      editarProspecto(prospecto.id, { nombre: form.nombre.trim(), whatsapp: form.whatsapp.trim(), demoId: form.demoId || null, notas: form.notas.trim() })
+      editarProspecto(prospecto.id, {
+        nombre: form.nombre.trim(),
+        whatsapp: form.whatsapp.trim(),
+        nombreNegocio: form.nombreNegocio.trim(),
+        demoId: form.demoId || null,
+        canal: form.canal,
+        prioridad: form.prioridad,
+        proximoSeguimiento: form.proximoSeguimiento,
+        notas: form.notas.trim()
+      })
     } else {
-      crearProspecto(form)
+      crearProspecto({
+        nombre: form.nombre.trim(),
+        whatsapp: form.whatsapp.trim(),
+        nombreNegocio: form.nombreNegocio.trim(),
+        demoId: form.demoId,
+        canal: form.canal,
+        prioridad: form.prioridad,
+        proximoSeguimiento: form.proximoSeguimiento,
+        notas: form.notas
+      })
     }
     onCerrar()
   }
@@ -70,8 +93,12 @@ export default function ProspectForm({ prospecto, onCerrar }) {
     <ModalDemo titulo={prospecto ? 'Editar interesado' : 'Registrar interesado'} onCerrar={onCerrar}>
       <div className="space-y-4">
         <div>
-          <label className={labelCls}>Nombre *</label>
+          <label className={labelCls}>Nombre del contacto *</label>
           <input className={inputCls} value={form.nombre} onChange={e => setForm({ ...form, nombre: e.target.value })} placeholder="Nombre del interesado" />
+        </div>
+        <div>
+          <label className={labelCls}>Nombre del negocio *</label>
+          <input className={inputCls} value={form.nombreNegocio} onChange={e => setForm({ ...form, nombreNegocio: e.target.value })} placeholder="Ej. Taquería Sabores" />
         </div>
         <div>
           <label className={labelCls}>WhatsApp</label>
@@ -83,6 +110,24 @@ export default function ProspectForm({ prospecto, onCerrar }) {
             <option value="">— Sin definir —</option>
             {DEMOS_OFICIALES.map(d => <option key={d.id} value={d.id}>{d.emoji} {d.nombre}</option>)}
           </select>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <div>
+            <label className={labelCls}>Canal de entrada</label>
+            <select className={inputCls} value={form.canal} onChange={e => setForm({ ...form, canal: e.target.value })}>
+              {['WhatsApp', 'Instagram', 'Facebook', 'Referido', 'Llamada', 'Otro'].map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className={labelCls}>Prioridad</label>
+            <select className={inputCls} value={form.prioridad} onChange={e => setForm({ ...form, prioridad: e.target.value })}>
+              {['Alta', 'Media', 'Baja'].map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+        </div>
+        <div>
+          <label className={labelCls}>Próximo seguimiento</label>
+          <input type="date" className={inputCls} value={form.proximoSeguimiento} onChange={e => setForm({ ...form, proximoSeguimiento: e.target.value })} />
         </div>
         <div>
           <label className={labelCls}>Notas</label>

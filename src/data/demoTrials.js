@@ -13,15 +13,32 @@
 
 export const TRIALS_STORAGE_KEY = 'sb_demo_trials_v1'
 export const trialDataKey = (trialId) => `sb_demo_trial_data_${trialId}`
+export const trialDeletedKey = (trialId) => `sb_demo_trial_deleted_${trialId}`
 
 // Número de ventas Street Boss (el mismo que ya usa la landing pública)
 export const WHATSAPP_VENTAS = '529612466204'
 
 // Estados del prospecto en el pipeline
 export const ESTADOS_PROSPECTO = ['Nuevo', 'Contactado', 'Prueba enviada', 'Ganado', 'Perdido']
+export const ESTADOS_PRUEBA = {
+  activa: 'Activa',
+  pausada: 'Pausada',
+  suspendida: 'Suspendida',
+}
 
 // Id corto único
 export const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+export const slugify = (texto) => {
+  const limpio = String(texto || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+  const palabrasExcluidas = new Set(['prueba', 'demo', 'test'])
+  const palabras = limpio.split(/\s+/).filter(w => w && !palabrasExcluidas.has(w))
+  return palabras.join('-').slice(0, 42)
+}
 
 // Código de 4 caracteres para el trialId (sin caracteres confusos)
 const codigo4 = () => {
@@ -247,25 +264,49 @@ export const buscarDemo = (demoId) => DEMOS_OFICIALES.find(d => d.id === demoId)
 export const buscarDemoPorClave = (clave) => DEMOS_OFICIALES.find(d => d.clave === clave) || null
 
 // ── Trial: id y datos semilla ────────────────────────────────────────────────
-// El trialId codifica la demo base: "<clave>-<COD4>" (ej. guero-K7P2).
+// El trialId nuevo incluye negocio + demo + código:
+// "<nombre-negocio>-<clave-demo>-<COD4>" (ej. antojitos-la-prueba-guero-K7P2).
+// Links viejos "<clave>-<COD4>" siguen funcionando.
 // Así, otro navegador puede auto-sembrar la prueba sin registro previo.
-export const generarTrialId = (demo) => `${demo.clave}-${codigo4()}`
-export const claveDeTrialId = (trialId) => String(trialId || '').split('-')[0]
+export const generarTrialId = (demo, nombreNegocio = '') => {
+  const negocioSlug = slugify(nombreNegocio) || 'prueba'
+  return `${negocioSlug}-${demo.clave}-${codigo4()}`
+}
+export const claveDeTrialId = (trialId) => {
+  const partes = String(trialId || '').split('-').filter(Boolean)
+  if (partes.length >= 3) return partes[partes.length - 2]
+  return partes[0] || ''
+}
+export const codigoAccesoDeTrialId = (trialId) => {
+  const partes = String(trialId || '').split('-').filter(Boolean)
+  return partes[partes.length - 1] || ''
+}
 
 // Datos editables iniciales de una prueba (copia profunda del menú semilla)
-export const crearDatosPrueba = (demo) => ({
+export const crearDatosPrueba = (demo, nombreNegocio, codigoAcceso = '') => ({
   demoId: demo.id,
+  codigoAcceso: codigoAcceso || '',
+  status: 'activa',
   creado: new Date().toISOString(),
   negocio: {
-    nombre: demo.nombre,
+    nombre: (nombreNegocio || '').trim() || demo.nombre,
+    logo: '',
     telefono: '',
     whatsapp: '',
     direccion: '',
     urlMaps: '',
     horarios: 'Lun a Dom · 9:00 am – 9:00 pm',
+    servicioDomicilio: true,
+    modoEnvio: 'pendiente',
     costoEnvio: 30,
+    costoEnvioKm: 12,
     tiempoEntrega: '30–40 min',
     mensajeClientes: '¡Gracias por tu preferencia! Haz tu pedido y te lo preparamos al momento. 🔥',
+    redes: {
+      instagram: '',
+      facebook: '',
+      tiktok: '',
+    },
   },
   menu: JSON.parse(JSON.stringify(demo.menu)),
 })

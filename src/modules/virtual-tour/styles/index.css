@@ -1,0 +1,441 @@
+/* ==========================================================================
+   Estilos Premium del Visor y Editor Virtual Tour (Aislado y Autónomo)
+   ========================================================================== */
+
+/* Visor General */
+.tour-viewer-wrapper {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(195, 164, 121, 0.15);
+  background-color: #080a08;
+}
+
+.tour-viewer-wrapper.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  border-radius: 0;
+  border: none;
+}
+
+/* Barra Superior */
+.tour-viewer-header {
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+}
+
+.tour-header-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.tour-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tour-scene-title {
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.tour-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tour-nav-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.tour-nav-btn:hover {
+  background: #c3a479;
+  border-color: #c3a479;
+  color: #1e3224;
+  box-shadow: 0 0 12px rgba(195, 164, 121, 0.4);
+}
+
+/* Contenedor del Canvas */
+.tour-canvas-container {
+  flex: 1;
+  position: relative;
+  background-color: #000;
+}
+
+/* Marcadores Nativo WebGL (Photo Sphere Viewer) */
+.tour-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto !important;
+  z-index: 5;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.tour-marker:hover {
+  transform: scale(1.12);
+  z-index: 10;
+}
+
+.tour-marker.is-selected {
+  transform: scale(1.2);
+  z-index: 20;
+}
+
+.tour-marker-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: #121713;
+  border: 2px solid var(--hs-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  color: var(--hs-color);
+  z-index: 2;
+}
+
+.tour-marker:hover .tour-marker-icon,
+.tour-marker.is-selected .tour-marker-icon {
+  background-color: var(--hs-color);
+}
+
+.tour-marker:hover .tour-marker-icon svg,
+.tour-marker.is-selected .tour-marker-icon svg {
+  stroke: #121713;
+}
+
+.tour-marker-pulse {
+  position: absolute;
+  top: 11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: tourPulse 2s infinite ease-in-out;
+  z-index: 1;
+}
+
+.tour-marker-label {
+  margin-top: 6px;
+  background-color: rgba(18, 23, 19, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  opacity: 0.85;
+  transition: all 0.25s ease;
+}
+
+.tour-marker:hover .tour-marker-label {
+  opacity: 1;
+  background-color: #121713;
+  border-color: var(--hs-color);
+}
+
+@keyframes tourPulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Loader */
+.tour-loader-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 10, 8, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  backdrop-filter: blur(4px);
+}
+
+.tour-loader-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: tourSpin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.tour-loader-text {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+@keyframes tourSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Popup de Información */
+.tour-info-popup-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 40;
+  padding: 20px;
+}
+
+.tour-info-popup {
+  background: #121713;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 380px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+  animation: tourScaleUp 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.tour-popup-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+}
+
+.tour-popup-desc {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.tour-popup-close-btn {
+  width: 100%;
+  border: none;
+  color: #121713;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 10px 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.tour-popup-close-btn:hover {
+  opacity: 0.9;
+}
+
+@keyframes tourScaleUp {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* Carrusel de Escenas */
+.tour-viewer-footer {
+  height: 100px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  z-index: 20;
+}
+
+.tour-thumbnails-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  width: 100%;
+  padding-bottom: 4px;
+}
+
+.tour-thumbnails-track::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tour-thumbnails-track::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.tour-thumb-card {
+  position: relative;
+  flex: 0 0 100px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background-color: #000;
+  padding: 0;
+}
+
+.tour-thumb-card.is-active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(195, 164, 121, 0.35);
+}
+
+.tour-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-cover: cover;
+  opacity: 0.65;
+  transition: opacity 0.25s ease;
+}
+
+.tour-thumb-card:hover .tour-thumb-img,
+.tour-thumb-card.is-active .tour-thumb-img {
+  opacity: 1;
+}
+
+.tour-thumb-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 3px 6px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Portada / Cover */
+.tour-portal-cover {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(195, 164, 121, 0.15);
+}
+
+.tour-portal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 10, 8, 0.65);
+  transition: background 0.3s ease;
+}
+
+.tour-portal-cover:hover .tour-portal-overlay {
+  background: rgba(8, 10, 8, 0.55);
+}
+
+.tour-portal-content {
+  position: relative;
+  text-align: center;
+  padding: 24px;
+  max-width: 600px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tour-portal-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #c3a479;
+}
+
+.tour-portal-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #fff;
+  margin: 0;
+}
+
+.tour-portal-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+  margin: 0 0 10px 0;
+}
+
+.tour-portal-enter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  color: #121713;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+}
+
+.tour-portal-enter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(195, 164, 121, 0.45);
+}
+
+/* Animaciones del editor */
+.animate-scaleUp {
+  animation: tourScaleUp 0.25s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes tourScaleUp {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

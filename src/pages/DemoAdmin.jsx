@@ -5,9 +5,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Pencil, Rocket, Users, FlaskConical, Store } from 'lucide-react'
+import { Plus, Pencil, Rocket, Users, FlaskConical, CalendarDays, Pause, Ban } from 'lucide-react'
 import { DemoTrialsProvider, useDemoTrials } from '../context/DemoTrialsContext'
-import { ESTADOS_PROSPECTO, DEMOS_OFICIALES, buscarDemo } from '../data/demoTrials'
+import { ESTADOS_PROSPECTO, buscarDemo } from '../data/demoTrials'
 import ProspectForm, { ModalDemo } from '../components/demotrials/ProspectForm'
 import DemoSelector from '../components/demotrials/DemoSelector'
 import TrialList from '../components/demotrials/TrialList'
@@ -32,7 +32,7 @@ function SeccionTitulo({ Icono, titulo, extra }) {
 }
 
 function AdminInterno() {
-  const { prospectos, cambiarEstadoProspecto, crearPrueba } = useDemoTrials()
+  const { prospectos, pruebas, cambiarEstadoProspecto, crearPrueba } = useDemoTrials()
   const [modalProspecto, setModalProspecto] = useState(null)  // null | 'nuevo' | prospecto
   const [modalPrueba, setModalPrueba] = useState(null)        // null | prospecto
   const [demoElegida, setDemoElegida] = useState(null)
@@ -45,6 +45,11 @@ function AdminInterno() {
     setDemoElegida(null)
     setPruebaCreada(meta)
   }
+
+  const pruebasActivas = pruebas.filter(p => (p.status || 'activa') === 'activa').length
+  const pruebasPausadas = pruebas.filter(p => p.status === 'pausada').length
+  const pruebasSuspendidas = pruebas.filter(p => p.status === 'suspendida').length
+  const seguimientosPendientes = prospectos.filter(p => p.proximoSeguimiento).length
 
   return (
     <div className="min-h-screen bg-dark">
@@ -60,6 +65,24 @@ function AdminInterno() {
       </header>
 
       <main className="p-4 md:p-8 max-w-5xl mx-auto space-y-10">
+        <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-dark2 border border-white/5 rounded-2xl p-4">
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Prospectos</p>
+            <p className="text-white font-black text-2xl mt-1">{prospectos.length}</p>
+          </div>
+          <div className="bg-dark2 border border-green-500/10 rounded-2xl p-4">
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Pruebas activas</p>
+            <p className="text-green-400 font-black text-2xl mt-1">{pruebasActivas}</p>
+          </div>
+          <div className="bg-dark2 border border-amber-500/10 rounded-2xl p-4">
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"><Pause size={12} /> Pausadas</p>
+            <p className="text-amber-400 font-black text-2xl mt-1">{pruebasPausadas}</p>
+          </div>
+          <div className="bg-dark2 border border-red-500/10 rounded-2xl p-4">
+            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-1"><Ban size={12} /> Suspendidas</p>
+            <p className="text-red-400 font-black text-2xl mt-1">{pruebasSuspendidas}</p>
+          </div>
+        </section>
 
         {/* ── Interesados / Prospectos ── */}
         <section>
@@ -82,11 +105,21 @@ function AdminInterno() {
                 <div key={p.id} className="bg-dark2 border border-white/5 rounded-2xl p-4">
                   <div className="flex flex-wrap items-center gap-3">
                     <div className="flex-1 min-w-[180px]">
-                      <p className="text-white font-bold">{p.nombre}</p>
-                      <p className="text-gray-500 text-xs mt-0.5">
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-white font-bold text-base">{p.nombre}</p>
+                        {p.nombreNegocio && <span className="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-md">{p.nombreNegocio}</span>}
+                      </div>
+                      <p className="text-gray-500 text-xs mt-1">
                         {p.whatsapp || 'Sin WhatsApp'} · {demo ? `${demo.emoji} Le interesó: ${demo.nombre}` : 'Demo sin definir'} · {p.creado}
                       </p>
-                      {p.notas && <p className="text-gray-600 text-xs mt-0.5 italic">{p.notas}</p>}
+                      <p className="text-gray-600 text-xs mt-1 flex flex-wrap gap-2">
+                        <span>Canal: <strong className="text-gray-400">{p.canal || 'WhatsApp'}</strong></span>
+                        <span>Prioridad: <strong className={p.prioridad === 'Alta' ? 'text-red-400' : p.prioridad === 'Baja' ? 'text-gray-500' : 'text-primary'}>{p.prioridad || 'Media'}</strong></span>
+                        {p.proximoSeguimiento && (
+                          <span className="flex items-center gap-1"><CalendarDays size={12} /> Seguimiento: <strong className="text-white">{p.proximoSeguimiento}</strong></span>
+                        )}
+                      </p>
+                      {p.notas && <p className="text-gray-600 text-xs mt-1 italic">{p.notas}</p>}
                     </div>
                     <select
                       value={p.estado}
@@ -116,15 +149,6 @@ function AdminInterno() {
         <section>
           <SeccionTitulo Icono={FlaskConical} titulo="Pruebas creadas" />
           <TrialList />
-        </section>
-
-        {/* ── Demos oficiales + mensaje de interés ── */}
-        <section>
-          <SeccionTitulo Icono={Store} titulo="Demos oficiales (10)" />
-          <p className="text-gray-600 text-xs mb-4">
-            Mensaje preparado por demo: <span className="italic">"Hola, me interesa este demo: [NOMBRE]"</span> — cópialo o copia el link de WhatsApp para usarlo en botones/tarjetas cuando se conecte producción.
-          </p>
-          <DemoSelector />
         </section>
       </main>
 
@@ -158,20 +182,39 @@ function AdminInterno() {
       {/* Confirmación de prueba creada con su URL */}
       {pruebaCreada && (
         <ModalDemo titulo="✅ Prueba creada" onCerrar={() => setPruebaCreada(null)}>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <p className="text-gray-400 text-sm">
-              {pruebaCreada.demoNombre} para <span className="text-white font-bold">{pruebaCreada.prospectoNombre}</span>.
+              Prueba creada para <span className="text-white font-bold">{pruebaCreada.nombreNegocio || pruebaCreada.prospectoNombre}</span> ({pruebaCreada.demoNombre}).
             </p>
-            <p className="text-gray-600 text-xs">URL local de acceso (cópiala desde "Pruebas creadas"):</p>
-            <p className="bg-dark3 rounded-xl p-3 text-primary text-xs font-mono break-all">
-              {window.location.origin}/demo/prueba/{pruebaCreada.trialId}
-            </p>
-            <Link
-              to={`/demo/prueba/${pruebaCreada.trialId}`}
-              className="block text-center w-full bg-primary text-dark font-black py-3 rounded-xl hover:opacity-90 transition-opacity"
-            >
-              Abrir la prueba
-            </Link>
+            
+            <div>
+              <p className="text-gray-500 text-xs mb-1 font-bold uppercase tracking-wider">1. Link Dashboard (Cliente):</p>
+              <p className="bg-dark3 rounded-xl p-2.5 text-primary text-xs font-mono break-all">
+                {window.location.origin}/dashboard/{pruebaCreada.trialId}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500 text-xs mb-1 font-bold uppercase tracking-wider">2. Link Menú Público (Compradores):</p>
+              <p className="bg-dark3 rounded-xl p-2.5 text-green-400 text-xs font-mono break-all">
+                {window.location.origin}/menu/{pruebaCreada.trialId}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 pt-2">
+              <Link
+                to={`/dashboard/${pruebaCreada.trialId}`}
+                className="block text-center bg-primary text-dark font-black py-3 rounded-xl hover:opacity-90 transition-opacity text-sm"
+              >
+                Abrir Dashboard
+              </Link>
+              <Link
+                to={`/menu/${pruebaCreada.trialId}`}
+                className="block text-center bg-dark3 border border-white/10 text-white font-black py-3 rounded-xl hover:opacity-90 transition-opacity text-sm"
+              >
+                Ver Menú Público
+              </Link>
+            </div>
           </div>
         </ModalDemo>
       )}

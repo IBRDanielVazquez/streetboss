@@ -380,89 +380,55 @@ export default function Landing() {
             Elige el plan que mejor se adapte a tu restaurante. Todo el poder de StreetBoss para disparar tus ventas online.
           </p>
           
-          <div className="grid md:grid-cols-3 gap-6 text-left">
-            {/* Mensual */}
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 flex flex-col hover:border-white/20 transition-colors">
-              <h3 className="text-2xl font-bold text-white mb-2">Mensual</h3>
-              <p className="text-gray-500 mb-6 text-sm h-10">Flexibilidad total, cancela cuando quieras.</p>
+          <div className="max-w-2xl mx-auto text-left">
+            <div className="bg-gradient-to-b from-[#111] to-black border border-primary/30 rounded-[2.5rem] p-8 md:p-12 relative shadow-[0_0_50px_rgba(245,184,122,0.15)] flex flex-col text-center">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-black text-xs font-black px-5 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(245,184,122,0.5)] whitespace-nowrap">
+                OFERTA DE LANZAMIENTO 🚀
+              </div>
+              <h3 className="text-2xl md:text-3xl font-black text-white mb-2 mt-2">Super paquete de inicio: $100 MXN al mes</h3>
+              <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto leading-relaxed">
+                Montamos tu menú digital optimizado para vender más a domicilio y aumentar tu ticket promedio.
+              </p>
               
-              <div className="mb-6 pb-6 border-b border-white/10 h-[100px]">
-                <div className="flex items-end mt-4">
-                  <span className="text-5xl font-extrabold text-white">$249</span>
-                  <span className="text-gray-400 font-medium ml-2 mb-1">MXN / mes</span>
+              <div className="mb-8 pb-8 border-b border-white/10 flex flex-col items-center">
+                <span className="bg-green-500/10 text-green-400 text-xs font-extrabold px-4 py-1 rounded-full uppercase tracking-wider mb-3">
+                  🔥 7 días de prueba gratis
+                </span>
+                <div className="flex items-baseline justify-center">
+                  <span className="text-5xl font-extrabold text-white">$100</span>
+                  <span className="text-gray-400 font-medium ml-2">MXN / mes</span>
                 </div>
+                <p className="text-xs text-amber-400 font-bold mt-3">
+                  ⚠️ Disponible únicamente para los primeros 10 negocios
+                </p>
+                <p className="text-xs text-gray-500 mt-2 max-w-sm leading-relaxed">
+                  Prueba el sistema completo gratis por 7 días. Después de los 7 días, aplica el plan de $100 MXN al mes para los primeros 10 negocios. Sin plazos forzosos.
+                </p>
               </div>
               
-              <ul className="space-y-4 mb-10 flex-1">
-                {['Menú Interactivo Ilimitado', 'Pedidos directo a WhatsApp', 'Cálculo GPS para envíos'].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                    <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" /> {item}
-                  </li>
+              <div className="text-left max-w-md mx-auto space-y-4 mb-10">
+                <p className="text-white font-bold text-xs uppercase tracking-wider mb-2 text-center text-primary">¿Qué incluye el paquete?</p>
+                {[
+                  'Menú Digital Interactivo e Ilimitado',
+                  'Pedidos ilimitados directo a tu WhatsApp',
+                  'Cálculo de envíos por GPS (manual, costo fijo o por km)',
+                  'Panel de administración (/dashboard) para actualizar precios y fotos',
+                  'Código QR personalizado para imprimir en tus mesas'
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
+                    <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" />
+                    <span>{item}</span>
+                  </div>
                 ))}
-              </ul>
-              
-              <a href="https://wa.me/529612466204?text=Me%20interesa%20el%20plan%20Mensual" target="_blank" rel="noreferrer" className="block text-center w-full bg-white/5 border border-white/10 text-white font-bold py-4 rounded-full hover:bg-white/10 transition-colors">
-                Empezar Ahora
-              </a>
-            </div>
-
-            {/* Semestral */}
-            <div className="bg-gradient-to-b from-[#111] to-black border border-primary/30 rounded-[2.5rem] p-8 relative shadow-[0_0_50px_rgba(245,184,122,0.1)] flex flex-col transform md:-translate-y-4">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-black text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(245,184,122,0.5)] whitespace-nowrap">
-                20% DE DESCUENTO
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Semestral</h3>
-              <p className="text-gray-500 mb-6 text-sm h-10">La opción favorita para estabilizar ventas.</p>
-              
-              <div className="mb-6 pb-6 border-b border-white/10 h-[100px]">
-                <span className="text-gray-500 line-through text-sm mr-2 block mb-1">Normal: $249</span>
-                <div className="flex items-end">
-                  <span className="text-5xl font-extrabold text-white">$199</span>
-                  <span className="text-gray-400 font-medium ml-2 mb-1">MXN / mes</span>
-                </div>
-                <p className="text-xs text-green-400 font-semibold mt-2">Facturado semestralmente ($1,194)</p>
               </div>
               
-              <ul className="space-y-4 mb-10 flex-1">
-                {['Menú Interactivo Ilimitado', 'Pedidos directo a WhatsApp', 'Cálculo GPS para envíos', 'Generador de QR para mesas'].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                    <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" /> {item}
-                  </li>
-                ))}
-              </ul>
-              
-              <a href="https://wa.me/529612466204?text=Me%20interesa%20el%20plan%20Semestral" target="_blank" rel="noreferrer" className="block text-center w-full bg-primary text-black font-extrabold py-4 rounded-full hover:scale-105 transition-transform shadow-[0_0_20px_rgba(245,184,122,0.3)]">
-                Empezar Ahora
-              </a>
-            </div>
-
-            {/* Anual */}
-            <div className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-8 relative flex flex-col hover:border-white/20 transition-colors">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-[0_0_20px_rgba(34,197,94,0.4)] whitespace-nowrap">
-                40% DE DESCUENTO
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Anual</h3>
-              <p className="text-gray-500 mb-6 text-sm h-10">Para líderes que ven a largo plazo.</p>
-              
-              <div className="mb-6 pb-6 border-b border-white/10 h-[100px]">
-                <span className="text-gray-500 line-through text-sm mr-2 block mb-1">Normal: $249</span>
-                <div className="flex items-end">
-                  <span className="text-5xl font-extrabold text-white">$149</span>
-                  <span className="text-gray-400 font-medium ml-2 mb-1">MXN / mes</span>
-                </div>
-                <p className="text-xs text-green-400 font-semibold mt-2">Facturado anualmente ($1,788)</p>
-              </div>
-              
-              <ul className="space-y-4 mb-10 flex-1">
-                {['Todo lo del plan Semestral', 'Soporte prioritario VIP', 'Sin letras chiquitas'].map((item, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                    <CheckCircle2 size={18} className="text-primary shrink-0 mt-0.5" /> {item}
-                  </li>
-                ))}
-              </ul>
-              
-              <a href="https://wa.me/529612466204?text=Me%20interesa%20el%20plan%20Anual" target="_blank" rel="noreferrer" className="block text-center w-full bg-white/5 border border-white/10 text-white font-bold py-4 rounded-full hover:bg-white/10 transition-colors">
-                Empezar Ahora
+              <a 
+                href="https://wa.me/529612466204?text=Hola,%20quiero%20probar%20los%207%20dias%20gratis%20y%20apartar%20el%20paquete%20de%20100%20pesos" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="block text-center w-full bg-primary text-black font-black py-4 rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(245,184,122,0.4)] text-base"
+              >
+                📱 Iniciar prueba de 7 días gratis por WhatsApp
               </a>
             </div>
           </div>
