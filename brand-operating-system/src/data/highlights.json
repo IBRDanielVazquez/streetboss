@@ -1,0 +1,18 @@
+[
+  {
+    "id": "HL-01",
+    "name": "¿Qué es SB?",
+    "prompt": "Fondo Boss Charcoal con icono minimalista de smartphone. Vectorial.",
+    "recommendedOrder": 1,
+    "coverPath": "HL_QueEs.webp",
+    "contentDesc": "Explicación de cero comisiones."
+  },
+  {
+    "id": "HL-02",
+    "name": "Demos",
+    "prompt": "Fondo Street Orange con icono blanco minimalista de un tap. Vectorial.",
+    "recommendedOrder": 2,
+    "coverPath": "HL_Demos.webp",
+    "contentDesc": "Grabaciones reales de UI."
+  }
+]

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 2560 1440" width="2560" height="1440">
+  <!-- StreetBoss · YouTube Channel Art · Layout master -->
+  <!-- Capa 1: fondo food premium (reemplazar rect por imagen IA generada, sin logo) -->
+  <rect x="0" y="0" width="2560" height="1440" fill="#0D0E12"/>
+  <text x="60" y="80" font-family="Inter, Arial, sans-serif" font-size="26" fill="#3a3d45">[CAPA FONDO: reemplazar por food premium IA · prompt COVER_FOOD_DARK · sin logo]</text>
+
+  <!-- Zona TV-safe central 1546x423 (centrada): x 507→2053, y 508→931 -->
+  <rect x="507" y="508" width="1546" height="423" fill="none" stroke="#FF4B00" stroke-width="2" stroke-dasharray="12 10" opacity="0.35"/>
+
+  <!-- Capa 2: Logo maestro variante DARK (Street en blanco) sobre fondo Charcoal -->
+  <image xlink:href="../../../brand-core/01_Master_Logo_Dark.svg" x="880" y="540" width="800" height="267"/>
+
+  <!-- Capa 3: Claim dentro del área segura -->
+  <text x="1280" y="880" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="64" fill="#FFFFFF" letter-spacing="-1">Vende directo. Manda tú.</text>
+</svg>

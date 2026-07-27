@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <!-- StreetBoss · Profile Master · Variante OSCURA / PRINCIPAL -->
+  <!-- Fondo Boss Charcoal (#0D0E12). NO se redibuja el logo: se referencia el ícono maestro. -->
+  <rect x="0" y="0" width="1080" height="1080" fill="#0D0E12"/>
+  <!-- Guía de área segura circular (no exportar visible; solo referencia de diseño) -->
+  <!-- Ícono maestro oficial referenciado desde brand-core, centrado al ~62% para respetar el recorte circular -->
+  <image xlink:href="../../brand-core/01_Master_Icon.svg" x="205" y="205" width="670" height="670"/>
+</svg>

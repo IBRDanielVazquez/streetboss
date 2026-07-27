@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreetBoss | Vende directo. Manda tú.</title>
+    <meta name="description" content="Convierte el menú de tu restaurante en un escaparate digital optimizado para móviles y recibe pedidos directamente por WhatsApp.">
+    <link rel="canonical" href="https://streetboss.com.mx/">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="StreetBoss | Vende directo. Manda tú.">
+    <meta property="og:description" content="Convierte el menú de tu restaurante en un escaparate digital optimizado para móviles y recibe pedidos directamente por WhatsApp.">
+    <meta property="og:url" content="https://streetboss.com.mx/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://streetboss.com.mx/assets/01_portada.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        boss: {
+                            charcoal: '#0D0E12',
+                            gray: '#1A1C23',
+                            orange: '#FF4B00',
+                            light: '#FF6A1A'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0D0E12; color: #FFFFFF; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="antialiased selection:bg-boss-orange selection:text-white">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-boss-charcoal/90 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <img src="assets/logo.png" alt="StreetBoss" class="h-8">
+            <a href="https://wa.me/529613725386" 
+               target="_blank"
+               class="bg-boss-orange hover:bg-boss-light text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105">
+                Solicitar demo
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="pt-40 pb-20 px-6 text-center max-w-5xl mx-auto">
+        <h1 class="text-6xl md:text-8xl font-black mb-6 leading-tight tracking-tight">
+            Vende directo.<br>
+            <span class="text-boss-orange">Manda tú.</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+            Convierte el menú de tu restaurante en un escaparate digital optimizado para móviles y recibe pedidos directamente por WhatsApp.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="https://wa.me/529613725386" 
+               target="_blank"
+               class="bg-boss-orange hover:bg-boss-light text-white text-lg font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(255,75,0,0.3)] hover:shadow-[0_0_40px_rgba(255,75,0,0.5)] transform hover:-translate-y-1">
+                Solicitar demo por WhatsApp
+            </a>
+            <a href="#producto" class="bg-white/10 hover:bg-white/20 text-white text-lg font-bold py-4 px-8 rounded-full transition-all duration-300">
+                Ver cómo funciona
+            </a>
+        </div>
+    </section>
+
+    <!-- Producto -->
+    <section id="producto" class="py-24 bg-boss-gray border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="flex flex-col items-center">
+                    <img src="assets/01_portada.png" alt="Escaparate optimizado para móviles" class="w-64 rounded-3xl border-8 border-boss-charcoal shadow-2xl mb-6">
+                    <h3 class="text-xl font-bold mb-2">Escaparate Digital</h3>
+                    <p class="text-gray-400 text-center text-sm">Diseñado para la conversión. Una presentación profesional e impecable de tu marca en cada pantalla.</p>
+                </div>
+                <div class="flex flex-col items-center mt-0 md:mt-12">
+                    <img src="assets/02_categorias.png" alt="Categorías Claras" class="w-64 rounded-3xl border-8 border-boss-charcoal shadow-2xl mb-6">
+                    <h3 class="text-xl font-bold mb-2">Categorías Claras</h3>
+                    <p class="text-gray-400 text-center text-sm">Tus productos estructurados para que tu cliente explore, antoje y decida más rápido sin fricción.</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img src="assets/05_carrito.png" alt="Carrito para WhatsApp" class="w-64 rounded-3xl border-8 border-boss-charcoal shadow-2xl mb-6">
+                    <h3 class="text-xl font-bold mb-2">Carrito a WhatsApp</h3>
+                    <p class="text-gray-400 text-center text-sm">El cliente arma su pedido y lo envía estructurado directo a tu chat. Sin errores y sin intermediarios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Beneficios -->
+    <section class="py-32 px-6 max-w-7xl mx-auto">
+        <div class="text-center mb-20">
+            <h2 class="text-4xl md:text-6xl font-black mb-6">No es otro menú QR.</h2>
+            <p class="text-xl text-gray-400">Es una plataforma de venta directa con beneficios reales para tu operación.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">📱</div>
+                <h3 class="text-xl font-bold mb-4">Escaparate Móvil</h3>
+                <p class="text-gray-400">Desarrollado para ser rápido, intuitivo y verse increíble en el teléfono de tu cliente. Cero fricción.</p>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">🍔</div>
+                <h3 class="text-xl font-bold mb-4">Organización Visual</h3>
+                <p class="text-gray-400">Categorías y productos que se muestran de forma limpia. La comida vende primero por los ojos.</p>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">🛒</div>
+                <h3 class="text-xl font-bold mb-4">Carrito Integrado</h3>
+                <p class="text-gray-400">El cliente elige, revisa su cuenta y confirma. Sin necesidad de descargar aplicaciones.</p>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">💬</div>
+                <h3 class="text-xl font-bold mb-4">Recepción por WhatsApp</h3>
+                <p class="text-gray-400">Recibe pedidos limpios y estructurados directamente en el WhatsApp de tu negocio.</p>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">👑</div>
+                <h3 class="text-xl font-bold mb-4">Control de Clientes</h3>
+                <p class="text-gray-400">El número y contacto del cliente se quedan en tu teléfono, no en la base de datos de una app.</p>
+            </div>
+            <div class="p-8 bg-white/5 rounded-3xl border border-white/10 hover:border-boss-orange/50 transition-colors">
+                <div class="w-12 h-12 bg-boss-orange/20 text-boss-orange rounded-xl flex items-center justify-center text-2xl font-black mb-6">💰</div>
+                <h3 class="text-xl font-bold mb-4">Cero Comisiones</h3>
+                <p class="text-gray-400">Tú cobras el 100% de la venta. Olvídate de pagar 30% por cada orden a los marketplaces.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Para quién es -->
+    <section class="py-24 bg-boss-gray border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-5xl font-black mb-12">Para todo negocio de comida.</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="px-6 py-3 bg-white/5 border border-white/10 rounded-full font-semibold text-gray-300">Restaurantes</span>
+                <span class="px-6 py-3 bg-white/5 border border-white/10 rounded-full font-semibold text-gray-300">Cafeterías</span>
+                <span class="px-6 py-3 bg-white/5 border border-white/10 rounded-full font-semibold text-gray-300">Food Trucks</span>
+                <span class="px-6 py-3 bg-white/5 border border-white/10 rounded-full font-semibold text-gray-300">Dark Kitchens</span>
+                <span class="px-6 py-3 bg-white/5 border border-white/10 rounded-full font-semibold text-gray-300">Postres</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="py-32 px-6 text-center max-w-4xl mx-auto">
+        <h2 class="text-4xl md:text-6xl font-black mb-6">Tu negocio no necesita otro intermediario.</h2>
+        <p class="text-2xl text-boss-orange font-bold mb-12">Necesita vender directamente.</p>
+        <a href="https://wa.me/529613725386" 
+           target="_blank"
+           class="inline-block bg-boss-orange hover:bg-boss-light text-white text-xl font-bold py-5 px-10 rounded-full transition-all duration-300 shadow-[0_0_30px_rgba(255,75,0,0.3)] hover:shadow-[0_0_40px_rgba(255,75,0,0.5)] transform hover:-translate-y-1">
+            Solicita tu demo por WhatsApp
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-boss-gray py-12 border-t border-white/5 text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <img src="assets/logo.png" alt="StreetBoss" class="h-6 mx-auto mb-6 opacity-50 hover:opacity-100 transition-opacity">
+            <p class="font-bold text-lg mb-2">Vende directo. Manda tú.</p>
+            <div class="flex justify-center gap-6 mt-6 text-gray-500 text-sm">
+                <a href="https://streetboss.com.mx/" class="hover:text-boss-orange transition-colors">Visitar Web (https://streetboss.com.mx/)</a>
+                <a href="https://wa.me/529613725386" class="hover:text-boss-orange transition-colors">WhatsApp</a>
+            </div>
+            <p class="mt-8 text-gray-600 text-xs">© 2024 StreetBoss. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

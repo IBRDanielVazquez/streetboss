@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --street-orange: #FF4B00;
+  --boss-charcoal: #0D0E12;
+  --street-orange-light: #FF6A1A;
+  --absolute-white: #FFFFFF;
+}
+
+body {
+  background-color: var(--boss-charcoal);
+  color: var(--absolute-white);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

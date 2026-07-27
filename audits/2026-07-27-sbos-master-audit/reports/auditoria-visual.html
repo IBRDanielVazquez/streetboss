@@ -1,0 +1,376 @@
+<title>Auditoría Forense StreetBoss · 2026-07-27</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --ground:#0d0e12; --panel:#16181f; --panel-2:#1e212b; --line:#2a2e3a;
+    --ink:#f4f3f1; --ink-2:#b9bcc6; --ink-3:#7e838f;
+    --accent:#ff4b00; --accent-soft:#ff6a1a;
+    --p0:#f0525a; --p1:#ff7a18; --p2:#e8b420; --p3:#3fb765; --ok:#3fb765; --bad:#f0525a;
+    --paper:#f7f6f4;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --maxw:informational;
+  }
+  :root[data-theme="light"]{
+    --ground:#f7f6f4; --panel:#ffffff; --panel-2:#f0eeea; --line:#e3e0da;
+    --ink:#16171b; --ink-2:#43474f; --ink-3:#8b8f98;
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme="dark"]){
+      --ground:#f7f6f4; --panel:#ffffff; --panel-2:#f0eeea; --line:#e3e0da;
+      --ink:#16171b; --ink-2:#43474f; --ink-3:#8b8f98;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:0;max-width:1240px;margin:0 auto}
+  /* --- TOC --- */
+  nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+    padding:28px 20px;border-right:1px solid var(--line);background:var(--ground)}
+  nav.toc .brand{font-weight:800;letter-spacing:-.02em;font-size:1.05rem;line-height:1.2}
+  nav.toc .brand span{color:var(--accent)}
+  nav.toc .sub{font:600 .62rem/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-top:6px}
+  nav.toc ol{list-style:none;margin:22px 0 0;padding:0;counter-reset:s}
+  nav.toc a{display:flex;gap:9px;text-decoration:none;color:var(--ink-2);font-size:.82rem;
+    padding:5px 8px;border-radius:7px;align-items:baseline}
+  nav.toc a:hover{background:var(--panel);color:var(--ink)}
+  nav.toc a .n{font:600 .68rem/1 var(--mono);color:var(--ink-3);min-width:20px}
+  main{padding:40px clamp(20px,4vw,56px) 90px;min-width:0}
+  /* --- header --- */
+  .kicker{font:700 .68rem/1 var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:clamp(1.9rem,4vw,2.9rem);line-height:1.04;letter-spacing:-.03em;margin:14px 0 6px;text-wrap:balance;font-weight:800}
+  .lede{color:var(--ink-2);font-size:1.05rem;max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .meta span{font:600 .7rem/1 var(--mono);color:var(--ink-2);background:var(--panel);
+    border:1px solid var(--line);padding:7px 10px;border-radius:999px}
+  section{scroll-margin-top:16px;padding-top:44px;margin-top:44px;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0;margin-top:26px}
+  h2{font-size:1.5rem;letter-spacing:-.02em;margin:0 0 4px;font-weight:800;display:flex;gap:12px;align-items:baseline}
+  h2 .h2n{font:700 .8rem/1 var(--mono);color:var(--accent)}
+  h3{font-size:1.02rem;margin:26px 0 10px;letter-spacing:-.01em}
+  p{max-width:66ch}
+  .callout{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:10px;padding:16px 18px;margin:18px 0;font-size:.97rem}
+  .callout strong{color:var(--ink)}
+  /* --- score hero --- */
+  .scorehero{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;
+    background:linear-gradient(135deg,var(--panel),var(--panel-2));border:1px solid var(--line);
+    border-radius:16px;padding:26px;margin:22px 0}
+  .ring{--v:41;width:132px;height:132px;border-radius:50%;display:grid;place-items:center;
+    background:radial-gradient(closest-side,var(--panel) 71%,transparent 72%),
+      conic-gradient(var(--accent) calc(var(--v)*1%),var(--line) 0);flex:none}
+  .ring b{font:800 2.1rem/1 var(--sans);letter-spacing:-.03em}
+  .ring small{display:block;font:600 .6rem/1 var(--mono);letter-spacing:.12em;color:var(--ink-3);margin-top:3px;text-align:center}
+  .verdict b{color:var(--accent)}
+  /* --- tiles --- */
+  .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:16px 0}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 14px}
+  .tile .t{font:600 .62rem/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+  .tile .v{font:800 1.55rem/1 var(--sans);letter-spacing:-.02em;margin-top:7px;font-variant-numeric:tabular-nums}
+  .bar{height:4px;border-radius:2px;background:var(--line);margin-top:9px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--accent)}
+  /* --- findings --- */
+  .find{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px;margin:11px 0;
+    border-left-width:4px}
+  .find.p0{border-left-color:var(--p0)} .find.p1{border-left-color:var(--p1)}
+  .find.p2{border-left-color:var(--p2)} .find.p3{border-left-color:var(--p3)}
+  .find .fh{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .sev{font:700 .62rem/1 var(--mono);letter-spacing:.05em;padding:5px 8px;border-radius:6px;color:#0d0e12}
+  .sev.p0{background:var(--p0)} .sev.p1{background:var(--p1)}
+  .sev.p2{background:var(--p2)} .sev.p3{background:var(--p3);color:#04210f}
+  .find .id{font:700 .74rem/1 var(--mono);color:var(--ink-2)}
+  .find .ttl{font-weight:700}
+  .find p{margin:9px 0 0;color:var(--ink-2);font-size:.92rem;max-width:none}
+  /* --- table --- */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:520px}
+  th,td{text-align:left;padding:10px 13px;border-bottom:1px solid var(--line)}
+  thead th{font:700 .64rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+    background:var(--panel-2)}
+  tbody tr:last-child td{border-bottom:0}
+  td.num{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+  .ok{color:var(--ok);font-weight:700} .no{color:var(--bad);font-weight:700}
+  .warn{color:var(--p2);font-weight:700}
+  code{font-family:var(--mono);font-size:.85em;background:var(--panel-2);padding:2px 6px;border-radius:5px;color:var(--accent-soft)}
+  ul{padding-left:20px;max-width:66ch}li{margin:5px 0}
+  .theme{position:fixed;bottom:18px;right:18px;z-index:9;background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);border-radius:999px;padding:9px 15px;font:600 .74rem/1 var(--sans);cursor:pointer}
+  .foot{margin-top:50px;padding-top:22px;border-top:1px solid var(--line);color:var(--ink-3);font-size:.82rem}
+  @media(max-width:860px){
+    .wrap{grid-template-columns:1fr}
+    nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);
+      display:flex;flex-wrap:wrap;gap:4px 14px;padding:18px}
+    nav.toc .brand{width:100%}
+    nav.toc ol{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:10px}
+    nav.toc a{padding:3px 4px}
+    .scorehero{grid-template-columns:1fr;text-align:center;justify-items:center}
+  }
+</style>
+
+<div class="wrap">
+<nav class="toc">
+  <div class="brand">Street<span>Boss</span> · Auditoría Forense</div>
+  <div class="sub">2026-07-27 · Solo lectura</div>
+  <ol>
+    <li><a href="#resumen"><span class="n">00</span> Resumen ejecutivo</a></li>
+    <li><a href="#conteos"><span class="n">01</span> Conteos reales</a></li>
+    <li><a href="#hallazgos"><span class="n">02</span> Hallazgos P0–P3</a></li>
+    <li><a href="#scores"><span class="n">03</span> Puntuaciones</a></li>
+    <li><a href="#inventario"><span class="n">04</span> Inventario / Git</a></li>
+    <li><a href="#fuente"><span class="n">05</span> Fuente de verdad</a></li>
+    <li><a href="#calendario"><span class="n">06</span> Calendario</a></li>
+    <li><a href="#copy"><span class="n">07</span> Copy</a></li>
+    <li><a href="#prompts"><span class="n">08</span> Prompts + Áreas limpias</a></li>
+    <li><a href="#video"><span class="n">09</span> Video</a></li>
+    <li><a href="#redes"><span class="n">10</span> Redes</a></li>
+    <li><a href="#ux"><span class="n">11</span> UX / UI</a></li>
+    <li><a href="#tecnica"><span class="n">12</span> Técnica</a></li>
+    <li><a href="#seguridad"><span class="n">13</span> Seguridad</a></li>
+    <li><a href="#vercel"><span class="n">14</span> Vercel</a></li>
+    <li><a href="#assets"><span class="n">15</span> Assets</a></li>
+    <li><a href="#comercial"><span class="n">16</span> Comercial</a></li>
+    <li><a href="#contradicciones"><span class="n">17</span> Contradicciones</a></li>
+    <li><a href="#riesgos"><span class="n">18</span> Riesgos</a></li>
+    <li><a href="#roadmap"><span class="n">19</span> Roadmap</a></li>
+    <li><a href="#aceptacion"><span class="n">20</span> No-modificación</a></li>
+  </ol>
+</nav>
+
+<main>
+  <header id="resumen">
+    <div class="kicker">Auditoría Maestra Forense · Brand Operating System</div>
+    <h1>La estructura es real. La unicidad, no.</h1>
+    <p class="lede">El “Command Center” es una envoltura visual sólida sobre un dataset masivamente duplicado: declara 325 piezas únicas, pero el contenido real se reduce a <strong>~45 copys, ~62 prompts, 5 hooks, 3 CTAs, 1 negative prompt y 1 movimiento</strong>.</p>
+    <div class="meta">
+      <span>Rama · respaldo/pre-edicion-2026-07-23</span>
+      <span>Node 24.15</span>
+      <span>Build ✅ verde</span>
+      <span>Vercel ✅ live</span>
+      <span>Producto NO modificado</span>
+    </div>
+
+    <div class="scorehero">
+      <div class="ring"><div><b>41</b><small>/ 100 global</small></div></div>
+      <div class="verdict">
+        <p style="margin:0 0 8px"><strong>Veredicto:</strong> No apto para lanzamiento sin remediación.</p>
+        <p style="margin:0;color:var(--ink-2);font-size:.95rem">El volumen (325 posts, distribución por red) es <b style="color:var(--ok)">exacto</b>. El problema no es la calidad de cada pieza base —bien escritas— sino que <b>45 copys se reciclan 7× y se publican idénticos entre redes</b>, y que <b>0 de las 325 imágenes existen</b>.</p>
+      </div>
+    </div>
+  </header>
+
+  <section id="conteos">
+    <h2><span class="h2n">01</span> Conteos reales vs. declarados</h2>
+    <p>Verificado por script reproducible sobre la fuente real <code>posts.json</code>.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Métrica</th><th class="num">Declarado</th><th class="num">Real</th><th>Veredicto</th></tr></thead>
+      <tbody>
+        <tr><td>Publicaciones</td><td class="num">325</td><td class="num">325</td><td class="ok">✅ HECHO</td></tr>
+        <tr><td>IG / FB / TT / WA / LI / YT</td><td class="num">130/78/39/39/26/13</td><td class="num">130/78/39/39/26/13</td><td class="ok">✅ HECHO</td></tr>
+        <tr><td>Copys únicos</td><td class="num">325</td><td class="num">45</td><td class="no">❌ FALSO</td></tr>
+        <tr><td>Prompts visuales únicos</td><td class="num">325</td><td class="num">62</td><td class="no">❌ FALSO</td></tr>
+        <tr><td>Negative prompts distintos</td><td class="num">325</td><td class="num">1</td><td class="no">❌ FALSO</td></tr>
+        <tr><td>Prompts de movimiento distintos</td><td class="num">91</td><td class="num">1</td><td class="no">❌ FALSO</td></tr>
+        <tr><td>Hooks únicos</td><td class="num">—</td><td class="num">5</td><td class="warn">⚠️</td></tr>
+        <tr><td>CTAs únicos</td><td class="num">—</td><td class="num">3</td><td class="warn">⚠️</td></tr>
+        <tr><td>Set de hashtags</td><td class="num">—</td><td class="num">1</td><td class="no">❌ idéntico</td></tr>
+        <tr><td>Imágenes producidas</td><td class="num">—</td><td class="num">0/325</td><td class="no">❌ 0%</td></tr>
+        <tr><td>imagePrompts en dup. exacto</td><td class="num">—</td><td class="num">324/325</td><td class="no">❌</td></tr>
+        <tr><td>Pares copy Jaccard≥0.5</td><td class="num">—</td><td class="num">17 474</td><td class="no">❌</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="hallazgos">
+    <h2><span class="h2n">02</span> Hallazgos por severidad</h2>
+
+    <h3>🔴 P0 — Críticos</h3>
+    <div class="find p0"><div class="fh"><span class="sev p0">P0</span><span class="id">P0-01</span><span class="ttl">Unicidad de contenido colapsada</span></div>
+      <p>325 posts = 45 copys (43 reutilizados entre redes), 62 imagePrompts (324/325 duplicados exactos), 5 hooks, 3 CTAs, 1 negativePrompt, 1 motionPrompt para los 91 videos.</p></div>
+    <div class="find p0"><div class="fh"><span class="sev p0">P0</span><span class="id">P0-02</span><span class="ttl">Cero producción visual</span></div>
+      <p>Los 325 posts tienen <code>status: "IMAGEN PENDIENTE"</code>. No existe ninguna de las 325 imágenes/videos. Es un plan, no un inventario publicable.</p></div>
+    <div class="find p0"><div class="fh"><span class="sev p0">P0</span><span class="id">P0-03</span><span class="ttl">No existe documentación oficial</span></div>
+      <p>Ninguno de los libros declarados (01_MASTER_BOOK … 10_FAQ, CONTENT_SCHEMA, VISUAL_PROMPT_STANDARD, QUALITY_CONTROL) existe. Sin fuente de verdad formal.</p></div>
+
+    <h3>🟠 P1 — Altos</h3>
+    <div class="find p1"><div class="fh"><span class="sev p1">P1</span><span class="id">P1-01</span><span class="ttl"><code>.env</code> versionado en git</span></div>
+      <p>Presente en el historial (<code>VITE_SUPABASE_URL</code>, <code>VITE_SUPABASE_ANON_KEY</code>) pese al <code>.gitignore</code>. Remoto: GitHub <code>IBRDanielVazquez/streetboss</code>. Rotar claves + purgar historial + confirmar RLS.</p></div>
+    <div class="find p1"><div class="fh"><span class="sev p1">P1</span><span class="id">P1-02</span><span class="ttl">4–5 generadores en conflicto con <code>Math.random()</code></span></div>
+      <p>No reproducibles; cualquier regeneración sobrescribe <code>posts.json</code> y destruye ediciones manuales.</p></div>
+    <div class="find p1"><div class="fh"><span class="sev p1">P1</span><span class="id">P1-03</span><span class="ttl">Doble fuente desincronizada</span></div>
+      <p><code>masterCalendar.ts</code> (2.66 MB) NO es importado; la app consume <code>posts.json</code>. Dos “verdades” paralelas.</p></div>
+    <div class="find p1"><div class="fh"><span class="sev p1">P1</span><span class="id">P1-04</span><span class="ttl">Bundle 2.68 MB con estrategia pública</span></div>
+      <p>Todo <code>posts.json</code> (prompts + calendario) se embebe en el JS del cliente y queda accesible en Vercel.</p></div>
+
+    <h3>🟡 P2 — Medios</h3>
+    <div class="find p2"><div class="fh"><span class="sev p2">P2</span><span class="id">P2-01</span><span class="ttl">Copy idéntico entre redes (43/45)</span></div><p>Sin adaptación por plataforma. Percepción de spam y posible penalización.</p></div>
+    <div class="find p2"><div class="fh"><span class="sev p2">P2</span><span class="id">P2-02</span><span class="ttl">Tecnicismo de cine forzado</span></div><p>ARRI en 283/325 prompts, “Roger Deakins” en 159, Zeiss 159, Kodak Portra 166 — sobre fotografía fija. Homogeneiza y estiliza a “stock”.</p></div>
+    <div class="find p2"><div class="fh"><span class="sev p2">P2</span><span class="id">P2-03</span><span class="ttl">12 campos del schema al 0%</span></div><p>campaign, objective, audience, funnel, alt, imageText, safeZone, cover, productionStatus, path, pinnedComment, visualConcept.</p></div>
+    <div class="find p2"><div class="fh"><span class="sev p2">P2</span><span class="id">P2-04</span><span class="ttl">LinkedIn y YouTube inalcanzables en la UI</span></div><p>El nav expone 5/6 redes; 39 posts (12%) no son navegables.</p></div>
+    <div class="find p2"><div class="fh"><span class="sev p2">P2</span><span class="id">P2-05</span><span class="ttl">Naming inconsistente</span></div><p>Carpeta <code>brand-operating-system</code> → deploy <code>streetboss-social-command-center</code> → app <code>streetboss-brand-os</code>.</p></div>
+
+    <h3>🟢 P3 — Bajos</h3>
+    <ul>
+      <li><b>P3-01</b> Tailwind <code>content</code> vacío → CSS potencialmente incompleto.</li>
+      <li><b>P3-02</b> Escritorio no responsivo (columna móvil fija en 1440px).</li>
+      <li><b>P3-03</b> Basura en raíz (<code>audit_results.txt</code>, <code>test_error.cjs</code>, <code>scratch/</code>).</li>
+      <li><b>P3-04</b> Repo monolítico mezcla dashboard, landing Next.js, brand-assets y experimentos.</li>
+    </ul>
+  </section>
+
+  <section id="scores">
+    <h2><span class="h2n">03</span> Puntuaciones por dimensión</h2>
+    <div class="tiles" id="scoretiles"></div>
+    <p style="color:var(--ink-3);font-size:.85rem">Metodología: cumplimiento verificable + proporción único/duplicado + completitud de campos + severidad de riesgos abiertos. Ponderado Producto&gt;Marca&gt;UX&gt;Contenido y penalizado por los P0.</p>
+  </section>
+
+  <section id="inventario">
+    <h2><span class="h2n">04</span> Inventario y estado inicial</h2>
+    <ul>
+      <li>pwd <code>/Users/danielvazquez/Proyectos/StreetBoss</code> · macOS · Node v24.15 · npm 11.12 · Git 2.39.</li>
+      <li>Rama activa <code>respaldo/pre-edicion-sitio-2026-07-23</code> (¡rama de <em>respaldo</em> usada como rama de trabajo!).</li>
+      <li>Último commit <code>6fdbbdd</code> — 2026-07-23. <b>Casi todo el trabajo reciente está sin commitear.</b></li>
+      <li>Remoto GitHub <code>IBRDanielVazquez/streetboss</code>. Sin submódulos ni worktrees extra.</li>
+      <li>680 archivos de media en el repo (267 PNG, 188 WebP, 26 JPG, 18 SVG).</li>
+    </ul>
+    <p><strong>Rutas declaradas que NO existen:</strong> <code>streetboss-gpt/</code>, <code>archive/</code>, <code>legacy/</code> (raíz).</p>
+  </section>
+
+  <section id="fuente">
+    <h2><span class="h2n">05</span> Fuente de verdad</h2>
+    <div class="callout"><strong>HECHO:</strong> el dashboard importa <code>posts.json</code>, <b>no</b> <code>masterCalendar.ts</code>. Los ~5 MB de calendarios <code>.ts</code> por red son artefactos <b>huérfanos</b> que no alimentan la app.</div>
+    <p>No existe corpus documental: la “verdad” vive fragmentada entre <code>posts.json</code>, <code>profiles.json</code> y bitácoras ad-hoc (<code>REGLAS_NEGOCIO.md</code>, <code>ESTADO_ACTUAL.md</code>…).</p>
+  </section>
+
+  <section id="calendario">
+    <h2><span class="h2n">06</span> Calendario</h2>
+    <p>Estructura temporal y volumen <b class="ok">correctos</b> (90 días, 13 semanas, 325 piezas exactas). Pero <b>13 de ~30 campos esperados no existen</b> (embudo, objetivo, audiencia, ALT, concepto visual) y <b>325/325 en “IMAGEN PENDIENTE”</b>. Campos “llenos sin valor”: <code>hook</code> = 1ª línea del copy; <code>hashtags</code> idénticos; <code>filename</code> apunta a archivos inexistentes.</p>
+  </section>
+
+  <section id="copy">
+    <h2><span class="h2n">07</span> Copy</h2>
+    <p>El copy base <b>está bien escrito</b> (claro, fiel a marca, Unicode válido). El problema es de <b>cantidad real</b>: 45 buenos copys reciclados no son 325. Además <b>43/45 se publican en más de una red</b> sin adaptar, y hay <b>461</b> secuencias de 20 palabras repetidas literalmente.</p>
+    <div class="tblwrap"><table>
+      <thead><tr><th>Dimensión (pool de 45)</th><th class="num">Score</th></tr></thead>
+      <tbody>
+        <tr><td>Marca</td><td class="num">82</td></tr>
+        <tr><td>Claridad</td><td class="num">85</td></tr>
+        <tr><td>Originalidad (dataset)</td><td class="num">15</td></tr>
+        <tr><td>Adaptación a red</td><td class="num">10</td></tr>
+        <tr><td>Publicabilidad tal cual (325)</td><td class="num">~0</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="prompts">
+    <h2><span class="h2n">08</span> Prompts visuales + requisito “Áreas limpias”</h2>
+    <p>62 prompts únicos para 325 posts; 324/325 en duplicado exacto. Tecnicismo cinematográfico forzado (ARRI 283/325) sobre foto fija. El negative prompt es <b>uno solo</b> (no 325) — lo cual es la práctica <em>correcta</em>, pero contradice la afirmación de “325 negativos únicos”.</p>
+    <div class="callout"><strong>Requisito del dueño (registrado):</strong> todos los prompts de imagen que se generen a futuro deben especificar explícitamente <b>“áreas limpias / entorno ordenado”</b> y prohibir cualquier apariencia de desorden. Redacción sugerida a añadir en cada prompt y reforzar en el negative prompt maestro:
+      <ul style="margin:10px 0 0">
+        <li><b>Positivo:</b> «Entorno limpio y ordenado, superficies despejadas, mise en place impecable, sin desorden, espacio de trabajo pulcro.»</li>
+        <li><b>Negativo:</b> «desorden, superficies sucias, cocina desordenada, objetos amontonados, basura, cables sueltos, caos visual.»</li>
+      </ul>
+      <span style="display:block;margin-top:8px;color:var(--ink-3);font-size:.85rem">Documentado en <code>08_PROMPT_AUDIT.md</code> y <code>20_REMEDIATION_ROADMAP.md</code> (Fase E). Requiere consolidar antes en <b>un</b> generador determinista para no perder el estándar al regenerar.</span>
+    </div>
+  </section>
+
+  <section id="video">
+    <h2><span class="h2n">09</span> Video / Movimiento</h2>
+    <p>91 videos comparten <b>exactamente el mismo</b> prompt de movimiento (una panorámica). No hay guiones, escenas, duración, audio ni portadas. Es un placeholder, no una biblioteca de video. El movimiento menciona “la app activa”, lo que <b>contradice</b> el escaparate web.</p>
+  </section>
+
+  <section id="redes">
+    <h2><span class="h2n">10</span> Perfiles de redes</h2>
+    <p>Handles <b>declarados, no confirmados</b>: <code>@streetboss.mx</code>, <code>@StreetBossMX</code>, TikTok, WhatsApp <code>52961372xxxx</code>, dominio <code>streetboss.com.mx</code>. Instagram tiene la mejor config (5 bios A/E, avatar). LinkedIn y YouTube sin pantalla en la UI. Ninguna cuenta verificada como real/activa.</p>
+  </section>
+
+  <section id="ux">
+    <h2><span class="h2n">11</span> UX / UI</h2>
+    <p><b>EMULADO</b> (Chromium; iOS real NO probado). Móvil 375×812: render limpio iOS-style, bottom nav, 0 errores de consola, botones “Copiar” funcionales → <b>78/100</b>. Escritorio: no adapta layout, columna móvil fija → <b>45/100</b>. Accesibilidad: 0 ALT en 325 piezas.</p>
+  </section>
+
+  <section id="tecnica">
+    <h2><span class="h2n">12</span> Técnica</h2>
+    <p>Stack Vite 5 + React 18 + TS. <b>Build verde</b> (<code>tsc && vite build</code>, 5.96s). Bundle <b>2.68 MB</b> (gzip 182 KB) por embeber <code>posts.json</code>. Warning Tailwind (<code>content</code> vacío). ~5 MB de TS huérfano. Sin ESLint ni tests en el dashboard.</p>
+  </section>
+
+  <section id="seguridad">
+    <h2><span class="h2n">13</span> Seguridad</h2>
+    <p>Sin imprimir secretos. <code>.env</code> en historial git (anon key — riesgo depende de RLS, <b>no verificado</b>). Estrategia/prompts públicos en el bundle. Clave Supabase hardcodeada en <code>src/supabase.js</code> legacy. <b>Si el repo es público, escala a P0</b> — verificar visibilidad primero.</p>
+  </section>
+
+  <section id="vercel">
+    <h2><span class="h2n">14</span> Vercel</h2>
+    <p><b>LIVE</b> en <code>streetboss-social-command-center.vercel.app</code> (SPA, rewrite a index.html). Naming inconsistente con la carpeta. Sin headers de seguridad personalizados. Logs/alias no verificables sin acceso autenticado.</p>
+  </section>
+
+  <section id="assets">
+    <h2><span class="h2n">15</span> Assets</h2>
+    <p><code>brand-assets/</code> bien organizada (443 archivos, carpetas 00–13). <b>Biblioteca de historias humanas</b> = 12 arquetipos por negocio (taquería, hamburguesería, food-truck…). Existe un 5º generador en Python. <b>0 de las 325 imágenes de posts producidas.</b> Oficiales conviven con <code>legacy/</code> y <code>descartados/</code>.</p>
+  </section>
+
+  <section id="comercial">
+    <h2><span class="h2n">16</span> Comercial</h2>
+    <p>Volumen con esqueleto estratégico incompleto: sin <code>funnel</code>/<code>objective</code>/<code>audience</code> por pieza (0%), no se puede verificar progresión TOFU→BOFU ni medir. CTA único “Solicita un Demo”. Riesgo de fatiga: quien siga IG+FB verá el mismo copy dos veces.</p>
+  </section>
+
+  <section id="contradicciones">
+    <h2><span class="h2n">17</span> Contradicciones clave</h2>
+    <ul>
+      <li>“325 únicos” vs. 45/62/1/1 reales.</li>
+      <li>“App activa” en prompts vs. producto = escaparate web (y el negative prohíbe apps falsas).</li>
+      <li>Doble fuente <code>masterCalendar.ts</code> vs <code>posts.json</code>.</li>
+      <li>“Brand Operating System” sin ningún libro del OS documentado.</li>
+      <li>5 generadores, un objetivo; el “advanced” (rico) no se usa.</li>
+      <li>4 nombres para el mismo proyecto.</li>
+      <li>UI cubre 5 redes; los datos cubren 6.</li>
+    </ul>
+  </section>
+
+  <section id="riesgos">
+    <h2><span class="h2n">18</span> Top 10 riesgos</h2>
+    <ol>
+      <li>Contenido duplicado (P0)</li><li>0 producción visual (P0)</li><li>Sin fuente de verdad (P0)</li>
+      <li><code>.env</code> en git (P1)</li><li>Generadores destructivos (P1)</li><li>Doble fuente (P1)</li>
+      <li>Fuga de estrategia en bundle (P1)</li><li>Copy cross-red (P2)</li>
+      <li>Tecnicismo forzado / homogeneidad (P2)</li><li>LinkedIn/YouTube inaccesibles (P2)</li>
+    </ol>
+  </section>
+
+  <section id="roadmap">
+    <h2><span class="h2n">19</span> Roadmap (propuesta, no ejecutada)</h2>
+    <ul>
+      <li><b>A · Bloqueos:</b> verificar repo público, rotar claves/RLS, congelar regeneración, commit en rama de trabajo.</li>
+      <li><b>B · Fuente de verdad:</b> elegir <code>posts.json</code> como única fuente; <code>CONTENT_SCHEMA.md</code>; un generador determinista.</li>
+      <li><b>C · Producto/marca:</b> BRAND_BOOK + PRODUCT; corregir narrativa “app”→escaparate; unificar naming.</li>
+      <li><b>D · Copy:</b> expandir de 45; adaptar por red; variar CTA por embudo.</li>
+      <li><b>E · Prompts:</b> limpiar tecnicismo; <b>añadir estándar “áreas limpias / nada desordenado”</b>; un negative maestro.</li>
+      <li><b>F · UX:</b> pantallas LinkedIn/YouTube; layout escritorio; ALT por pieza.</li>
+      <li><b>G · Rendimiento:</b> sacar <code>posts.json</code> del bundle.</li>
+      <li><b>H · Seguridad · I · Producción visual · J · Lanzamiento.</b></li>
+    </ul>
+  </section>
+
+  <section id="aceptacion">
+    <h2><span class="h2n">20</span> Confirmación de no-modificación</h2>
+    <div class="callout"><strong>No se modificó el producto.</strong> Solo se crearon archivos dentro de <code>audits/2026-07-27-sbos-master-audit/</code> y dos <code>launch.json</code> de preview local. <code>posts.json</code>, prompts, calendarios, dashboard, landing, Supabase, Vercel y DNS <b>intactos</b>. El dev server se levantó y se detuvo; sin deploy ni commit.</div>
+    <div class="foot">Auditoría generada por Claude Code (Opus 4.8) · Evidencia reproducible en <code>audits/2026-07-27-sbos-master-audit/</code> · <code>node scripts/content-analysis.mjs</code></div>
+  </main>
+</div>
+
+<button class="theme" onclick="(function(){var r=document.documentElement;var d=r.getAttribute('data-theme')==='dark'||(!r.getAttribute('data-theme')&&matchMedia('(prefers-color-scheme:dark)').matches);r.setAttribute('data-theme',d?'light':'dark')})()">☀︎ / ☾ Tema</button>
+
+<script>
+  // Tiles de puntuación
+  var scores=[["Producto",72],["Marca",68],["Contenido",22],["Copy",30],["Prompts",25],
+    ["Visual",40],["UX móvil",78],["UX escritorio",45],["Accesibilidad",50],["Tecnología",62],
+    ["Rendimiento",38],["Seguridad",45],["Escalabilidad",35],["Operación",40],["Conversión",48],
+    ["Lanzamiento",30]];
+  var el=document.getElementById('scoretiles');
+  el.innerHTML=scores.map(function(s){
+    return '<div class="tile"><div class="t">'+s[0]+'</div><div class="v">'+s[1]+'</div>'+
+      '<div class="bar"><i style="width:'+s[1]+'%"></i></div></div>';
+  }).join('');
+</script>

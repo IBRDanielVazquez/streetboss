@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>StreetBoss Social Assets</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --charcoal: #0D0E12;
+    --orange: #FF4B00;
+    --orange-light: #FF6A1A;
+    --white: #FFFFFF;
+  }
+  body { margin: 0; padding: 20px; font-family: 'Inter', sans-serif; background: #e0e0e0; }
+  .asset-container { margin-bottom: 50px; display: inline-block; }
+  .asset {
+    position: relative;
+    background-color: var(--charcoal);
+    color: var(--white);
+    overflow: hidden;
+    display: flex;
+    box-sizing: border-box;
+  }
+  
+  /* Utilities */
+  .center { justify-content: center; align-items: center; text-align: center; }
+  
+  /* Logos */
+  .logo-full { display: flex; align-items: center; gap: 20px; z-index: 10; }
+  .logo-icon { width: 80px; height: 80px; }
+  .logo-wordmark { display: flex; flex-direction: column; align-items: flex-start; }
+  .brand-text { font-size: 3em; font-weight: 900; letter-spacing: -1px; }
+  .brand-orange { color: var(--orange); }
+  .tagline { font-size: 0.25em; letter-spacing: 0.15em; color: var(--orange-light); font-weight: 700; text-transform: uppercase; margin-top: 5px; }
+  
+  .bg-gradient {
+    position: absolute;
+    top: -30%; right: -30%;
+    width: 150%; height: 150%;
+    background: radial-gradient(circle, rgba(255,75,0,0.2) 0%, rgba(13,14,18,0) 60%);
+    z-index: 1;
+  }
+
+  .mockup-container {
+    position: absolute;
+    bottom: -50px; right: 5%;
+    width: 320px; height: 690px;
+    border-radius: 40px;
+    border: 12px solid #222;
+    background: #000;
+    overflow: hidden;
+    box-shadow: -20px 20px 60px rgba(0,0,0,0.6);
+    transform: rotate(-8deg);
+    z-index: 5;
+  }
+  .mockup-img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* Profiles & Icons */
+  .profile-sq { justify-content: center; align-items: center; background: var(--charcoal); }
+  .profile-circle { justify-content: center; align-items: center; background: var(--orange); border-radius: 50%; }
+  
+  /* Text styling */
+  .h1-main { font-size: 4em; font-weight: 900; line-height: 1.1; margin: 40px 0 20px; z-index: 10; position: relative; }
+  .h1-main span { color: var(--orange); }
+  
+</style>
+</head>
+<body>
+
+<script>
+  const assets = [
+    { id: 'ig_profile', w: 1080, h: 1080, name: 'SB_INSTAGRAM_PROFILE_1080x1080_V01', cat: 'instagram' },
+    { id: 'ig_reel', w: 1080, h: 1920, name: 'SB_INSTAGRAM_REEL_COVER_1080x1920_V01', cat: 'instagram' },
+    { id: 'ig_post_v', w: 1080, h: 1350, name: 'SB_INSTAGRAM_POST_1080x1350_V01', cat: 'instagram' },
+    { id: 'ig_carousel', w: 1080, h: 1350, name: 'SB_INSTAGRAM_CAROUSEL_1080x1350_V01', cat: 'instagram' },
+    { id: 'ig_story', w: 1080, h: 1920, name: 'SB_INSTAGRAM_STORY_1080x1920_V01', cat: 'instagram' },
+    
+    { id: 'fb_profile', w: 1080, h: 1080, name: 'SB_FACEBOOK_PROFILE_1080x1080_V01', cat: 'facebook' },
+    { id: 'fb_cover', w: 1640, h: 624, name: 'SB_FACEBOOK_COVER_1640x624_V01', cat: 'facebook' },
+    { id: 'fb_post_v', w: 1080, h: 1350, name: 'SB_FACEBOOK_POST_V_1080x1350_V01', cat: 'facebook' },
+    { id: 'fb_post_h', w: 1200, h: 630, name: 'SB_FACEBOOK_POST_H_1200x630_V01', cat: 'facebook' },
+
+    { id: 'tt_profile', w: 1080, h: 1080, name: 'SB_TIKTOK_PROFILE_1080x1080_V01', cat: 'tiktok' },
+    { id: 'tt_cover', w: 1080, h: 1920, name: 'SB_TIKTOK_COVER_1080x1920_V01', cat: 'tiktok' },
+
+    { id: 'li_logo', w: 400, h: 400, name: 'SB_LINKEDIN_PROFILE_400x400_V01', cat: 'linkedin' },
+    { id: 'li_cover', w: 1128, h: 191, name: 'SB_LINKEDIN_COVER_1128x191_V01', cat: 'linkedin' },
+    { id: 'li_post_v', w: 1080, h: 1350, name: 'SB_LINKEDIN_POST_V_1080x1350_V01', cat: 'linkedin' },
+    { id: 'li_post_h', w: 1200, h: 627, name: 'SB_LINKEDIN_POST_H_1200x627_V01', cat: 'linkedin' },
+    { id: 'li_carousel', w: 1080, h: 1350, name: 'SB_LINKEDIN_CAROUSEL_1080x1350_V01', cat: 'linkedin' },
+
+    { id: 'yt_profile', w: 800, h: 800, name: 'SB_YOUTUBE_PROFILE_800x800_V01', cat: 'youtube' },
+    { id: 'yt_banner', w: 2560, h: 1440, name: 'SB_YOUTUBE_BANNER_2560x1440_V01', cat: 'youtube' },
+    { id: 'yt_thumb', w: 1280, h: 720, name: 'SB_YOUTUBE_THUMBNAIL_1280x720_V01', cat: 'youtube' },
+
+    { id: 'x_profile', w: 1080, h: 1080, name: 'SB_X_PROFILE_1080x1080_V01', cat: 'x' },
+    { id: 'x_header', w: 1500, h: 500, name: 'SB_X_HEADER_1500x500_V01', cat: 'x' },
+    { id: 'x_post_h', w: 1600, h: 900, name: 'SB_X_POST_1600x900_V01', cat: 'x' },
+
+    { id: 'pin_profile', w: 1080, h: 1080, name: 'SB_PINTEREST_PROFILE_1080x1080_V01', cat: 'pinterest' },
+    { id: 'pin_vertical', w: 1000, h: 1500, name: 'SB_PINTEREST_PIN_1000x1500_V01', cat: 'pinterest' },
+
+    { id: 'og_main', w: 1200, h: 630, name: 'SB_OPEN_GRAPH_1200x630_V01', cat: 'open-graph' },
+    { id: 'favicon', w: 512, h: 512, name: 'SB_FAVICON_512x512_V01', cat: 'favicon' },
+    { id: 'apple_touch', w: 180, h: 180, name: 'SB_APPLE_TOUCH_180x180_V01', cat: 'favicon' },
+    { id: 'app_icon', w: 1024, h: 1024, name: 'SB_APP_ICON_1024x1024_V01', cat: 'favicon' }
+  ];
+
+  const logoSVG = `../public/icon.svg`; // assuming this is the isotipo
+  const uiMockup = `../brand-assets/ui/product-real/screenshots/01_portada.png`;
+
+  function getLogoHTML(scale = 1) {
+    return \`
+      <div class="logo-full" style="transform: scale(\${scale}); transform-origin: left top;">
+        <img src="\${logoSVG}" class="logo-icon" onerror="this.src='../public/vite.svg'"/>
+        <div class="logo-wordmark">
+          <span class="brand-text">Street<span class="brand-orange">Boss</span><sup style="font-size:0.4em">®</sup></span>
+          <span class="tagline">TU ESCAPARATE DIGITAL DE COMIDA</span>
+        </div>
+      </div>
+    \`;
+  }
+
+  const container = document.createElement('div');
+  
+  assets.forEach(a => {
+    let content = '';
+    const isProfile = a.id.includes('profile') || a.id.includes('favicon') || a.id.includes('apple') || a.id.includes('icon') || a.id.includes('logo');
+    
+    if (isProfile) {
+      let iconScale = a.w / 180;
+      content = \`
+        <div id="\${a.id}" class="asset profile-sq" style="width:\${a.w}px; height:\${a.h}px; background:var(--\${a.cat=='youtube' ? 'orange' : 'charcoal'})" data-file="\${a.name}" data-cat="\${a.cat}">
+          <img src="\${logoSVG}" style="width: 50%; height: 50%; filter: \${a.cat=='youtube'?'brightness(0) invert(1)':'none'}" />
+        </div>
+      \`;
+    } else {
+      // Banners, covers, posts
+      let scale = (a.w < 1100) ? 0.8 : (a.w > 2000 ? 1.5 : 1);
+      let mockupScale = (a.h > 1000) ? 'width: 400px; height: 850px; bottom: 50px; right: 10%;' : 'width: 250px; height: 530px; bottom: -50px; right: 5%;';
+      if (a.id.includes('reel') || a.id.includes('story') || a.id.includes('vertical')) {
+        mockupScale = 'width: 320px; height: 690px; bottom: 20%; right: auto; left: 50%; transform: translateX(-50%) rotate(0deg);';
+      }
+
+      content = \`
+        <div id="\${a.id}" class="asset" style="width:\${a.w}px; height:\${a.h}px; padding: \${60 * scale}px;" data-file="\${a.name}" data-cat="\${a.cat}">
+          <div class="bg-gradient"></div>
+          <div style="z-index:10; position:relative; width: 100%;">
+            \${getLogoHTML(scale)}
+            <h1 class="h1-main" style="font-size:\${4 * scale}em">
+              \${a.w > a.h ? 'Vende directo.<br><span>Manda tú.</span>' : 'Tu menú.<br><span>Tus clientes.</span>'}
+            </h1>
+          </div>
+          <div class="mockup-container" style="\${mockupScale}">
+             <img src="\${uiMockup}" class="mockup-img" />
+          </div>
+        </div>
+      \`;
+    }
+
+    container.innerHTML += \`
+      <div class="asset-container">
+        <h3 style="margin-bottom:10px">\${a.name} (\${a.w}x\${a.h})</h3>
+        \${content}
+      </div><br>
+    \`;
+  });
+
+  document.body.appendChild(container);
+</script>
+</body>
+</html>

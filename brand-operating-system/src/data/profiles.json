@@ -1,0 +1,186 @@
+[
+  {
+    "network": "Instagram",
+    "username": "@streetboss.mx",
+    "category": "Software Company",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/",
+      "whatsapp": "529613725386",
+      "waLink": "https://wa.me/529613725386"
+    },
+    "buttons": [
+      "Mensaje",
+      "Contactar"
+    ],
+    "cta": "Solicita un Demo 👇",
+    "profilePic": {
+      "prompt": "Logotipo SB minimalista en fondo Boss Charcoal. Safe zone 60%.",
+      "safeZone": "Círculo centrado."
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Directa",
+        "text": "Vende directo por WhatsApp.\nCero comisiones por pedido.\nTu menú, tus reglas.\n👇 Solicita un Demo"
+      },
+      {
+        "id": "B",
+        "name": "Promocional",
+        "text": "El sistema operativo para restaurantes independientes.\nDigitaliza tu menú y recibe pedidos directos.\n👇"
+      },
+      {
+        "id": "C",
+        "name": "Orgullo",
+        "text": "Apoyando al emprendedor gastronómico.\nEscaparate visual sin intermediarios.\n👇 Inicia hoy"
+      },
+      {
+        "id": "D",
+        "name": "FAQ",
+        "text": "¿Menú digital premium? Sí.\n¿Pedidos por WhatsApp? Sí.\n¿Comisiones? 0%.\n👇 Haz la prueba"
+      },
+      {
+        "id": "E",
+        "name": "Minimalista",
+        "text": "FoodTech para negocios reales.\nVenta Directa.\n👇"
+      }
+    ]
+  },
+  {
+    "network": "Facebook",
+    "username": "@StreetBossMX",
+    "category": "Producto/Servicio",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/",
+      "whatsapp": "529613725386"
+    },
+    "buttons": [
+      "WhatsApp"
+    ],
+    "cta": "Envíanos un mensaje directo.",
+    "profilePic": {
+      "prompt": "Logotipo SB centrado. Fondo Boss Charcoal.",
+      "safeZone": "Círculo centrado."
+    },
+    "coverPhoto": {
+      "prompt": "Fotografía documental de taquero trabajando orgullosamente, espacio negativo amplio izquierda. Iluminación nocturna urbana real sin filtro naranja.",
+      "mobileSafeZone": "640x360 px centrales.",
+      "desktopSafeZone": "820x312 px completos.",
+      "text": "TU NEGOCIO, TUS CLIENTES, TUS REGLAS.\nEscaparate digital sin comisiones."
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Institucional",
+        "text": "StreetBoss ayuda a negocios de comida a vender directamente a través de un escaparate digital optimizado para móviles, conectando directamente con WhatsApp."
+      },
+      {
+        "id": "B",
+        "name": "Breve",
+        "text": "Escaparate digital premium para tu negocio de comida. Vende directo sin comisiones."
+      },
+      {
+        "id": "C",
+        "name": "Comunidad",
+        "text": "Únete a la revolución de la venta directa y recupera el control de tus ingresos."
+      },
+      {
+        "id": "D",
+        "name": "Producto",
+        "text": "Digitalizamos tu menú para que recibas órdenes limpias, exactas y directas en tu WhatsApp."
+      },
+      {
+        "id": "E",
+        "name": "Problema/Solución",
+        "text": "¿Cansado de pagar hasta 30% a otras apps? Descubre StreetBoss y vende directamente."
+      }
+    ]
+  },
+  {
+    "network": "TikTok",
+    "username": "@streetboss.mx",
+    "category": "B2B / Tecnología",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/"
+    },
+    "buttons": [
+      "Enlace"
+    ],
+    "cta": "Crea tu menú premium 👇",
+    "profilePic": {
+      "prompt": "Isotipo SB vibrante centrado.",
+      "safeZone": "Círculo estricto."
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Educativa",
+        "text": "Hackeando el sistema de delivery 🛑\nVende por WA 📲\n👇 Checa cómo"
+      },
+      {
+        "id": "B",
+        "name": "Orgánica",
+        "text": "Para dueños de restaurantes reales.\nGuarda tus ganancias.\n👇 Link aquí"
+      },
+      {
+        "id": "C",
+        "name": "Marketing",
+        "text": "El menú digital más pro.\nDirecto a tu caja.\n👇 Solicita demo"
+      },
+      {
+        "id": "D",
+        "name": "Hype",
+        "text": "Cero comisiones. 100% tu negocio.\nTransformación FoodTech.\n👇"
+      },
+      {
+        "id": "E",
+        "name": "Simple",
+        "text": "Vende comida en internet, sin regalar tu dinero.\n👇"
+      }
+    ]
+  },
+  {
+    "network": "WhatsApp Business",
+    "username": "StreetBoss",
+    "category": "Software",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/",
+      "description": "Plataforma de venta directa para restaurantes."
+    },
+    "buttons": [
+      "Catálogo",
+      "Sitio Web"
+    ],
+    "cta": "Ver Catálogo completo.",
+    "profilePic": {
+      "prompt": "Logo de StreetBoss centrado en formato cuadrado. Fondo Boss Charcoal. Padding 20% para recorte circular automático de WA.",
+      "safeZone": "Círculo perfecto interno del 70%."
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Mensaje de Bienvenida",
+        "text": "¡Hola! 👋 Gracias por comunicarte con StreetBoss. ¿Tienes un restaurante y quieres implementar tu escaparate digital para vender sin comisiones? Déjanos tus dudas aquí y un asesor humano te responderá enseguida."
+      },
+      {
+        "id": "B",
+        "name": "Mensaje de Ausencia",
+        "text": "¡Hola! 🌙 En este momento estamos fuera del horario de oficina, pero tu independencia digital no puede esperar. Déjanos tu nombre, el giro de tu negocio y te contactaremos a primera hora."
+      },
+      {
+        "id": "C",
+        "name": "Respuesta Rápida: Demo",
+        "text": "Aquí tienes el enlace directo para que conozcas cómo se vería tu menú en StreetBoss: https://streetboss.com.mx/demo. Míralo desde tu celular y cuéntame qué te parece."
+      },
+      {
+        "id": "D",
+        "name": "Respuesta Rápida: Precios",
+        "text": "Nosotros NO cobramos comisiones por pedido. Pagas una tarifa plana de suscripción, y el 100% de tus ventas va directo a tu caja. ¿Quieres que te muestre los planes?"
+      },
+      {
+        "id": "E",
+        "name": "Mensaje de Cierre",
+        "text": "¡Excelente decisión! Te comparto el enlace para crear tu cuenta en menos de 5 minutos y subir tu primer producto. Si te atoras, avísame."
+      }
+    ]
+  }
+]

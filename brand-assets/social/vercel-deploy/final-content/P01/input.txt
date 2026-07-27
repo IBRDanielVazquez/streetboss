@@ -1,0 +1,1 @@
+file 'P01_F1.png'\nduration 2\nfile 'P01_F2.png'\nduration 2\nfile 'P01_F3.png'\nduration 2\nfile 'P01_F4.png'\nduration 2\nfile 'P01_F5.png'\nduration 2\nfile 'P01_F5.png'\n

@@ -1,0 +1,91 @@
+=== LOCAL DIRECTORIES ===
+=== GITHUB REPOS ===
+Post "https://api.github.com/graphql": tls: failed to verify certificate: x509: “api.github.com” certificate is not trusted
+=== VERCEL PROJECTS ===
+Vercel Projects matching streetboss:
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EPERM: operation not permitted, open '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+    at Object.readFileSync (node:fs:441:20)
+    at defaultLoadImpl (node:internal/modules/cjs/loader:1168:17)
+    at loadSource (node:internal/modules/cjs/loader:1856:20)
+    at Object..js (node:internal/modules/cjs/loader:1954:44)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'open',
+  path: '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+}
+
+Node.js v24.15.0
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EPERM: operation not permitted, open '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+    at Object.readFileSync (node:fs:441:20)
+    at defaultLoadImpl (node:internal/modules/cjs/loader:1168:17)
+    at loadSource (node:internal/modules/cjs/loader:1856:20)
+    at Object..js (node:internal/modules/cjs/loader:1954:44)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'open',
+  path: '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+}
+
+Node.js v24.15.0
+=== ENV VARS streetboss ===
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EPERM: operation not permitted, open '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+    at Object.readFileSync (node:fs:441:20)
+    at defaultLoadImpl (node:internal/modules/cjs/loader:1168:17)
+    at loadSource (node:internal/modules/cjs/loader:1856:20)
+    at Object..js (node:internal/modules/cjs/loader:1954:44)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'open',
+  path: '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+}
+
+Node.js v24.15.0
+=== ENV VARS streetboss-web ===
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: EPERM: operation not permitted, open '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+    at Object.readFileSync (node:fs:441:20)
+    at defaultLoadImpl (node:internal/modules/cjs/loader:1168:17)
+    at loadSource (node:internal/modules/cjs/loader:1856:20)
+    at Object..js (node:internal/modules/cjs/loader:1954:44)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'open',
+  path: '/Users/danielvazquez/.node/lib/node_modules/vercel/dist/vc.js'
+}
+
+Node.js v24.15.0

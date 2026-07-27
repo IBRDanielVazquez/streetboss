@@ -1,0 +1,63 @@
+Retrieving project…
+Deploying ibrdanielvazquezs-projects/streetboss-social-command-center
+Uploading [--------------------] (0.0B/10.3MB)
+Uploading [=====---------------] (2.6MB/10.3MB)
+Uploading [==========----------] (5.2MB/10.3MB)
+Uploading [===============-----] (7.7MB/10.3MB)
+Uploading [====================] (10.3MB/10.3MB)
+Inspect: https://vercel.com/ibrdanielvazquezs-projects/streetboss-social-command-center/J4ajVzsnSDgp6zeCr2nN3Bo4mgEo [3s]
+Production: https://streetboss-social-command-center-gt6twkyff.vercel.app [3s]
+Building...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 283 deployment files...
+Building: Restored build cache from previous deployment (24QahmevsucR6mzCN7U4z9N57hsd)
+Building: Running "vercel build"
+Building: Vercel CLI 56.5.0
+Building: Installing dependencies...
+Building: up to date in 577ms
+Building: 7 packages are looking for funding
+Building: run `npm fund` for details
+Building: Running "npm run build"
+Building: > streetboss-brand-os@1.0.0 build
+Building: > tsc && vite build
+Building: vite v5.4.21 building for production...
+Building: transforming...
+Building: ✓ 1401 modules transformed.
+Building: rendering chunks...
+Building: computing gzip size...
+Building: dist/index.html                     0.42 kB │ gzip:   0.28 kB
+Building: dist/assets/index-DPOXknxJ.css      5.83 kB │ gzip:   1.71 kB
+Building: dist/assets/index-DUuII_Op.js   2,685.19 kB │ gzip: 182.64 kB
+Building: ✓ built in 2.74s
+Building: (!) Some chunks are larger than 500 kB after minification. Consider:
+Building: - Using dynamic import() to code-split the application
+Building: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+Building: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[2K[1A[2K[GProduction: https://streetboss-social-command-center-gt6twkyff.vercel.app [16s]
+Completing...
+Aliased: https://streetboss-social-command-center.vercel.app [16s]
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_J4ajVzsnSDgp6zeCr2nN3Bo4mgEo",
+    "url": "https://streetboss-social-command-center-gt6twkyff.vercel.app",
+    "inspectorUrl": "https://vercel.com/ibrdanielvazquezs-projects/streetboss-social-command-center/J4ajVzsnSDgp6zeCr2nN3Bo4mgEo",
+    "readyState": "READY",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_J4ajVzsnSDgp6zeCr2nN3Bo4mgEo"
+  },
+  "message": "Deployment streetboss-social-command-center-gt6twkyff.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel inspect streetboss-social-command-center-gt6twkyff.vercel.app",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod",
+      "when": "Promote to production"
+    }
+  ]
+}

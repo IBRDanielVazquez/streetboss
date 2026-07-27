@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1500 500" width="1500" height="500">
+  <!-- StreetBoss · X (Twitter) Header 1500x500 -->
+  <rect x="0" y="0" width="1500" height="500" fill="#0D0E12"/>
+  <rect x="1000" y="0" width="500" height="500" fill="#17181d"/>
+  <text x="1030" y="40" font-family="Inter, Arial" font-size="18" fill="#3a3d45">[FOOD IA · sin logo]</text>
+  <!-- Avatar tapa zona inferior-izquierda (~200x200): mantener texto a la derecha del avatar -->
+  <rect x="40" y="300" width="200" height="200" fill="none" stroke="#FF4B00" stroke-width="2" stroke-dasharray="8 6" opacity="0.25"/>
+  <image xlink:href="../../../brand-core/01_Master_Logo_Dark.svg" x="280" y="120" width="360" height="120"/>
+  <text x="285" y="330" font-family="Poppins, Arial" font-weight="800" font-size="46" fill="#FFFFFF" letter-spacing="-1">Tu restaurante. Tus reglas.</text>
+  <text x="285" y="385" font-family="Poppins, Arial" font-weight="800" font-size="46" fill="#FF4B00" letter-spacing="-1">Tu venta directa.</text>
+</svg>

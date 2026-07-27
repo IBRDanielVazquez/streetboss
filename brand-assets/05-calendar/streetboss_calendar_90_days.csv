@@ -1,0 +1,837 @@
+day,date,week,phase,platform_primary,platform_adaptations,format,content_pillar,objective,funnel_stage,topic,narrative_angle,hook,on_screen_text,visual_concept,caption,cta,hashtags,dimensions,duration,assets_required,visual_prompt,motion_prompt,master_file,export_file,destination_folder,status,approval,publication_time,notes
+1,2026-07-27,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El caos del WhatsApp desordenado,"Mostrar el dolor real: capturas, audios, “¿ya sumaste?”, errores en cocina.",POV: son las 2 pm y tu WhatsApp es un caos de pedidos,¿Así tomas tus pedidos?,[T01-pain] ¿Así tomas tus pedidos?,"POV: son las 2 pm y tu WhatsApp es un caos de pedidos
+
+Mostrar el dolor real: capturas, audios, “¿ya sumaste?”, errores en cocina.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El caos del WhatsApp desordenado. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-01_el-caos-del-whatsapp-desordenado_pain.png,07-reels/month-01/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+2,2026-07-28,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Por qué el PDF te cuesta dinero,Educar sobre fricción del PDF vs. escaparate transaccional.,3 razones por las que tu menú en PDF pierde pedidos,El PDF no vende,[T07-carousel-edu] El PDF no vende,"3 razones por las que tu menú en PDF pierde pedidos
+
+Guárdalo para tu negocio de comida.
+
+Educar sobre fricción del PDF vs. escaparate transaccional.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Por qué el PDF te cuesta dinero. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-02_por-que-el-pdf-te-cuesta-dinero_carousel.png,06-posts/month-01/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+3,2026-07-29,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Del link al pedido en 20 segundos,Demo real: abrir link → tocar platillo → agregar → enviar a WhatsApp.,Mira cómo se arma un pedido perfecto en 20 segundos,Fricción cero,[T05-product] Fricción cero,"Mira cómo se arma un pedido perfecto en 20 segundos
+
+Demo real: abrir link → tocar platillo → agregar → enviar a WhatsApp.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Del link al pedido en 20 segundos. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-03_del-link-al-pedido-en-20-segundos_product.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+4,2026-07-30,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),0% de comisión,Afirmación fuerte y verificable: StreetBoss no cobra % por venta.,0% de comisión por pedido. Punto.,Cero comisiones,[T08-data] Cero comisiones,"0% de comisión por pedido. Punto.
+
+Afirmación fuerte y verificable: StreetBoss no cobra % por venta.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre 0% de comisión. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-04_0-de-comision_data.png,06-posts/month-01/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+5,2026-07-31,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Tacos al pastor en cámara lenta,"Puro antojo: textura, brillo, vapor. Cierre con el link para pedir.",El trompo girando y la grasa brillando en 4K,Se ve. Se antoja. Se pide.,[T06-foodporn] Se ve. Se antoja. Se pide.,"El trompo girando y la grasa brillando en 4K
+
+Así se ve tu menú antes de que lleguen. Tu tacos al pastor con piña merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: tacos al pastor con piña. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de madera carbonizada. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-05_tacos-al-pastor-en-camara-lenta_foodporn.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+6,2026-08-01,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),"El que cocina, manda",Pieza de manifiesto: soberanía del restaurantero.,"El que cocina, manda.",Manifiesto,[T10-culture] Manifiesto,"El que cocina, manda.
+
+Pieza de manifiesto: soberanía del restaurantero.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El que cocina, manda. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-06_el-que-cocina-manda_culture.png,06-posts/month-01/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+7,2026-08-02,1,Fase 1: Posicionamiento · Problema · Educación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Precio fundador de lanzamiento,"Presentación limpia de la oferta ancla, sin dark patterns.",Precio fundador: $100 MXN mensuales,Cupo fundador abierto,[T13-founder-price] Cupo fundador abierto,"Precio fundador: $100 MXN mensuales
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Precio fundador de lanzamiento. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-07_precio-fundador-de-lanzamiento_commercial.png,06-posts/month-01/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+8,2026-08-03,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El menú en PDF que espanta,"El PDF obliga a hacer zoom, sumar a mano y escribir todo. Fricción = pedido perdido.",Tu cliente abrió tu menú… y se salió en 3 segundos,El PDF no vende,[T01-pain] El PDF no vende,"Tu cliente abrió tu menú… y se salió en 3 segundos
+
+El PDF obliga a hacer zoom, sumar a mano y escribir todo. Fricción = pedido perdido.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El menú en PDF que espanta. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-08_el-menu-en-pdf-que-espanta_pain.png,07-reels/month-01/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+9,2026-08-04,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Marketplace vs. venta directa,Cuándo sí conviene la app y cuándo dar tu link directo.,¿Cliente nuevo o cliente tuyo? La diferencia de 30%,Directo manda,[T07-carousel-edu] Directo manda,"¿Cliente nuevo o cliente tuyo? La diferencia de 30%
+
+Guárdalo para tu negocio de comida.
+
+Cuándo sí conviene la app y cuándo dar tu link directo.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Marketplace vs. venta directa. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-09_marketplace-vs-venta-directa_carousel.png,06-posts/month-01/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+10,2026-08-05,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),El pedido perfecto en tu WhatsApp,Mostrar el mensaje estructurado que llega listo para cocina.,Así cae el pedido en tu WhatsApp: ordenado y sumado,Ticket impecable,[T05-product] Ticket impecable,"Así cae el pedido en tu WhatsApp: ordenado y sumado
+
+Mostrar el mensaje estructurado que llega listo para cocina.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: El pedido perfecto en tu WhatsApp. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-10_el-pedido-perfecto-en-tu-whatsapp_product.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+11,2026-08-06,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),Menú QR vs. StreetBoss,Comparativa clara de capacidades (transacción vs. solo ver).,Menú QR muestra. StreetBoss vende.,Muestra vs. Vende,[T08-data] Muestra vs. Vende,"Menú QR muestra. StreetBoss vende.
+
+Comparativa clara de capacidades (transacción vs. solo ver).
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Menú QR vs. StreetBoss. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-11_menu-qr-vs-streetboss_data.png,06-posts/month-01/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+12,2026-08-07,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),El queso que se estira,Macro del cheese pull. Deseo físico. CTA suave a pedir.,Ese momento en que el queso se estira y no puedes ver otra cosa,El hambre entra por los ojos,[T06-foodporn] El hambre entra por los ojos,"Ese momento en que el queso se estira y no puedes ver otra cosa
+
+Así se ve tu menú antes de que lleguen. Tu pizza con queso derretido merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: pizza con queso derretido. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de pizarra oscura. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-12_el-queso-que-se-estira_foodporn.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+13,2026-08-08,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Vende directo. Manda tú.,Reforzar el eslogan principal con estética premium.,Vende directo. Manda tú.,Eslogan B2B,[T10-culture] Eslogan B2B,"Vende directo. Manda tú.
+
+Reforzar el eslogan principal con estética premium.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Vende directo. Manda tú.. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-13_vende-directo-manda-tu_culture.png,06-posts/month-01/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+14,2026-08-09,2,Fase 1: Posicionamiento · Problema · Educación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),¿Ustedes reparten? No.,"Objeción FAQ: no somos delivery, somos tu tecnología.",No repartimos tu comida. Tú controlas la entrega.,Tú controlas la entrega,[T13-founder-price] Tú controlas la entrega,"No repartimos tu comida. Tú controlas la entrega.
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre ¿Ustedes reparten? No.. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-14_ustedes-reparten-no_commercial.png,06-posts/month-01/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+15,2026-08-10,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El 30% que regalas,La comisión de intermediarios se come tu ganancia en tus clientes que YA te conocen.,Cada pedido en la app… y el 30% se va a otro bolsillo,¿Y tu margen?,[T01-pain] ¿Y tu margen?,"Cada pedido en la app… y el 30% se va a otro bolsillo
+
+La comisión de intermediarios se come tu ganancia en tus clientes que YA te conocen.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El 30% que regalas. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-15_el-30-que-regalas_pain.png,07-reels/month-01/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+16,2026-08-11,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Anatomía de un pedido perfecto,Descomponer el ticket estructurado y por qué reduce errores.,Cómo se ve un pedido que la cocina entiende a la primera,Orden = crecimiento,[T07-carousel-edu] Orden = crecimiento,"Cómo se ve un pedido que la cocina entiende a la primera
+
+Guárdalo para tu negocio de comida.
+
+Descomponer el ticket estructurado y por qué reduce errores.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Anatomía de un pedido perfecto. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-16_anatomia-de-un-pedido-perfecto_carousel.png,06-posts/month-01/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+17,2026-08-12,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),"Tu menú, hipervisual","Regla 80/20: la foto manda, la interfaz solo acompaña.",Tu menú ya no es texto: es una vitrina que da hambre,"80% comida, 20% interfaz","[T05-product] 80% comida, 20% interfaz","Tu menú ya no es texto: es una vitrina que da hambre
+
+Regla 80/20: la foto manda, la interfaz solo acompaña.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Tu menú, hipervisual. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-17_tu-menu-hipervisual_product.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+18,2026-08-13,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),< 15 minutos para publicar,Dato de producto: onboarding rápido.,Tu menú publicado en menos de 15 minutos,Time-to-value,[T08-data] Time-to-value,"Tu menú publicado en menos de 15 minutos
+
+Dato de producto: onboarding rápido.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre < 15 minutos para publicar. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-18_15-minutos-para-publicar_data.png,06-posts/month-01/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+19,2026-08-14,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Hamburguesa jugosa a 45°,"Plano 45°, jugo cayendo, pan brillante.","La mordida perfecta, la salsa cayendo",Así se ve el antojo,[T06-foodporn] Así se ve el antojo,"La mordida perfecta, la salsa cayendo
+
+Así se ve tu menú antes de que lleguen. Tu hamburguesa con queso y salsa merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: hamburguesa con queso y salsa. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de metal oxidado oscuro. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-19_hamburguesa-jugosa-a-45_foodporn.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+20,2026-08-15,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),"Tu restaurante, tus reglas",Mensaje nuclear #1 en pieza de marca.,Tu restaurante merece vender bajo sus propias reglas,Tus reglas,[T10-culture] Tus reglas,"Tu restaurante merece vender bajo sus propias reglas
+
+Mensaje nuclear #1 en pieza de marca.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Tu restaurante, tus reglas. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-20_tu-restaurante-tus-reglas_culture.png,06-posts/month-01/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+21,2026-08-16,3,Fase 1: Posicionamiento · Problema · Educación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),¿App para descargar? No hace falta,"Objeción FAQ: sin apps, abre desde link/QR.",Tu cliente pide sin bajar ninguna app,Abre y pide,[T13-founder-price] Abre y pide,"Tu cliente pide sin bajar ninguna app
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre ¿App para descargar? No hace falta. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-21_app-para-descargar-no-hace-falta_commercial.png,06-posts/month-01/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+22,2026-08-17,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),Errores en cocina por mala comunicación,"Pedidos por audio/nota = errores, reposiciones, clientes molestos.",“Dijo sin cebolla”… salió con cebolla,El pedido mal entendido cuesta,[T01-pain] El pedido mal entendido cuesta,"“Dijo sin cebolla”… salió con cebolla
+
+Pedidos por audio/nota = errores, reposiciones, clientes molestos.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: Errores en cocina por mala comunicación. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-22_errores-en-cocina-por-mala-comunicacion_pain.png,07-reels/month-01/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+23,2026-08-18,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),5 fotos que venden más comida,"Tips de luz, ángulo 45°, fondo oscuro, cercanía.",La guía rápida para fotografiar tu comida con el celular,El hambre entra por los ojos,[T07-carousel-edu] El hambre entra por los ojos,"La guía rápida para fotografiar tu comida con el celular
+
+Guárdalo para tu negocio de comida.
+
+Tips de luz, ángulo 45°, fondo oscuro, cercanía.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre 5 fotos que venden más comida. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-23_5-fotos-que-venden-mas-comida_carousel.png,06-posts/month-01/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+24,2026-08-19,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Publica tu menú en 15 minutos,"Onboarding real: cargar categoría, foto, precio, listo.",Publicaste tu escaparate en menos de 15 minutos,Time-to-value < 15 min,[T05-product] Time-to-value < 15 min,"Publicaste tu escaparate en menos de 15 minutos
+
+Onboarding real: cargar categoría, foto, precio, listo.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Publica tu menú en 15 minutos. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-24_publica-tu-menu-en-15-minutos_product.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+25,2026-08-20,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),El 30% que te quedas,Contraste 30% intermediario vs. 0% StreetBoss.,"Con tu link directo, el 100% de la ganancia es tuya","Tu margen, tuyo","[T08-data] Tu margen, tuyo","Con tu link directo, el 100% de la ganancia es tuya
+
+Contraste 30% intermediario vs. 0% StreetBoss.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El 30% que te quedas. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-25_el-30-que-te-quedas_data.png,06-posts/month-01/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+26,2026-08-21,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Mariscos frescos brillando,"Frescura, color, brillo de cítrico.",Limón exprimido sobre el marisco fresco,Directo del mar a tu pantalla,[T06-foodporn] Directo del mar a tu pantalla,"Limón exprimido sobre el marisco fresco
+
+Así se ve tu menú antes de que lleguen. Tu tostada de camarón merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: tostada de camarón. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de hielo y pizarra. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-26_mariscos-frescos-brillando_foodporn.png,07-reels/month-01/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+27,2026-08-22,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Recupera el control,Mensaje nuclear #3.,Recupera el control de tus clientes y de tus márgenes,Recupera el control,[T10-culture] Recupera el control,"Recupera el control de tus clientes y de tus márgenes
+
+Mensaje nuclear #3.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Recupera el control. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-27_recupera-el-control_culture.png,06-posts/month-01/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+28,2026-08-23,4,Fase 1: Posicionamiento · Problema · Educación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),¿Comisión por venta? Cero,"Objeción FAQ: modelo de renta fija, no comisión.",0% de comisión. Solo tu renta fija mensual.,0% comisión,[T13-founder-price] 0% comisión,"0% de comisión. Solo tu renta fija mensual.
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre ¿Comisión por venta? Cero. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-28_comision-por-venta-cero_commercial.png,06-posts/month-01/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+29,2026-08-24,5,Fase 1: Posicionamiento · Problema · Educación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),No sabes quién es tu cliente,"En las apps, tu cliente es de la app. Sin datos no hay recompra dirigida.","Vendes 1,000 pedidos al mes y no tienes ni un solo contacto",¿De quién son tus clientes?,[T01-pain] ¿De quién son tus clientes?,"Vendes 1,000 pedidos al mes y no tienes ni un solo contacto
+
+En las apps, tu cliente es de la app. Sin datos no hay recompra dirigida.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: No sabes quién es tu cliente. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-29_no-sabes-quien-es-tu-cliente_pain.png,07-reels/month-01/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+30,2026-08-25,5,Fase 1: Posicionamiento · Problema · Educación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Qué es un escaparate digital,Definir la categoría y por qué vende más.,No es un menú QR: es una vitrina que transacciona,Escaparate ≠ menú QR,[T07-carousel-edu] Escaparate ≠ menú QR,"No es un menú QR: es una vitrina que transacciona
+
+Guárdalo para tu negocio de comida.
+
+Definir la categoría y por qué vende más.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Qué es un escaparate digital. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-30_que-es-un-escaparate-digital_carousel.png,06-posts/month-01/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+31,2026-08-26,5,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Agotar un platillo en 1 toque,Actualizas disponibilidad al instante. Sin pedidos imposibles.,Se acabó el pastor: 1 toque y desaparece del menú,Control en tiempo real,[T05-product] Control en tiempo real,"Se acabó el pastor: 1 toque y desaparece del menú
+
+Actualizas disponibilidad al instante. Sin pedidos imposibles.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Agotar un platillo en 1 toque. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-31_agotar-un-platillo-en-1-toque_product.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+32,2026-08-27,5,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),App vs. Link directo,Comparativa de soberanía del cliente.,App: cliente de la app. Link: cliente tuyo.,¿De quién es tu cliente?,[T08-data] ¿De quién es tu cliente?,"App: cliente de la app. Link: cliente tuyo.
+
+Comparativa de soberanía del cliente.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre App vs. Link directo. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-32_app-vs-link-directo_data.png,06-posts/month-02/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+33,2026-08-28,5,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Café y pan recién horneado,"Ambiente cálido, vapor, textura de pan.",El vapor del café y el pan saliendo del horno,Tu mañana empieza aquí,[T06-foodporn] Tu mañana empieza aquí,"El vapor del café y el pan saliendo del horno
+
+Así se ve tu menú antes de que lleguen. Tu café y concha merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: café y concha. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de madera clara oscurecida. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-33_cafe-y-pan-recien-horneado_foodporn.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+34,2026-08-29,5,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),El orden crece,Mensaje nuclear #2.,El orden en tus pedidos es el primer paso hacia el crecimiento,Orden = crecimiento,[T10-culture] Orden = crecimiento,"El orden en tus pedidos es el primer paso hacia el crecimiento
+
+Mensaje nuclear #2.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El orden crece. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-34_el-orden-crece_culture.png,06-posts/month-02/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+35,2026-08-30,5,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Ya uso Rappi/UberEats,Objeción: coexistir con apps y recuperar al recurrente.,"Perfecto para clientes nuevos. Al recurrente, dale tu link.","Combina, no regales margen","[T13-founder-price] Combina, no regales margen","Perfecto para clientes nuevos. Al recurrente, dale tu link.
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Ya uso Rappi/UberEats. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-35_ya-uso-rappi-ubereats_commercial.png,06-posts/month-02/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+36,2026-08-31,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),Depender del algoritmo,Depender de un agregador = depender de su algoritmo y sus reglas.,"Hoy te muestran, mañana no. Tú no decides.",No mandas en tu negocio,[T01-pain] No mandas en tu negocio,"Hoy te muestran, mañana no. Tú no decides.
+
+Depender de un agregador = depender de su algoritmo y sus reglas.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: Depender del algoritmo. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-36_depender-del-algoritmo_pain.png,07-reels/month-02/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+37,2026-09-01,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),El costo real de las comisiones,Ejercicio ilustrativo de margen perdido (CASO ILUSTRATIVO).,Cuánto pierdes al año regalando 30% por pedido,Haz las cuentas,[T07-carousel-edu] Haz las cuentas,"Cuánto pierdes al año regalando 30% por pedido
+
+Guárdalo para tu negocio de comida.
+
+Ejercicio ilustrativo de margen perdido (CASO ILUSTRATIVO).
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El costo real de las comisiones. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-37_el-costo-real-de-las-comisiones_carousel.png,06-posts/month-02/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+38,2026-09-02,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Carrito flotante siempre visible,El carrito flotante muestra el subtotal en cada paso.,El cliente ve su total todo el tiempo. Cero sorpresas.,Transparencia total,[T05-product] Transparencia total,"El cliente ve su total todo el tiempo. Cero sorpresas.
+
+El carrito flotante muestra el subtotal en cada paso.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Carrito flotante siempre visible. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-38_carrito-flotante-siempre-visible_product.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+39,2026-09-03,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),PDF vs. Escaparate,Comparativa de experiencia de pedido.,PDF: escribe a mano. Escaparate: arma el pedido solo.,Adiós al PDF,[T08-data] Adiós al PDF,"PDF: escribe a mano. Escaparate: arma el pedido solo.
+
+Comparativa de experiencia de pedido.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre PDF vs. Escaparate. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-39_pdf-vs-escaparate_data.png,06-posts/month-02/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+40,2026-09-04,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Alitas bañadas en salsa,"Brillo de salsa, textura crujiente.",Las alitas girando bañadas en salsa buffalo,Picante que se ve,[T06-foodporn] Picante que se ve,"Las alitas girando bañadas en salsa buffalo
+
+Así se ve tu menú antes de que lleguen. Tu alitas buffalo merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: alitas buffalo. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de canasta y papel kraft. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-40_alitas-banadas-en-salsa_foodporn.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+41,2026-09-05,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Hecho para la calle,"Cultura StreetBoss: raíces callejeras, ambición global.",De la cocina de barrio a la vitrina digital,Con orgullo de barrio,[T10-culture] Con orgullo de barrio,"De la cocina de barrio a la vitrina digital
+
+Cultura StreetBoss: raíces callejeras, ambición global.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Hecho para la calle. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-41_hecho-para-la-calle_culture.png,06-posts/month-02/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+42,2026-09-06,6,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Ya tengo menú en PDF,Objeción: PDF vs. escaparate transaccional.,El PDF hace que el cliente trabaje. StreetBoss arma el pedido.,Deja el PDF,[T13-founder-price] Deja el PDF,"El PDF hace que el cliente trabaje. StreetBoss arma el pedido.
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Ya tengo menú en PDF. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-42_ya-tengo-menu-en-pdf_commercial.png,06-posts/month-02/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+43,2026-09-07,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El cliente que no encontró cómo pedir,"Sin un flujo claro de pedido, el antojo no se convierte en venta.",Le encantó tu foto… pero no supo cómo pedir,"Si no es fácil, no compra","[T01-pain] Si no es fácil, no compra","Le encantó tu foto… pero no supo cómo pedir
+
+Sin un flujo claro de pedido, el antojo no se convierte en venta.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El cliente que no encontró cómo pedir. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-43_el-cliente-que-no-encontro-como-pedir_pain.png,07-reels/month-02/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+44,2026-09-08,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Mobile first: por qué importa,Por qué el menú debe diseñarse para el pulgar.,El 80% de tus clientes pide desde el celular,Piensa en móvil,[T07-carousel-edu] Piensa en móvil,"El 80% de tus clientes pide desde el celular
+
+Guárdalo para tu negocio de comida.
+
+Por qué el menú debe diseñarse para el pulgar.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Mobile first: por qué importa. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-44_mobile-first-por-que-importa_carousel.png,06-posts/month-02/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+45,2026-09-09,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Sin apps que descargar,El escaparate abre desde un link o QR. Instantáneo.,Tu cliente pide sin bajar ninguna app,Abre y pide,[T05-product] Abre y pide,"Tu cliente pide sin bajar ninguna app
+
+El escaparate abre desde un link o QR. Instantáneo.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Sin apps que descargar. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-45_sin-apps-que-descargar_product.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+46,2026-09-10,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),WhatsApp: donde ya estás,Dato de penetración de WhatsApp (contexto LatAm).,Tus clientes ya usan WhatsApp. El pedido cae ahí.,Sin apps nuevas,[T08-data] Sin apps nuevas,"Tus clientes ya usan WhatsApp. El pedido cae ahí.
+
+Dato de penetración de WhatsApp (contexto LatAm).
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre WhatsApp: donde ya estás. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-46_whatsapp-donde-ya-estas_data.png,06-posts/month-02/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+47,2026-09-11,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Postre con chocolate cayendo,"Cámara lenta, chocolate líquido, textura.",El chocolate cayendo lento sobre el postre,El final feliz,[T06-foodporn] El final feliz,"El chocolate cayendo lento sobre el postre
+
+Así se ve tu menú antes de que lleguen. Tu pastel de chocolate merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: pastel de chocolate. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de plato oscuro mate. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-47_postre-con-chocolate-cayendo_foodporn.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+48,2026-09-12,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),La comida es la protagonista,Filosofía: la tech opera en segundo plano.,"Aquí la estrella es tu comida, no la tecnología",Tú al centro,[T10-culture] Tú al centro,"Aquí la estrella es tu comida, no la tecnología
+
+Filosofía: la tech opera en segundo plano.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre La comida es la protagonista. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-48_la-comida-es-la-protagonista_culture.png,06-posts/month-02/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+49,2026-09-13,7,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Lo que incluye tu escaparate,Enumerar el alcance real (sin prometer roadmap).,Escaparate + carrito + pedido a WhatsApp + panel,Todo lo que necesitas para vender,[T13-founder-price] Todo lo que necesitas para vender,"Escaparate + carrito + pedido a WhatsApp + panel
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Lo que incluye tu escaparate. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-49_lo-que-incluye-tu-escaparate_commercial.png,06-posts/month-02/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+50,2026-09-14,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),La guerra de precios del marketplace,El marketplace te vuelve un commodity. Tu marca desaparece.,En la app compites por precio contra tu vecino,Ahí solo gana la app,[T01-pain] Ahí solo gana la app,"En la app compites por precio contra tu vecino
+
+El marketplace te vuelve un commodity. Tu marca desaparece.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: La guerra de precios del marketplace. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-50_la-guerra-de-precios-del-marketplace_pain.png,07-reels/month-02/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+51,2026-09-15,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Cómo describir un platillo que vende,Fórmula de descripción: sensación + ingrediente estrella + porción.,Las palabras que despiertan el antojo,Vende con palabras,[T07-carousel-edu] Vende con palabras,"Las palabras que despiertan el antojo
+
+Guárdalo para tu negocio de comida.
+
+Fórmula de descripción: sensación + ingrediente estrella + porción.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Cómo describir un platillo que vende. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-51_como-describir-un-platillo-que-vende_carousel.png,06-posts/month-02/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+52,2026-09-16,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),El QR en tu mesa,"El mismo escaparate sirve en mesa, bio y estados.",Un QR en la mesa = pedido para llevar mientras comen aquí,Vende en cada mesa,[T05-product] Vende en cada mesa,"Un QR en la mesa = pedido para llevar mientras comen aquí
+
+El mismo escaparate sirve en mesa, bio y estados.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: El QR en tu mesa. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-52_el-qr-en-tu-mesa_product.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+53,2026-09-17,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),"1 link, todos tus canales",Versatilidad del link de venta directa.,"Bio, QR, estados: un solo link para vender",Un link para todo,[T08-data] Un link para todo,"Bio, QR, estados: un solo link para vender
+
+Versatilidad del link de venta directa.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre 1 link, todos tus canales. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-53_1-link-todos-tus-canales_data.png,06-posts/month-02/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+54,2026-09-18,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Sushi rolls en fila,"Top-down parcial, colores saturados.",Los rolls perfectamente alineados y brillando,Precisión que se antoja,[T06-foodporn] Precisión que se antoja,"Los rolls perfectamente alineados y brillando
+
+Así se ve tu menú antes de que lleguen. Tu sushi variado merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: sushi variado. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de pizarra negra. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-54_sushi-rolls-en-fila_foodporn.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+55,2026-09-19,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Soberanía gastronómica,Valor corporativo #1 en pieza de marca.,"Tus datos, tus clientes y tu marca son tuyos",Soberanía,[T10-culture] Soberanía,"Tus datos, tus clientes y tu marca son tuyos
+
+Valor corporativo #1 en pieza de marca.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Soberanía gastronómica. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-55_soberania-gastronomica_culture.png,06-posts/month-02/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+56,2026-09-20,8,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Cómo empezar hoy,Pasos concretos para activar el precio fundador.,"Escríbenos, armamos tu menú y vendes esta semana",Arranca esta semana,[T13-founder-price] Arranca esta semana,"Escríbenos, armamos tu menú y vendes esta semana
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Cómo empezar hoy. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-56_como-empezar-hoy_commercial.png,06-posts/month-02/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+57,2026-09-21,9,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),Tu marca escondida,El intermediario tapa tu identidad. Eres un renglón más.,"En la app, tu logo es del tamaño de una uña",¿Dónde quedó tu marca?,[T01-pain] ¿Dónde quedó tu marca?,"En la app, tu logo es del tamaño de una uña
+
+El intermediario tapa tu identidad. Eres un renglón más.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: Tu marca escondida. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-57_tu-marca-escondida_pain.png,07-reels/month-02/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+58,2026-09-22,9,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Tu marca vs. ser un renglón,Branding gastronómico: por qué tu logo y tu historia venden.,Cómo recuperar tu identidad frente a los agregadores,Tu marca importa,[T07-carousel-edu] Tu marca importa,"Cómo recuperar tu identidad frente a los agregadores
+
+Guárdalo para tu negocio de comida.
+
+Branding gastronómico: por qué tu logo y tu historia venden.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Tu marca vs. ser un renglón. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-58_tu-marca-vs-ser-un-renglon_carousel.png,06-posts/month-02/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+59,2026-09-23,9,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Checkout minimalista,Checkout sin fricción: solo lo esencial para cocinar y entregar.,"Dirección, mesa o para llevar: 3 datos y listo","Menos pasos, más pedidos","[T05-product] Menos pasos, más pedidos","Dirección, mesa o para llevar: 3 datos y listo
+
+Checkout sin fricción: solo lo esencial para cocinar y entregar.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Checkout minimalista. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-59_checkout-minimalista_product.png,07-reels/month-02/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+60,2026-09-24,9,Fase 2: Demostración · Autoridad · Producto · Diferenciación,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),Rápido = más ventas,Dato UX: performance como factor de conversión.,Una web lenta espanta pedidos. La velocidad convierte.,La velocidad vende,[T08-data] La velocidad vende,"Una web lenta espanta pedidos. La velocidad convierte.
+
+Dato UX: performance como factor de conversión.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Rápido = más ventas. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-60_rapido--mas-ventas_data.png,06-posts/month-02/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+61,2026-09-25,9,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Birria con consomé humeante,"Vapor, rojo intenso, dip en cámara lenta.",El taco de birria entrando al consomé humeante,El dip que enamora,[T06-foodporn] El dip que enamora,"El taco de birria entrando al consomé humeante
+
+Así se ve tu menú antes de que lleguen. Tu tacos de birria merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: tacos de birria. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de comal de hierro. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-61_birria-con-consome-humeante_foodporn.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+62,2026-09-26,9,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Independencia,Arquetipo rebelde: emancipación del agregador.,No le pidas permiso a un algoritmo para vender lo tuyo,Independízate,[T10-culture] Independízate,"No le pidas permiso a un algoritmo para vender lo tuyo
+
+Arquetipo rebelde: emancipación del agregador.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Independencia. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-62_independencia_culture.png,06-posts/month-03/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+63,2026-09-27,9,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Para quién es StreetBoss,Casos de uso: a quién sirve.,"Fondas, food trucks, dark kitchens, cafés, pizzerías…",¿Es para ti? Sí.,[T13-founder-price] ¿Es para ti? Sí.,"Fondas, food trucks, dark kitchens, cafés, pizzerías…
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Para quién es StreetBoss. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-63_para-quien-es-streetboss_commercial.png,06-posts/month-03/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+64,2026-09-28,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El menú desactualizado,No poder actualizar al instante genera pedidos que no puedes cumplir.,Se acabó el platillo… pero sigue “disponible”,Menú viejo = pedido perdido,[T01-pain] Menú viejo = pedido perdido,"Se acabó el platillo… pero sigue “disponible”
+
+No poder actualizar al instante genera pedidos que no puedes cumplir.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El menú desactualizado. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-64_el-menu-desactualizado_pain.png,07-reels/month-03/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+65,2026-09-29,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),El embudo de la venta directa,Explicar el journey: contenido → escaparate → WhatsApp.,"De un Reel a un pedido en tu WhatsApp, paso a paso",De la vista al pedido,[T07-carousel-edu] De la vista al pedido,"De un Reel a un pedido en tu WhatsApp, paso a paso
+
+Guárdalo para tu negocio de comida.
+
+Explicar el journey: contenido → escaparate → WhatsApp.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El embudo de la venta directa. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-65_el-embudo-de-la-venta-directa_carousel.png,06-posts/month-03/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+66,2026-09-30,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Fotos optimizadas que cargan volando,La lentitud espanta. StreetBoss optimiza cada imagen.,Tus fotos pesan menos y cargan al instante,Rápido = más ventas,[T05-product] Rápido = más ventas,"Tus fotos pesan menos y cargan al instante
+
+La lentitud espanta. StreetBoss optimiza cada imagen.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Fotos optimizadas que cargan volando. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-66_fotos-optimizadas-que-cargan-volando_product.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+67,2026-10-01,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),Tu escaparate nunca cierra,El escaparate recibe pedidos fuera de horario (según config).,Tu menú vende aunque tú estés dormido,Abierto 24/7,[T08-data] Abierto 24/7,"Tu menú vende aunque tú estés dormido
+
+El escaparate recibe pedidos fuera de horario (según config).
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Tu escaparate nunca cierra. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-67_tu-escaparate-nunca-cierra_data.png,06-posts/month-03/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+68,2026-10-02,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Pizza saliendo del horno,"Fuego de fondo, burbujas del queso.",La pala sacando la pizza del horno de leña,Directo del horno,[T06-foodporn] Directo del horno,"La pala sacando la pizza del horno de leña
+
+Así se ve tu menú antes de que lleguen. Tu pizza artesanal merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: pizza artesanal. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de horno de leña. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-68_pizza-saliendo-del-horno_foodporn.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+69,2026-10-03,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Simplicidad extrema,Valor: simplicidad. La tecnología no estorba.,Cero curvas de aprendizaje. Tú solo cocina y vende.,Simple manda,[T10-culture] Simple manda,"Cero curvas de aprendizaje. Tú solo cocina y vende.
+
+Valor: simplicidad. La tecnología no estorba.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Simplicidad extrema. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-69_simplicidad-extrema_culture.png,06-posts/month-03/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+70,2026-10-04,10,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),El primer pedido cambia todo,"Enfoque en activación/retención, no en promesas.",Tu primer pedido directo por tu escaparate te lo demuestra,El primer pedido,[T13-founder-price] El primer pedido,"Tu primer pedido directo por tu escaparate te lo demuestra
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El primer pedido cambia todo. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-70_el-primer-pedido-cambia-todo_commercial.png,06-posts/month-03/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+71,2026-10-05,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),Perder al cliente recurrente,"A quien ya te conoce, dale tu link directo. El nuevo, ok. El fiel, directo.",Tu mejor cliente pide por la app y te cuesta el 30%,Al recurrente NO le regales margen,[T01-pain] Al recurrente NO le regales margen,"Tu mejor cliente pide por la app y te cuesta el 30%
+
+A quien ya te conoce, dale tu link directo. El nuevo, ok. El fiel, directo.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: Perder al cliente recurrente. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-71_perder-al-cliente-recurrente_pain.png,07-reels/month-03/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+72,2026-10-06,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Recompra: el secreto del margen,Retención > adquisición. Cómo la venta directa la habilita.,Por qué el cliente que regresa es tu verdadero negocio,El fiel vale oro,[T07-carousel-edu] El fiel vale oro,"Por qué el cliente que regresa es tu verdadero negocio
+
+Guárdalo para tu negocio de comida.
+
+Retención > adquisición. Cómo la venta directa la habilita.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Recompra: el secreto del margen. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-72_recompra-el-secreto-del-margen_carousel.png,06-posts/month-03/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+73,2026-10-07,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Tu escaparate en la bio,El link de venta directa vive en tu perfil de Instagram/TikTok.,Un solo link en tu bio y todos pueden pedir,Tu bio ahora vende,[T05-product] Tu bio ahora vende,"Un solo link en tu bio y todos pueden pedir
+
+El link de venta directa vive en tu perfil de Instagram/TikTok.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Tu escaparate en la bio. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-73_tu-escaparate-en-la-bio_product.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+74,2026-10-08,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),Comparativa: soberanía de datos,Comparativa de propiedad de la relación con el cliente.,Tú dueño de tus clientes vs. datos ajenos,Soberanía,[T08-data] Soberanía,"Tú dueño de tus clientes vs. datos ajenos
+
+Comparativa de propiedad de la relación con el cliente.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Comparativa: soberanía de datos. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-74_comparativa-soberania-de-datos_data.png,06-posts/month-03/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+75,2026-10-09,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Elote y esquites callejeros,"Cercano, vapor, colores cálidos.",El queso y el chile cayendo sobre el esquite,Sabor de la calle,[T06-foodporn] Sabor de la calle,"El queso y el chile cayendo sobre el esquite
+
+Así se ve tu menú antes de que lleguen. Tu esquites con queso merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: esquites con queso. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de carrito nocturno. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-75_elote-y-esquites-callejeros_foodporn.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+76,2026-10-10,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Transparencia,Valor: transparencia.,Sin comisiones ocultas. Sin letras chiquitas.,Claro y directo,[T10-culture] Claro y directo,"Sin comisiones ocultas. Sin letras chiquitas.
+
+Valor: transparencia.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Transparencia. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-76_transparencia_culture.png,06-posts/month-03/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+77,2026-10-11,11,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Sin letras chiquitas,"Transparencia comercial: precio claro, sin dark patterns.",Sin trucos ni sorpresas. Renta clara: $100 MXN al mes.,Claro y honesto,[T13-founder-price] Claro y honesto,"Sin trucos ni sorpresas. Renta clara: $100 MXN al mes.
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Sin letras chiquitas. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-77_sin-letras-chiquitas_commercial.png,06-posts/month-03/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+78,2026-10-12,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),El domingo de pedidos perdidos,"Sin sistema, la hora pico se traduce en ventas que nunca cobraste.",Saturado un domingo: 3 pedidos se te fueron sin querer,El desorden te cuesta ventas,[T01-pain] El desorden te cuesta ventas,"Saturado un domingo: 3 pedidos se te fueron sin querer
+
+Sin sistema, la hora pico se traduce en ventas que nunca cobraste.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: El domingo de pedidos perdidos. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-78_el-domingo-de-pedidos-perdidos_pain.png,07-reels/month-03/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+79,2026-10-13,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Errores que espantan pedidos,"Checklist de fricción: lentitud, precios ocultos, sin fotos…",7 cosas en tu menú digital que te cuestan ventas hoy,Revisa tu menú,[T07-carousel-edu] Revisa tu menú,"7 cosas en tu menú digital que te cuestan ventas hoy
+
+Guárdalo para tu negocio de comida.
+
+Checklist de fricción: lentitud, precios ocultos, sin fotos…
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Errores que espantan pedidos. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-79_errores-que-espantan-pedidos_carousel.png,06-posts/month-03/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+80,2026-10-14,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Categorías que se navegan solas,"Categorías ancladas arriba, scroll suave. Cero confusión.","Tacos, bebidas, postres: el cliente encuentra todo",Navegación clara,[T05-product] Navegación clara,"Tacos, bebidas, postres: el cliente encuentra todo
+
+Categorías ancladas arriba, scroll suave. Cero confusión.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Categorías que se navegan solas. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-80_categorias-que-se-navegan-solas_product.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+81,2026-10-15,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),El costo de un cliente perdido,Dato ilustrativo de valor de recompra (CASO ILUSTRATIVO).,Perder un recurrente cuesta más que ganar uno nuevo,Cuida al que vuelve,[T08-data] Cuida al que vuelve,"Perder un recurrente cuesta más que ganar uno nuevo
+
+Dato ilustrativo de valor de recompra (CASO ILUSTRATIVO).
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre El costo de un cliente perdido. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-81_el-costo-de-un-cliente-perdido_data.png,06-posts/month-03/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+82,2026-10-16,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Parrillada al carbón,"Fuego, humo, sear marks.",El corte sellándose sobre el carbón encendido,El humo que sabe a fin de semana,[T06-foodporn] El humo que sabe a fin de semana,"El corte sellándose sobre el carbón encendido
+
+Así se ve tu menú antes de que lleguen. Tu arrachera a la parrilla merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: arrachera a la parrilla. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de brasas encendidas. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-82_parrillada-al-carbon_foodporn.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+83,2026-10-17,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Comunidad StreetBoss,Pieza de pertenencia (sin inventar testimonios).,Restaurantes que decidieron mandar en su negocio,Somos comunidad,[T10-culture] Somos comunidad,"Restaurantes que decidieron mandar en su negocio
+
+Pieza de pertenencia (sin inventar testimonios).
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Comunidad StreetBoss. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-83_comunidad-streetboss_culture.png,06-posts/month-03/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.
+84,2026-10-18,12,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"Facebook, LinkedIn",Post gráfico,Precio fundador,Convertir: activar cupo fundador y resolver objeciones.,BOFU (Conversión),Tu competencia ya lo está viendo,"Urgencia honesta, sin falsas escaseces ni plazas inventadas.","Mientras lo piensas, otro ya está vendiendo directo",No te quedes atrás,[T13-founder-price] No te quedes atrás,"Mientras lo piensas, otro ya está vendiendo directo
+
+Se buscan restaurantes y negocios de comida que quieran probar su escaparate digital con precio fundador de lanzamiento: $100 MXN mensuales.
+
+Sin comisiones por pedido. Sin apps. Tu escaparate, tu WhatsApp, tu marca.
+
+Cupo fundador abierto. Escríbenos por WhatsApp.
+
+#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto",Cupo fundador abierto. Escríbenos por WhatsApp.,#StreetBoss #PrecioFundador #Restaurantes #VendeDirecto,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Tu competencia ya lo está viendo. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/commercial/T13-founder-price.md,day-84_tu-competencia-ya-lo-esta-viendo_commercial.png,06-posts/month-03/,PENDIENTE,NO APROBADO,19:00,"Adaptar hook/duración por plataforma: Facebook, LinkedIn."
+85,2026-10-19,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, Facebook, YouTube Short",Reel/Short,Control del negocio,Agitar el dolor y generar identificación.,TOFU (Atención),La ilusión de “ya tengo redes”,"Sin escaparate, tus redes generan likes, no ventas.",Tienes 10k seguidores… y ni un botón para pedir,Seguidores ≠ pedidos,[T01-pain] Seguidores ≠ pedidos,"Tienes 10k seguidores… y ni un botón para pedir
+
+Sin escaparate, tus redes generan likes, no ventas.
+
+Con StreetBoss tu menú se vuelve un escaparate: el cliente arma su pedido y te cae ordenado al WhatsApp. Vende directo. Manda tú.
+
+Comenta “DIRECTO” y te mandamos cómo se ve tu menú.
+
+#StreetBoss #VendeDirecto #Restaurantes",Comenta “DIRECTO” y te mandamos cómo se ve tu menú.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Escena editorial que ilustra el dolor operativo de un restaurante: La ilusión de “ya tengo redes”. Ambiente de cocina/mostrador real, luz tensa, tonos oscuros, sensación de saturación y desorden. Enfoque en manos y objetos (teléfono, tickets, comandas), sin rostros. Espacio negativo para texto. Sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara nerviosa handheld, cortes rápidos que transmiten saturación; whip-pan entre teléfono y cocina; resolución de tensión al aparecer el escaparate ordenado.",04-social-templates/pain/T01-pain.md,day-85_la-ilusion-de-ya-tengo-redes_pain.png,07-reels/month-03/,PENDIENTE,NO APROBADO,13:30,"Adaptar hook/duración por plataforma: TikTok, Facebook, YouTube Short."
+86,2026-10-20,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"LinkedIn Document, Facebook",Carrusel,Educación gastronómica,Educar y posicionar la categoría. Guardados y autoridad.,MOFU (Interés/Demostración),Cómo lanzar tu escaparate esta semana,Guía accionable de arranque + precio fundador al cierre.,Tu plan de 5 pasos para vender directo ya,Empieza hoy,[T07-carousel-edu] Empieza hoy,"Tu plan de 5 pasos para vender directo ya
+
+Guárdalo para tu negocio de comida.
+
+Guía accionable de arranque + precio fundador al cierre.
+
+En StreetBoss convertimos tu menú en un escaparate que vende directo, sin comisiones.
+
+Guarda esto y compártelo con ese restaurante que lo necesita.
+
+#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta",Guarda esto y compártelo con ese restaurante que lo necesita.,#StreetBoss #MarketingGastronomico #Restaurantes #VentaDirecta,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Cómo lanzar tu escaparate esta semana. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/carousel/T07-carousel-edu.md,day-86_como-lanzar-tu-escaparate-esta-semana_carousel.png,06-posts/month-03/,PENDIENTE,NO APROBADO,12:00,"Adaptar hook/duración por plataforma: LinkedIn Document, Facebook."
+87,2026-10-21,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Producto,Demostrar fricción cero y capacidades reales del escaparate.,MOFU (Interés/Demostración),Antes y después de tu menú,Comparación visual directa entre el PDF y el escaparate StreetBoss.,Antes: PDF. Después: escaparate que vende.,El cambio se nota,[T05-product] El cambio se nota,"Antes: PDF. Después: escaparate que vende.
+
+Comparación visual directa entre el PDF y el escaparate StreetBoss.
+
+Así de simple: tu comida bien mostrada y el pedido perfecto en tu WhatsApp. Sin comisiones, sin apps que descargar.
+
+Pídenos una demo por WhatsApp. Sin compromiso.
+
+#StreetBoss #VendeDirecto #Restaurantes",Pídenos una demo por WhatsApp. Sin compromiso.,#StreetBoss #VendeDirecto #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Screen capture real del escaparate · Tipografía Poppins/Inter,"Mockup 3D hiperrealista de un celular mostrando un escaparate digital de restaurante (interfaz oscura, tarjetas de producto con foto grande y botón naranja), sostenido por una mano sobre una mesa de restaurante con ingredientes desenfocados al fondo (bokeh). Iluminación de estudio dramática, fondo oscuro. Concepto: Antes y después de tu menú. Sin logo (se integra después). Proporciones de UI precisas y legibles. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",Screen-capture real de la interfaz + planos B-roll de la mano tocando la pantalla. Movimiento de seguimiento suave del dedo (tap → agregar → enviar). Zoom sutil al ticket de WhatsApp. Cortes rápidos al beat.,04-social-templates/product/T05-product.md,day-87_antes-y-despues-de-tu-menu_product.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+88,2026-10-22,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Comparativas,Diferenciar con datos y comparativas claras.,MOFU (Interés/Demostración),StreetBoss en números,Tarjeta resumen de propuesta de valor.,Directo · Cero comisión · < 15 min · 100% tu marca,Los números claros,[T08-data] Los números claros,"Directo · Cero comisión · < 15 min · 100% tu marca
+
+Tarjeta resumen de propuesta de valor.
+
+StreetBoss: la plataforma visual de venta directa para restaurantes.
+
+Escríbenos por WhatsApp y arma tu escaparate.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Escríbenos por WhatsApp y arma tu escaparate.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre StreetBoss en números. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/data/T08-data.md,day-88_streetboss-en-numeros_data.png,06-posts/month-03/,PENDIENTE,NO APROBADO,18:30,Adaptar hook/duración por plataforma: Facebook.
+89,2026-10-23,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,"TikTok, YouTube Short",Reel/Short,Fotografía gastronómica,Deseo/branding aspiracional (FoodPorn). Alcance y recordación.,TOFU (Atención),Combo familiar completo,"Cenital de combo grande, abundancia.",Todo el combo servido: para compartir,Para toda la mesa,[T06-foodporn] Para toda la mesa,"Todo el combo servido: para compartir
+
+Así se ve tu menú antes de que lleguen. Tu combo de hamburguesas y papas merece una vitrina, no una lista.
+
+Escaparate digital + pedido directo a tu WhatsApp.
+
+El link de tu escaparate va en tu bio. Nosotros te lo armamos.
+
+#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes",El link de tu escaparate va en tu bio. Nosotros te lo armamos.,#StreetBoss #FoodPorn #ComidaMexicana #Antojo #Restaurantes,1080x1920,22-32s,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fotografía hiperrealista de producto gastronómico de alta gama: combo de hamburguesas y papas. Estilo Food Porn premium. Luz dura moody que resalte texturas, brillo de la grasa y volumen. Fondo oscuro con textura de mesa de madera oscura. Colores saturados del espectro del apetito. Macro/close-up, lente 85mm, calidad cinematográfica. Sin logo, sin texto. Manos permitidas, sin rostros. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.","Cámara lenta cinematográfica (slow motion). Movimiento de push-in macro hacia la textura; vapor/goteo natural; ligero parallax. 24-30fps, transiciones por match-cut de textura.",04-social-templates/foodporn/T06-foodporn.md,day-89_combo-familiar-completo_foodporn.png,07-reels/month-03/,PENDIENTE,NO APROBADO,14:00,"Adaptar hook/duración por plataforma: TikTok, YouTube Short."
+90,2026-10-24,13,Fase 3: Conversión · Precio fundador · Objeciones · Comunidad,Instagram,Facebook,Post gráfico,Cultura StreetBoss,"Construir marca, comunidad y pertenencia.",TOFU (Atención),Tu marca merece brillar,Cierre de fase de marca: dignificar al restaurante.,Tu logo grande. Tu historia. Tu vitrina.,Brilla tú,[T10-culture] Brilla tú,"Tu logo grande. Tu historia. Tu vitrina.
+
+Cierre de fase de marca: dignificar al restaurante.
+
+StreetBoss existe para que tu restaurante venda bajo sus propias reglas.
+
+Síguenos para vender directo y mandar tú.
+
+#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida",Síguenos para vender directo y mandar tú.,#StreetBoss #Restaurantes #Emprendimiento #NegociosDeComida,1080x1350,N/A,Fondo/escena IA (prompt visual) · Logo SVG maestro (brand-core) · Tipografía Poppins/Inter,"Fondo/composición premium para pieza gráfica de marca sobre Tu marca merece brillar. Fondo Boss Charcoal texturizado (pizarra/metal oscuro), acento naranja #FF4B00, mucho espacio negativo para titular en Poppins ExtraBold. Estética FoodTech internacional, minimalista, alto contraste. Sin texto generado por IA, sin logo. Dirección de arte StreetBoss: flat premium, alto contraste, fondo oscuro Boss Charcoal (#0D0E12), acentos naranja #FF4B00, iluminación moody y luz dura, sin logo, sin texto generado, espacio negativo para integrar tipografía y logo después. Ratio 9:16 vertical salvo indicación.",N/A,04-social-templates/brand/T10-culture.md,day-90_tu-marca-merece-brillar_culture.png,06-posts/month-03/,PENDIENTE,NO APROBADO,11:00,Adaptar hook/duración por plataforma: Facebook.

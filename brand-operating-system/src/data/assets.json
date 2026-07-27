@@ -1,0 +1,43 @@
+{
+  "brand": {
+    "name": "StreetBoss",
+    "tagline": "Vende directo. Conserva el control.",
+    "description": "Plataforma FoodTech de venta directa para restaurantes.",
+    "website": "https://streetboss.com.mx/",
+    "officialWhatsApp": "+52 961 372 5386",
+    "waLink": "https://wa.me/529613725386"
+  },
+  "colors": {
+    "primary": {
+      "name": "Boss Charcoal",
+      "hex": "#0D0E12",
+      "usage": "Fondos principales, texto dominante."
+    },
+    "accent": {
+      "name": "Street Orange",
+      "hex": "#FF4B00",
+      "usage": "CTAs, alertas, badges, detalles clave. No abusar."
+    },
+    "secondary": {
+      "name": "Orange Light",
+      "hex": "#FF6A1A",
+      "usage": "Hover states, gradientes sutiles funcionales."
+    },
+    "neutral": {
+      "name": "Paper White",
+      "hex": "#F5F5F7",
+      "usage": "Superficies secundarias, tarjetas (modo claro)."
+    }
+  },
+  "typography": {
+    "primary": "Inter / Roboto (Clean sans-serif)",
+    "hierarchy": "Headers gruesos (700/800), cuerpo legible (400), tracking ajustado (-0.5px en headers)."
+  },
+  "forbiddenTerms": [
+    "Menú QR (usar Escaparate Digital)",
+    "Aplicación móvil de delivery (somos plataforma web directa)",
+    "Punto de venta / POS",
+    "Comisiones bajas (es Cero Comisiones por venta)",
+    "Marketplace"
+  ]
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>StreetBoss Social Assets & Copy</title>
+<style>
+  body { font-family: sans-serif; background: #0D0E12; color: #FFFFFF; padding: 40px; }
+  h1, h2 { color: #FF4B00; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+  .card { background: #1a1c23; border-radius: 12px; padding: 20px; text-align: left; border: 1px solid #333; }
+  .card img { max-width: 100%; max-height: 250px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
+  .card h3 { margin: 0 0 10px 0; font-size: 14px; word-break: break-all; color: #FF6A1A; }
+  .meta { font-size: 12px; color: #aaa; margin: 5px 0; text-align: left; }
+  .platform-section { margin-top: 50px; border-top: 2px solid #333; padding-top: 20px; }
+  .copy-section { background: #1a1c23; border-radius: 12px; padding: 30px; border: 1px solid #333; margin-bottom: 50px; line-height: 1.6; }
+  .alert { background: rgba(255, 75, 0, 0.1); border-left: 4px solid #FF4B00; padding: 15px; margin: 20px 0; }
+  hr { border-color: #333; margin: 30px 0; }
+  textarea { width: 100%; height: 80px; background: #0D0E12; color: #fff; border: 1px solid #333; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; resize: vertical; }
+  .copy-btn { background: #FF4B00; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 10px; font-weight: bold; }
+  .copy-btn:hover { background: #E64300; }
+</style>
+<script>
+  function copyText(id) {
+    var copyText = document.getElementById(id);
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+    alert("¡Copiado!");
+  }
+</script>
+</head>
+<body>
+  
+  <div class="copy-section">
+    <h1>🚀 CONTENIDO SEMANA 1 (P01 - P07)</h1>
+    <p>A continuación, las 7 piezas publicables de la primera semana usando capturas reales del producto y el <strong>logotipo oficial con tagline</strong>.</p>
+    
+    <div class="platform-section">
+      <h2 style="color: #fff;">PUBLICACIONES P01 - P07</h2>
+      <div class="grid" id="p01-p07-grid">
+        <!-- Injected via JS below -->
+      </div>
+    </div>
+  </div>
+
+  <div class="copy-section">
+    <h1>🚀 SETUP INICIAL DE REDES SOCIALES — STREETBOSS</h1>
+    <p>Aquí tienes <strong>todo lo necesario</strong> (Textos, Biografías y las Rutas exactas de las Imágenes que ya generamos) para que abras y configures oficialmente todas las redes sociales de StreetBoss hoy mismo.</p>
+
+    <div class="alert"><strong>TIP:</strong> Todas las imágenes están listas para usarse a continuación.</div>
+    <hr>
+
+    <h2>📱 INSTAGRAM</h2>
+    <ul>
+      <li><strong>Nombre de Usuario:</strong> @streetboss.mx</li>
+      <li><strong>Nombre:</strong> StreetBoss</li>
+      <li><strong>Enlace:</strong> streetboss.com.mx</li>
+    </ul>
+    <strong>Biografía:</strong>
+    <textarea id="copyIg">Tu escaparate digital de comida. 🍔📱
+Vende directo. Manda tú.
+Olvídate de las comisiones. 👇</textarea>
+    <button class="copy-btn" onclick="copyText('copyIg')">Copiar Bio</button>
+    <hr>
+
+    <h2>📘 FACEBOOK (Página de Empresa)</h2>
+    <ul>
+      <li><strong>Nombre de la Página:</strong> StreetBoss</li>
+      <li><strong>Botón de Acción:</strong> Visitar sitio web (streetboss.com.mx)</li>
+    </ul>
+    <strong>Descripción Corta (Presentación):</strong>
+    <textarea id="copyFbShort">Tu escaparate digital de comida. Vende directo. Manda tú.</textarea>
+    <button class="copy-btn" onclick="copyText('copyFbShort')">Copiar Corta</button>
+    <br><br>
+    <strong>Descripción Larga (Acerca de):</strong>
+    <textarea id="copyFbLong" style="height: 120px;">StreetBoss es tu escaparate digital de comida. Olvídate del típico menú en PDF o código QR aburrido y de las altas comisiones de las apps de delivery. Transformamos tu menú en una experiencia visual e interactiva donde tus clientes exploran tus productos, se les antoja, arman su carrito y te envían su pedido estructurado directamente a tu WhatsApp. Tú mantienes el control de tu negocio. Vende directo. Manda tú.</textarea>
+    <button class="copy-btn" onclick="copyText('copyFbLong')">Copiar Larga</button>
+    <hr>
+
+    <h2>🎵 TIKTOK</h2>
+    <ul>
+      <li><strong>Nombre de Usuario:</strong> @streetboss.mx</li>
+      <li><strong>Enlace:</strong> streetboss.com.mx</li>
+    </ul>
+    <strong>Biografía:</strong>
+    <textarea id="copyTt">Tu menú digital que sí vende 🍔📱
+Vende directo. Manda tú. 👇</textarea>
+    <button class="copy-btn" onclick="copyText('copyTt')">Copiar Bio</button>
+    <hr>
+
+    <h2>💼 LINKEDIN (Página de Empresa)</h2>
+    <ul>
+      <li><strong>Nombre de la Empresa:</strong> StreetBoss</li>
+      <li><strong>Eslogan:</strong> Tu escaparate digital de comida. Vende directo. Manda tú.</li>
+      <li><strong>Sitio Web:</strong> https://streetboss.com.mx</li>
+    </ul>
+    <strong>Descripción (Acerca de):</strong>
+    <textarea id="copyLi" style="height: 120px;">StreetBoss es la plataforma diseñada para que los negocios de comida retomen el control de sus ventas. Transformamos el tradicional PDF o menú QR en un escaparate digital interactivo optimizado para móviles. Tus clientes exploran tus productos, arman su carrito y te envían el pedido estructurado directo a tu WhatsApp. Sin intermediarios, sin comisiones por pedido, y con una experiencia visual que verdaderamente despierta el antojo. Devolvemos el poder a los dueños de restaurantes. Vende directo. Manda tú.</textarea>
+    <button class="copy-btn" onclick="copyText('copyLi')">Copiar Descripción</button>
+    <hr>
+
+    <h2>✖️ X (Twitter)</h2>
+    <ul>
+      <li><strong>Nombre:</strong> StreetBoss</li>
+      <li><strong>Sitio Web:</strong> streetboss.com.mx</li>
+    </ul>
+    <strong>Biografía:</strong>
+    <textarea id="copyX">Tu escaparate digital de comida. Convierte tu menú en ventas directas sin comisiones por pedido. 🍔📱 Vende directo. Manda tú.</textarea>
+    <button class="copy-btn" onclick="copyText('copyX')">Copiar Bio</button>
+    <hr>
+
+    <h2>🟥 YOUTUBE</h2>
+    <ul>
+      <li><strong>Nombre del Canal:</strong> StreetBoss</li>
+    </ul>
+    <strong>Descripción (Acerca de):</strong>
+    <textarea id="copyYt" style="height: 120px;">Bienvenidos al canal oficial de StreetBoss. Somos la plataforma que convierte tu menú en un escaparate digital interactivo para vender por WhatsApp sin pagar comisiones por pedido. Suscríbete para conocer cómo mejorar las ventas directas de tu restaurante o negocio de comida, tutoriales de uso y consejos de marketing gastronómico. Vende directo. Manda tú.</textarea>
+    <button class="copy-btn" onclick="copyText('copyYt')">Copiar Descripción</button>
+    <hr>
+
+    <h2>📌 PINTEREST</h2>
+    <ul>
+      <li><strong>Nombre:</strong> StreetBoss</li>
+    </ul>
+    <strong>Biografía:</strong>
+    <textarea id="copyPin">Ideas, inspiración y herramientas para que tu negocio de comida venda más. Tu escaparate digital de comida. 🍔🚀</textarea>
+    <button class="copy-btn" onclick="copyText('copyPin')">Copiar Bio</button>
+  </div>
+
+  <h1>Tablero de Activos Sociales Institucionales V01</h1>
+  <div id="assets"></div>
+
+  <script>
+    const contentPieces = [
+      { p: 'P01', f: 'P01_F1' }, { p: 'P01', f: 'P01_F2' }, { p: 'P01', f: 'P01_F3' }, { p: 'P01', f: 'P01_F4' }, { p: 'P01', f: 'P01_F5' },
+      { p: 'P02', f: 'P02_S1' }, { p: 'P02', f: 'P02_S2' }, { p: 'P02', f: 'P02_S3' }, { p: 'P02', f: 'P02_S4' }, { p: 'P02', f: 'P02_S5' }, { p: 'P02', f: 'P02_S6' },
+      { p: 'P03', f: 'P03' },
+      { p: 'P04', f: 'P04_S1' }, { p: 'P04', f: 'P04_S2' }, { p: 'P04', f: 'P04_S3' }, { p: 'P04', f: 'P04_S4' }, { p: 'P04', f: 'P04_S5' },
+      { p: 'P05', f: 'P05_F1' }, { p: 'P05', f: 'P05_F2' }, { p: 'P05', f: 'P05_F3' }, { p: 'P05', f: 'P05_F4' },
+      { p: 'P06', f: 'P06_S1' }, { p: 'P06', f: 'P06_S2' }, { p: 'P06', f: 'P06_S3' }, { p: 'P06', f: 'P06_S4' }, { p: 'P06', f: 'P06_S5' }, { p: 'P06', f: 'P06_S6' },
+      { p: 'P07', f: 'P07' }
+    ];
+
+    const contentGrid = document.getElementById('p01-p07-grid');
+    contentPieces.forEach(item => {
+      contentGrid.innerHTML += \`
+        <div class="card">
+          <a href="final-content/\${item.p}/\${item.f}.webp" target="_blank">
+            <img src="final-content/\${item.p}/\${item.f}.webp" alt="\${item.f}" onerror="this.src=''; this.alt='Error loading image';"/>
+          </a>
+          <h3>\${item.f}</h3>
+          <div class="meta"><strong>Pieza:</strong> \${item.p}</div>
+        </div>
+      \`;
+    });
+
+    const assets = [
+      { w: 1080, h: 1080, name: 'SB_INSTAGRAM_PROFILE_1080x1080_V01', cat: 'instagram', type: 'Profile' },
+      { w: 1080, h: 1350, name: 'SB_INSTAGRAM_POST_TEMPLATE_1080x1350_V01', cat: 'instagram', type: 'Post' },
+      { w: 1080, h: 1350, name: 'SB_INSTAGRAM_CAROUSEL_TEMPLATE_1080x1350_V01', cat: 'instagram', type: 'Carousel' },
+      { w: 1080, h: 1920, name: 'SB_INSTAGRAM_STORY_TEMPLATE_1080x1920_V01', cat: 'instagram', type: 'Story' },
+      { w: 1080, h: 1920, name: 'SB_INSTAGRAM_REEL_COVER_1080x1920_V01', cat: 'instagram', type: 'Reel Cover' },
+      
+      { w: 1080, h: 1080, name: 'SB_FACEBOOK_PROFILE_1080x1080_V01', cat: 'facebook', type: 'Profile' },
+      { w: 1640, h: 624, name: 'SB_FACEBOOK_COVER_1640x624_V01', cat: 'facebook', type: 'Cover' },
+      { w: 1080, h: 1350, name: 'SB_FACEBOOK_POST_VERTICAL_1080x1350_V01', cat: 'facebook', type: 'Post V' },
+      { w: 1200, h: 630, name: 'SB_FACEBOOK_POST_HORIZONTAL_1200x630_V01', cat: 'facebook', type: 'Post H' },
+
+      { w: 1080, h: 1080, name: 'SB_TIKTOK_PROFILE_1080x1080_V01', cat: 'tiktok', type: 'Profile' },
+      { w: 1080, h: 1920, name: 'SB_TIKTOK_VIDEO_COVER_1080x1920_V01', cat: 'tiktok', type: 'Cover' },
+
+      { w: 400, h: 400, name: 'SB_LINKEDIN_COMPANY_LOGO_400x400_V01', cat: 'linkedin', type: 'Logo' },
+      { w: 1128, h: 191, name: 'SB_LINKEDIN_COVER_1128x191_V01', cat: 'linkedin', type: 'Cover' },
+      { w: 1080, h: 1350, name: 'SB_LINKEDIN_POST_VERTICAL_1080x1350_V01', cat: 'linkedin', type: 'Post V' },
+      { w: 1200, h: 627, name: 'SB_LINKEDIN_POST_HORIZONTAL_1200x627_V01', cat: 'linkedin', type: 'Post H' },
+      { w: 1080, h: 1350, name: 'SB_LINKEDIN_CAROUSEL_TEMPLATE_1080x1350_V01', cat: 'linkedin', type: 'Carousel' },
+
+      { w: 800, h: 800, name: 'SB_YOUTUBE_PROFILE_800x800_V01', cat: 'youtube', type: 'Profile' },
+      { w: 2560, h: 1440, name: 'SB_YOUTUBE_BANNER_2560x1440_V01', cat: 'youtube', type: 'Banner' },
+      { w: 1280, h: 720, name: 'SB_YOUTUBE_THUMBNAIL_TEMPLATE_1280x720_V01', cat: 'youtube', type: 'Thumb' },
+
+      { w: 1080, h: 1080, name: 'SB_X_PROFILE_1080x1080_V01', cat: 'x', type: 'Profile' },
+      { w: 1500, h: 500, name: 'SB_X_HEADER_1500x500_V01', cat: 'x', type: 'Header' },
+      { w: 1600, h: 900, name: 'SB_X_POST_HORIZONTAL_1600x900_V01', cat: 'x', type: 'Post H' },
+
+      { w: 1080, h: 1080, name: 'SB_PINTEREST_PROFILE_1080x1080_V01', cat: 'pinterest', type: 'Profile' },
+      { w: 1000, h: 1500, name: 'SB_PINTEREST_PIN_VERTICAL_1000x1500_V01', cat: 'pinterest', type: 'Pin V' },
+
+      { w: 1200, h: 630, name: 'SB_OPEN_GRAPH_1200x630_V01', cat: 'open-graph', type: 'OG Image' },
+      { w: 512, h: 512, name: 'SB_FAVICON_512x512_V01', cat: 'favicon', type: 'Favicon' },
+      { w: 180, h: 180, name: 'SB_APPLE_TOUCH_ICON_180x180_V01', cat: 'favicon', type: 'Apple Touch' },
+      { w: 1024, h: 1024, name: 'SB_APP_ICON_1024x1024_V01', cat: 'favicon', type: 'App Icon' }
+    ];
+
+    const platforms = [...new Set(assets.map(a => a.cat))];
+    const container = document.getElementById('assets');
+
+    platforms.forEach(p => {
+      const pAssets = assets.filter(a => a.cat === p);
+      let html = '<div class="platform-section"><h2 style="text-transform: capitalize; color: #fff;">' + p.replace('-', ' ') + '</h2><div class="grid">';
+      
+      pAssets.forEach(a => {
+        html += '<div class="card">' +
+            '<a href="' + a.cat + '/' + a.name + '.webp" target="_blank">' +
+              '<img src="' + a.cat + '/' + a.name + '.webp" alt="' + a.name + '" onerror="this.src=\'\'; this.alt=\'Error loading image\';"/>' +
+            '</a>' +
+            '<h3>' + a.name + '</h3>' +
+            '<div class="meta"><strong>Plataforma:</strong> ' + p.toUpperCase() + '</div>' +
+            '<div class="meta"><strong>Dimensiones:</strong> ' + a.w + ' x ' + a.h + ' px</div>' +
+          '</div>';
+      });
+      html += '</div></div>';
+      container.innerHTML += html;
+    });
+  </script>
+</body>
+</html>

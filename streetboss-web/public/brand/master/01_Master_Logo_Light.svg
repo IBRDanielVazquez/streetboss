@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 500" width="3000" height="1000">
+  <g transform="translate(0, 0)">
+    <!-- Card 3 (Back) -->
+    <rect x="100" y="100" width="220" height="300" rx="25" fill="#0D0E12" opacity="0.6"/>
+    <!-- Card 2 (Middle) -->
+    <rect x="125" y="125" width="220" height="300" rx="25" fill="#0D0E12" opacity="0.8"/>
+    <!-- Card 1 (Front - Main) -->
+    <rect x="150" y="150" width="220" height="300" rx="25" fill="#FF4B00"/>
+    
+    <!-- Flame Icon -->
+    <path d="M260 170 C240 190 220 220 230 250 C200 230 210 200 235 180 C235 160 260 140 260 140 C260 140 280 160 280 180 C305 200 315 230 285 250 C295 220 275 190 260 170 Z" fill="#FFFFFF"/>
+    
+    <!-- Menu Pills -->
+    <circle cx="190" cy="300" r="18" fill="#0D0E12"/>
+    <rect x="230" y="282" width="100" height="36" rx="18" fill="#0D0E12"/>
+    
+    <circle cx="190" cy="350" r="18" fill="#0D0E12"/>
+    <rect x="230" y="332" width="100" height="36" rx="18" fill="#0D0E12"/>
+    
+    <circle cx="190" cy="400" r="18" fill="#0D0E12"/>
+    <rect x="230" y="382" width="100" height="36" rx="18" fill="#0D0E12"/>
+  </g>
+  
+  <g transform="translate(420, 350)">
+    <text x="0" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="220" fill="#0D0E12" letter-spacing="-6">Street</text>
+    <text x="590" y="0" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-weight="900" font-size="220" fill="#FF4B00" letter-spacing="-6">Boss.</text>
+  </g>
+</svg>

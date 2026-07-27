@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Tablero de Activos Sociales - StreetBoss</title>
+<style>
+  body { font-family: sans-serif; background: #0D0E12; color: #FFFFFF; padding: 40px; }
+  h1, h2 { color: #FF4B00; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-top: 20px; }
+  .card { background: #1a1c23; border-radius: 12px; padding: 20px; text-align: left; border: 1px solid #333; }
+  .card img { max-width: 100%; max-height: 200px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #333; }
+  .card h3 { margin: 0 0 10px 0; font-size: 14px; word-break: break-all; color: #FF6A1A; }
+  .meta { font-size: 12px; color: #aaa; margin: 5px 0; text-align: left; }
+  .status { display: inline-block; padding: 4px 8px; border-radius: 4px; background: #4caf50; color: white; font-weight: bold; font-size: 10px; margin-top: 10px;}
+  .platform-section { margin-top: 50px; border-top: 2px solid #333; padding-top: 20px; }
+</style>
+</head>
+<body>
+  <h1>Tablero de Activos Sociales Institucionales V01</h1>
+
+  <script>
+    const assets = [
+      { id: 'ig_profile', w: 1080, h: 1080, name: 'SB_INSTAGRAM_PROFILE_1080x1080_V01', cat: 'instagram', logo: 'Circular', type: 'Profile/Avatar' },
+      { id: 'ig_post_v', w: 1080, h: 1350, name: 'SB_INSTAGRAM_POST_TEMPLATE_1080x1350_V01', cat: 'instagram', logo: 'Horizontal', type: 'Post Vertical' },
+      { id: 'ig_carousel', w: 1080, h: 1350, name: 'SB_INSTAGRAM_CAROUSEL_TEMPLATE_1080x1350_V01', cat: 'instagram', logo: 'Horizontal', type: 'Carrusel' },
+      { id: 'ig_story', w: 1080, h: 1920, name: 'SB_INSTAGRAM_STORY_TEMPLATE_1080x1920_V01', cat: 'instagram', logo: 'Horizontal', type: 'Historia' },
+      { id: 'ig_reel', w: 1080, h: 1920, name: 'SB_INSTAGRAM_REEL_COVER_1080x1920_V01', cat: 'instagram', logo: 'Horizontal', type: 'Portada de Reel' },
+      
+      { id: 'fb_profile', w: 1080, h: 1080, name: 'SB_FACEBOOK_PROFILE_1080x1080_V01', cat: 'facebook', logo: 'App Icon Cuadrado', type: 'Profile/Avatar' },
+      { id: 'fb_cover', w: 1640, h: 624, name: 'SB_FACEBOOK_COVER_1640x624_V01', cat: 'facebook', logo: 'Horizontal', type: 'Portada' },
+      { id: 'fb_post_v', w: 1080, h: 1350, name: 'SB_FACEBOOK_POST_VERTICAL_1080x1350_V01', cat: 'facebook', logo: 'Horizontal', type: 'Post Vertical' },
+      { id: 'fb_post_h', w: 1200, h: 630, name: 'SB_FACEBOOK_POST_HORIZONTAL_1200x630_V01', cat: 'facebook', logo: 'Horizontal', type: 'Post Horizontal' },
+
+      { id: 'tt_profile', w: 1080, h: 1080, name: 'SB_TIKTOK_PROFILE_1080x1080_V01', cat: 'tiktok', logo: 'Circular', type: 'Profile/Avatar' },
+      { id: 'tt_cover', w: 1080, h: 1920, name: 'SB_TIKTOK_VIDEO_COVER_1080x1920_V01', cat: 'tiktok', logo: 'Horizontal', type: 'Portada de Video' },
+
+      { id: 'li_logo', w: 400, h: 400, name: 'SB_LINKEDIN_COMPANY_LOGO_400x400_V01', cat: 'linkedin', logo: 'App Icon Cuadrado', type: 'Profile/Logo de Empresa' },
+      { id: 'li_cover', w: 1128, h: 191, name: 'SB_LINKEDIN_COVER_1128x191_V01', cat: 'linkedin', logo: 'Horizontal', type: 'Portada' },
+      { id: 'li_post_v', w: 1080, h: 1350, name: 'SB_LINKEDIN_POST_VERTICAL_1080x1350_V01', cat: 'linkedin', logo: 'Horizontal', type: 'Post Vertical' },
+      { id: 'li_post_h', w: 1200, h: 627, name: 'SB_LINKEDIN_POST_HORIZONTAL_1200x627_V01', cat: 'linkedin', logo: 'Horizontal', type: 'Post Horizontal' },
+      { id: 'li_carousel', w: 1080, h: 1350, name: 'SB_LINKEDIN_CAROUSEL_TEMPLATE_1080x1350_V01', cat: 'linkedin', logo: 'Horizontal', type: 'Carrusel/Documento' },
+
+      { id: 'yt_profile', w: 800, h: 800, name: 'SB_YOUTUBE_PROFILE_800x800_V01', cat: 'youtube', logo: 'App Icon Cuadrado', type: 'Profile/Avatar' },
+      { id: 'yt_banner', w: 2560, h: 1440, name: 'SB_YOUTUBE_BANNER_2560x1440_V01', cat: 'youtube', logo: 'Horizontal', type: 'Banner' },
+      { id: 'yt_thumb', w: 1280, h: 720, name: 'SB_YOUTUBE_THUMBNAIL_TEMPLATE_1280x720_V01', cat: 'youtube', logo: 'Horizontal', type: 'Miniatura' },
+
+      { id: 'x_profile', w: 1080, h: 1080, name: 'SB_X_PROFILE_1080x1080_V01', cat: 'x', logo: 'Circular', type: 'Profile/Avatar' },
+      { id: 'x_header', w: 1500, h: 500, name: 'SB_X_HEADER_1500x500_V01', cat: 'x', logo: 'Horizontal', type: 'Header/Portada' },
+      { id: 'x_post_h', w: 1600, h: 900, name: 'SB_X_POST_HORIZONTAL_1600x900_V01', cat: 'x', logo: 'Horizontal', type: 'Post Horizontal' },
+
+      { id: 'pin_profile', w: 1080, h: 1080, name: 'SB_PINTEREST_PROFILE_1080x1080_V01', cat: 'pinterest', logo: 'Circular', type: 'Profile/Avatar' },
+      { id: 'pin_vertical', w: 1000, h: 1500, name: 'SB_PINTEREST_PIN_VERTICAL_1000x1500_V01', cat: 'pinterest', logo: 'Horizontal', type: 'Pin Vertical' },
+
+      { id: 'og_main', w: 1200, h: 630, name: 'SB_OPEN_GRAPH_1200x630_V01', cat: 'open-graph', logo: 'Horizontal', type: 'Open Graph Image' },
+      { id: 'favicon', w: 512, h: 512, name: 'SB_FAVICON_512x512_V01', cat: 'favicon', logo: 'App Icon Cuadrado', type: 'Favicon' },
+      { id: 'apple_touch', w: 180, h: 180, name: 'SB_APPLE_TOUCH_ICON_180x180_V01', cat: 'favicon', logo: 'App Icon Cuadrado', type: 'Apple Touch Icon' },
+      { id: 'app_icon', w: 1024, h: 1024, name: 'SB_APP_ICON_1024x1024_V01', cat: 'favicon', logo: 'App Icon Cuadrado', type: 'App Icon' }
+    ];
+
+    const platforms = [...new Set(assets.map(a => a.cat))];
+
+    platforms.forEach(p => {
+      const pAssets = assets.filter(a => a.cat === p);
+      let html = \`<div class="platform-section"><h2 style="text-transform: capitalize; color: #fff;">\${p.replace('-', ' ')} (\${pAssets.length} activos)</h2><div class="grid">\`;
+      
+      pAssets.forEach(a => {
+        html += \`
+          <div class="card">
+            <a href="\${a.cat}/\${a.name}.webp" target="_blank">
+              <img src="\${a.cat}/\${a.name}.webp" alt="\${a.name}" onerror="this.src=''; this.alt='Error loading image';"/>
+            </a>
+            <h3>\${a.name}</h3>
+            <div class="meta"><strong>Plataforma:</strong> \${p.toUpperCase()}</div>
+            <div class="meta"><strong>Tipo:</strong> \${a.type}</div>
+            <div class="meta"><strong>Dimensiones:</strong> \${a.w} x \${a.h} px</div>
+            <div class="meta"><strong>PNG disponible:</strong> Sí</div>
+            <div class="meta"><strong>WebP disponible:</strong> Sí</div>
+            <div class="meta" style="font-family: monospace; font-size: 10px;">/Users/danielvazquez/Proyectos/StreetBoss/brand-assets/social/final/\${a.cat}/\${a.name}</div>
+            <div class="status">LISTO_PARA_REVISION</div>
+          </div>
+        \`;
+      });
+      html += \`</div></div>\`;
+      document.body.innerHTML += html;
+    });
+  </script>
+</body>
+</html>

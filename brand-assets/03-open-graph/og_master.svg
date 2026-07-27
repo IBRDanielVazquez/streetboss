@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 630" width="1200" height="630">
+  <!-- StreetBoss · Open Graph 1200x630 · preview al compartir el link -->
+  <rect x="0" y="0" width="1200" height="630" fill="#0D0E12"/>
+  <rect x="760" y="0" width="440" height="630" fill="#17181d"/>
+  <text x="795" y="50" font-family="Inter, Arial, sans-serif" font-size="18" fill="#3a3d45">[FOOD IA · COVER_FOOD_DARK · sin logo]</text>
+  <!-- Logo maestro Dark (fondo oscuro) -->
+  <image xlink:href="../../brand-core/01_Master_Logo_Dark.svg" x="80" y="90" width="380" height="127"/>
+  <!-- Titular -->
+  <text x="90" y="360" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="62" fill="#FFFFFF" letter-spacing="-1">Vende directo.</text>
+  <text x="90" y="435" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="62" fill="#FF4B00" letter-spacing="-1">Manda tú.</text>
+  <text x="90" y="500" font-family="Inter, Arial, sans-serif" font-size="27" fill="#C7C9CE">La plataforma visual de venta directa para restaurantes.</text>
+</svg>

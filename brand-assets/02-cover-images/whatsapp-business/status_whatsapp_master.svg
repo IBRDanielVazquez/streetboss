@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <!-- StreetBoss · WhatsApp Business · Estado 1080x1920 (equivalente a portada) -->
+  <rect x="0" y="0" width="1080" height="1920" fill="#0D0E12"/>
+  <text x="80" y="120" font-family="Inter, Arial" font-size="24" fill="#3a3d45">[FOOD IA / mockup escaparate · sin logo]</text>
+  <image xlink:href="../../../brand-core/01_Master_Logo_Dark.svg" x="300" y="220" width="480" height="160"/>
+  <text x="540" y="900" text-anchor="middle" font-family="Poppins, Arial" font-weight="800" font-size="90" fill="#FFFFFF">Haz tu pedido</text>
+  <text x="540" y="1010" text-anchor="middle" font-family="Poppins, Arial" font-weight="800" font-size="90" fill="#FF4B00">aquí 👇</text>
+  <rect x="240" y="1150" width="600" height="120" rx="60" fill="#FF4B00"/>
+  <text x="540" y="1228" text-anchor="middle" font-family="Poppins, Arial" font-weight="800" font-size="46" fill="#0D0E12">Ver el menú</text>
+  <text x="540" y="1420" text-anchor="middle" font-family="Inter, Arial" font-size="34" fill="#C7C9CE">[link del escaparate]</text>
+</svg>

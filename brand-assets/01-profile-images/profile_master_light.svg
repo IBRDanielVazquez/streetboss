@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1080 1080" width="1080" height="1080">
+  <!-- StreetBoss · Profile Master · Variante CLARA -->
+  <!-- Fondo Absolute White (#FFFFFF). Se referencia el ícono maestro, no se redibuja. -->
+  <rect x="0" y="0" width="1080" height="1080" fill="#FFFFFF"/>
+  <image xlink:href="../../brand-core/01_Master_Icon.svg" x="205" y="205" width="670" height="670"/>
+</svg>

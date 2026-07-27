@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1640 924" width="1640" height="924">
+  <!-- StreetBoss · Facebook Cover · Layout master -->
+  <!-- Capa 1: fondo. Izquierda Charcoal sólido / Derecha food premium IA (reemplazar) -->
+  <rect x="0" y="0" width="1640" height="924" fill="#0D0E12"/>
+  <rect x="960" y="0" width="680" height="924" fill="#17181d"/>
+  <text x="1000" y="60" font-family="Inter, Arial, sans-serif" font-size="22" fill="#3a3d45">[FOOD IA · COVER_FOOD_DARK · 45° · sin logo]</text>
+
+  <!-- Área segura central ~1090x470 centrada: x275→1365, y227→697 -->
+  <rect x="275" y="227" width="1090" height="470" fill="none" stroke="#FF4B00" stroke-width="2" stroke-dasharray="10 8" opacity="0.3"/>
+
+  <!-- Logo maestro variante DARK (Street en blanco) para fondo Charcoal -->
+  <image xlink:href="../../../brand-core/01_Master_Logo_Dark.svg" x="290" y="250" width="430" height="143"/>
+
+  <!-- Titular -->
+  <text x="300" y="500" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="82" fill="#FFFFFF" letter-spacing="-2">Vende directo.</text>
+  <text x="300" y="590" font-family="Poppins, Arial, sans-serif" font-weight="800" font-size="82" fill="#FF4B00" letter-spacing="-2">Manda tú.</text>
+
+  <!-- Apoyo -->
+  <text x="300" y="650" font-family="Inter, Arial, sans-serif" font-size="30" fill="#C7C9CE">Tu escaparate digital · Pedidos a tu WhatsApp · Cero comisiones</text>
+
+  <!-- CTA discreto -->
+  <text x="300" y="690" font-family="Inter, Arial, sans-serif" font-weight="600" font-size="26" fill="#FF6A1A">Escríbenos por WhatsApp →</text>
+</svg>
