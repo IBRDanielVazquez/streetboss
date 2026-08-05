@@ -4,6 +4,57 @@
 
 ---
 
+## 2026-08-05 — Auditoría Exhaustiva de Calidad y Generación de Base Maestra Auditada
+
+**Hora:** 02:42 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Auditoría integral, separación de sucursales independientes, matrices de trazabilidad y muestreo de control.
+
+### Cambios realizados
+
+- **Motor de Auditoría y Control de Calidad (`scripts/master_dataset_auditor.py`):**
+  - Lectura exhaustiva de todas las pestañas de archivos `.xlsx` y `.xls` y encodings en CSVs (15,345 filas brutas).
+  - Regla estricta de **Sucursales Independientes**: preservó 1,901 restaurantes/sucursales independientes basándose en diferencias de dirección, teléfono o redes sociales.
+  - Auditoría de **Registros Descartados**: clasificados 9,790 descartes (incluyendo 9,593 filas del Catálogo de CP Correos de México y ventas inmobiliarias).
+  - Matriz de deduplicación con 1,580 fusiones correctas confirmadas y 0 fusiones riesgosas por similitud de nombre únicamente.
+- **Nuevos Archivos Generados (`data/`):**
+  - `MASTER_RESTAURANTS_AUDITED.xlsx` (341 KB)
+  - `MASTER_RESTAURANTS_AUDITED.csv` (1.55 MB)
+  - `MASTER_RESTAURANTS_AUDITED.json` (2.59 MB)
+  - `DEDUPLICATION_AUDIT.xlsx` (127 KB)
+  - `RESTAURANTS_REJECTED_AUDIT.xlsx` (191 KB)
+  - `QUALITY_CONTROL_SAMPLE.xlsx` (33 KB, 4 pestañas: Aleatorios, Mayor Fusiones, Menor Confianza, Descartados)
+  - `MASTER_RESTAURANTS_AUDITED_REPORT.md`
+- **Archivos Originales Preservados:**
+  - `MASTER_RESTAURANTS.xlsx`, `MASTER_RESTAURANTS.csv` y `MASTER_RESTAURANTS.json` permanecen 100% intactos.
+
+---
+
+## 2026-08-05 — Construcción de la Base Maestra Oficial de Restaurantes StreetBoss
+
+**Hora:** 02:27 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Creación y ejecución de `master_dataset_builder.py` para consolidad datasets de `~/Downloads`.
+
+### Cambios realizados
+
+- **Motor de Ingestión y Normalización (`scripts/master_dataset_builder.py`):**
+  - Escaneo automático de 22 archivos Excel y CSV en `~/Downloads`.
+  - Ingestión de 5,753 registros brutos.
+  - Filtro estricto de no-alimentos (descartados 198 registros).
+  - Normalización canónica de URLs de Facebook, Instagram y WhatsApp (1,157 URLs limpias).
+  - Deduplicación inteligente y consolidación incremental obteniendo **1,190 restaurantes únicos**.
+  - Clasificación en categorías/subcategorías y cálculo de **Score Comercial (0-100)**.
+- **Archivos Maestros Generados (`data/`):**
+  - `data/MASTER_RESTAURANTS.xlsx`
+  - `data/MASTER_RESTAURANTS.csv`
+  - `data/MASTER_RESTAURANTS.json`
+  - `data/MASTER_RESTAURANTS_REPORT.md`
+- **Documentación:**
+  - `docs/README_DATASET_BUILDER.md`
+
+---
+
 ## 2026-07-22 — Consolidación de Identidad y Activos de Marca
 
 **Hora:** 09:25 CST  

@@ -9,6 +9,19 @@ const STORAGE_KEYS = {
   DELIVERY_ZONES: 'sb_v3_delivery_zones',
   PROSPECTS: 'sb_v3_prospects',
   AUDIT: 'sb_v3_audit',
+  CUSTOMERS: 'sb_v3_business_customers',
+  ORDERS: 'sb_v3_orders',
+}
+
+// Helper: Normalizador de teléfono de México (10 dígitos limpios)
+export function normalizeMexicanPhone(phone) {
+  let digits = String(phone || '').replace(/\D/g, '')
+  if (digits.startsWith('52') && digits.length === 12) {
+    digits = digits.slice(2)
+  } else if (digits.startsWith('1') && digits.length === 11) {
+    digits = digits.slice(1)
+  }
+  return digits.slice(-10)
 }
 
 // Helper: Generador de contraseña segura
@@ -682,3 +695,148 @@ export function logAuditAction(action, targetId, details = {}) {
 export function getAuditLogs() {
   return JSON.parse(localStorage.getItem(STORAGE_KEYS.AUDIT) || '[]')
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// REGISTRO DE PEDIDOS Y CLIENTES DEL RESTAURANTE (MULTI-TENANT DEDUPLICADO)
+// ─────────────────────────────────────────────────────────────────────────────
+export function recordPublicOrder(orderPayload) {
+  const {
+    business_id,
+    business_name,
+    customer_name,
+    phone,
+    whatsapp,
+    email,
+    colonia,
+    postal_code,
+    address,
+    items = [],
+    subtotal = 0,
+    delivery_fee = 0,
+    total = 0,
+    delivery_type = 'domicilio',
+    promo_consent = false,
+    whatsapp_message = '',
+  } = orderPayload
+
+  const nowISO = new Date().toISOString()
+  const phoneClean = normalizeMexicanPhone(phone || whatsapp)
+
+  // 1. Deduplicar o registrar cliente privado del restaurante
+  let customerList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  let existingCustomer = customerList.find(
+    c => c.business_id === business_id && (
+      (phoneClean && c.phone_normalized === phoneClean) ||
+      (email && c.email && c.email.toLowerCase().trim() === email.toLowerCase().trim())
+    )
+  )
+
+  let customerId = existingCustomer ? existingCustomer.id : `cust_${business_id}_${Math.random().toString(36).slice(2, 7)}`
+
+  if (existingCustomer) {
+    existingCustomer.name = customer_name || existingCustomer.name
+    existingCustomer.phone = phone || existingCustomer.phone
+    existingCustomer.whatsapp = whatsapp || existingCustomer.whatsapp
+    existingCustomer.email = email || existingCustomer.email
+    existingCustomer.colonia = colonia || existingCustomer.colonia
+    existingCustomer.postal_code = postal_code || existingCustomer.postal_code
+    existingCustomer.address = address || existingCustomer.address
+    existingCustomer.last_order_at = nowISO
+    existingCustomer.orders_count = (existingCustomer.orders_count || 1) + 1
+    existingCustomer.total_spent = Number((existingCustomer.total_spent || 0) + total)
+    if (promo_consent) {
+      existingCustomer.promo_consent = true
+      existingCustomer.promo_consent_at = nowISO
+      existingCustomer.consent_details = {
+        accepted_text: 'Quiero recibir promociones y novedades de este negocio por WhatsApp.',
+        channel: 'whatsapp',
+        version: 'v1.0'
+      }
+    }
+  } else {
+    const newCustomer = {
+      id: customerId,
+      business_id,
+      name: customer_name || 'Cliente de WhatsApp',
+      phone: phone || '',
+      whatsapp: whatsapp || phone || '',
+      phone_normalized: phoneClean,
+      email: email || '',
+      colonia: colonia || '',
+      postal_code: postal_code || '',
+      address: address || '',
+      first_order_at: nowISO,
+      last_order_at: nowISO,
+      orders_count: 1,
+      total_spent: Number(total),
+      promo_consent: !!promo_consent,
+      promo_consent_at: promo_consent ? nowISO : null,
+      consent_details: promo_consent ? {
+        accepted_text: 'Quiero recibir promociones y novedades de este negocio por WhatsApp.',
+        channel: 'whatsapp',
+        version: 'v1.0'
+      } : null,
+      created_at: nowISO,
+    }
+    customerList.unshift(newCustomer)
+  }
+  localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(customerList))
+
+  // 2. Registrar Pedido en la Base Central
+  let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+  const orderNumber = `#SB-${Math.floor(10000 + Math.random() * 90000)}`
+
+  const newOrder = {
+    id: `ord_${Date.now().toString(36)}`,
+    order_number: orderNumber,
+    business_id,
+    business_name: business_name || 'Restaurante',
+    customer_id: customerId,
+    customer_name: customer_name || 'Cliente',
+    phone: phone || '',
+    whatsapp: whatsapp || phone || '',
+    email: email || '',
+    delivery_type, // 'domicilio' | 'recoleccion'
+    colonia: colonia || '',
+    postal_code: postal_code || '',
+    address: address || '',
+    items,
+    subtotal: Number(subtotal),
+    delivery_fee: Number(delivery_fee),
+    total: Number(total),
+    whatsapp_message,
+    whatsapp_status: 'whatsapp_abierto',
+    status: 'creado',
+    created_at: nowISO,
+  }
+
+  ordersList.unshift(newOrder)
+  localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+
+  return { order: newOrder, customerId }
+}
+
+export function getBusinessCustomers(businessId) {
+  const customerList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  return customerList.filter(c => c.business_id === businessId)
+}
+
+export function updateCustomerPromoConsent(customerId, hasConsent) {
+  let customerList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  const idx = customerList.findIndex(c => c.id === customerId)
+  if (idx !== -1) {
+    customerList[idx].promo_consent = hasConsent
+    customerList[idx].promo_consent_at = hasConsent ? new Date().toISOString() : null
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(customerList))
+  }
+}
+
+export function getAllOrders() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+}
+
+export function getOrdersByBusiness(businessId) {
+  const orders = getAllOrders()
+  return orders.filter(o => o.business_id === businessId)
+}
+

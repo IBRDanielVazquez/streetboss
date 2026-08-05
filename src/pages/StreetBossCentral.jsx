@@ -3,12 +3,14 @@ import DemosTab from '../components/crm/DemosTab'
 import CrearNegocioTab from '../components/crm/CrearNegocioTab'
 import ClientesTab from '../components/crm/ClientesTab'
 import ProspectosTab from '../components/crm/ProspectosTab'
+import PedidosCRMTab from '../components/crm/PedidosCRMTab'
 import {
   Home,
   Store,
   Sparkles,
   Users,
   UserPlus,
+  ShoppingBag,
   Shield,
   Activity,
   Settings,
@@ -137,6 +139,18 @@ export default function StreetBossCentral() {
             </button>
 
             <button
+              onClick={() => { setActiveTab('pedidos'); setSidebarOpen(false) }}
+              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                activeTab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <ShoppingBag size={16} /> Registro de Pedidos
+              </div>
+              <ChevronRight size={14} opacity={0.6} />
+            </button>
+
+            <button
               onClick={() => { setActiveTab('crear'); setSidebarOpen(false) }}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                 activeTab === 'crear' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'
@@ -247,6 +261,11 @@ export default function StreetBossCentral() {
         {/* PROSPECTOS */}
         {activeTab === 'prospectos' && (
           <ProspectosTab onConvertProspectToBusiness={handleConvertProspectToBusiness} />
+        )}
+
+        {/* PEDIDOS */}
+        {activeTab === 'pedidos' && (
+          <PedidosCRMTab />
         )}
 
         {/* OPERACIÓN (PRÓXIMAMENTE) */}

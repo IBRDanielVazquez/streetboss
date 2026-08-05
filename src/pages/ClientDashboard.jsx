@@ -13,7 +13,8 @@ import {
   saveDeliveryZones,
   bulkUpdateZoneFees
 } from '../services/crmV3Service'
-import { buscarPorCP, buscarPorColonia } from '../data/sepomexTuxtla'
+import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
+import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
 import {
   Store,
   Layers,
@@ -35,8 +36,7 @@ import {
   AlertTriangle,
   Globe,
   Share2,
-  CheckSquare,
-  Square
+  Users
 } from 'lucide-react'
 
 // Helper: Convert File object to Base64 WebP Data URL for local storage persistence
@@ -218,9 +218,9 @@ export default function ClientDashboard() {
     }
   }
 
-  // 4. Zonas de Entrega (Tuxtla Gutiérrez)
-  const resultsByCP = cpSearch ? buscarPorCP(cpSearch) : []
-  const resultsByColonia = coloniaSearch ? buscarPorColonia(coloniaSearch) : []
+  // 4. Zonas de Entrega (Tuxtla Gutiérrez Síncrono)
+  const resultsByCP = cpSearch ? buscarPorCPSync(cpSearch) : []
+  const resultsByColonia = coloniaSearch ? buscarPorColoniaSync(coloniaSearch) : []
 
   const handleAddSettlement = (item, fee = 30) => {
     const existing = zones.find(z => z.postal_code === item.cp && z.settlement_name === item.colonia)
@@ -377,6 +377,15 @@ export default function ClientDashboard() {
           }`}
         >
           <MapPin size={14} /> Servicio a Domicilio ({zones.length})
+        </button>
+
+        <button
+          onClick={() => setTab('clientes')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <Users size={14} /> Mis Clientes Privados
         </button>
       </nav>
 
@@ -965,6 +974,11 @@ export default function ClientDashboard() {
               </div>
             )}
           </div>
+        )}
+
+        {/* PESTAÑA 6: MIS CLIENTES PRIVADOS */}
+        {tab === 'clientes' && (
+          <RestaurantCustomersTab businessId={business.business_id} businessName={business.name} />
         )}
       </main>
 

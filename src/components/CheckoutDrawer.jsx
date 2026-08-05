@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { X, CheckCircle, Store, Bike, Search } from 'lucide-react'
 import { buscarPorCP, verificarCobertura } from '../data/sepomexTuxtla'
+import { recordPublicOrder } from '../services/crmV3Service'
 
 // Genera folio único tipo SB-AXKF-7821
 const generarFolio = () => {
@@ -36,6 +37,7 @@ export default function CheckoutDrawer({
     referencias: '',
     observaciones: ''
   })
+  const [promoConsent, setPromoConsent] = useState(false)
   const [pedidoConfirmado, setPedidoConfirmado] = useState(null)
   // SEPOMEX
   const [coloniasDisponibles, setColoniasDisponibles] = useState([])
@@ -52,28 +54,15 @@ export default function CheckoutDrawer({
     }
     setBuscandoCP(true)
     buscarPorCP(datosCliente.cp).then(resultado => {
-      if (resultado) {
-        const zonas = config.envio?.zonas || []
-        let coloniasFiltradas = resultado.colonias
-        
-        // Si el negocio tiene zonas configuradas para este CP, filtrar solo las colonias habilitadas
-        if (zonas.length > 0) {
-          const zonaCP = zonas.find(z => String(z.cp).trim() === datosCliente.cp.trim())
-          if (zonaCP && zonaCP.colonias && zonaCP.colonias.length > 0) {
-            coloniasFiltradas = resultado.colonias.filter(c => 
-              zonaCP.colonias.some(zc => zc.toLowerCase().trim() === c.toLowerCase().trim())
-            )
-          }
-        }
-        
+      if (resultado && resultado.length > 0) {
+        const coloniasFiltradas = resultado.map(item => item.colonia)
         setColoniasDisponibles(coloniasFiltradas)
-        const colInicial = coloniasFiltradas[0] || resultado.colonias[0] || ''
-        setDatosCliente(d => ({ ...d, estado: resultado.estado, municipio: resultado.municipio, colonia: colInicial }))
+        const colInicial = coloniasFiltradas[0] || ''
+        setDatosCliente(d => ({ ...d, estado: resultado[0]?.estado || 'Chiapas', municipio: resultado[0]?.municipio || 'Tuxtla Gutiérrez', colonia: colInicial }))
         
-        if (zonas.length > 0) {
-          const cob = verificarCobertura(datosCliente.cp, colInicial, zonas)
-          setCobertura(cob)
-        }
+        const zonas = config.envio?.zonas || []
+        const cob = verificarCobertura(datosCliente.cp, colInicial, zonas)
+        setCobertura(cob)
       } else {
         setColoniasDisponibles([])
         setDatosCliente(d => ({ ...d, estado: 'CP no encontrado', municipio: '', colonia: '' }))
@@ -85,7 +74,7 @@ export default function CheckoutDrawer({
   // Revalidar cobertura al cambiar colonia
   useEffect(() => {
     const zonas = config.envio?.zonas || []
-    if (zonas.length > 0 && datosCliente.cp.length === 5) {
+    if (datosCliente.cp.length === 5) {
       const cob = verificarCobertura(datosCliente.cp, datosCliente.colonia, zonas)
       setCobertura(cob)
     } else {
@@ -99,7 +88,7 @@ export default function CheckoutDrawer({
     const items = []
     Object.entries(carrito).forEach(([id, cant]) => {
       const p = productosPorId[id]
-      if (p && p.activo && !p.agotado) {
+      if (p && p.activo && !p.agotado && !p.is_out_of_stock) {
         sub += p.precio * cant
         items.push({ ...p, cant, subtotal: p.precio * cant })
       }
@@ -109,7 +98,7 @@ export default function CheckoutDrawer({
 
   // Si hay zonas configuradas, usar el precio de cobertura; si no, usar el costo fijo del config
   const costoEnvio = datosCliente.tipo === 'llevar'
-    ? (config.envio?.zonas?.length > 0 ? cobertura.precioEnvio : (config.envio?.costoEnvio || 0))
+    ? (cobertura.precioEnvio || config.envio?.costoEnvio || 0)
     : 0
   const total = subtotal + costoEnvio
 
@@ -126,7 +115,6 @@ export default function CheckoutDrawer({
     const folio = generarFolio()
     const esLlevar = datosCliente.tipo === 'llevar'
 
-    // NUEVO FORMATO DE WHATSAPP (Fase 4)
     let msg = `🍔 *NUEVO PEDIDO: ${config.negocio || 'StreetBoss'}*\n`
     msg += `📋 *Folio:* ${folio}\n\n`
     msg += `*CLIENTE:*\n👤 ${datosCliente.nombre.trim()}\n📱 ${datosCliente.whatsapp.trim()}\n\n`
@@ -154,7 +142,7 @@ export default function CheckoutDrawer({
     if (datosCliente.observaciones) msg += `📝 *Nota:* ${datosCliente.observaciones.trim()}\n`
 
     msg += `\n*RESUMEN:*\n💰 Subtotal: $${subtotal}\n`
-    if (esLlevar) msg += `🛵 Envío: $${costoEnvio}\n`
+    if (esLlevar) msg += `🛵 Envío: $${costoEnvio === 0 ? 'GRATIS' : `$${costoEnvio}`}\n`
     msg += `✅ *TOTAL: $${total}*\n`
     
     const pagoL = datosCliente.formaPago === 'efectivo' ? 'Efectivo (Paga al recibir)' : 
@@ -162,6 +150,29 @@ export default function CheckoutDrawer({
     msg += `💵 Pago: ${pagoL}\n`
     
     if (datosCliente.formaPago === 'transferencia') msg += `\n📎 Adjunto comprobante de pago.`
+
+    // REGISTRAR PEDIDO Y CLIENTE EN LA BASE CENTRAL ANTES DE ABRIR WHATSAPP
+    try {
+      recordPublicOrder({
+        business_id: config.business_id || config.id || 'tacos-el-guero',
+        business_name: config.negocio || config.nombre || 'Restaurante',
+        customer_name: datosCliente.nombre.trim(),
+        phone: datosCliente.whatsapp.trim(),
+        whatsapp: datosCliente.whatsapp.trim(),
+        colonia: datosCliente.colonia,
+        postal_code: datosCliente.cp,
+        address: `${datosCliente.calle} #${datosCliente.numero}`,
+        items: itemsCarrito.map(i => ({ id: i.id, name: i.nombre, price: i.precio, qty: i.cant, subtotal: i.subtotal })),
+        subtotal,
+        delivery_fee: costoEnvio,
+        total,
+        delivery_type: datosCliente.tipo,
+        promo_consent: promoConsent,
+        whatsapp_message: msg,
+      })
+    } catch (err) {
+      console.warn('Error guardando pedido público:', err)
+    }
 
     window.open(`https://wa.me/52${config.whatsapp || '9612466204'}?text=${encodeURIComponent(msg)}`, '_blank')
 
@@ -437,6 +448,19 @@ export default function CheckoutDrawer({
                       </div>
                     </label>
                   )}
+
+                {/* Casilla de Consentimiento Promocional Opcional */}
+                <div className="mt-4 p-3 bg-[#FAFAFA] border border-gray-200 rounded-xl">
+                  <label className="flex items-start gap-2.5 cursor-pointer text-xs text-gray-700 font-medium">
+                    <input
+                      type="checkbox"
+                      checked={promoConsent}
+                      onChange={e => setPromoConsent(e.target.checked)}
+                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-0"
+                    />
+                    <span>Quiero recibir promociones y novedades de este negocio por WhatsApp.</span>
+                  </label>
+                </div>
                 </div>
               </div>
             </div>

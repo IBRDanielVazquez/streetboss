@@ -1,78 +1,84 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// SEPOMEX — Módulo exclusivo para Tuxtla Gutiérrez, Chiapas
+// SEPOMEX — Módulo oficial exclusivo para Tuxtla Gutiérrez, Chiapas
 // 53 Códigos Postales · 507 Colonias y Asentamientos Oficiales
 // ─────────────────────────────────────────────────────────────────────────────
+import sepomexRawData from '../../public/data/sepomex-tuxtla.json'
 
-let cacheTuxtla = null
+let dataTuxtla = sepomexRawData
 
-export async function cargarDatosTuxtla() {
-  if (cacheTuxtla) return cacheTuxtla
-  try {
-    const res = await fetch('/data/sepomex-tuxtla.json')
-    if (!res.ok) throw new Error('No se pudo cargar SEPOMEX Tuxtla')
-    cacheTuxtla = await res.json()
-    return cacheTuxtla
-  } catch (err) {
-    console.warn('[SEPOMEX Tuxtla] Error cargando JSON, usando fallback:', err)
-    return null
-  }
+// Helper: Normalizador de texto (Quita acentos, convierte a minúsculas)
+export function normalizeText(str) {
+  return String(str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
 }
 
 /**
- * Busca colonias y datos para un CP de Tuxtla Gutiérrez
+ * Retorna la lista plana de las 507 colonias de Tuxtla Gutiérrez
  */
-export async function buscarPorCP(cp) {
-  if (!cp || String(cp).trim().length !== 5) return null
-  const datos = await cargarDatosTuxtla()
-  if (!datos || !datos.codigos) return null
-
-  const colonias = datos.codigos[String(cp).trim()]
-  if (!colonias) return null
-
-  return {
-    estado: datos.estado,
-    municipio: datos.municipio,
-    ciudad: datos.ciudad,
-    colonias: colonias
-  }
-}
-
-/**
- * Retorna todas las colonias de Tuxtla Gutiérrez agrupadas por CP
- */
-export async function obtenerTodosLosCodigosYColonias() {
-  const datos = await cargarDatosTuxtla()
-  if (!datos || !datos.codigos) return []
-  
-  const lista = []
-  Object.entries(datos.codigos).forEach(([cp, colonias]) => {
-    colonias.forEach(colonia => {
-      lista.push({
-        cp,
-        colonia,
-        municipio: datos.municipio,
-        estado: datos.estado
+export function getFlatTuxtlaSettlements() {
+  if (!dataTuxtla || !dataTuxtla.codigos) return []
+  const list = []
+  Object.entries(dataTuxtla.codigos).forEach(([cp, colonias]) => {
+    colonias.forEach((colonia, idx) => {
+      list.push({
+        id: `tuxtla_${cp}_${idx}`,
+        cp: String(cp).trim(),
+        colonia: colonia.trim(),
+        tipo: 'Colonia',
+        municipio: dataTuxtla.municipio || 'Tuxtla Gutiérrez',
+        ciudad: dataTuxtla.ciudad || 'Tuxtla Gutiérrez',
+        estado: dataTuxtla.estado || 'Chiapas',
+        colonia_norm: normalizeText(colonia)
       })
     })
   })
-  return lista
+  return list
+}
+
+const ALL_SETTLEMENTS = getFlatTuxtlaSettlements()
+
+/**
+ * Búsqueda síncrona instantánea por CP o Colonia
+ */
+export function buscarColoniasSync(query) {
+  if (!query || !String(query).trim()) return []
+  const qNorm = normalizeText(query)
+  const qClean = String(query).trim()
+
+  return ALL_SETTLEMENTS.filter(item => {
+    const matchCP = item.cp.includes(qClean)
+    const matchColonia = item.colonia_norm.includes(qNorm)
+    return matchCP || matchColonia
+  }).slice(0, 50)
 }
 
 /**
- * Filtra colonias por nombre o CP
+ * Búsqueda síncrona instantánea por CP
  */
+export function buscarPorCPSync(cp) {
+  if (!cp || !String(cp).trim()) return []
+  const qClean = String(cp).trim()
+  return ALL_SETTLEMENTS.filter(item => item.cp.includes(qClean))
+}
+
+// Exportaciones Async para mantener compatibilidad
+export async function cargarDatosTuxtla() {
+  return dataTuxtla
+}
+
+export async function buscarPorCP(cp) {
+  return buscarPorCPSync(cp)
+}
+
 export async function buscarColonias(query) {
-  if (!query || !query.trim()) return []
-  const q = query.toLowerCase().trim()
-  const todos = await obtenerTodosLosCodigosYColonias()
-  
-  return todos.filter(item => 
-    item.colonia.toLowerCase().includes(q) || 
-    item.cp.includes(q)
-  ).slice(0, 30) // límite de 30 resultados
+  return buscarColoniasSync(query)
 }
 
 export const buscarPorColonia = buscarColonias
+export const buscarPorColoniaSync = buscarColoniasSync
 
 /**
  * Verifica si un CP y Colonia están cubiertos en las zonas configuradas por un negocio
@@ -83,20 +89,18 @@ export function verificarCobertura(cp, colonia, zonas = []) {
   }
 
   const cpLimpio = String(cp || '').trim()
-  const coloniaLimpia = String(colonia || '').toLowerCase().trim()
+  const coloniaNorm = normalizeText(colonia)
 
   const zonaEncontrada = zonas.find(z => {
-    // V3 object format: postal_code, settlement_name, delivery_fee
     if (z.postal_code || z.settlement_name) {
       const matchCp = !z.postal_code || String(z.postal_code).trim() === cpLimpio
-      const matchCol = !z.settlement_name || String(z.settlement_name).toLowerCase().trim() === coloniaLimpia
+      const matchCol = !z.settlement_name || normalizeText(z.settlement_name) === coloniaNorm
       return matchCp && matchCol
     }
 
-    // Format: cp, colonias, precioEnvio
     if (String(z.cp || '').trim() !== cpLimpio) return false
     if (!z.colonias || z.colonias.length === 0) return true
-    return z.colonias.some(c => String(c).toLowerCase().trim() === coloniaLimpia)
+    return z.colonias.some(c => normalizeText(c) === coloniaNorm)
   })
 
   if (!zonaEncontrada) {

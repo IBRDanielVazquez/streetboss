@@ -1,13 +1,13 @@
 # ESTADO ACTUAL — STREETBOSS
 
-> Última actualización: 2026-07-22
+> Última actualización: 2026-08-05
 > Actualizado por: Antigravity (Google DeepMind)
 
 ## Estado General
 
-**Estado: 🟢 CONSOLIDACIÓN DE ACTIVOS Y SISTEMA DE MARCA COMPLETADO**
+**Estado: 🟢 AUDITORIA DE CALIDAD COMPLETADA Y BASE MAESTRA AUDITADA GENERADA (1,901 SUCURSALES / RESTAURANTES UNICOS)**
 
-La carpeta `/Users/danielvazquez/Proyectos/StreetBoss` se mantiene como la **fuente de verdad oficial y única** del proyecto StreetBoss. Se ha completado con éxito la incorporación de `brand-core` y `brand-assets` directamente en la raíz como carpetas hermanas oficiales.
+Se ha ejecutado la auditoría integral de calidad (`scripts/master_dataset_auditor.py`) sobre los 22 datasets de `~/Downloads` procesando todas las pestañas de archivos Excel y encodings de CSVs (15,345 filas leídas). Se aplicó la regla estricta de separación de sucursales independientes por dirección/contacto, se auditó el 100% de descartes (9,790 filas) y se generaron los archivos entregables auditados sin modificar los maestros originales.
 
 
 ---
