@@ -1,11 +1,14 @@
 {
   "name": "StreetBoss",
   "short_name": "StreetBoss",
-  "description": "Control total de tu negocio ambulante",
+  "description": "Menú digital para vender directo por WhatsApp sin comisiones",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111111",
-  "theme_color": "#f5b87a",
-  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "theme_color": "#ff4b16",
+  "icons": [
+    { "src": "/brand/SB_FAVICON_512x512_V01.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/brand/SB_APPLE_TOUCH_ICON_180x180_V01.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
 }

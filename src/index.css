@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Inter self-hosted (variable, subset latin) — evita el render-block de Google Fonts */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter-latin-var.woff2') format('woff2');
+}
+
 * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 body { background: #111; color: #fff; font-family: 'Inter', system-ui, sans-serif; overscroll-behavior: none; -webkit-font-smoothing: antialiased; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -9,3 +18,29 @@ body { background: #111; color: #fff; font-family: 'Inter', system-ui, sans-seri
 @keyframes blink-border { 0%,100%{border-color:#ef4444}50%{border-color:transparent} }
 .border-blink { animation: blink-border 1.2s ease-in-out infinite; }
 @media print { body{background:white;color:black} .print-hidden{display:none!important} }
+
+/* Fix input contrast, text color, and browser autofill */
+input, select, textarea {
+  color-scheme: light;
+}
+
+.bg-white input, .bg-white select, .bg-white textarea,
+.bg-gray-50 input, .bg-gray-50 select, .bg-gray-50 textarea,
+.bg-gray-100 input, .bg-gray-100 select, .bg-gray-100 textarea {
+  color: #111827 !important;
+  caret-color: #111827;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #111827 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

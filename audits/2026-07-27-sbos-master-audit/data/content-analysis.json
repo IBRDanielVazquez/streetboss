@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T19:28:09.000Z",
+  "generatedAt": "2026-07-27T20:02:58.917Z",
   "source": "/Users/danielvazquez/Proyectos/StreetBoss/brand-operating-system/src/data/posts.json",
   "totalPosts": 325,
   "byNetwork": {
@@ -30,33 +30,26 @@
       "field": "hook",
       "present": 325,
       "empty": 0,
-      "uniqueValues": 5,
-      "duplicateGroups": 5,
-      "duplicatedItems": 325,
+      "uniqueValues": 159,
+      "duplicateGroups": 94,
+      "duplicatedItems": 260,
       "examples": [
         [
           "IN-FEED-001",
-          "IN-REEL-005",
-          "IN-STORY-008",
-          "FA-REEL-014",
-          "WH-STATUS-020",
-          "YO-SHORT-025"
+          "TI-VIDEO-193",
+          "IN-STORY-283"
         ],
         [
           "IN-FEED-002",
-          "IN-STORY-010",
-          "FA-COMERCIAL-016",
-          "IN-REEL-031",
-          "IN-STORY-035",
-          "FA-COMERCIAL-041"
+          "IN-STORY-084",
+          "LI-POST-149",
+          "TI-VIDEO-167",
+          "IN-STORY-310"
         ],
         [
-          "IN-FEED-003",
-          "IN-CARRUSEL-004",
-          "IN-REEL-006",
-          "IN-STORY-007",
-          "TI-VIDEO-017",
-          "WH-STATUS-021"
+          "IN-REEL-005",
+          "FA-FEED-088",
+          "IN-CARRUSEL-254"
         ]
       ]
     },
@@ -64,67 +57,42 @@
       "field": "copy",
       "present": 325,
       "empty": 0,
-      "uniqueValues": 45,
-      "duplicateGroups": 45,
-      "duplicatedItems": 325,
-      "examples": [
-        [
-          "IN-FEED-001",
-          "IN-STORY-084",
-          "TI-VIDEO-093",
-          "TI-VIDEO-117",
-          "IN-STORY-157",
-          "IN-STORY-183"
-        ],
-        [
-          "IN-FEED-002",
-          "FA-EDUCATIVO-040",
-          "IN-CARRUSEL-054",
-          "IN-STORY-082",
-          "FA-FEED-113",
-          "IN-REEL-130"
-        ],
-        [
-          "IN-FEED-003",
-          "FA-FEED-062",
-          "IN-STORY-085",
-          "IN-FEED-127",
-          "FA-EDUCATIVO-165",
-          "FA-REEL-189"
-        ]
-      ]
+      "uniqueValues": 325,
+      "duplicateGroups": 0,
+      "duplicatedItems": 0,
+      "examples": []
     },
     {
       "field": "cta",
       "present": 325,
       "empty": 0,
-      "uniqueValues": 3,
-      "duplicateGroups": 3,
+      "uniqueValues": 9,
+      "duplicateGroups": 9,
       "duplicatedItems": 325,
       "examples": [
         [
           "IN-FEED-001",
+          "IN-CARRUSEL-004",
+          "WH-STATUS-020",
+          "WH-STATUS-021",
+          "IN-STORY-032",
+          "FA-FEED-037"
+        ],
+        [
           "IN-FEED-002",
           "IN-FEED-003",
-          "IN-REEL-005",
           "FA-FEED-011",
-          "FA-FEED-012"
-        ],
-        [
-          "IN-CARRUSEL-004",
-          "IN-REEL-006",
-          "IN-STORY-007",
-          "IN-STORY-009",
-          "IN-STORY-010",
-          "FA-REEL-014"
-        ],
-        [
-          "IN-STORY-008",
-          "FA-FEED-013",
           "FA-EDUCATIVO-015",
           "TI-VIDEO-018",
-          "TI-VIDEO-019",
-          "YO-SHORT-025"
+          "IN-REEL-030"
+        ],
+        [
+          "IN-REEL-005",
+          "FA-REEL-014",
+          "FA-COMERCIAL-016",
+          "IN-CARRUSEL-029",
+          "WH-STATUS-047",
+          "IN-REEL-055"
         ]
       ]
     },
@@ -132,9 +100,9 @@
       "field": "title",
       "present": 325,
       "empty": 0,
-      "uniqueValues": 90,
-      "duplicateGroups": 84,
-      "duplicatedItems": 319,
+      "uniqueValues": 53,
+      "duplicateGroups": 53,
+      "duplicatedItems": 325,
       "examples": [
         [
           "IN-FEED-001",
@@ -144,16 +112,17 @@
         ],
         [
           "IN-FEED-002",
+          "FA-REEL-014",
+          "TI-VIDEO-017",
+          "YO-SHORT-025"
+        ],
+        [
           "IN-FEED-003",
           "IN-CARRUSEL-004",
           "IN-REEL-005",
-          "IN-STORY-007",
-          "TI-VIDEO-019"
-        ],
-        [
           "IN-REEL-006",
-          "IN-STORY-009",
-          "FA-FEED-013"
+          "IN-STORY-008",
+          "FA-EDUCATIVO-015"
         ]
       ]
     },
@@ -161,30 +130,21 @@
       "field": "imagePrompt",
       "present": 325,
       "empty": 0,
-      "uniqueValues": 62,
-      "duplicateGroups": 61,
-      "duplicatedItems": 324,
+      "uniqueValues": 321,
+      "duplicateGroups": 4,
+      "duplicatedItems": 8,
       "examples": [
         [
-          "IN-FEED-001",
-          "IN-STORY-207",
-          "FA-COMERCIAL-266"
+          "FA-COMERCIAL-041",
+          "YO-SHORT-100"
         ],
         [
-          "IN-FEED-002",
-          "IN-FEED-026",
-          "FA-FEED-037",
-          "WH-STATUS-146",
-          "FA-FEED-161",
-          "TI-VIDEO-319"
+          "IN-FEED-152",
+          "YO-SHORT-325"
         ],
         [
-          "IN-FEED-003",
-          "LI-POST-048",
-          "YO-SHORT-050",
-          "IN-FEED-077",
-          "FA-REEL-114",
-          "IN-FEED-151"
+          "IN-FEED-251",
+          "IN-FEED-302"
         ]
       ]
     },
@@ -210,17 +170,26 @@
       "field": "motionPrompt",
       "present": 91,
       "empty": 234,
-      "uniqueValues": 1,
-      "duplicateGroups": 1,
-      "duplicatedItems": 91,
+      "uniqueValues": 53,
+      "duplicateGroups": 22,
+      "duplicatedItems": 60,
       "examples": [
         [
           "IN-REEL-005",
-          "IN-REEL-006",
+          "TI-VIDEO-067",
+          "TI-VIDEO-118",
+          "FA-REEL-214"
+        ],
+        [
           "FA-REEL-014",
-          "TI-VIDEO-017",
-          "TI-VIDEO-018",
-          "TI-VIDEO-019"
+          "IN-REEL-080",
+          "TI-VIDEO-093",
+          "FA-REEL-164"
+        ],
+        [
+          "YO-SHORT-025",
+          "TI-VIDEO-094",
+          "TI-VIDEO-143"
         ]
       ]
     },
@@ -253,39 +222,91 @@
     },
     {
       "field": "imageText",
-      "present": 0,
-      "empty": 325,
-      "uniqueValues": 0,
-      "duplicateGroups": 0,
-      "duplicatedItems": 0,
-      "examples": []
+      "present": 325,
+      "empty": 0,
+      "uniqueValues": 8,
+      "duplicateGroups": 8,
+      "duplicatedItems": 325,
+      "examples": [
+        [
+          "IN-FEED-001",
+          "IN-CARRUSEL-004",
+          "TI-VIDEO-017",
+          "TI-VIDEO-018",
+          "IN-FEED-028",
+          "IN-CARRUSEL-029"
+        ],
+        [
+          "IN-FEED-002",
+          "FA-FEED-012",
+          "FA-FEED-013",
+          "FA-COMERCIAL-016",
+          "WH-STATUS-022",
+          "LI-POST-024"
+        ],
+        [
+          "IN-FEED-003",
+          "FA-REEL-014",
+          "TI-VIDEO-019",
+          "LI-POST-023",
+          "IN-FEED-027",
+          "TI-VIDEO-042"
+        ]
+      ]
     },
     {
       "field": "alt",
-      "present": 0,
-      "empty": 325,
-      "uniqueValues": 0,
-      "duplicateGroups": 0,
-      "duplicatedItems": 0,
-      "examples": []
+      "present": 325,
+      "empty": 0,
+      "uniqueValues": 1,
+      "duplicateGroups": 1,
+      "duplicatedItems": 325,
+      "examples": [
+        [
+          "IN-FEED-001",
+          "IN-FEED-002",
+          "IN-FEED-003",
+          "IN-CARRUSEL-004",
+          "IN-REEL-005",
+          "IN-REEL-006"
+        ]
+      ]
     },
     {
       "field": "pinnedComment",
-      "present": 0,
-      "empty": 325,
-      "uniqueValues": 0,
-      "duplicateGroups": 0,
-      "duplicatedItems": 0,
-      "examples": []
+      "present": 325,
+      "empty": 0,
+      "uniqueValues": 1,
+      "duplicateGroups": 1,
+      "duplicatedItems": 325,
+      "examples": [
+        [
+          "IN-FEED-001",
+          "IN-FEED-002",
+          "IN-FEED-003",
+          "IN-CARRUSEL-004",
+          "IN-REEL-005",
+          "IN-REEL-006"
+        ]
+      ]
     },
     {
       "field": "visualConcept",
-      "present": 0,
-      "empty": 325,
-      "uniqueValues": 0,
-      "duplicateGroups": 0,
-      "duplicatedItems": 0,
-      "examples": []
+      "present": 325,
+      "empty": 0,
+      "uniqueValues": 1,
+      "duplicateGroups": 1,
+      "duplicatedItems": 325,
+      "examples": [
+        [
+          "IN-FEED-001",
+          "IN-FEED-002",
+          "IN-FEED-003",
+          "IN-CARRUSEL-004",
+          "IN-REEL-005",
+          "IN-REEL-006"
+        ]
+      ]
     }
   ],
   "completeness": [
@@ -326,23 +347,23 @@
     },
     {
       "field": "campaign",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "objective",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "audience",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "funnel",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "status",
@@ -376,23 +397,23 @@
     },
     {
       "field": "imageText",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "alt",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "pinnedComment",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "visualConcept",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "resolution",
@@ -401,8 +422,8 @@
     },
     {
       "field": "safeZone",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "filename",
@@ -411,8 +432,8 @@
     },
     {
       "field": "path",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     },
     {
       "field": "imagePrompt",
@@ -431,154 +452,129 @@
     },
     {
       "field": "cover",
-      "present": 0,
-      "pct": 0
+      "present": 91,
+      "pct": 28
     },
     {
       "field": "productionStatus",
-      "present": 0,
-      "pct": 0
+      "present": 325,
+      "pct": 100
     }
   ],
-  "copyNearDuplicatesPairs": 17474,
+  "copyNearDuplicatesPairs": 3828,
   "copyNearExamples": [
     {
       "a": "IN-FEED-001",
-      "b": "IN-CARRUSEL-004",
-      "sim": 0.66
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-REEL-005",
-      "sim": 0.77
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-007",
-      "sim": 0.67
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-009",
-      "sim": 0.65
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "FA-FEED-011",
-      "sim": 0.65
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "FA-FEED-012",
-      "sim": 0.86
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "FA-FEED-013",
-      "sim": 0.86
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "FA-COMERCIAL-016",
-      "sim": 0.75
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "TI-VIDEO-018",
-      "sim": 0.66
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "WH-STATUS-021",
-      "sim": 0.64
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "WH-STATUS-022",
-      "sim": 0.77
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-FEED-026",
-      "sim": 0.86
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-033",
-      "sim": 0.87
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-034",
-      "sim": 0.87
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "FA-FEED-037",
-      "sim": 0.86
-    }
-  ],
-  "promptNearDuplicatesPairs": 13289,
-  "promptNearExamples": [
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-009",
-      "sim": 0.5
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-010",
-      "sim": 0.53
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "TI-VIDEO-017",
-      "sim": 0.5
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "TI-VIDEO-019",
-      "sim": 0.5
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "WH-STATUS-020",
-      "sim": 0.5
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "WH-STATUS-021",
-      "sim": 0.5
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-FEED-028",
-      "sim": 0.52
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-CARRUSEL-029",
-      "sim": 0.72
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "IN-STORY-034",
+      "b": "IN-FEED-002",
       "sim": 0.51
     },
     {
       "a": "IN-FEED-001",
-      "b": "IN-STORY-035",
-      "sim": 0.53
+      "b": "IN-FEED-003",
+      "sim": 0.52
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-005",
+      "sim": 0.5
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-006",
+      "sim": 0.5
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-008",
+      "sim": 0.51
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-FEED-027",
+      "sim": 0.59
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-033",
+      "sim": 0.52
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-034",
+      "sim": 0.54
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-CARRUSEL-054",
+      "sim": 0.58
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-055",
+      "sim": 0.5
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-057",
+      "sim": 0.61
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-059",
+      "sim": 0.51
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-STORY-060",
+      "sim": 0.5
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-FEED-078",
+      "sim": 0.61
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-CARRUSEL-079",
+      "sim": 0.6
+    }
+  ],
+  "promptNearDuplicatesPairs": 8072,
+  "promptNearExamples": [
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-006",
+      "sim": 0.52
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "FA-FEED-012",
+      "sim": 0.51
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "FA-FEED-013",
+      "sim": 0.59
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "WH-STATUS-021",
+      "sim": 0.57
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "WH-STATUS-022",
+      "sim": 0.54
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-031",
+      "sim": 0.58
     },
     {
       "a": "IN-FEED-001",
       "b": "FA-REEL-039",
-      "sim": 0.74
-    },
-    {
-      "a": "IN-FEED-001",
-      "b": "WH-STATUS-045",
-      "sim": 0.53
+      "sim": 0.56
     },
     {
       "a": "IN-FEED-001",
@@ -587,112 +583,137 @@
     },
     {
       "a": "IN-FEED-001",
-      "b": "IN-FEED-051",
-      "sim": 0.69
+      "b": "IN-FEED-052",
+      "sim": 0.54
     },
     {
       "a": "IN-FEED-001",
-      "b": "IN-FEED-052",
-      "sim": 0.72
+      "b": "IN-CARRUSEL-054",
+      "sim": 0.59
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "IN-REEL-055",
+      "sim": 0.58
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "FA-FEED-061",
+      "sim": 0.51
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "TI-VIDEO-067",
+      "sim": 0.59
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "LI-POST-073",
+      "sim": 0.54
+    },
+    {
+      "a": "IN-FEED-001",
+      "b": "FA-FEED-086",
+      "sim": 0.56
     }
   ],
   "copyReusedNgrams": {
-    "totalNgrams": 461,
-    "reusedNgrams": 461,
+    "totalNgrams": 6982,
+    "reusedNgrams": 1546,
     "top": [
       {
-        "count": 113,
-        "sample": "streetboss convierte tu negocio en un escaparate digital optimizado para teléfon"
+        "count": 66,
+        "sample": "detrás de cada platillo hay horas de preparación. ¿por qué ceder el 30% a plataf"
       },
       {
-        "count": 113,
-        "sample": "convierte tu negocio en un escaparate digital optimizado para teléfonos móviles."
+        "count": 66,
+        "sample": "significa tomar el mando. tu identidad visual se respeta al 100% en tu propio en"
       },
       {
-        "count": 113,
-        "sample": "tu negocio en un escaparate digital optimizado para teléfonos móviles. tus clien"
+        "count": 66,
+        "sample": "tomar el mando. tu identidad visual se respeta al 100% en tu propio enlace web, "
       },
       {
-        "count": 113,
-        "sample": "negocio en un escaparate digital optimizado para teléfonos móviles. tus clientes"
+        "count": 66,
+        "sample": "el mando. tu identidad visual se respeta al 100% en tu propio enlace web, y los "
       },
       {
-        "count": 113,
-        "sample": "en un escaparate digital optimizado para teléfonos móviles. tus clientes pueden "
+        "count": 66,
+        "sample": "mando. tu identidad visual se respeta al 100% en tu propio enlace web, y los ped"
       },
       {
-        "count": 113,
-        "sample": "un escaparate digital optimizado para teléfonos móviles. tus clientes pueden exp"
+        "count": 66,
+        "sample": "tu identidad visual se respeta al 100% en tu propio enlace web, y los pedidos en"
       },
       {
-        "count": 113,
-        "sample": "escaparate digital optimizado para teléfonos móviles. tus clientes pueden explor"
+        "count": 66,
+        "sample": "identidad visual se respeta al 100% en tu propio enlace web, y los pedidos entra"
       },
       {
-        "count": 113,
-        "sample": "digital optimizado para teléfonos móviles. tus clientes pueden explorar tus prod"
+        "count": 66,
+        "sample": "visual se respeta al 100% en tu propio enlace web, y los pedidos entran ordenado"
       }
     ]
   },
   "promptReusedNgrams": {
-    "totalNgrams": 1933,
-    "reusedNgrams": 1933,
+    "totalNgrams": 3746,
+    "reusedNgrams": 2087,
     "top": [
       {
-        "count": 171,
-        "sample": "objetivo narrativo y narrativa de la escena: la narrativa principal de esta foto"
+        "count": 325,
+        "sample": "entorno limpio y ordenado, superficies despejadas, mise en place impecable, sin "
       },
       {
-        "count": 171,
-        "sample": "narrativo y narrativa de la escena: la narrativa principal de esta fotografía es"
+        "count": 325,
+        "sample": "limpio y ordenado, superficies despejadas, mise en place impecable, sin desorden"
       },
       {
-        "count": 171,
-        "sample": "y narrativa de la escena: la narrativa principal de esta fotografía es transmiti"
+        "count": 325,
+        "sample": "y ordenado, superficies despejadas, mise en place impecable, sin desorden, espac"
       },
       {
-        "count": 171,
-        "sample": "narrativa de la escena: la narrativa principal de esta fotografía es transmitir "
+        "count": 92,
+        "sample": "color: contraste vibrante y saturado. entorno limpio y ordenado, superficies des"
       },
       {
-        "count": 171,
-        "sample": "de la escena: la narrativa principal de esta fotografía es transmitir el control"
+        "count": 92,
+        "sample": "contraste vibrante y saturado. entorno limpio y ordenado, superficies despejadas"
       },
       {
-        "count": 171,
-        "sample": "la escena: la narrativa principal de esta fotografía es transmitir el control ab"
+        "count": 92,
+        "sample": "vibrante y saturado. entorno limpio y ordenado, superficies despejadas, mise en "
       },
       {
-        "count": 171,
-        "sample": "escena: la narrativa principal de esta fotografía es transmitir el control absol"
+        "count": 92,
+        "sample": "y saturado. entorno limpio y ordenado, superficies despejadas, mise en place imp"
       },
       {
-        "count": 171,
-        "sample": "la narrativa principal de esta fotografía es transmitir el control absoluto y la"
+        "count": 92,
+        "sample": "saturado. entorno limpio y ordenado, superficies despejadas, mise en place impec"
       }
     ]
   },
   "forcedTechTerms": {
-    "ARRI": 283,
-    "Alexa 65": 159,
-    "Alexa": 159,
-    "Zeiss": 159,
-    "Kodak Portra": 166,
-    "Portra": 166,
+    "ARRI": 0,
+    "Alexa 65": 0,
+    "Alexa": 0,
+    "Zeiss": 0,
+    "Kodak Portra": 0,
+    "Portra": 0,
     "Master Prime": 0,
     "anamorphic": 0,
-    "85mm": 0,
-    "50mm": 0,
-    "35mm": 166,
-    "Roger Deakins": 159,
+    "85mm": 85,
+    "50mm": 76,
+    "35mm": 0,
+    "Roger Deakins": 0,
     "cinematographer": 0
   },
   "claims": {
-    "cero_comision": 102,
-    "whatsapp": 325,
-    "venta_directa": 0,
+    "cero_comision": 184,
+    "whatsapp": 292,
+    "venta_directa": 160,
     "marketplace_bad": 0,
-    "delivery_bad": 0,
+    "delivery_bad": 4,
     "pos_bad": 0,
     "qr_menu": 0,
     "hashtag_over5": 0

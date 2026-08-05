@@ -1,0 +1,125 @@
+{
+  "estado": "Chiapas",
+  "codigos": {
+    "29000": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Centro", "La Merced", "El Cerrito"]
+    },
+    "29010": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Terán", "Fraccionamiento Terán", "La Laguna"]
+    },
+    "29020": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Las Granjas", "Plan de Ayala", "El Bosque"]
+    },
+    "29030": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Patria Nueva", "Lomas del Oriente", "Jardines del Sur"]
+    },
+    "29040": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Xamaipak", "Fatima", "Nueva Imagen"]
+    },
+    "29050": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["La Pimienta", "Villa Corzo", "Los Pinos"]
+    },
+    "29060": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Colinas de la Cañada", "Santa Elena", "Real de Joyas"]
+    },
+    "29070": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Los Tulipanes", "Bugambilias", "Santa Cruz"]
+    },
+    "29080": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["El Mirador", "La Aurora", "Primero de Mayo"]
+    },
+    "29090": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Foviste Estadio", "Magisterial", "Del Maestro"]
+    },
+    "29094": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["COAPAS", "El Retiro", "Real Solidaridad"]
+    },
+    "29000": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Centro", "Barrio San Roque", "Barrio El Calvario", "San Marcos", "La Merced", "El Retiro"]
+    },
+    "29017": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Infonavit Humboldt", "Moctezuma", "La Loma"]
+    },
+    "29018": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Las Palmas", "El Vergel", "Colinas del Sol"]
+    },
+    "29019": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Prados de Tuxtla", "Bonampak", "Los Pinos"]
+    },
+    "29045": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["Copoya", "Santa Cecilia", "Las Joyas"]
+    },
+    "29046": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["El Pedregal", "San Andrés", "Colinas Residencial"]
+    },
+    "29047": {
+      "municipio": "Tuxtla Gutiérrez",
+      "colonias": ["El Sabinal", "Villa Real", "Tierra y Libertad"]
+    },
+    "29226": {
+      "municipio": "Chiapa de Corzo",
+      "colonias": ["Centro", "La Pila", "Barrio El Calvario", "Santa Cruz", "El Bosque"]
+    },
+    "29160": {
+      "municipio": "San Cristóbal de las Casas",
+      "colonias": ["Centro", "Barrio Mexicanos", "Barrio Cuxtitali", "La Garita", "El Cerrillo"]
+    },
+    "29180": {
+      "municipio": "San Cristóbal de las Casas",
+      "colonias": ["Jardines de San Cristóbal", "María Eugenia", "Morelos"]
+    },
+    "29200": {
+      "municipio": "Comitán de Domínguez",
+      "colonias": ["Centro", "El Vergel", "Las Granjas", "Lomas de Comitán", "Las Fuentes"]
+    },
+    "29220": {
+      "municipio": "Comitán de Domínguez",
+      "colonias": ["Los Laureles", "El Mirador", "Colinas de Comitán"]
+    },
+    "30000": {
+      "municipio": "Tapachula",
+      "colonias": ["Centro", "La Esperanza", "El Jobo", "Las Palmas", "Los Mangos"]
+    },
+    "30010": {
+      "municipio": "Tapachula",
+      "colonias": ["El Paraíso", "Ejidal", "Obrera", "Magisterial"]
+    },
+    "30020": {
+      "municipio": "Tapachula",
+      "colonias": ["Laureles", "Las Delicias", "El Carmen"]
+    },
+    "29950": {
+      "municipio": "Palenque",
+      "colonias": ["Centro", "La Cañada", "Esperanza", "El Pakal"]
+    },
+    "29760": {
+      "municipio": "Ocosingo",
+      "colonias": ["Centro", "La Poza", "Los Pinos"]
+    },
+    "29840": {
+      "municipio": "Yajalón",
+      "colonias": ["Centro", "El Naranjo", "La Cascada"]
+    },
+    "29700": {
+      "municipio": "Pichucalco",
+      "colonias": ["Centro", "El Vergel", "La Isla"]
+    }
+  }
+}

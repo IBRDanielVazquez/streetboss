@@ -1,6 +1,21 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Copy, X, Calendar, LayoutGrid, Image as ImageIcon, Briefcase, Play, Users, MessageCircle } from 'lucide-react';
+import { Copy, X, Calendar, LayoutGrid, Image as ImageIcon, Briefcase, Play, Users, MessageCircle, Linkedin, Youtube, ChevronLeft, ChevronRight } from 'lucide-react';
+
+// ── Helpers de calendario cronológico (solo Instagram) ──
+const CATEGORIES = ["Venta directa","Producto","Educación","Objeciones","Marca","Conversión","Historia humana","Autoridad FoodTech","Demostración","Comunidad"];
+const hashNum = (s: string) => { let h = 0; for (let i = 0; i < s.length; i++) { h = (h * 31 + s.charCodeAt(i)) >>> 0; } return h; };
+const categoryOf = (p: any) => CATEGORIES[hashNum(p.id + 'cat') % CATEGORIES.length];
+const FORMAT_PRIO: any = { story: 0, status: 0, feed: 1, educativo: 1, comercial: 1, post: 1, carrusel: 2, reel: 3, video: 3, short: 3 };
+const chronoSort = (a: any, b: any) => {
+  if (a.date !== b.date) return a.date < b.date ? -1 : 1;
+  if (a.time !== b.time) return a.time < b.time ? -1 : 1;
+  return (FORMAT_PRIO[a.format] ?? 9) - (FORMAT_PRIO[b.format] ?? 9);
+};
+const DIAS = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+const MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+const diaFecha = (d: string) => { const [y, m, day] = (d || '2026-01-01').split('-').map(Number); const dt = new Date(y, m - 1, day); return `${DIAS[dt.getDay()]} ${day} DE ${MESES[m - 1]}`; };
+const isReady = (p: any) => p.status && !/PENDIENTE/i.test(p.status);
 import postsData from './data/posts.json';
 import profilesData from './data/profiles.json';
 import highlightsData from './data/highlights.json';
@@ -24,8 +39,8 @@ const Sidebar = () => {
     { name: 'Facebook', path: '/Facebook', icon: Users },
     { name: 'TikTok', path: '/TikTok', icon: Play },
     { name: 'WhatsApp Biz', path: '/WhatsApp', icon: MessageCircle },
-    { name: 'LinkedIn', path: '/LinkedIn', icon: Briefcase },
-    { name: 'YouTube', path: '/YouTube', icon: Play }
+    { name: 'LinkedIn', path: '/LinkedIn', icon: Linkedin },
+    { name: 'YouTube', path: '/YouTube', icon: Youtube }
   ];
 
   return (
@@ -134,18 +149,28 @@ const ProfileView = ({ profile }: { profile: any }) => {
 
 const PostModal = ({ post, onClose }: { post: any, onClose: () => void }) => {
   if (!post) return null;
+  const isIG = post.network === 'Instagram';
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <div>
             <h3 style={{fontSize:'20px'}}>{post.id}</h3>
-            <p style={{color:'var(--text-secondary)', fontSize:'14px'}}>{post.network} • {post.format}</p>
+            <p style={{color:'var(--text-secondary)', fontSize:'14px'}}>{post.network} • {post.format} • {post.productionStatus}</p>
           </div>
           <button onClick={onClose} style={{background:'none', border:'none', cursor:'pointer'}}><X size={24}/></button>
         </div>
         <div className="modal-body">
           <div>
+            <h4 className="section-title">Estrategia de Embudo</h4>
+            <div className="data-block">
+              <p><strong>Campaña:</strong> {post.campaign}</p>
+              <p><strong>Embudo:</strong> {post.funnel}</p>
+              <p><strong>Objetivo:</strong> {post.objective}</p>
+              <p><strong>Audiencia:</strong> {post.audience}</p>
+              <p><strong>Concepto Visual:</strong> {post.visualConcept}</p>
+            </div>
+            
             <h4 className="section-title">Copy & Hook</h4>
             <div className="data-block">
               <p><strong>Hook:</strong> {post.hook}</p>
@@ -155,7 +180,9 @@ const PostModal = ({ post, onClose }: { post: any, onClose: () => void }) => {
               <p><strong>CTA:</strong> {post.cta}</p>
               <br/>
               <p style={{color:'var(--street-orange)'}}>{post.hashtags.join(' ')}</p>
-              <CopyBtn text={`${post.hook}\n\n${post.copy}\n\n${post.cta}\n\n${post.hashtags.join(' ')}`} label="Copiar Copy Completo" />
+              <br/>
+              <p><strong>Primer Comentario (Pinned):</strong> {post.pinnedComment}</p>
+              <CopyBtn text={post.copy} label="Copiar Copy" />
             </div>
             {post.carouselTexts && (
               <div className="data-block">
@@ -174,18 +201,70 @@ const PostModal = ({ post, onClose }: { post: any, onClose: () => void }) => {
             <h4 className="section-title">Dirección Visual y Prompts</h4>
             <div className="data-block">
               <p><strong>Formato:</strong> {post.aspectRatio} ({post.resolution})</p>
-              <p><strong>Archivo Sugerido:</strong> {post.filename}</p>
+              <p><strong>Ruta:</strong> {post.path}</p>
+              {post.cover && <p><strong>Portada:</strong> {post.cover}</p>}
             </div>
-            <div className="data-block">
-              <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>PROMPT DE IMAGEN</p>
-              <p style={{fontSize:'12px'}}>{post.imagePrompt}</p>
-              <CopyBtn text={post.imagePrompt} label="Copiar Prompt" />
-            </div>
-            <div className="data-block" style={{background:'#fff0eb'}}>
-              <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px', color:'var(--street-orange)'}}>NEGATIVE PROMPT</p>
-              <p style={{fontSize:'12px', color:'var(--street-orange)'}}>{post.negativePrompt}</p>
-              <CopyBtn text={post.negativePrompt} label="Copiar Negative" />
-            </div>
+            
+            {isIG ? (
+              <>
+                <div className="data-block">
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>PROMPT COMPLETO PARA GENERACIÓN</p>
+                  <p style={{fontSize:'12px', whiteSpace:'pre-wrap'}}>{post.promptCompleto}</p>
+                  <CopyBtn text={post.promptCompleto} label="Copiar Prompt Completo" />
+                </div>
+                <div className="data-block" style={{background:'#f2fbf3'}}>
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px', color:'#166534'}}>PROMPT PARA APLICAR EL TEXTO FINAL</p>
+                  <p style={{fontSize:'12px', whiteSpace:'pre-wrap'}}>{post.promptTextoFinal}</p>
+                  <CopyBtn text={post.promptTextoFinal} label="Copiar Prompt de Texto" />
+                </div>
+                <div className="data-block">
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>DATOS TÉCNICOS</p>
+                  <p style={{fontSize:'12px'}}><strong>Zona segura:</strong> {post.safeZone}</p>
+                  <p style={{fontSize:'12px'}}><strong>ALT:</strong> {post.alt}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="data-block">
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>TEXTO EN IMAGEN (UX)</p>
+                  <p style={{fontSize:'12px'}}>{post.imageText}</p>
+                  <br/>
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>ZONA SEGURA</p>
+                  <p style={{fontSize:'12px'}}>{post.safeZone}</p>
+                  <br/>
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>TEXTO ALTERNATIVO (ALT)</p>
+                  <p style={{fontSize:'12px'}}>{post.alt}</p>
+                </div>
+
+                <div className="data-block">
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px'}}>PROMPT DE IMAGEN (5 párrafos · negativo integrado)</p>
+                  <p style={{fontSize:'12px', whiteSpace:'pre-wrap'}}>{post.imagePrompt}</p>
+                  <CopyBtn text={post.imagePrompt} label="Copiar Prompt Completo" />
+                </div>
+
+                {post.overlayText && (
+                  <div className="data-block" style={{background:'#f2fbf3'}}>
+                    <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px', color:'#166534'}}>POST-PRODUCCIÓN · Se agrega ENCIMA de la imagen</p>
+                    <p style={{fontSize:'12px'}}><strong>Titular:</strong> {post.overlayText.titular}</p>
+                    <p style={{fontSize:'12px'}}><strong>Subtítulo:</strong> {post.overlayText.subtitulo}</p>
+                    <p style={{fontSize:'12px'}}><strong>CTA visual:</strong> {post.overlayText.ctaVisual}</p>
+                    {post.logo && (
+                      <>
+                        <br/>
+                        <p style={{fontSize:'12px', fontWeight:600, marginBottom:'4px'}}>LOGO</p>
+                        <p style={{fontSize:'12px'}}>{post.logo.version} — {post.logo.ubicacion} ({post.logo.margen})</p>
+                      </>
+                    )}
+                    <CopyBtn text={`Titular: ${post.overlayText.titular}\nSubtítulo: ${post.overlayText.subtitulo}\nCTA visual: ${post.overlayText.ctaVisual}\nLogo: ${post.logo?.version} — ${post.logo?.ubicacion} (${post.logo?.margen})`} label="Copiar Textos + Logo" />
+                  </div>
+                )}
+                <div className="data-block" style={{background:'#fff0eb'}}>
+                  <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px', color:'var(--street-orange)'}}>NEGATIVE PROMPT</p>
+                  <p style={{fontSize:'12px', color:'var(--street-orange)'}}>{post.negativePrompt}</p>
+                  <CopyBtn text={post.negativePrompt} label="Copiar Negative" />
+                </div>
+              </>
+            )}
             {post.motionPrompt && (
               <div className="data-block" style={{background:'#f0f4ff'}}>
                 <p style={{fontSize:'12px', fontWeight:600, marginBottom:'8px', color:'#2563eb'}}>PROMPT DE MOVIMIENTO (VIDEO)</p>
@@ -200,7 +279,225 @@ const PostModal = ({ post, onClose }: { post: any, onClose: () => void }) => {
   );
 };
 
-const NetworkView = () => {
+// ── Ficha de Instagram en pestañas + navegación cronológica ──
+const IG_TABS = ['RESUMEN','COPY','PROMPT VISUAL','FORMATO','PRODUCCIÓN'];
+const CalendarPostModal = ({ post, list, num, weekInfo, onClose, onNav }: any) => {
+  const [tab, setTab] = useState('RESUMEN');
+  useEffect(() => { setTab('RESUMEN'); }, [post?.id]);
+  if (!post) return null;
+  const idx = list.findIndex((p: any) => p.id === post.id);
+  const wi = weekInfo[post.id] || { pos: 1, total: 1 };
+  const cat = categoryOf(post);
+  const isVideo = ['reel','video','short'].includes(post.format);
+  const isCarousel = ['carrusel','story','status'].includes(post.format);
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content ig-modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-header ig-modal-header">
+          <div style={{minWidth:0}}>
+            <p className="ig-pos">{num(post)} · SEMANA {post.week} · PUBLICACIÓN {wi.pos} DE {wi.total}</p>
+            <h3 style={{fontSize:'17px'}}>{diaFecha(post.date)} · {post.time}</h3>
+            <div className="ig-tags">
+              <span className="tag tag-format">{post.format}</span>
+              <span className="tag tag-cat">{cat}</span>
+              <span className="tag tag-pilar">{post.pilar || '—'}</span>
+              <span className="tag tag-status">{post.status}</span>
+            </div>
+          </div>
+          <button className="modal-close" onClick={onClose} aria-label="Cerrar"><X size={22}/></button>
+        </div>
+        <div className="ig-tabbar">
+          {IG_TABS.map(t => <button key={t} className={`ig-tab ${tab===t?'active':''}`} onClick={() => setTab(t)}>{t}</button>)}
+        </div>
+        <div className="modal-body ig-modal-body">
+          {tab === 'RESUMEN' && (
+            <div className="data-block">
+              <p><strong>Título interno:</strong> {post.title}</p>
+              <p><strong>Campaña:</strong> {post.campaign}</p>
+              <p><strong>Categoría:</strong> {cat}</p>
+              <p><strong>Pilar:</strong> {post.pilar || '—'}</p>
+              <p><strong>Embudo:</strong> {post.funnel}</p>
+              <p><strong>Objetivo:</strong> {post.objective}</p>
+              <p><strong>Audiencia:</strong> {post.audience}</p>
+              <p><strong>Estado:</strong> {post.status}</p>
+            </div>
+          )}
+          {tab === 'COPY' && (
+            <div className="data-block">
+              <p style={{fontSize:'11px',fontWeight:700,color:'var(--text-secondary)'}}>COPY PUBLICABLE (se copia tal cual a Instagram)</p>
+              <p style={{marginTop:'8px'}}>{post.copy}</p>
+              <CopyBtn text={post.copy} label="Copiar Copy" />
+              <br/>
+              <p style={{marginTop:'12px'}}><strong>Primer comentario (fijado):</strong> {post.pinnedComment}</p>
+            </div>
+          )}
+          {tab === 'PROMPT VISUAL' && (
+            <div className="data-block">
+              <p style={{fontSize:'11px',fontWeight:700,color:'var(--text-secondary)'}}>PROMPT COMPLETO PARA GENERACIÓN</p>
+              <p style={{marginTop:'8px'}}>{post.promptCompleto || post.imagePrompt}</p>
+              <CopyBtn text={post.promptCompleto || post.imagePrompt} label="Copiar Prompt Completo" />
+              {!post.promptCompleto && post.negativePrompt && (<><br/><p style={{fontSize:'11px',fontWeight:700,color:'var(--street-orange)'}}>NEGATIVE PROMPT</p><p style={{color:'var(--street-orange)'}}>{post.negativePrompt}</p></>)}
+            </div>
+          )}
+          {tab === 'TEXTO FINAL' && (
+            <div className="data-block" style={{background:'#f2fbf3'}}>
+              <p style={{fontSize:'11px',fontWeight:700,color:'#166534'}}>PROMPT PARA APLICAR EL TEXTO FINAL</p>
+              {post.promptTextoFinal ? (
+                <><p style={{marginTop:'8px'}}>{post.promptTextoFinal}</p><CopyBtn text={post.promptTextoFinal} label="Copiar Prompt de Texto" /></>
+              ) : post.overlayText ? (
+                <>
+                  <p style={{marginTop:'8px'}}><strong>Titular:</strong> {post.overlayText.titular}</p>
+                  <p><strong>Subtítulo:</strong> {post.overlayText.subtitulo}</p>
+                  <p><strong>CTA visual:</strong> {post.overlayText.ctaVisual}</p>
+                  {post.logo && <p><strong>Logo:</strong> {post.logo.version} — {post.logo.ubicacion} ({post.logo.margen})</p>}
+                  <p style={{marginTop:'8px',fontSize:'12px',color:'var(--text-secondary)'}}>La imagen base se genera SIN texto y SIN logo; el texto se aplica después en diseño.</p>
+                  <CopyBtn text={`Titular: ${post.overlayText.titular}\nSubtítulo: ${post.overlayText.subtitulo}\nCTA visual: ${post.overlayText.ctaVisual}`} label="Copiar Textos" />
+                </>
+              ) : <p style={{color:'var(--text-secondary)'}}>Sin datos de texto.</p>}
+            </div>
+          )}
+          {tab === 'FORMATO' && (
+            <div className="data-block">
+              <p><strong>Formato:</strong> {post.format} · {post.resolution}</p>
+              {isVideo && post.script && (<><br/><p style={{fontSize:'11px',fontWeight:700}}>GUION / ESCENAS</p><p>{post.script}</p></>)}
+              {isVideo && post.motionPrompt && (<><br/><p style={{fontSize:'11px',fontWeight:700}}>MOVIMIENTO</p><p>{post.motionPrompt}</p><CopyBtn text={post.motionPrompt} label="Copiar Motion" /></>)}
+              {isVideo && post.cover && (<p style={{marginTop:'8px'}}><strong>Portada:</strong> {post.cover}</p>)}
+              {isCarousel && post.carouselTexts && (<><br/><p style={{fontSize:'11px',fontWeight:700}}>SECUENCIA / DIAPOSITIVAS</p>{post.carouselTexts.map((t: string, i: number) => <p key={i}><strong>{i+1}.</strong> {t}</p>)}</>)}
+              {!isVideo && !isCarousel && <p style={{color:'var(--text-secondary)',fontSize:'13px'}}>Publicación de imagen única (feed). Sin diapositivas ni movimiento.</p>}
+            </div>
+          )}
+          {tab === 'PRODUCCIÓN' && (
+            <div className="data-block">
+              <p><strong>Estado de imagen:</strong> {post.status}</p>
+              <p><strong>Estado de producción:</strong> {post.productionStatus}</p>
+              <p><strong>Ruta:</strong> {post.path}</p>
+              {post.cover && <p><strong>Portada:</strong> {post.cover}</p>}
+              <br/>
+              <p><strong>Zona segura:</strong> {post.safeZone}</p>
+              <p><strong>ALT:</strong> {post.alt}</p>
+            </div>
+          )}
+        </div>
+        <div className="ig-modal-footer">
+          <button className="ig-nav-btn" onClick={() => onNav(-1)} disabled={idx <= 0}><ChevronLeft size={16}/> Anterior</button>
+          <button className="ig-nav-btn ig-nav-center" onClick={onClose}>Volver a la semana</button>
+          <button className="ig-nav-btn" onClick={() => onNav(1)} disabled={idx >= list.length - 1}>Siguiente <ChevronRight size={16}/></button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CalendarView = ({ network, profile, posts }: any) => {
+  const [mainTab, setMainTab] = useState('calendario');
+  const [week, setWeek] = useState('all');
+  const [fCat, setFCat] = useState('all');
+  const [fFormat, setFFormat] = useState('all');
+  const [sel, setSel] = useState<any>(null);
+
+  const prefix = network.toLowerCase() === 'facebook' ? 'FB' : network.toLowerCase() === 'instagram' ? 'IG' : network.slice(0, 2).toUpperCase();
+  const fullOrdered = useMemo(() => [...posts].sort(chronoSort), [posts]);
+  const seqOf = useMemo(() => { const m: any = {}; fullOrdered.forEach((p: any, i: number) => { m[p.id] = i + 1; }); return m; }, [fullOrdered]);
+  const weekInfo = useMemo(() => { const byW: any = {}; fullOrdered.forEach((p: any) => { (byW[p.week] = byW[p.week] || []).push(p); }); const m: any = {}; Object.values(byW).forEach((wl: any) => wl.forEach((p: any, i: number) => { m[p.id] = { pos: i + 1, total: wl.length }; })); return m; }, [fullOrdered]);
+  const num = (p: any) => `${prefix}-${String(seqOf[p.id]).padStart(3, '0')}`;
+
+  const formats = useMemo(() => Array.from(new Set(posts.map((p: any) => p.format))), [posts]);
+  const ordered = useMemo(() => {
+    let list = [...posts];
+    if (fCat !== 'all') list = list.filter((p: any) => categoryOf(p) === fCat);
+    if (fFormat !== 'all') list = list.filter((p: any) => p.format === fFormat);
+    return list.sort(chronoSort);
+  }, [posts, fCat, fFormat]);
+  const byWeek = useMemo(() => { const g: any = {}; ordered.forEach((p: any) => { (g[p.week] = g[p.week] || []).push(p); }); return g; }, [ordered]);
+  const allWeeks = Array.from(new Set(posts.map((p: any) => p.week))).sort((a: any, b: any) => a - b);
+  const visibleWeeks = (week === 'all' ? allWeeks : [Number(week)]).filter((w: any) => byWeek[w]);
+
+  const nav = (dir: number) => { const i = ordered.findIndex((p: any) => p.id === sel.id); const ni = i + dir; if (ni >= 0 && ni < ordered.length) setSel(ordered[ni]); };
+
+  return (
+    <div className="main-content">
+      <div className="header">
+        <h2>{network}</h2>
+        <p style={{color:'var(--text-secondary)', marginTop:'8px'}}>Calendario editorial · 13 semanas en orden cronológico</p>
+      </div>
+
+      <div className="tabs">
+        <div className={`tab ${mainTab==='calendario'?'active':''}`} onClick={() => setMainTab('calendario')}>Calendario</div>
+        <div className={`tab ${mainTab==='perfil'?'active':''}`} onClick={() => setMainTab('perfil')}>Perfil & Bios</div>
+      </div>
+
+      {mainTab === 'perfil' && profile && <ProfileView profile={profile} />}
+
+      {mainTab === 'calendario' && (
+        <>
+          <div className="ig-toolbar">
+            <label className="ig-filter">
+              <span>Semana</span>
+              <select value={week} onChange={e => setWeek(e.target.value)}>
+                <option value="all">Todas las semanas</option>
+                {allWeeks.map((w: any) => <option key={w} value={w}>Semana {w}</option>)}
+              </select>
+            </label>
+            <label className="ig-filter">
+              <span>Categoría</span>
+              <select value={fCat} onChange={e => setFCat(e.target.value)}>
+                <option value="all">Todas</option>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </label>
+            <label className="ig-filter">
+              <span>Formato</span>
+              <select value={fFormat} onChange={e => setFFormat(e.target.value)}>
+                <option value="all">Todos</option>
+                {formats.map((f: any) => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </label>
+          </div>
+
+          {visibleWeeks.length === 0 && <p style={{color:'var(--text-secondary)'}}>No hay publicaciones con esos filtros.</p>}
+
+          {visibleWeeks.map((w: any) => {
+            const list = byWeek[w];
+            const ready = list.filter(isReady).length;
+            const pend = list.length - ready;
+            return (
+              <div key={w} className="ig-week-block">
+                <div className="ig-week-head">
+                  <h3>Semana {w}</h3>
+                  <span className="ig-week-stats">{list.length} publicaciones · {ready} listas · {pend} pendientes</span>
+                </div>
+                <div className="ig-cards">
+                  {list.map((post: any) => (
+                    <div key={post.id} className="ig-card" onClick={() => setSel(post)}>
+                      <div className="ig-card-idrow">
+                        <span className="ig-card-id">{num(post)}</span>
+                        <span className="ig-card-pos">Sem {post.week} · {weekInfo[post.id]?.pos}/{weekInfo[post.id]?.total}</span>
+                      </div>
+                      <div className="ig-card-when">
+                        <span className="ig-card-day">{diaFecha(post.date)}</span>
+                        <span className="ig-card-time">{post.time}</span>
+                      </div>
+                      <div className="ig-card-title">{post.title}</div>
+                      <div className="ig-tags">
+                        <span className="tag tag-format">{post.format}</span>
+                        <span className="tag tag-cat">{categoryOf(post)}</span>
+                        <span className="tag tag-status">{post.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      <CalendarPostModal post={sel} list={ordered} num={num} weekInfo={weekInfo} onClose={() => setSel(null)} onNav={nav} />
+    </div>
+  );
+};
+
+const GenericNetworkView = () => {
   const location = useLocation();
   const network = location.pathname.replace('/', '') || 'Instagram';
   
@@ -274,6 +571,16 @@ const NetworkView = () => {
   );
 };
 
+const NetworkView = () => {
+  const location = useLocation();
+  const network = location.pathname.replace('/', '') || 'Instagram';
+  const profile = profilesData.find(p => p.network.toLowerCase() === network.toLowerCase());
+  const posts = postsData.filter(p => p.network.toLowerCase() === network.toLowerCase());
+  const n = network.toLowerCase();
+  if (n === 'instagram' || n === 'facebook') return <CalendarView network={network} profile={profile} posts={posts} />;
+  return <GenericNetworkView />;
+};
+
 export default function App() {
   const menu = [
     { name: 'Assets', path: '/', icon: Briefcase },
@@ -281,6 +588,8 @@ export default function App() {
     { name: 'Facebook', path: '/Facebook', icon: Users },
     { name: 'TikTok', path: '/TikTok', icon: Play },
     { name: 'WhatsApp', path: '/WhatsApp', icon: MessageCircle },
+    { name: 'LinkedIn', path: '/LinkedIn', icon: Linkedin },
+    { name: 'YouTube', path: '/YouTube', icon: Youtube }
   ];
 
   const MobileBottomBar = () => {

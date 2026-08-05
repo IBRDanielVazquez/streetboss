@@ -182,5 +182,64 @@
         "text": "¡Excelente decisión! Te comparto el enlace para crear tu cuenta en menos de 5 minutos y subir tu primer producto. Si te atoras, avísame."
       }
     ]
+  },
+  {
+    "network": "LinkedIn",
+    "username": "StreetBoss MX",
+    "category": "B2B Software / SaaS",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/"
+    },
+    "buttons": [
+      "Visitar sitio web",
+      "Seguir"
+    ],
+    "cta": "Descubre el futuro de la venta directa",
+    "profilePic": {
+      "prompt": "Isotipo corporativo SB centrado en fondo Boss Charcoal. Iluminación premium.",
+      "safeZone": "Círculo centrado."
+    },
+    "coverPhoto": {
+      "prompt": "Abstracto tecnológico de nodos conectados, colores corporativos de StreetBoss, ambiente profesional y minimalista.",
+      "mobileSafeZone": "Recorte central 4:1.",
+      "desktopSafeZone": "Espacio horizontal completo 1128x191.",
+      "text": "CERO COMISIONES. CONTROL TOTAL."
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Corporativa",
+        "text": "Somos el sistema operativo para el comercio independiente de alimentos. Digitalizamos negocios para que vendan directo por WhatsApp sin perder su rentabilidad en comisiones abusivas."
+      }
+    ]
+  },
+  {
+    "network": "YouTube",
+    "username": "@StreetBossMX",
+    "category": "Tecnología / Educación",
+    "contactInfo": {
+      "url": "https://streetboss.com.mx/"
+    },
+    "buttons": [
+      "Suscribirse"
+    ],
+    "cta": "Mira nuestros tutoriales",
+    "profilePic": {
+      "prompt": "Logo SB de alto contraste para visibilidad en resoluciones pequeñas.",
+      "safeZone": "Círculo estricto."
+    },
+    "coverPhoto": {
+      "prompt": "Banner de YouTube StreetBoss, mostrando el escaparate móvil y un operador contento. Texto claro en el centro.",
+      "mobileSafeZone": "1546x423 px centrales.",
+      "desktopSafeZone": "2560x1440 px completos (TV safe).",
+      "text": "NUEVOS VIDEOS CADA SEMANA"
+    },
+    "bios": [
+      {
+        "id": "A",
+        "name": "Canal",
+        "text": "Bienvenidos al canal oficial de StreetBoss. Aquí encontrarás tutoriales, casos de éxito y estrategias para vender más comida por internet sin regalar tu dinero a terceros."
+      }
+    ]
   }
 ]

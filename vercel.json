@@ -12,5 +12,14 @@
       ]
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "routes": [
+    { "src": "/demo/admin(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/streetboss-crm(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/superadmin(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/streetboss-admin(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/demo-admin(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/internal(/.*)?", "status": 404, "dest": "/404.html" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
