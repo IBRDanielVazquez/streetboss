@@ -5,10 +5,9 @@
 
 ## Estado General
 
-**Estado: 🟢 AUDITORIA DE CALIDAD COMPLETADA Y BASE MAESTRA AUDITADA GENERADA (1,901 SUCURSALES / RESTAURANTES UNICOS)**
+**Estado: 🟢 DASHBOARD MÓVIL DE PROSPECCIÓN Y BASE MAESTRA DEFINITIVA CONSOLIDADA (1,901 RESTAURANTES)**
 
-Se ha ejecutado la auditoría integral de calidad (`scripts/master_dataset_auditor.py`) sobre los 22 datasets de `~/Downloads` procesando todas las pestañas de archivos Excel y encodings de CSVs (15,345 filas leídas). Se aplicó la regla estricta de separación de sucursales independientes por dirección/contacto, se auditó el 100% de descartes (9,790 filas) y se generaron los archivos entregables auditados sin modificar los maestros originales.
-
+Se ha construido e integrado el **Dashboard Móvil de Prospección Comercial de StreetBoss**, alimentado en tiempo real desde la Base Maestra Oficial (`data/MASTER_RESTAURANTS.xlsx`) mediante sincronización automatizada (`scripts/sync_master_prospects.py`). Incluye búsqueda instantánea, filtros multidimensionales (Giro, Ciudad/Municipio, Canales y Estado), Ficha del Negocio con 27 atributos, llamada rápida, enlace directo a Facebook, asignador de demos oficiales y generador dinámico de mensajes para WhatsApp.
 
 ---
 

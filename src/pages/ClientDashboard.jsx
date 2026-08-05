@@ -15,6 +15,7 @@ import {
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
+import RestaurantOrdersTab from '../components/crm/RestaurantOrdersTab'
 import {
   Store,
   Layers,
@@ -36,7 +37,8 @@ import {
   AlertTriangle,
   Globe,
   Share2,
-  Users
+  Users,
+  ShoppingBag
 } from 'lucide-react'
 
 // Helper: Convert File object to Base64 WebP Data URL for local storage persistence
@@ -386,6 +388,15 @@ export default function ClientDashboard() {
           }`}
         >
           <Users size={14} /> Mis Clientes Privados
+        </button>
+
+        <button
+          onClick={() => setTab('pedidos')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <ShoppingBag size={14} /> Gestión de Pedidos
         </button>
       </nav>
 
@@ -979,6 +990,11 @@ export default function ClientDashboard() {
         {/* PESTAÑA 6: MIS CLIENTES PRIVADOS */}
         {tab === 'clientes' && (
           <RestaurantCustomersTab businessId={business.business_id} businessName={business.name} />
+        )}
+
+        {/* PESTAÑA 7: GESTIÓN DE PEDIDOS DEL RESTAURANTE */}
+        {tab === 'pedidos' && (
+          <RestaurantOrdersTab businessId={business.business_id} businessName={business.name} />
         )}
       </main>
 

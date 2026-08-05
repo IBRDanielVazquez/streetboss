@@ -805,8 +805,12 @@ export function recordPublicOrder(orderPayload) {
     delivery_fee: Number(delivery_fee),
     total: Number(total),
     whatsapp_message,
-    whatsapp_status: 'whatsapp_abierto',
-    status: 'creado',
+    whatsapp_status: orderPayload.whatsapp_status || 'pendiente_envio',
+    status: orderPayload.status || 'pendiente_envio',
+    comentarios_internos: orderPayload.comentarios_internos || '',
+    observaciones: orderPayload.observaciones || '',
+    hora_confirmacion: orderPayload.hora_confirmacion || null,
+    hora_entrega: orderPayload.hora_entrega || null,
     created_at: nowISO,
   }
 
@@ -838,5 +842,21 @@ export function getAllOrders() {
 export function getOrdersByBusiness(businessId) {
   const orders = getAllOrders()
   return orders.filter(o => o.business_id === businessId)
+}
+
+export function updateOrderStatus(orderId, newStatus, extraData = {}) {
+  let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+  const idx = ordersList.findIndex(o => o.id === orderId || o.order_number === orderId)
+  if (idx !== -1) {
+    ordersList[idx] = {
+      ...ordersList[idx],
+      status: newStatus,
+      ...extraData,
+      updated_at: new Date().toISOString()
+    }
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+    return ordersList[idx]
+  }
+  return null
 }
 

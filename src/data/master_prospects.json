@@ -1,0 +1,32 @@
+[
+  {
+    "id": "prospect_001",
+    "business_name": "Tacos El Pastorcito",
+    "category": "Taquería",
+    "city": "Tuxtla Gutiérrez",
+    "colonia": "Centro",
+    "address": "Av. Central Sur #450, Centro",
+    "phone": "9611234567",
+    "whatsapp": "9611234567",
+    "contact_name": "Don Roberto Gomez",
+    "status": "Nuevo",
+    "completeness_score": 85,
+    "rating": 4.6,
+    "reviews_count": 42
+  },
+  {
+    "id": "prospect_002",
+    "business_name": "Burgers & Wings 961",
+    "category": "Hamburguesería",
+    "city": "Tuxtla Gutiérrez",
+    "colonia": "Moctezuma",
+    "address": "15da Poniente Norte #120, Moctezuma",
+    "phone": "9619876543",
+    "whatsapp": "9619876543",
+    "contact_name": "Lic. Carlos Mendoza",
+    "status": "Demo Enviada",
+    "completeness_score": 90,
+    "rating": 4.8,
+    "reviews_count": 88
+  }
+]

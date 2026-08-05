@@ -4,6 +4,44 @@
 
 ---
 
+## 2026-08-05 — Creación e Integración del Dashboard Móvil de Prospección Comercial
+
+**Hora:** 07:37 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Implementación del Dashboard Móvil de Prospección Comercial conectado a los 1,901 restaurantes de `MASTER_RESTAURANTS.xlsx`.
+
+### Cambios realizados
+
+- **Script de Sincronización de Datos (`scripts/sync_master_prospects.py`):**
+  - Parsea `data/MASTER_RESTAURANTS.xlsx` exportando `src/data/master_prospects.json` con los 1,901 restaurantes validados.
+- **Componente Ficha del Negocio (`src/components/crm/ProspectDetailModal.jsx`):**
+  - Vista en modal/drawer móvil con los 27 atributos, indicador de calidad, llamada telefónica directa, enlace directo a Facebook / Google Maps, asignación de demo oficial (10 demos), selector de Estado Comercial y generador dinámico de mensajes de WhatsApp.
+- **Componente Dashboard Móvil (`src/components/crm/MobileProspectingDashboard.jsx`):**
+  - Renderizado táctil responsivo, métricas en vivo (Total, Contactados, Demos Enviadas, Interesados, Cerrados), buscador instantáneo y filtros multidimensionales por Ciudad, Giro, Canales y Estado.
+- **Integración CRM (`src/components/crm/ProspectosTab.jsx`):**
+  - Establecido como modo predeterminado de prospección dentro de StreetBoss Central HQ.
+
+---
+
+## 2026-08-05 — Consolidación Final y Depuración de la Base Maestra Oficial
+
+**Hora:** 02:56 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Consolidación final en `MASTER_RESTAURANTS.xlsx` único, depuración total de `/data` y eliminación de fuentes procesadas en `~/Downloads`.
+
+### Cambios realizados
+
+- **Base Maestra Definitiva:**
+  - Consolidada en `/Users/danielvazquez/Proyectos/StreetBoss/data/MASTER_RESTAURANTS.xlsx` con **1,901 restaurantes/sucursales independientes** y 27 columnas.
+- **Depuración Total de `/data`:**
+  - Eliminados 10 archivos (CSV, JSON, auditorías, muestras y reportes). Dentro de `data/` únicamente resida `MASTER_RESTAURANTS.xlsx`.
+- **Limpieza de Descargas (`~/Downloads`):**
+  - Eliminados definitivamente los 22 archivos fuente confirmados.
+- **Actualización del Sistema Futuro:**
+  - Modificado `scripts/master_dataset_builder.py` para operabilidad incremental directa sobre `MASTER_RESTAURANTS.xlsx` y auto-eliminación de fuentes sin generar CSV, JSON ni basura residual.
+
+---
+
 ## 2026-08-05 — Auditoría Exhaustiva de Calidad y Generación de Base Maestra Auditada
 
 **Hora:** 02:42 CST  

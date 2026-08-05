@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getProspects, createProspect, checkProspectDuplicates, importProspects } from '../../services/crmV3Service'
-import { UserPlus, Upload, AlertCircle, CheckCircle2, Search, Sparkles, Filter, FileSpreadsheet, ArrowRight, ShieldAlert } from 'lucide-react'
+import MobileProspectingDashboard from './MobileProspectingDashboard'
+import { UserPlus, Upload, Sparkles, FileSpreadsheet, ShieldAlert, Smartphone, ListFilter } from 'lucide-react'
 
 export default function ProspectosTab({ onConvertProspectToBusiness }) {
   const [prospects, setProspects] = useState([])
-  const [mode, setMode] = useState('list') // 'list', 'manual', 'import'
+  const [mode, setMode] = useState('mobile_dashboard') // 'mobile_dashboard', 'list', 'manual', 'import'
   const [search, setSearch] = useState('')
 
   // Formulario manual
@@ -59,7 +60,7 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
     reloadProspects()
 
     if (dupes.length === 0) {
-      setMode('list')
+      setMode('mobile_dashboard')
       setManualForm({
         business_name: '', category: 'Restaurante', contact_name: '', phone: '', whatsapp: '',
         email: '', address: '', colonia: '', city: 'Tuxtla Gutiérrez', state: 'Chiapas',
@@ -77,7 +78,6 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
       const text = event.target.result
       setRawFileContent(text)
       
-      // Basic CSV parsing by newline and comma/tab
       const lines = text.split(/\r?\n/).filter(line => line.trim())
       const rows = lines.map(line => line.split(/[,;\t]/).map(cell => cell.trim().replace(/^["']|["']$/g, '')))
       
@@ -89,7 +89,6 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
   const handleConfirmImport = () => {
     if (parsedRows.length < 2) return
 
-    // Header row is index 0
     const dataRows = parsedRows.slice(1)
     const formattedProspects = dataRows.map(row => ({
       business_name: row[columnMapping.business_name] || 'Negocio Importado',
@@ -100,7 +99,7 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
 
     const importedCount = importProspects(formattedProspects)
     reloadProspects()
-    setMode('list')
+    setMode('mobile_dashboard')
     setParsedRows([])
     setRawFileContent('')
     alert(`¡${importedCount} prospectos importados correctamente!`)
@@ -114,25 +113,34 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
 
   return (
     <div className="space-y-6">
-      {/* Header & Submenú de Acciones */}
+      {/* Header & Submenú de Navegación de Prospección */}
       <div className="bg-[#14161F] p-4 sm:p-6 rounded-2xl border border-white/5 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <UserPlus className="text-[#FF4B00]" size={24} /> Gestión y Prospección Comercial
+            <UserPlus className="text-[#FF4B00]" size={24} /> Prospección Comercial StreetBoss
           </h2>
           <p className="text-xs sm:text-sm text-gray-400 mt-1">
-            Captura manual de leads e importación por archivo con control anti-duplicados.
+            Gestión comercial de la Base Maestra Oficial de Restaurantes (1,901 registros validados).
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <button
+            onClick={() => setMode('mobile_dashboard')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              mode === 'mobile_dashboard' ? 'bg-[#FF4B00] text-white shadow-lg' : 'bg-white/5 text-gray-300 hover:bg-white/10'
+            }`}
+          >
+            <Smartphone size={15} /> Dashboard Móvil 1,901
+          </button>
+
+          <button
             onClick={() => setMode('list')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
               mode === 'list' ? 'bg-[#FF4B00] text-white shadow-lg' : 'bg-white/5 text-gray-300 hover:bg-white/10'
             }`}
           >
-            Lista de Prospectos ({prospects.length})
+            <ListFilter size={15} /> Capturas Locales ({prospects.length})
           </button>
 
           <button
@@ -155,7 +163,12 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
         </div>
       </div>
 
-      {/* MODO LISTA */}
+      {/* MODO DASHBOARD MÓVIL PRINCIPAL (1,901 RESTAURANTES) */}
+      {mode === 'mobile_dashboard' && (
+        <MobileProspectingDashboard onConvertProspectToBusiness={onConvertProspectToBusiness} />
+      )}
+
+      {/* MODO LISTA LOCAL DE CAPTURAS */}
       {mode === 'list' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4 bg-[#14161F] p-4 rounded-xl border border-white/5">
@@ -271,7 +284,7 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
           <div className="flex justify-end gap-3 pt-3">
             <button
               type="button"
-              onClick={() => setMode('list')}
+              onClick={() => setMode('mobile_dashboard')}
               className="px-4 py-2.5 rounded-xl bg-white/5 text-gray-300 font-bold text-xs"
             >
               Cancelar

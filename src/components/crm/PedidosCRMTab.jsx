@@ -235,7 +235,7 @@ export default function PedidosCRMTab() {
                 className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 hover:border-[#FF4B00]/40 transition-all cursor-pointer flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3"
               >
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-black text-white font-mono">{o.order_number}</span>
                     <span className="bg-white/5 text-gray-300 font-bold px-2 py-0.5 rounded text-[10px]">
                       {o.business_name}
@@ -246,6 +246,19 @@ export default function PedidosCRMTab() {
                         : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                     }`}>
                       {o.delivery_type === 'domicilio' ? '🛵 A Domicilio' : '🏪 Recoger'}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      o.status === 'enviado_wa' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                      o.status === 'confirmado' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                      o.status === 'entregado' ? 'bg-green-500/10 text-green-300 border border-green-500/20' :
+                      o.status === 'cancelado' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
+                      'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                    }`}>
+                      {o.status === 'enviado_wa' ? 'Enviado WA' :
+                       o.status === 'confirmado' ? 'Confirmado' :
+                       o.status === 'entregado' ? 'Entregado' :
+                       o.status === 'cancelado' ? 'Cancelado' :
+                       'Pendiente'}
                     </span>
                   </div>
 
@@ -293,6 +306,18 @@ export default function PedidosCRMTab() {
               <p className="text-gray-300">Cliente: <span className="font-bold text-white">{selectedOrder.customer_name}</span></p>
               <p className="text-emerald-400 font-mono">WhatsApp: {selectedOrder.whatsapp}</p>
               <p className="text-gray-400">Dirección: {selectedOrder.address || 'No especificada'} (Colonia {selectedOrder.colonia || 'N/A'}, CP {selectedOrder.postal_code || 'N/A'})</p>
+              {selectedOrder.comentarios_internos && (
+                <p className="text-amber-300 pt-1">💬 Comentario Interno: {selectedOrder.comentarios_internos}</p>
+              )}
+              {selectedOrder.observaciones && (
+                <p className="text-gray-300">📝 Observaciones: {selectedOrder.observaciones}</p>
+              )}
+              {selectedOrder.hora_confirmacion && (
+                <p className="text-gray-400">⏰ Hora Confirmación: {selectedOrder.hora_confirmacion}</p>
+              )}
+              {selectedOrder.hora_entrega && (
+                <p className="text-emerald-400">🚚 Hora Entrega: {selectedOrder.hora_entrega}</p>
+              )}
             </div>
 
             <div className="space-y-2">
