@@ -1,16 +1,73 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { getBusinessBySlug, updateBusinessSettings, saveCategory, deleteCategory, saveProduct, deleteProduct, getBusinessDeliveryZones, saveDeliveryZones, bulkUpdateZoneFees } from '../services/crmV3Service'
+import {
+  getBusinessBySlug,
+  updateBusinessSettings,
+  saveCategory,
+  deleteCategory,
+  saveProduct,
+  toggleProductAvailability,
+  toggleProductVisibility,
+  deleteProduct,
+  getBusinessDeliveryZones,
+  saveDeliveryZones,
+  bulkUpdateZoneFees
+} from '../services/crmV3Service'
 import { buscarPorCP, buscarPorColonia } from '../data/sepomexTuxtla'
-import { Store, Layers, Package, MapPin, ExternalLink, Save, Plus, Trash2, Edit2, CheckCircle, Search, Power, DollarSign, Image } from 'lucide-react'
+import {
+  Store,
+  Layers,
+  Package,
+  MapPin,
+  ExternalLink,
+  Save,
+  Plus,
+  Trash2,
+  Edit2,
+  CheckCircle,
+  Search,
+  Power,
+  DollarSign,
+  Image as ImageIcon,
+  Upload,
+  Eye,
+  EyeOff,
+  AlertTriangle,
+  Globe,
+  Share2,
+  CheckSquare,
+  Square
+} from 'lucide-react'
+
+// Helper: Convert File object to Base64 WebP Data URL for local storage persistence
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve('')
+    // Validation: JPG, JPEG, PNG, WEBP
+    const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+    if (!allowed.includes(file.type.toLowerCase())) {
+      return reject(new Error('Formato no permitido. Utiliza archivos JPG, JPEG, PNG o WEBP.'))
+    }
+    // Validation: Size <= 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      return reject(new Error('La imagen pesa demasiado. El tamaño máximo permitido es 5MB.'))
+    }
+
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = () => reject(new Error('Error al leer la imagen seleccionada.'))
+    reader.readAsDataURL(file)
+  })
+}
 
 export default function ClientDashboard() {
   const { slug } = useParams()
   const [business, setBusiness] = useState(null)
-  const [tab, setTab] = useState('info') // 'info', 'categorias', 'productos', 'zonas'
+  const [tab, setTab] = useState('info') // 'info', 'rrss', 'categorias', 'productos', 'zonas'
   const [savedSuccess, setSavedSuccess] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
-  // Form info
+  // Information & RRSS Form
   const [infoForm, setInfoForm] = useState({})
   
   // Modal Categorías
@@ -23,9 +80,8 @@ export default function ClientDashboard() {
   const [zones, setZones] = useState([])
   const [cpSearch, setCpSearch] = useState('')
   const [coloniaSearch, setColoniaSearch] = useState('')
-  const [selectedSettlements, setSelectedSettlements] = useState([])
-  const [bulkFee, setBulkFee] = useState(30)
   const [selectedZoneKeys, setSelectedZoneKeys] = useState([])
+  const [bulkFee, setBulkFee] = useState(30)
 
   const loadData = () => {
     const b = getBusinessBySlug(slug)
@@ -40,15 +96,25 @@ export default function ClientDashboard() {
         postal_code: b.postal_code || '',
         schedule_text: b.schedule_text || '',
         is_open: b.is_open !== false,
+        
+        // Delivery Settings (Reparto)
         has_delivery: b.has_delivery !== false,
-        delivery_mode: b.delivery_mode || 'fijo',
-        base_delivery_fee: b.base_delivery_fee || 30,
+        free_delivery: b.free_delivery || false,
+        use_general_fee: b.use_general_fee !== false,
+        base_delivery_fee: b.base_delivery_fee ?? 30,
+
+        // Images
         logo_url: b.logo_url || '',
         banner_url: b.banner_url || '',
         brand_color: b.brand_color || '#FF4B00',
+
+        // Social Networks (RRSS)
         facebook_url: b.facebook_url || '',
         instagram_url: b.instagram_url || '',
         tiktok_url: b.tiktok_url || '',
+        youtube_url: b.youtube_url || '',
+        website_url: b.website_url || '',
+        maps_url: b.maps_url || '',
       })
 
       const z = getBusinessDeliveryZones(b.business_id)
@@ -78,12 +144,30 @@ export default function ClientDashboard() {
     setTimeout(() => setSavedSuccess(''), 3000)
   }
 
-  // 1. Guardar Información General
+  const showError = (msg) => {
+    setErrorMessage(msg)
+    setTimeout(() => setErrorMessage(''), 4000)
+  }
+
+  // File Upload Handlers (Examinar fotos desde celular/equipo)
+  const handleImageFileChange = async (e, fieldSetter) => {
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+      const dataUrl = await readFileAsDataURL(file)
+      fieldSetter(dataUrl)
+      showToast('Imagen cargada correctamente')
+    } catch (err) {
+      showError(err.message)
+    }
+  }
+
+  // 1. Guardar Información General y Redes Sociales
   const handleSaveInfo = (e) => {
     e.preventDefault()
     updateBusinessSettings(business.business_id, infoForm)
     loadData()
-    showToast('Información del restaurante actualizada')
+    showToast('Información y configuraciones actualizadas')
   }
 
   // 2. Categorías
@@ -104,7 +188,7 @@ export default function ClientDashboard() {
     }
   }
 
-  // 3. Productos
+  // 3. Productos y Estados (Disponible, Agotado, Oculto)
   const handleSaveProd = (e) => {
     e.preventDefault()
     if (!editingProduct?.name || !editingProduct?.category_id) return
@@ -112,6 +196,18 @@ export default function ClientDashboard() {
     setEditingProduct(null)
     loadData()
     showToast('Producto guardado')
+  }
+
+  const handleToggleAgotado = (prodId) => {
+    toggleProductAvailability(prodId)
+    loadData()
+    showToast('Estado del producto actualizado')
+  }
+
+  const handleToggleOculto = (prodId) => {
+    toggleProductVisibility(prodId)
+    loadData()
+    showToast('Visibilidad del producto actualizada')
   }
 
   const handleDeleteProd = (prodId) => {
@@ -122,21 +218,21 @@ export default function ClientDashboard() {
     }
   }
 
-  // 4. Zonas de Entrega
+  // 4. Zonas de Entrega (Tuxtla Gutiérrez)
   const resultsByCP = cpSearch ? buscarPorCP(cpSearch) : []
   const resultsByColonia = coloniaSearch ? buscarPorColonia(coloniaSearch) : []
 
   const handleAddSettlement = (item, fee = 30) => {
-    const key = `${item.cp}_${item.colonia}`
     const existing = zones.find(z => z.postal_code === item.cp && z.settlement_name === item.colonia)
     if (!existing) {
+      const finalFee = infoForm.free_delivery ? 0 : (infoForm.use_general_fee ? Number(infoForm.base_delivery_fee || 30) : fee)
       const newZones = [
         ...zones,
         {
           postal_code: item.cp,
           settlement_name: item.colonia,
           settlement_type: item.tipo || 'Colonia',
-          delivery_fee: fee,
+          delivery_fee: finalFee,
           is_active: true,
         }
       ]
@@ -146,8 +242,9 @@ export default function ClientDashboard() {
     }
   }
 
-  const handleAddAllFromCP = (cpItems, fee = 30) => {
+  const handleAddAllFromCP = (cpItems) => {
     const newZones = [...zones]
+    const finalFee = infoForm.free_delivery ? 0 : Number(infoForm.base_delivery_fee || 30)
     cpItems.forEach(item => {
       const exists = newZones.some(z => z.postal_code === item.cp && z.settlement_name === item.colonia)
       if (!exists) {
@@ -155,14 +252,14 @@ export default function ClientDashboard() {
           postal_code: item.cp,
           settlement_name: item.colonia,
           settlement_type: item.tipo || 'Colonia',
-          delivery_fee: fee,
+          delivery_fee: finalFee,
           is_active: true,
         })
       }
     })
     const saved = saveDeliveryZones(business.business_id, newZones)
     setZones(saved)
-    showToast(`Colonias del CP agregadas`)
+    showToast(`Colonias agregadas al reparto`)
   }
 
   const handleRemoveZone = (zoneId) => {
@@ -188,7 +285,14 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      {/* Header Superior del Dashboard */}
+      {/* Error Alert */}
+      {errorMessage && (
+        <div className="fixed top-4 right-4 z-50 bg-red-600 text-white px-5 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2">
+          <AlertTriangle size={16} /> {errorMessage}
+        </div>
+      )}
+
+      {/* Header Superior del Dashboard Mobile First */}
       <header className="bg-[#14161F] border-b border-white/5 px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 flex items-center justify-center font-black text-[#FF4B00]">
@@ -236,7 +340,16 @@ export default function ClientDashboard() {
             tab === 'info' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <Store size={14} /> Información General
+          <Store size={14} /> Información e Imágenes
+        </button>
+
+        <button
+          onClick={() => setTab('rrss')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'rrss' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <Share2 size={14} /> Redes Sociales
         </button>
 
         <button
@@ -263,20 +376,88 @@ export default function ClientDashboard() {
             tab === 'zonas' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <MapPin size={14} /> Zonas de Entrega ({zones.length})
+          <MapPin size={14} /> Servicio a Domicilio ({zones.length})
         </button>
       </nav>
 
       {/* Contenido Principal */}
       <main className="max-w-5xl mx-auto p-4 sm:p-8 space-y-6">
-        {/* PESTAÑA 1: INFORMACIÓN GENERAL & IMÁGENES */}
+        {/* PESTAÑA 1: INFORMACIÓN GENERAL & CARGA MANUAL DE IMÁGENES */}
         {tab === 'info' && (
           <form onSubmit={handleSaveInfo} className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl">
             <h2 className="text-lg font-black text-white border-b border-white/5 pb-3">Información del Negocio e Imágenes</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+              {/* Carga Manual de Logotipo */}
+              <div className="space-y-2 bg-[#0D0E12] p-4 rounded-2xl border border-white/5">
+                <label className="block font-bold text-gray-300">Logotipo del Restaurante</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                    {infoForm.logo_url ? (
+                      <img src={infoForm.logo_url} alt="Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <ImageIcon size={24} className="text-gray-600" />
+                    )}
+                  </div>
+                  <div className="space-y-2 flex-1">
+                    <label className="inline-flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all">
+                      <Upload size={14} /> EXAMINAR FOTOS
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={e => handleImageFileChange(e, url => setInfoForm(prev => ({ ...prev, logo_url: url })))}
+                      />
+                    </label>
+                    {infoForm.logo_url && (
+                      <button
+                        type="button"
+                        onClick={() => setInfoForm(prev => ({ ...prev, logo_url: '' }))}
+                        className="text-red-400 hover:underline text-[11px] block"
+                      >
+                        Eliminar logotipo
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Carga Manual de Portada */}
+              <div className="space-y-2 bg-[#0D0E12] p-4 rounded-2xl border border-white/5">
+                <label className="block font-bold text-gray-300">Imagen de Portada (Header)</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-24 h-16 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                    {infoForm.banner_url ? (
+                      <img src={infoForm.banner_url} alt="Portada" className="w-full h-full object-cover" />
+                    ) : (
+                      <ImageIcon size={24} className="text-gray-600" />
+                    )}
+                  </div>
+                  <div className="space-y-2 flex-1">
+                    <label className="inline-flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-4 py-2 rounded-xl font-bold cursor-pointer transition-all">
+                      <Upload size={14} /> EXAMINAR FOTOS
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                        className="hidden"
+                        onChange={e => handleImageFileChange(e, url => setInfoForm(prev => ({ ...prev, banner_url: url })))}
+                      />
+                    </label>
+                    {infoForm.banner_url && (
+                      <button
+                        type="button"
+                        onClick={() => setInfoForm(prev => ({ ...prev, banner_url: '' }))}
+                        className="text-red-400 hover:underline text-[11px] block"
+                      >
+                        Eliminar portada
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               <div>
-                <label className="block font-bold text-gray-300 mb-1">Nombre del Restaurante</label>
+                <label className="block font-bold text-gray-300 mb-1">Nombre Comercial</label>
                 <input
                   type="text"
                   value={infoForm.name}
@@ -315,26 +496,6 @@ export default function ClientDashboard() {
                 />
               </div>
 
-              <div>
-                <label className="block font-bold text-gray-300 mb-1">Imagen de Portada (URL o /demos/img/...)</label>
-                <input
-                  type="text"
-                  value={infoForm.banner_url}
-                  onChange={e => setInfoForm({ ...infoForm, banner_url: e.target.value })}
-                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
-                />
-              </div>
-
-              <div>
-                <label className="block font-bold text-gray-300 mb-1">Imagen de Logotipo (URL)</label>
-                <input
-                  type="text"
-                  value={infoForm.logo_url}
-                  onChange={e => setInfoForm({ ...infoForm, logo_url: e.target.value })}
-                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
-                />
-              </div>
-
               <div className="sm:col-span-2">
                 <label className="block font-bold text-gray-300 mb-1">Descripción / Eslogan del Negocio</label>
                 <textarea
@@ -351,13 +512,100 @@ export default function ClientDashboard() {
                 type="submit"
                 className="flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-6 py-3 rounded-full shadow-lg"
               >
-                <Save size={16} /> Guardar Información
+                <Save size={16} /> Guardar Cambios
               </button>
             </div>
           </form>
         )}
 
-        {/* PESTAÑA 2: CATEGORÍAS */}
+        {/* PESTAÑA 2: REDES SOCIALES (RRSS) */}
+        {tab === 'rrss' && (
+          <form onSubmit={handleSaveInfo} className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl">
+            <h2 className="text-lg font-black text-white border-b border-white/5 pb-3">Redes Sociales y Enlaces Oficiales</h2>
+            <p className="text-xs text-gray-400">
+              Agrega los enlaces a tus perfiles sociales. Únicamente las redes que tengan información guardada se mostrarán en tu menú público.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Facebook (URL completa)</label>
+                <input
+                  type="url"
+                  placeholder="https://facebook.com/tustacos"
+                  value={infoForm.facebook_url}
+                  onChange={e => setInfoForm({ ...infoForm, facebook_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Instagram (URL completa)</label>
+                <input
+                  type="url"
+                  placeholder="https://instagram.com/tustacos"
+                  value={infoForm.instagram_url}
+                  onChange={e => setInfoForm({ ...infoForm, instagram_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">TikTok (URL completa)</label>
+                <input
+                  type="url"
+                  placeholder="https://tiktok.com/@tustacos"
+                  value={infoForm.tiktok_url}
+                  onChange={e => setInfoForm({ ...infoForm, tiktok_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">YouTube (URL completa)</label>
+                <input
+                  type="url"
+                  placeholder="https://youtube.com/@tustacos"
+                  value={infoForm.youtube_url}
+                  onChange={e => setInfoForm({ ...infoForm, youtube_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Sitio Web Oficial</label>
+                <input
+                  type="url"
+                  placeholder="https://tustacos.com.mx"
+                  value={infoForm.website_url}
+                  onChange={e => setInfoForm({ ...infoForm, website_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Google Maps (Ubicación en mapa)</label>
+                <input
+                  type="url"
+                  placeholder="https://maps.google.com/..."
+                  value={infoForm.maps_url}
+                  onChange={e => setInfoForm({ ...infoForm, maps_url: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-6 py-3 rounded-full shadow-lg"
+              >
+                <Save size={16} /> Guardar Redes Sociales
+              </button>
+            </div>
+          </form>
+        )}
+
+        {/* PESTAÑA 3: CATEGORÍAS */}
         {tab === 'categorias' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center bg-[#14161F] p-4 rounded-2xl border border-white/5">
@@ -399,7 +647,7 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA 3: PRODUCTOS */}
+        {/* PESTAÑA 4: PRODUCTOS CON ESTADOS (DISPONIBLE, AGOTADO, OCULTO) Y EXAMINAR FOTOS */}
         {tab === 'productos' && (
           <div className="space-y-6">
             <div className="flex justify-between items-center bg-[#14161F] p-4 rounded-2xl border border-white/5">
@@ -412,6 +660,7 @@ export default function ClientDashboard() {
                   category_id: business.categories[0]?.id || '',
                   is_active: true,
                   is_out_of_stock: false,
+                  is_hidden: false,
                   image_url: ''
                 })}
                 className="flex items-center gap-1.5 bg-[#FF4B00] text-white px-4 py-2 rounded-xl text-xs font-black"
@@ -429,7 +678,7 @@ export default function ClientDashboard() {
                         <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-600">
-                          <Image size={24} />
+                          <ImageIcon size={24} />
                         </div>
                       )}
                       <span className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/80 font-black text-emerald-400 text-xs">
@@ -437,15 +686,38 @@ export default function ClientDashboard() {
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-sm text-white">{prod.name}</h3>
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-bold text-sm text-white">{prod.name}</h3>
+                    </div>
                     <p className="text-xs text-gray-400 line-clamp-2">{prod.description}</p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
-                    <span className={prod.is_out_of_stock ? 'text-red-400 font-bold' : 'text-emerald-400'}>
-                      {prod.is_out_of_stock ? 'Agotado' : 'Disponible'}
-                    </span>
-                    <div className="flex gap-2">
+                  {/* Casilla Sencilla de Estado Agotado / Disponible / Oculto */}
+                  <div className="pt-3 border-t border-white/5 space-y-2 text-xs">
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={!prod.is_out_of_stock}
+                          onChange={() => handleToggleAgotado(prod.id)}
+                          className="rounded border-white/20 text-[#FF4B00] focus:ring-0"
+                        />
+                        <span className={`font-bold ${!prod.is_out_of_stock ? 'text-emerald-400' : 'text-amber-400 font-black'}`}>
+                          {!prod.is_out_of_stock ? 'DISPONIBLE' : 'AGOTADO'}
+                        </span>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleOculto(prod.id)}
+                        className={`flex items-center gap-1 text-[11px] font-bold ${prod.is_hidden ? 'text-gray-500' : 'text-gray-300'}`}
+                      >
+                        {prod.is_hidden ? <EyeOff size={13} /> : <Eye size={13} />}
+                        {prod.is_hidden ? 'Oculto' : 'Visible'}
+                      </button>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-1">
                       <button onClick={() => setEditingProduct(prod)} className="p-1.5 rounded-lg bg-white/5 text-gray-300">
                         <Edit2 size={14} />
                       </button>
@@ -460,144 +732,238 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA 4: ZONAS DE ENTREGA (COLONIAS TUXTLA GUTIÉRREZ) */}
+        {/* PESTAÑA 5: SERVICIO A DOMICILIO Y REPARTO POR COLONIA */}
         {tab === 'zonas' && (
           <div className="space-y-6">
-            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
-              <h2 className="text-lg font-black text-white flex items-center gap-2">
-                <MapPin className="text-[#FF4B00]" size={20} /> Zonas de Entrega y Colonias Habilitadas
+            {/* Controles Principales del Servicio a Domicilio */}
+            <form onSubmit={handleSaveInfo} className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl">
+              <h2 className="text-lg font-black text-white flex items-center gap-2 border-b border-white/5 pb-3">
+                <MapPin className="text-[#FF4B00]" size={20} /> Configuración de Servicio a Domicilio
               </h2>
-              <p className="text-xs text-gray-400">
-                Selecciona las colonias oficiales de Tuxtla Gutiérrez a donde realizas envíos a domicilio y asigna el costo de entrega.
-              </p>
 
-              {/* Buscador de Colonias / CPs */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                <div>
-                  <label className="block font-bold text-gray-300 mb-1">Buscar por Código Postal (CP)</label>
+              <div className="space-y-4 text-xs">
+                {/* Control 1: Agregar Servicio a Domicilio */}
+                <label className="flex items-center gap-3 p-3 bg-[#0D0E12] rounded-xl border border-white/5 cursor-pointer">
                   <input
-                    type="text"
-                    placeholder="Ej. 29000"
-                    value={cpSearch}
-                    onChange={e => setCpSearch(e.target.value)}
-                    className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                    type="checkbox"
+                    checked={infoForm.has_delivery}
+                    onChange={e => setInfoForm({ ...infoForm, has_delivery: e.target.checked })}
+                    className="w-4 h-4 rounded text-[#FF4B00] focus:ring-0"
                   />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-gray-300 mb-1">Buscar por Nombre de Colonia</label>
-                  <input
-                    type="text"
-                    placeholder="Ej. Centro, Terán, Moctezuma"
-                    value={coloniaSearch}
-                    onChange={e => setColoniaSearch(e.target.value)}
-                    className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
-                  />
-                </div>
-              </div>
-
-              {/* Resultados de búsqueda */}
-              {resultsByCP.length > 0 && (
-                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/10 space-y-2 text-xs">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-emerald-400">{resultsByCP.length} colonias encontradas para CP {cpSearch}</span>
-                    <button
-                      onClick={() => handleAddAllFromCP(resultsByCP, 30)}
-                      className="bg-[#FF4B00] text-white px-3 py-1 rounded-lg font-bold"
-                    >
-                      + Agregar todas las colonias del CP ($30)
-                    </button>
+                  <div>
+                    <span className="font-bold text-white text-sm block">AGREGAR SERVICIO A DOMICILIO</span>
+                    <span className="text-gray-400 text-[11px]">Habilita la opción de entrega a domicilio en el carrito de tu menú público.</span>
                   </div>
-                  <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto">
-                    {resultsByCP.map((item, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleAddSettlement(item, 30)}
-                        className="bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg text-gray-300 text-[11px] border border-white/5"
-                      >
-                        + {item.colonia} ({item.tipo})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+                </label>
 
-              {resultsByColonia.length > 0 && (
-                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/10 space-y-2 text-xs">
-                  <span className="font-bold text-emerald-400">{resultsByColonia.length} colonias encontradas</span>
-                  <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto">
-                    {resultsByColonia.map((item, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleAddSettlement(item, 30)}
-                        className="bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg text-gray-300 text-[11px] border border-white/5"
-                      >
-                        + {item.colonia} (CP {item.cp})
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Edición Masiva y Lista de Zonas Habilitadas */}
-            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/5 pb-3">
-                <h3 className="font-black text-sm text-white">Colonias Activas ({zones.length})</h3>
-
-                {selectedZoneKeys.length > 0 && (
-                  <div className="flex items-center gap-2 bg-[#0D0E12] p-2 rounded-xl border border-[#FF4B00]/30 text-xs">
-                    <span>{selectedZoneKeys.length} seleccionadas. Asignar costo: $</span>
-                    <input
-                      type="number"
-                      value={bulkFee}
-                      onChange={e => setBulkFee(e.target.value)}
-                      className="w-16 bg-black border border-white/20 rounded px-2 py-0.5 text-emerald-400 font-bold"
-                    />
-                    <button onClick={handleApplyBulkFee} className="bg-[#FF4B00] text-white px-3 py-1 rounded-lg font-bold">
-                      Aplicar
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                {zones.length === 0 ? (
-                  <p className="text-xs text-gray-400 text-center py-6">No has agregado colonias de entrega. Utiliza el buscador superior.</p>
-                ) : (
-                  zones.map(z => {
-                    const key = `${z.postal_code}_${z.settlement_name}`
-                    const isSelected = selectedZoneKeys.includes(key)
-                    return (
-                      <div key={z.id} className="bg-[#0D0E12] p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={e => {
-                              if (e.target.checked) setSelectedZoneKeys([...selectedZoneKeys, key])
-                              else setSelectedZoneKeys(selectedZoneKeys.filter(k => k !== key))
-                            }}
-                            className="rounded border-white/20"
-                          />
-                          <div>
-                            <span className="font-bold text-white">{z.settlement_name}</span>
-                            <span className="text-[10px] text-gray-400 ml-2">CP {z.postal_code} · {z.settlement_type}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                          <span className="font-bold text-emerald-400 font-mono">${z.delivery_fee}</span>
-                          <button onClick={() => handleRemoveZone(z.id)} className="text-red-400 hover:text-red-300">
-                            <Trash2 size={14} />
-                          </button>
-                        </div>
+                {infoForm.has_delivery && (
+                  <div className="space-y-4 pl-4 border-l-2 border-[#FF4B00]/40 animate-fade-in">
+                    {/* Control 2: Envío Gratis */}
+                    <label className="flex items-center gap-3 p-3 bg-[#0D0E12] rounded-xl border border-white/5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={infoForm.free_delivery}
+                        onChange={e => setInfoForm({ ...infoForm, free_delivery: e.target.checked })}
+                        className="w-4 h-4 rounded text-[#FF4B00] focus:ring-0"
+                      />
+                      <div>
+                        <span className="font-bold text-emerald-400 text-sm block">SERVICIO A DOMICILIO GRATIS</span>
+                        <span className="text-gray-400 text-[11px]">Todas las colonias seleccionadas tendrán costo $0 y se mostrará ENVÍO GRATIS.</span>
                       </div>
-                    )
-                  })
+                    </label>
+
+                    {!infoForm.free_delivery && (
+                      <div className="space-y-3 p-4 bg-[#0D0E12] rounded-xl border border-white/5">
+                        <label className="block font-bold text-white mb-2">¿Deseas usar el mismo costo para todas las colonias?</label>
+                        
+                        <div className="flex gap-4">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="use_general_fee"
+                              checked={infoForm.use_general_fee === true}
+                              onChange={() => setInfoForm({ ...infoForm, use_general_fee: true })}
+                              className="text-[#FF4B00]"
+                            />
+                            <span className="text-gray-300 font-bold">Sí (Costo General Único)</span>
+                          </label>
+
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="use_general_fee"
+                              checked={infoForm.use_general_fee === false}
+                              onChange={() => setInfoForm({ ...infoForm, use_general_fee: false })}
+                              className="text-[#FF4B00]"
+                            />
+                            <span className="text-gray-300 font-bold">No (Costo Individual por Colonia)</span>
+                          </label>
+                        </div>
+
+                        {infoForm.use_general_fee && (
+                          <div className="pt-2">
+                            <label className="block font-bold text-gray-300 mb-1">COSTO GENERAL DE ENVÍO ($ MXN)</label>
+                            <input
+                              type="number"
+                              value={infoForm.base_delivery_fee}
+                              onChange={e => setInfoForm({ ...infoForm, base_delivery_fee: e.target.value })}
+                              className="w-48 bg-black border border-white/20 rounded-xl px-4 py-2 font-mono text-emerald-400 font-bold text-sm"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
-            </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-6 py-3 rounded-full shadow-lg"
+                >
+                  <Save size={16} /> Guardar Configuración de Reparto
+                </button>
+              </div>
+            </form>
+
+            {/* Catálogo de Colonias y Reparto (Sólo si servicio a domicilio está activo) */}
+            {infoForm.has_delivery && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
+                  <h3 className="text-base font-black text-white flex items-center gap-2">
+                    <Search className="text-[#FF4B00]" size={18} /> Buscador de Colonias Oficiales (Tuxtla Gutiérrez)
+                  </h3>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">Buscar por Código Postal (CP)</label>
+                      <input
+                        type="text"
+                        placeholder="Ej. 29000"
+                        value={cpSearch}
+                        onChange={e => setCpSearch(e.target.value)}
+                        className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-gray-300 mb-1">Buscar por Nombre de Colonia</label>
+                      <input
+                        type="text"
+                        placeholder="Ej. Centro, Terán, Moctezuma"
+                        value={coloniaSearch}
+                        onChange={e => setColoniaSearch(e.target.value)}
+                        className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                      />
+                    </div>
+                  </div>
+
+                  {resultsByCP.length > 0 && (
+                    <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/10 space-y-2 text-xs">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-emerald-400">{resultsByCP.length} colonias encontradas para CP {cpSearch}</span>
+                        <button
+                          onClick={() => handleAddAllFromCP(resultsByCP)}
+                          className="bg-[#FF4B00] text-white px-3 py-1 rounded-lg font-bold"
+                        >
+                          + Agregar todas las colonias del CP
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto">
+                        {resultsByCP.map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleAddSettlement(item)}
+                            className="bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg text-gray-300 text-[11px] border border-white/5"
+                          >
+                            + {item.colonia} ({item.tipo})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {resultsByColonia.length > 0 && (
+                    <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/10 space-y-2 text-xs">
+                      <span className="font-bold text-emerald-400">{resultsByColonia.length} colonias encontradas</span>
+                      <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto">
+                        {resultsByColonia.map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleAddSettlement(item)}
+                            className="bg-white/5 hover:bg-white/10 px-2.5 py-1 rounded-lg text-gray-300 text-[11px] border border-white/5"
+                          >
+                            + {item.colonia} (CP {item.cp})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Secciones Colonias Seleccionadas y Edición Masiva */}
+                <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/5 pb-3">
+                    <h3 className="font-black text-sm text-white">COLONIAS SELECCIONADAS Y ACTIVAS ({zones.length})</h3>
+
+                    {selectedZoneKeys.length > 0 && !infoForm.free_delivery && (
+                      <div className="flex items-center gap-2 bg-[#0D0E12] p-2 rounded-xl border border-[#FF4B00]/30 text-xs">
+                        <span>{selectedZoneKeys.length} seleccionadas. Asignar costo: $</span>
+                        <input
+                          type="number"
+                          value={bulkFee}
+                          onChange={e => setBulkFee(e.target.value)}
+                          className="w-16 bg-black border border-white/20 rounded px-2 py-0.5 text-emerald-400 font-bold"
+                        />
+                        <button onClick={handleApplyBulkFee} className="bg-[#FF4B00] text-white px-3 py-1 rounded-lg font-bold">
+                          Aplicar a Seleccionadas
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    {zones.length === 0 ? (
+                      <p className="text-xs text-gray-400 text-center py-6">No has seleccionado colonias de entrega. Utiliza el buscador superior.</p>
+                    ) : (
+                      zones.map(z => {
+                        const key = `${z.postal_code}_${z.settlement_name}`
+                        const isSelected = selectedZoneKeys.includes(key)
+                        return (
+                          <div key={z.id} className="bg-[#0D0E12] p-3 rounded-xl border border-white/5 flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-3">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={e => {
+                                  if (e.target.checked) setSelectedZoneKeys([...selectedZoneKeys, key])
+                                  else setSelectedZoneKeys(selectedZoneKeys.filter(k => k !== key))
+                                }}
+                                className="rounded border-white/20"
+                              />
+                              <div>
+                                <span className="font-bold text-white">{z.settlement_name}</span>
+                                <span className="text-[10px] text-gray-400 ml-2">CP {z.postal_code} · {z.settlement_type}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-emerald-400 font-mono">
+                                {infoForm.free_delivery ? 'GRATIS' : `$${z.delivery_fee}`}
+                              </span>
+                              <button onClick={() => handleRemoveZone(z.id)} className="text-red-400 hover:text-red-300">
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -623,11 +989,11 @@ export default function ClientDashboard() {
         </div>
       )}
 
-      {/* Modal Editar Producto */}
+      {/* Modal Editar Producto con Carga Manual de Imagen */}
       {editingProduct && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSaveProd} className="bg-[#14161F] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-xs">
-            <h3 className="font-black text-white text-base">Guardar Producto</h3>
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <form onSubmit={handleSaveProd} className="bg-[#14161F] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-xs my-8">
+            <h3 className="font-black text-white text-base">Editar / Crear Producto</h3>
 
             <div>
               <label className="block text-gray-300 font-bold mb-1">Categoría</label>
@@ -674,24 +1040,61 @@ export default function ClientDashboard() {
               />
             </div>
 
-            <div>
-              <label className="block text-gray-300 font-bold mb-1">Fotografía URL (/productos/...)</label>
-              <input
-                type="text"
-                value={editingProduct.image_url}
-                onChange={e => setEditingProduct({ ...editingProduct, image_url: e.target.value })}
-                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
-              />
+            {/* Carga Manual de Imagen del Producto */}
+            <div className="space-y-2 bg-[#0D0E12] p-3 rounded-xl border border-white/5">
+              <label className="block text-gray-300 font-bold">Fotografía del Producto</label>
+              <div className="flex items-center gap-3">
+                <div className="w-16 h-16 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10 flex items-center justify-center">
+                  {editingProduct.image_url ? (
+                    <img src={editingProduct.image_url} alt="Producto" className="w-full h-full object-cover" />
+                  ) : (
+                    <ImageIcon size={20} className="text-gray-600" />
+                  )}
+                </div>
+                <div className="space-y-1 flex-1">
+                  <label className="inline-flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-3 py-1.5 rounded-lg font-bold cursor-pointer transition-all text-xs">
+                    <Upload size={12} /> EXAMINAR FOTOS
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      className="hidden"
+                      onChange={e => handleImageFileChange(e, url => setEditingProduct(prev => ({ ...prev, image_url: url })))}
+                    />
+                  </label>
+                  {editingProduct.image_url && (
+                    <button
+                      type="button"
+                      onClick={() => setEditingProduct(prev => ({ ...prev, image_url: '' }))}
+                      className="text-red-400 hover:underline text-[10px] block"
+                    >
+                      Quitar foto
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="outOfStock"
-                checked={editingProduct.is_out_of_stock}
-                onChange={e => setEditingProduct({ ...editingProduct, is_out_of_stock: e.target.checked })}
-              />
-              <label htmlFor="outOfStock" className="text-gray-300 font-bold">Marcar como AGOTADO</label>
+            {/* Controles Disponibilidad / Oculto */}
+            <div className="space-y-2 pt-2 border-t border-white/5">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={editingProduct.is_out_of_stock}
+                  onChange={e => setEditingProduct({ ...editingProduct, is_out_of_stock: e.target.checked })}
+                  className="rounded text-[#FF4B00]"
+                />
+                <span className="font-bold text-amber-400">Marcar como AGOTADO</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={editingProduct.is_hidden}
+                  onChange={e => setEditingProduct({ ...editingProduct, is_hidden: e.target.checked })}
+                  className="rounded text-gray-400"
+                />
+                <span className="font-bold text-gray-400">OCULTAR PRODUCTO (no aparecerá en el menú)</span>
+              </label>
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-white/5">

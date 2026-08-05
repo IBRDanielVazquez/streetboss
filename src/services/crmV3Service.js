@@ -562,6 +562,7 @@ export function saveProduct(businessId, productData) {
       description: productData.description || '',
       image_url: productData.image_url || '',
       is_out_of_stock: productData.is_out_of_stock || false,
+      is_hidden: productData.is_hidden || false,
       is_active: productData.is_active !== false,
       is_featured: productData.is_featured || false,
       is_promo: productData.is_promo || false,
@@ -571,6 +572,28 @@ export function saveProduct(businessId, productData) {
     pList.push(newProd)
   }
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+}
+
+export function toggleProductAvailability(productId) {
+  const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+  const idx = pList.findIndex(p => p.id === productId)
+  if (idx !== -1) {
+    pList[idx].is_out_of_stock = !pList[idx].is_out_of_stock
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+    return pList[idx]
+  }
+  return null
+}
+
+export function toggleProductVisibility(productId) {
+  const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+  const idx = pList.findIndex(p => p.id === productId)
+  if (idx !== -1) {
+    pList[idx].is_hidden = !pList[idx].is_hidden
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+    return pList[idx]
+  }
+  return null
 }
 
 export function deleteProduct(productId) {

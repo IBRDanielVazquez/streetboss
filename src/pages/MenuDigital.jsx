@@ -111,7 +111,7 @@ const { subtotal, cantidadTotal } = useMemo(() => {
               {c.tipo === 'especial' && <span className="text-xs font-black text-purple-600 bg-purple-100 px-2 py-0.5 rounded-full">⭐ Especial</span>}
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-              {c.productos.filter(p => p.activo).map(prod => {
+              {c.productos.filter(p => p.activo && !p.is_hidden && !p.oculto).map(prod => {
                 const cant = carrito[prod.id] || 0
                 return (
                   <ProductoMenuCard 

@@ -2,12 +2,13 @@ import React from 'react'
 import { Plus, Minus } from 'lucide-react'
 
 const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAgregar, onQuitar, colorMarca }) {
+  const isAgotado = prod.agotado || prod.is_out_of_stock
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col ${prod.agotado ? 'opacity-50' : ''}`}>
+    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col ${isAgotado ? 'opacity-60' : ''}`}>
       <div className="w-full aspect-[4/3] sm:aspect-[16/9] bg-gray-100 relative">
-        {prod.foto ? (
+        {prod.foto || prod.image_url ? (
           <img 
-            src={prod.foto} 
+            src={prod.foto || prod.image_url} 
             className="w-full h-full object-cover" 
             alt={prod.nombre} 
             loading="lazy" 
@@ -16,7 +17,7 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
         ) : (
           <div className="w-full h-full flex items-center justify-center text-5xl">🌮</div>
         )}
-        {prod.agotado && (
+        {isAgotado && (
           <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
             <span className="bg-red-500 text-white font-black px-4 py-1.5 rounded-full text-xs tracking-widest uppercase shadow-sm">Agotado</span>
           </div>
@@ -29,7 +30,7 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
         </div>
         <div className="mt-auto pt-4 flex items-center justify-between gap-2">
           <span className="font-black text-lg md:text-xl flex-shrink-0" style={{ color: colorMarca || '#ff4b16' }}>${prod.precio}</span>
-          {!prod.agotado && (
+          {!isAgotado && (
             cant > 0 ? (
               <div className="flex items-center gap-2.5 bg-gray-50 rounded-full p-1 border border-gray-100">
                 <button onClick={() => onQuitar(prod.id)} className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-700 active:scale-90 border border-gray-200"><Minus size={16} /></button>

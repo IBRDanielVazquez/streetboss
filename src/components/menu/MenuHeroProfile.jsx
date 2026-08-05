@@ -2,7 +2,7 @@
 // MenuHeroProfile — Hero tipo perfil de redes sociales
 // Banner horizontal + foto de perfil superpuesta + info del negocio
 // ─────────────────────────────────────────────────────────────────────────────
-import { MapPin, Clock, Phone, Share2, Instagram, Facebook } from 'lucide-react'
+import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
 
 // Ícono TikTok SVG inline (Lucide no tiene TikTok)
 function TikTokIcon({ size = 16 }) {
@@ -45,6 +45,9 @@ export default function MenuHeroProfile({ config }) {
     redes.instagram && { icon: <Instagram size={18} />, url: redes.instagram, label: 'Instagram' },
     redes.facebook && { icon: <Facebook size={18} />, url: redes.facebook, label: 'Facebook' },
     redes.tiktok && { icon: <TikTokIcon size={18} />, url: redes.tiktok, label: 'TikTok' },
+    redes.youtube && { icon: <Youtube size={18} />, url: redes.youtube, label: 'YouTube' },
+    redes.website && { icon: <Globe size={18} />, url: redes.website, label: 'Sitio Web' },
+    urlMaps && { icon: <MapPin size={18} />, url: urlMaps, label: 'Ubicación' },
     whatsapp && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${whatsapp}`, label: 'WhatsApp' },
     telefono && { icon: <Phone size={18} />, url: `tel:+52${telefono}`, label: 'Llamar' },
   ].filter(Boolean)
