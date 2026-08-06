@@ -111,8 +111,20 @@ function initLocalStore() {
       temp_password: '', // REQUERIMIENTO 10: No se generan contraseñas automáticamente
       payment_methods: {
         efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
-        transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
-        tarjeta: { activo: false, instrucciones: '', compra_minima: 0 }
+        transferencia: {
+          activo: true,
+          titular: `${demo.nombre || demo.name || 'Negocio Demo'} S.A. de C.V.`,
+          banco: 'BBVA Bancomer / Banorte',
+          clabe: '012180000123456789',
+          numero_cuenta: '4152 3130 0000 1234',
+          instrucciones: 'Por favor realiza tu transferencia SPEI incluyendo tu nombre o número de pedido en el concepto.',
+          texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta la captura del comprobante cuando envíes tu pedido por WhatsApp.'
+        },
+        tarjeta: {
+          activo: true,
+          instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El pago se realiza al momento de la entrega.',
+          compra_minima: 0
+        }
       },
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -162,19 +174,33 @@ function initLocalStore() {
     localStorage.setItem(STORAGE_KEYS.PROSPECTS, JSON.stringify([]))
     localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify([]))
   } else {
-    // Sincronizar automáticamente imágenes y nombres oficiales de los 10 demos si existía caché antiguo
+    // Sincronizar automáticamente imágenes, datos bancarios y nombres oficiales de los 10 demos si existía caché antiguo
     let updated = false
     const refreshedBusinesses = localBusinesses.map(b => {
       if (b.is_demo) {
         const official = DEMO_SHOWCASE.find(d => d.id === b.id || d.id === b.business_id || d.id === b.slug)
-        if (official) {
-          updated = true
-          return {
-            ...b,
-            name: official.nombre || official.name,
-            business_type: official.giro || official.badge || b.business_type,
-            banner_url: official.banner_url || `/demos/${official.id}/cover.jpg`,
-            logo_url: official.logo_url || `/demos/${official.id}/profile.png`,
+        const bName = official?.nombre || official?.name || b.name || 'Negocio Demo'
+        const existingTrans = b.payment_methods?.transferencia || {}
+        
+        updated = true
+        return {
+          ...b,
+          name: bName,
+          business_type: official?.giro || official?.badge || b.business_type,
+          banner_url: official?.banner_url || `/demos/${official?.id || b.id}/cover.jpg`,
+          logo_url: official?.logo_url || `/demos/${official?.id || b.id}/profile.png`,
+          payment_methods: {
+            efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500, ...(b.payment_methods?.efectivo || {}) },
+            transferencia: {
+              activo: true,
+              titular: existingTrans.titular || `${bName} S.A. de C.V.`,
+              banco: existingTrans.banco || 'BBVA Bancomer / Banorte',
+              clabe: existingTrans.clabe || '012180000123456789',
+              numero_cuenta: existingTrans.numero_cuenta || '4152 3130 0000 1234',
+              instrucciones: existingTrans.instrucciones || 'Por favor realiza tu transferencia SPEI incluyendo tu nombre o número de pedido en el concepto.',
+              texto_solicitar_comprobante: existingTrans.texto_solicitar_comprobante || 'Realiza tu transferencia y adjunta la captura del comprobante cuando envíes tu pedido por WhatsApp.'
+            },
+            tarjeta: { activo: true, instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El pago se realiza al momento de la entrega.', compra_minima: 0, ...(b.payment_methods?.tarjeta || {}) }
           }
         }
       }
@@ -615,19 +641,19 @@ export function getBusinessBySlug(slugOrId) {
   const zones = zList.filter(z => z.business_id === business.business_id && z.is_active)
 
   const defaultPaymentMethods = {
-    efectivo: { activo: true, preguntar_cambio: true },
+    efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
     transferencia: {
-      activo: false,
-      titular: '',
-      banco: '',
-      clabe: '',
-      numero_cuenta: '',
-      instrucciones: '',
-      texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.'
+      activo: true,
+      titular: `${business.name || 'Negocio Demo'} S.A. de C.V.`,
+      banco: 'BBVA Bancomer / Banorte',
+      clabe: '012180000123456789',
+      numero_cuenta: '4152 3130 0000 1234',
+      instrucciones: 'Por favor realiza tu transferencia SPEI incluyendo tu nombre o número de pedido en el concepto.',
+      texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta la captura del comprobante cuando envíes tu pedido por WhatsApp.'
     },
     tarjeta: {
-      activo: false,
-      instrucciones: 'Se aceptan tarjetas de crédito y débito. El pago se realiza al momento de la entrega.',
+      activo: true,
+      instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El pago se realiza al momento de la entrega.',
       compra_minima: 0
     }
   }

@@ -6,17 +6,17 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
   const defaultMethods = {
     efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
     transferencia: {
-      activo: false,
-      titular: '',
-      banco: '',
-      clabe: '',
-      numero_cuenta: '',
-      instrucciones: '',
-      texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.'
+      activo: true,
+      titular: `${business.name || 'Negocio Demo'} S.A. de C.V.`,
+      banco: 'BBVA Bancomer / Banorte',
+      clabe: '012180000123456789',
+      numero_cuenta: '4152 3130 0000 1234',
+      instrucciones: 'Por favor realiza tu transferencia SPEI incluyendo tu nombre o número de pedido en el concepto.',
+      texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta la captura del comprobante cuando envíes tu pedido por WhatsApp.'
     },
     tarjeta: {
-      activo: false,
-      instrucciones: 'Se aceptan tarjetas de crédito y débito. El pago se realiza al momento de la entrega.',
+      activo: true,
+      instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El pago se realiza al momento de la entrega.',
       compra_minima: 0
     }
   }
