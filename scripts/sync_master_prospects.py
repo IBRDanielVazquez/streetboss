@@ -1,8 +1,8 @@
-#!/usr/bin/env font
+#!/usr/bin/env python3
 """
-Script de sincronización de la Base Maestra de Restaurantes a JSON para el Frontend de StreetBoss.
-Lee directamente data/MASTER_RESTAURANTS.xlsx (la única fuente oficial)
-y genera src/data/master_prospects.json.
+Script de sincronización y minificación extrema de la Base Maestra de Restaurantes para StreetBoss.
+Lee data/MASTER_RESTAURANTS.xlsx y genera src/data/master_prospects.json
+exportando ÚNICAMENTE las propiedades indispensables para el CRM en formato compacto.
 """
 
 import sys
@@ -21,53 +21,67 @@ def sync_master_prospects():
 
     print(f"📖 Leyendo base maestra desde {EXCEL_PATH}...")
     df = pd.read_excel(EXCEL_PATH)
-
-    # Reemplazar NaNs por cadenas vacías o None
     df = df.fillna("")
 
     records = df.to_dict(orient="records")
 
     cleaned_records = []
     for idx, row in enumerate(records):
-        # Asegurar ID único
-        prospect_id = str(row.get("id") or f"prospect_master_{idx + 1}")
+        prospect_id = str(row.get("id") or f"prospect_master_{idx + 1}").strip()
+        name = str(row.get("business_name") or row.get("nombre") or "").strip()
+        cat = str(row.get("category") or row.get("giro") or "Restaurante").strip()
+        city = str(row.get("city") or row.get("ciudad") or "Tuxtla Gutiérrez").strip()
         
-        # Formatear teléfono / whatsapp
-        phone = str(row.get("phone") or row.get("whatsapp") or "").replace(".0", "").strip()
-        whatsapp = str(row.get("whatsapp") or phone).replace(".0", "").strip()
+        phone = str(row.get("phone") or "").replace(".0", "").strip()
+        whatsapp = str(row.get("whatsapp") or "").replace(".0", "").strip()
+        if not whatsapp and phone:
+            whatsapp = phone
 
-        cleaned_item = {
+        fb = str(row.get("facebook") or row.get("facebook_url") or "").strip()
+        ig = str(row.get("instagram") or row.get("instagram_url") or "").strip()
+        web = str(row.get("website") or row.get("website_url") or "").strip()
+        maps = str(row.get("maps_url") or "").strip()
+        addr = str(row.get("address") or row.get("direccion") or "").strip()
+        
+        rating = str(row.get("rating") or "").strip()
+        reviews = str(row.get("reviews_count") or "").strip()
+        score = row.get("completeness_score") or row.get("calidad_pct") or 50
+
+        status = str(row.get("status") or "Nuevo").strip()
+        demo = str(row.get("assigned_demo") or "").strip()
+        notes = str(row.get("notes") or "").strip()
+
+        # Construir objeto minificado omitiendo claves vacías
+        item = {
             "id": prospect_id,
-            "business_name": str(row.get("business_name") or row.get("nombre") or "Sin Nombre").strip(),
-            "category": str(row.get("category") or row.get("giro") or "Restaurante").strip(),
-            "contact_name": str(row.get("contact_name") or "").strip(),
-            "phone": phone,
-            "whatsapp": whatsapp,
-            "email": str(row.get("email") or "").strip(),
-            "address": str(row.get("address") or row.get("direccion") or "").strip(),
-            "colonia": str(row.get("colonia") or "").strip(),
-            "city": str(row.get("city") or row.get("ciudad") or "Tuxtla Gutiérrez").strip(),
-            "state": str(row.get("state") or row.get("estado") or "Chiapas").strip(),
-            "facebook": str(row.get("facebook") or row.get("facebook_url") or "").strip(),
-            "instagram": str(row.get("instagram") or row.get("instagram_url") or "").strip(),
-            "tiktok": str(row.get("tiktok") or row.get("tiktok_url") or "").strip(),
-            "website": str(row.get("website") or row.get("website_url") or "").strip(),
-            "maps_url": str(row.get("maps_url") or "").strip(),
-            "rating": str(row.get("rating") or "").strip(),
-            "reviews_count": str(row.get("reviews_count") or "").strip(),
-            "completeness_score": row.get("completeness_score") or row.get("calidad_pct") or 50,
-            "source": str(row.get("source") or "Base Maestra Official").strip(),
-            "status": str(row.get("status") or "Nuevo").strip(),
-            "assigned_demo": str(row.get("assigned_demo") or "").strip(),
-            "notes": str(row.get("notes") or "").strip()
+            "name": name,
+            "category": cat,
+            "city": city,
         }
-        cleaned_records.append(cleaned_item)
+
+        if addr: item["address"] = addr
+        if whatsapp: item["whatsapp"] = whatsapp
+        if phone and phone != whatsapp: item["phone"] = phone
+        if fb: item["facebook"] = fb
+        if ig: item["instagram"] = ig
+        if web: item["website"] = web
+        if maps: item["maps_url"] = maps
+        if rating: item["rating"] = rating
+        if reviews and reviews != "0": item["reviews_count"] = reviews
+        if score: item["completeness_score"] = int(score)
+
+        if status and status != "Nuevo": item["status"] = status
+        if demo: item["assigned_demo"] = demo
+        if notes: item["notes"] = notes
+
+        cleaned_records.append(item)
 
     os.makedirs(os.path.dirname(OUTPUT_JSON_PATH), exist_ok=True)
     with open(OUTPUT_JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(cleaned_records, f, ensure_ascii=False, indent=2)
+        json.dump(cleaned_records, f, ensure_ascii=False, separators=(',', ':'))
 
-    print(f"✅ Sincronización exitosa: {len(cleaned_records)} registros exportados a {OUTPUT_JSON_PATH}")
+    size_kb = round(os.path.getsize(OUTPUT_JSON_PATH) / 1024, 2)
+    print(f"✅ Sincronización y minificación exitosa: {len(cleaned_records)} registros exportados a {OUTPUT_JSON_PATH} ({size_kb} KB)")
 
 if __name__ == "__main__":
     sync_master_prospects()

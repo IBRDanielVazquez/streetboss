@@ -119,6 +119,7 @@ export default function CheckoutDrawer({
   const costoEnvio = datosCliente.tipo === 'llevar'
     ? (cobertura.precioEnvio || config.envio?.costoEnvio || 0)
     : 0
+  const total = subtotal + costoEnvio
   const [copiedCuenta, setCopiedCuenta] = useState(false)
 
   const handleCopyClabe = (clabe) => {
@@ -268,19 +269,19 @@ export default function CheckoutDrawer({
       console.warn('No se pudo abrir automáticamente el popup de WhatsApp:', e)
     }
 
-    // 4. BLOQUEAR MODIFICACIONES DEL PEDIDO, VACIAR CARRITO Y MOSTRAR CONFIRMACIÓN
+    // 4. BLOQUEAR MODIFICACIONES DEL PEDIDO, VACIAR CARRITO Y CERRAR
     onClearCarrito()
-    setPedidoConfirmado({ 
-      folio: savedOrderResult?.order?.order_number || folio, 
-      subtotal, 
-      costoEnvio, 
-      total, 
-      itemsCarrito, 
-      cliente: datosCliente,
-      status: openSuccess ? 'enviado_wa' : 'pendiente_envio',
-      whatsappUrl
-    })
+    
+    // Restaurar estado interno
+    setPaso(1);
+    setDatosCliente({ 
+      nombre: '', whatsapp: '', tipo: 'recoger', formaPago: 'efectivo', 
+      necesitaCambio: 'no', pagaraCon: '', cp: '', estado: 'Chiapas', municipio: 'Tuxtla Gutiérrez', 
+      colonia: '', calle: '', numero: '', interior: '', entreCalles: '', referencias: '', observaciones: '' 
+    });
+    
     setIsSubmitting(false)
+    onClose()
   }
 
   if (!isOpen && !pedidoConfirmado) return null

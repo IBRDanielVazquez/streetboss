@@ -515,10 +515,41 @@ export function generatePersonalizedDemoForProspect(prospect) {
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
 
-  logAuditAction('generar_demo_personalizado', newBusinessId, { name: prospect.business_name, slug: uniqueSlug })
-
   const demoUrl = `https://streetboss.mx/demo/${uniqueSlug}`
   return { business: newBusiness, demoUrl, slug: uniqueSlug }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROSPECT COMMERCIAL DATA ISOLATION (FASE 4 & FASE 5)
+// ─────────────────────────────────────────────────────────────────────────────
+export function getProspectCommercialData(prospectId) {
+  if (!prospectId) return null
+  const store = JSON.parse(localStorage.getItem('sb_v3_commercial_prospect_states') || '{}')
+  return store[prospectId] || {
+    status: 'Nuevo',
+    priority: 'Media',
+    contact_date: null,
+    last_contact: null,
+    next_followup: null,
+    assigned_demo: '',
+    demo_sent: false,
+    assigned_rep: '',
+    notes: ''
+  }
+}
+
+export function saveProspectCommercialData(prospectId, commercialData) {
+  if (!prospectId) return null
+  const store = JSON.parse(localStorage.getItem('sb_v3_commercial_prospect_states') || '{}')
+  const updated = {
+    ...store[prospectId],
+    ...commercialData,
+    updated_at: new Date().toISOString()
+  }
+  store[prospectId] = updated
+  localStorage.setItem('sb_v3_commercial_prospect_states', JSON.stringify(store))
+  notifyCentralSync('PROSPECT_COMMERCIAL_UPDATED', { prospectId, commercialData: updated })
+  return updated
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,6 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DEMOS_OFICIALES } from '../../data/demoShowcase'
-import { generatePersonalizedDemoForProspect, slugify } from '../../services/crmV3Service'
+import {
+  generatePersonalizedDemoForProspect,
+  slugify,
+  getProspectCommercialData,
+  saveProspectCommercialData
+} from '../../services/crmV3Service'
 import {
   X,
   Phone,
@@ -17,50 +22,60 @@ import {
   Gift,
   Bot,
   Tag,
-  Share2,
-  MessageSquare
+  Calendar,
+  UserCheck,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react'
 
 export default function ProspectDetailModal({ prospect, onClose, onUpdateProspect, onConvertProspectToBusiness }) {
   if (!prospect) return null
 
-  const businessNameUpper = (prospect.business_name || 'RESTAURANTE').toUpperCase()
-  const baseSlug = slugify(prospect.business_name || 'restaurante-demo')
+  const prospectName = prospect.name || prospect.business_name || 'Restaurante'
+  const prospectCategory = prospect.category || prospect.giro || 'Restaurante'
+  const prospectCity = prospect.city || prospect.ciudad || 'Tuxtla Gutiérrez'
+  const prospectAddress = prospect.address || prospect.direccion || ''
+  
+  const baseSlug = slugify(prospectName)
 
-  // Find suggested demo base according to category or assigned demo
-  const initialSuggestedDemo = DEMOS_OFICIALES.find(d => 
-    d.id === prospect.assigned_demo || 
-    d.giro?.toLowerCase().includes((prospect.category || '').toLowerCase())
+  // Demo sugerida inicial
+  const initialSuggestedDemo = DEMOS_OFICIALES.find(d =>
+    d.id === prospect.assigned_demo ||
+    d.giro?.toLowerCase().includes(prospectCategory.toLowerCase())
   ) || DEMOS_OFICIALES[0]
 
-  const [assignedDemo, setAssignedDemo] = useState(initialSuggestedDemo.id)
-  const [status, setStatus] = useState(prospect.status || 'Nuevo')
-  const [notes, setNotes] = useState(prospect.notes || '')
+  // Cargar estados comerciales aislados del CRM (FASE 4 & 5)
+  const initialCommercial = getProspectCommercialData(prospect.id)
+
+  const [assignedDemo, setAssignedDemo] = useState(prospect.assigned_demo || initialCommercial.assigned_demo || initialSuggestedDemo.id)
+  const [status, setStatus] = useState(prospect.status || initialCommercial.status || 'Nuevo')
+  const [priority, setPriority] = useState(initialCommercial.priority || 'Media')
+  const [assignedRep, setAssignedRep] = useState(initialCommercial.assigned_rep || '')
+  const [lastContact, setLastContact] = useState(initialCommercial.last_contact || '')
+  const [nextFollowup, setNextFollowup] = useState(initialCommercial.next_followup || '')
+  const [demoSent, setDemoSent] = useState(initialCommercial.demo_sent || false)
+  const [notes, setNotes] = useState(prospect.notes || initialCommercial.notes || '')
+  
   const [demoGenerated, setDemoGenerated] = useState(false)
   const [demoUrl, setDemoUrl] = useState(`https://streetboss.mx/demo/${baseSlug}`)
   const [copied, setCopied] = useState(false)
+  const [generatedSlug, setGeneratedSlug] = useState(baseSlug)
 
   const selectedDemoObj = DEMOS_OFICIALES.find(d => d.id === assignedDemo) || DEMOS_OFICIALES[0]
 
-  // Default IA Outreach Message
+  // Mensaje IA personalizado
   const [customMessage, setCustomMessage] = useState(() => {
-    return `Hola equipo de ${prospect.business_name || 'Negocio'}. 👋
-
-Estuve revisando su página y preparé una demostración interactiva de cómo se vería su menú digital en WhatsApp usando StreetBoss.
-
-👉 Ver demo sugerida:
-https://streetboss.mx/demo/${selectedDemoObj.id}
-
-Si les gusta, con gusto podemos activarla para ustedes sin comisiones por pedido.`
+    return `Hola equipo de ${prospectName}. 👋\n\nEstuve revisando su página y preparé una demostración interactiva de cómo se vería su menú digital en WhatsApp usando StreetBoss.\n\n👉 Ver demo sugerida:\nhttps://streetboss.mx/demo/${selectedDemoObj.id}\n\nSi les gusta, con gusto podemos activarla para ustedes sin comisiones por pedido.`
   })
 
-  const [generatedSlug, setGeneratedSlug] = useState(baseSlug)
-
-  // Handle "🎁 GENERAR DEMO"
+  // Generar demo personalizada
   const handleGenerateDemo = () => {
     try {
       const res = generatePersonalizedDemoForProspect({
         ...prospect,
+        business_name: prospectName,
+        category: prospectCategory,
+        city: prospectCity,
         assigned_demo: assignedDemo,
       })
 
@@ -69,56 +84,37 @@ Si les gusta, con gusto podemos activarla para ustedes sin comisiones por pedido
       setGeneratedSlug(finalSlug)
       setDemoUrl(generatedUrl)
       setDemoGenerated(true)
+      setDemoSent(true)
 
-      const autoMsg = `Hola equipo de ${prospect.business_name || 'Negocio'}. 👋
-
-Estuve revisando su página y preparé una demostración personalizada de cómo se vería su restaurante usando StreetBoss.
-
-👉 Ver demo
-${generatedUrl}
-
-Si les gusta, con gusto podemos activarla para ustedes.`
-
+      const autoMsg = `Hola equipo de ${prospectName}. 👋\n\nEstuve revisando su página y preparé una demostración personalizada de cómo se vería su menú digital usando StreetBoss.\n\n👉 Ver demo\n${generatedUrl}\n\nSi les gusta, con gusto podemos activarla para ustedes.`
       setCustomMessage(autoMsg)
     } catch (e) {
       console.error(e)
-      alert('Demo personalizada generada en /demo/' + baseSlug)
     }
   }
 
-  // Action links
-  const cleanPhone = (prospect.whatsapp || prospect.phone || '').replace(/\D/g, '')
-  const whatsappNumber = cleanPhone.length === 10 ? `52${cleanPhone}` : cleanPhone
-  const waSendUrl = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMessage)}`
-    : '#'
+  // Normalización de canales de contacto (Ocultamiento automático de vacíos)
+  const phoneClean = (prospect.phone || '').replace(/\D/g, '')
+  const waClean = (prospect.whatsapp || prospect.phone || '').replace(/\D/g, '')
+  const whatsappNumber = waClean.length >= 10 ? (waClean.length === 10 ? `52${waClean}` : waClean) : ''
+  const directPhone = phoneClean.length >= 10 ? phoneClean : ''
+  
+  // Omitir llamada directa si es exactamente idéntica al WhatsApp de 10 dígitos
+  const showCallButton = directPhone && directPhone !== waClean
 
-  const fbClean = prospect.facebook?.trim() || ''
-  const fbUrl = fbClean
-    ? (fbClean.startsWith('http') ? fbClean : `https://${fbClean}`)
-    : `https://www.facebook.com/search/top?q=${encodeURIComponent(prospect.business_name + ' ' + (prospect.city || ''))}`
+  const waSendUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMessage)}` : ''
 
-  const igClean = prospect.instagram?.trim() || ''
-  const igUrl = igClean
-    ? (igClean.startsWith('http') ? igClean : `https://instagram.com/${igClean.replace('@', '')}`)
-    : `https://www.instagram.com/explore/tags/${encodeURIComponent(slugify(prospect.business_name))}`
+  const fbClean = (prospect.facebook || '').trim()
+  const fbUrl = fbClean ? (fbClean.startsWith('http') ? fbClean : `https://${fbClean}`) : ''
 
-  const webClean = prospect.website?.trim() || ''
-  const webUrl = webClean ? (webClean.startsWith('http') ? webClean : `https://${webClean}`) : null
+  const igClean = (prospect.instagram || '').trim()
+  const igUrl = igClean ? (igClean.startsWith('http') ? igClean : `https://instagram.com/${igClean.replace('@', '')}`) : ''
 
-  const mapsClean = prospect.maps_url?.trim() || ''
-  const mapsUrl = mapsClean || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(prospect.business_name + ' ' + (prospect.address || prospect.city || ''))}`
+  const webClean = (prospect.website || '').trim()
+  const webUrl = webClean ? (webClean.startsWith('http') ? webClean : `https://${webClean}`) : ''
 
-  // Extract FB handle for Messenger if possible
-  let messengerUrl = '#'
-  if (fbClean) {
-    const handleMatch = fbClean.match(/facebook\.com\/([^/?#]+)/i)
-    if (handleMatch && handleMatch[1] && !['search', 'groups', 'pages'].includes(handleMatch[1])) {
-      messengerUrl = `https://m.me/${handleMatch[1]}`
-    } else {
-      messengerUrl = fbUrl
-    }
-  }
+  const mapsClean = (prospect.maps_url || '').trim()
+  const mapsUrl = mapsClean || (prospectAddress ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(prospectName + ' ' + prospectAddress)}` : '')
 
   const handleCopyMessage = () => {
     navigator.clipboard.writeText(customMessage)
@@ -127,274 +123,309 @@ Si les gusta, con gusto podemos activarla para ustedes.`
   }
 
   const handleSave = () => {
-    onUpdateProspect({
-      ...prospect,
+    // Guardar comercialmente aislado (FASE 4)
+    saveProspectCommercialData(prospect.id, {
       status,
+      priority,
+      assigned_rep: assignedRep,
+      last_contact: lastContact || new Date().toISOString().split('T')[0],
+      next_followup: nextFollowup,
       assigned_demo: assignedDemo,
+      demo_sent: demoSent,
       notes,
     })
+
+    if (onUpdateProspect) {
+      onUpdateProspect({
+        ...prospect,
+        status,
+        assigned_demo: assignedDemo,
+        notes,
+      })
+    }
     onClose()
   }
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-end sm:items-center p-0 sm:p-4 overflow-y-auto">
-      <div className="bg-[#14161F] border border-white/10 w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom duration-200">
+      <div className="bg-[#14161F] border border-white/10 w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl max-h-[94vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom duration-200">
         
-        {/* Modal Top Header Bar */}
-        <div className="px-5 py-4 border-b border-white/10 bg-[#0D0E12] flex items-center justify-between sticky top-0 z-20">
-          <div className="flex items-center gap-2 text-xs">
-            <span className="px-2.5 py-0.5 rounded-full bg-[#FF4B00]/10 text-[#FF6A1A] border border-[#FF4B00]/20 font-black text-[10px]">
+        {/* Header Modal Bar */}
+        <div className="px-5 py-3.5 border-b border-white/10 bg-[#0D0E12] flex items-center justify-between sticky top-0 z-20">
+          <div className="flex items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#FF4B00]/10 text-[#FF6A1A] border border-[#FF4B00]/20 font-black text-[10px] uppercase tracking-wider">
               Ficha del Negocio
             </span>
-            <span className="text-gray-400 font-bold">• {prospect.city || 'Tuxtla'}</span>
+            <span className="text-gray-400 font-bold text-xs">• {prospectCity}</span>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 transition-all"
+            className="p-1.5 rounded-xl text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 transition-all"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Modal Scrollable Body */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+        {/* Modal Scroll Body */}
+        <div className="p-5 overflow-y-auto space-y-5 flex-1 text-xs">
           
-          {/* SECTION 1: HEADER COMERCIAL */}
-          <div className="text-center bg-[#0D0E12] p-5 rounded-2xl border border-white/10 space-y-2 shadow-inner">
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-none uppercase">
-              {businessNameUpper}
+          {/* BLOQUE A: IDENTIDAD (READ-ONLY) */}
+          <div className="bg-[#0D0E12] p-4.5 rounded-2xl border border-white/10 space-y-2 text-center shadow-inner">
+            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight leading-tight">
+              {prospectName}
             </h2>
 
-            {/* Stars & Rating */}
-            <div className="flex items-center justify-center gap-1 text-amber-400 pt-1">
+            <div className="flex items-center justify-center gap-1 text-amber-400 pt-0.5">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} size={16} className="fill-amber-400 text-amber-400" />
+                <Star key={i} size={14} className="fill-amber-400 text-amber-400" />
               ))}
-              <span className="text-xs font-bold text-gray-300 ml-1.5">
-                {prospect.rating ? `${prospect.rating} (${prospect.reviews_count || 0} opiniones)` : '⭐⭐⭐⭐⭐'}
+              <span className="text-xs font-bold text-gray-300 ml-1">
+                {prospect.rating ? `${prospect.rating} (${prospect.reviews_count || 0})` : '5.0'}
               </span>
             </div>
 
-            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 pt-1 font-semibold">
-              <span className="text-white font-bold">{prospect.category || 'Restaurante'}</span>
+            <div className="flex items-center justify-center gap-2 text-xs text-gray-400 font-semibold">
+              <span className="text-white font-bold">{prospectCategory}</span>
               <span>•</span>
-              <span>{prospect.city || 'Tuxtla Gutiérrez'}</span>
-            </div>
-          </div>
-
-          <div className="h-px bg-white/10" />
-
-          {/* SECTION 2: BOTONES DE ACCIÓN RÁPIDA (PULGAR FRIENDLY) */}
-          <div className="space-y-2">
-            <h4 className="text-[11px] font-black uppercase text-gray-400 tracking-wider">Canales de Contacto Directo</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {prospect.phone ? (
-                <a
-                  href={`tel:${prospect.phone}`}
-                  className="flex items-center justify-center gap-2 py-3 px-3 bg-[#1A1D29] hover:bg-[#222636] border border-white/10 rounded-xl text-white font-bold transition-all text-xs active:scale-95 shadow"
-                >
-                  <Phone size={16} className="text-emerald-400" /> 📞 Llamar
-                </a>
-              ) : (
-                <button disabled className="opacity-40 flex items-center justify-center gap-2 py-3 px-3 bg-white/5 border border-white/5 rounded-xl font-bold text-gray-500 text-xs">
-                  📞 Sin Teléfono
-                </button>
+              <span>{prospectCity}</span>
+              {prospect.completeness_score && (
+                <>
+                  <span>•</span>
+                  <span className="text-emerald-400 font-bold">Score {prospect.completeness_score}%</span>
+                </>
               )}
-
-              {whatsappNumber ? (
-                <a
-                  href={waSendUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-xs active:scale-95 shadow"
-                >
-                  <MessageCircle size={16} /> 💬 WhatsApp
-                </a>
-              ) : (
-                <button disabled className="opacity-40 flex items-center justify-center gap-2 py-3 px-3 bg-white/5 border border-white/5 rounded-xl font-bold text-gray-500 text-xs">
-                  💬 Sin WhatsApp
-                </button>
-              )}
-
-              <a
-                href={fbUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 px-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
-              >
-                <Facebook size={16} /> 📘 Facebook
-              </a>
-
-              <a
-                href={igUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 px-3 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-400 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
-              >
-                <Instagram size={16} /> 📸 Instagram
-              </a>
-
-              {webUrl ? (
-                <a
-                  href={webUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 px-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
-                >
-                  <Globe size={16} /> 🌎 Sitio Web
-                </a>
-              ) : (
-                <a
-                  href={`https://www.google.com/search?q=${encodeURIComponent(prospect.business_name)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 px-3 bg-[#1A1D29] hover:bg-[#222636] border border-white/10 text-gray-300 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
-                >
-                  <Globe size={16} /> 🌎 Buscar Sitio
-                </a>
-              )}
-
-              <a
-                href={mapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-3 px-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
-              >
-                <MapPin size={16} /> 📍 Maps
-              </a>
-            </div>
-          </div>
-
-          <div className="h-px bg-white/10" />
-
-          {/* SECTION 3: DEMO SUGERIDO */}
-          <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase text-gray-400 flex items-center gap-1.5">
-                🎯 Demo Sugerido
-              </span>
-              <select
-                value={assignedDemo}
-                onChange={e => setAssignedDemo(e.target.value)}
-                className="bg-[#14161F] border border-white/10 rounded-lg px-2.5 py-1 text-white font-bold text-[11px] focus:outline-none focus:border-[#FF4B00]"
-              >
-                {DEMOS_OFICIALES.map(d => (
-                  <option key={d.id} value={d.id}>{d.nombre}</option>
-                ))}
-              </select>
             </div>
 
-            <div className="flex items-center justify-between bg-[#14161F] p-3 rounded-xl border border-white/5">
-              <div>
-                <p className="font-black text-white text-sm">{selectedDemoObj.nombre}</p>
-                <p className="text-[11px] text-gray-400">Giro: {selectedDemoObj.giro}</p>
-              </div>
-
-              <a
-                href={demoGenerated ? `/demo/${generatedSlug}` : `/menu/${selectedDemoObj.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg border border-white/10 text-xs flex items-center gap-1"
-              >
-                [ Ver Demo ] <ExternalLink size={12} />
-              </a>
-            </div>
-          </div>
-
-          {/* SECTION 4: BOTÓN HUUUUUGE "🎁 GENERAR DEMO" */}
-          <div className="space-y-2">
-            <button
-              onClick={handleGenerateDemo}
-              className="w-full py-4 px-6 bg-gradient-to-r from-[#FF4B00] to-[#FF6A1A] hover:from-[#FF6A1A] hover:to-[#FF4B00] text-white font-black text-base sm:text-lg rounded-2xl shadow-2xl flex items-center justify-center gap-3 transition-all transform active:scale-95 uppercase tracking-wide border border-white/20"
-            >
-              <Gift size={24} className="animate-bounce" /> 🎁 GENERAR DEMO
-            </button>
-
-            {demoGenerated && (
-              <p className="text-center text-[11px] text-emerald-400 font-bold bg-emerald-500/10 py-1.5 px-3 rounded-xl border border-emerald-500/20">
-                ¡Demo creada exitosamente en <u>streetboss.mx/demo/{generatedSlug}</u>!
+            {prospectAddress && (
+              <p className="text-[11px] text-gray-400 pt-1 leading-snug">
+                📍 {prospectAddress}
               </p>
             )}
           </div>
 
+          {/* BLOQUE B: CONTACTO (OCULTADO AUTOMÁTICO DE VACÍOS) */}
+          {(whatsappNumber || showCallButton || fbUrl || igUrl || webUrl || mapsUrl) && (
+            <div className="space-y-2">
+              <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Canales de Contacto Directo</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {whatsappNumber && (
+                  <a
+                    href={waSendUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <MessageCircle size={15} /> 💬 WhatsApp
+                  </a>
+                )}
+
+                {showCallButton && (
+                  <a
+                    href={`tel:${directPhone}`}
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-[#1A1D29] hover:bg-[#222636] border border-white/10 text-white font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <Phone size={15} className="text-emerald-400" /> 📞 Llamar
+                  </a>
+                )}
+
+                {fbUrl && (
+                  <a
+                    href={fbUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <Facebook size={15} /> 📘 Facebook
+                  </a>
+                )}
+
+                {igUrl && (
+                  <a
+                    href={igUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-400 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <Instagram size={15} /> 📸 Instagram
+                  </a>
+                )}
+
+                {webUrl && (
+                  <a
+                    href={webUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 text-purple-300 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <Globe size={15} /> 🌎 Sitio Web
+                  </a>
+                )}
+
+                {mapsUrl && (
+                  <a
+                    href={mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold rounded-xl transition-all text-xs active:scale-95 shadow"
+                  >
+                    <MapPin size={15} /> 📍 Maps
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="h-px bg-white/10" />
 
-          {/* SECTION 5: MENSAJE IA Y HERRAMIENTAS DE PROSPECCIÓN */}
-          <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase text-gray-400 flex items-center gap-1.5">
-                <Bot size={15} className="text-[#FF4B00]" /> 🤖 Mensaje IA / Outreach
+          {/* BLOQUE C: PROSPECCIÓN Y GESTIÓN COMERCIAL (FASE 4 & 5) */}
+          <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+              <span className="text-[11px] font-black uppercase text-gray-300 flex items-center gap-1.5">
+                <Tag size={15} className="text-[#FF4B00]" /> Prospección Comercial
               </span>
+              <div className="flex items-center gap-2">
+                <select
+                  value={priority}
+                  onChange={e => setPriority(e.target.value)}
+                  className="bg-[#14161F] border border-white/10 rounded-lg px-2 py-1 text-white font-bold text-[10px]"
+                >
+                  <option value="Alta">🔴 Prioridad Alta</option>
+                  <option value="Media">🟡 Prioridad Media</option>
+                  <option value="Baja">🔵 Prioridad Baja</option>
+                </select>
 
-              <span className="text-[10px] text-gray-500 font-bold">Editable</span>
+                <select
+                  value={status}
+                  onChange={e => setStatus(e.target.value)}
+                  className="bg-[#14161F] border border-white/10 rounded-lg px-2 py-1 text-white font-bold text-[10px]"
+                >
+                  <option value="Nuevo">🔵 Nuevo Lead</option>
+                  <option value="Contactado">🟡 Contactado</option>
+                  <option value="Demo Enviada">🟣 Demo Enviada</option>
+                  <option value="Interesado">🟠 Interesado</option>
+                  <option value="Cerrado">🟢 Cliente Cerrado</option>
+                  <option value="Descartado">🔴 Descartado</option>
+                </select>
+              </div>
             </div>
 
-            <textarea
-              rows={5}
-              value={customMessage}
-              onChange={e => setCustomMessage(e.target.value)}
-              className="w-full bg-[#14161F] border border-white/10 rounded-xl p-3 text-gray-200 font-mono text-[11px] leading-relaxed focus:outline-none focus:border-[#FF4B00]"
-            />
+            {/* CAMPOS COMERCIALES EXTENDIDOS (FASE 5) */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 mb-1 flex items-center gap-1">
+                  <UserCheck size={12} /> Asesor Responsable
+                </label>
+                <input
+                  type="text"
+                  value={assignedRep}
+                  onChange={e => setAssignedRep(e.target.value)}
+                  placeholder="Nombre de asesor..."
+                  className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF4B00]"
+                />
+              </div>
 
-            {/* BOTONES DE COPIAR Y ENVIAR WHATSAPP */}
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                onClick={handleCopyMessage}
-                className="py-3 px-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all text-xs flex items-center justify-center gap-2 active:scale-95"
-              >
-                <Copy size={15} /> 📋 {copied ? '¡Copiado!' : 'Copiar mensaje'}
-              </button>
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 mb-1 flex items-center gap-1">
+                  <Calendar size={12} /> Próximo Seguimiento
+                </label>
+                <input
+                  type="date"
+                  value={nextFollowup}
+                  onChange={e => setNextFollowup(e.target.value)}
+                  className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-[#FF4B00]"
+                />
+              </div>
+            </div>
 
-              {whatsappNumber ? (
+            {/* DEMO PERSONALIZADA Y MENSAJE IA */}
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between bg-[#14161F] p-3 rounded-xl border border-white/5">
+                <div>
+                  <p className="font-black text-white text-xs">{selectedDemoObj.nombre}</p>
+                  <p className="text-[10px] text-gray-400">Plantilla sugerida ({selectedDemoObj.giro})</p>
+                </div>
+
                 <a
-                  href={waSendUrl}
+                  href={demoGenerated ? `/demo/${generatedSlug}` : `/menu/${selectedDemoObj.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-3 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow-lg transition-all text-xs flex items-center justify-center gap-2 active:scale-95"
+                  className="px-2.5 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg border border-white/10 text-[11px] flex items-center gap-1"
                 >
-                  <Send size={15} /> 💬 Enviar WhatsApp
+                  [ Ver Demo ] <ExternalLink size={12} />
                 </a>
-              ) : (
-                <button disabled className="opacity-40 py-3 px-4 bg-white/5 border border-white/10 text-gray-500 font-bold rounded-xl text-xs flex items-center justify-center gap-2">
-                  💬 Sin WhatsApp
-                </button>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {/* SECTION 6: ESTADO COMERCIAL & NOTAS */}
-          <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-black uppercase text-gray-400 flex items-center gap-1.5">
-                <Tag size={14} className="text-[#FF4B00]" /> Estado Comercial
-              </span>
-              <select
-                value={status}
-                onChange={e => setStatus(e.target.value)}
-                className="bg-[#14161F] border border-white/10 rounded-lg px-2.5 py-1 text-white font-bold text-[11px] focus:outline-none focus:border-[#FF4B00]"
+              <button
+                onClick={handleGenerateDemo}
+                className="w-full py-3 px-4 bg-gradient-to-r from-[#FF4B00] to-[#FF6A1A] hover:from-[#FF6A1A] hover:to-[#FF4B00] text-white font-black text-sm rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all transform active:scale-95 uppercase tracking-wide border border-white/10"
               >
-                <option value="Nuevo">🔵 Nuevo Leads</option>
-                <option value="Contactado">🟡 Contactado</option>
-                <option value="Demo Enviada">🟣 Demo Enviada</option>
-                <option value="Interesado">🟠 Interesado / Negociación</option>
-                <option value="Cerrado">🟢 Cliente Cerrado</option>
-                <option value="Descartado">🔴 Descartado</option>
-              </select>
-            </div>
+                <Gift size={18} /> 🎁 GENERAR DEMO
+              </button>
 
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={e => setNotes(e.target.value)}
-              placeholder="Bitácora rápida o acuerdos..."
-              className="w-full bg-[#14161F] border border-white/10 rounded-xl p-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF4B00] text-xs"
-            />
+              {demoGenerated && (
+                <p className="text-center text-[10px] text-emerald-400 font-bold bg-emerald-500/10 py-1.5 px-3 rounded-xl border border-emerald-500/20">
+                  ¡Demo creada! URL: <u>streetboss.mx/demo/{generatedSlug}</u>
+                </p>
+              )}
+
+              {/* MENSAJE IA / OUTREACH */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
+                    <Bot size={13} className="text-[#FF4B00]" /> Mensaje de Venta Personalizado
+                  </span>
+                  <span className="text-[9px] text-gray-500 font-mono">Autogenerado</span>
+                </div>
+                <textarea
+                  rows={4}
+                  value={customMessage}
+                  onChange={e => setCustomMessage(e.target.value)}
+                  className="w-full bg-[#14161F] border border-white/10 rounded-xl p-3 text-gray-200 font-mono text-[10px] leading-relaxed focus:outline-none focus:border-[#FF4B00]"
+                />
+
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <button
+                    onClick={handleCopyMessage}
+                    className="py-2.5 px-3 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl border border-white/10 transition-all text-xs flex items-center justify-center gap-1.5 active:scale-95"
+                  >
+                    <Copy size={14} /> {copied ? '¡Copiado!' : 'Copiar mensaje'}
+                  </button>
+
+                  {whatsappNumber ? (
+                    <a
+                      href={waSendUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl shadow transition-all text-xs flex items-center justify-center gap-1.5 active:scale-95"
+                    >
+                      <Send size={14} /> 💬 Enviar WhatsApp
+                    </a>
+                  ) : (
+                    <button disabled className="opacity-40 py-2.5 px-3 bg-white/5 border border-white/10 text-gray-500 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5">
+                      💬 Sin WhatsApp
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* OBSERVACIONES / BITÁCORA */}
+              <div className="pt-2">
+                <label className="block text-[10px] font-bold text-gray-400 mb-1">Observaciones / Bitácora Comercial</label>
+                <textarea
+                  rows={2}
+                  value={notes}
+                  onChange={e => setNotes(e.target.value)}
+                  placeholder="Bitácora rápida, objeciones o acuerdos..."
+                  className="w-full bg-[#14161F] border border-white/10 rounded-xl p-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-[#FF4B00] text-xs"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Modal Bottom Actions */}
-        <div className="p-4 border-t border-white/10 bg-[#0D0E12] flex items-center justify-between gap-3 sticky bottom-0 z-20">
+        {/* Modal Bottom Sticky Bar */}
+        <div className="p-3.5 border-t border-white/10 bg-[#0D0E12] flex items-center justify-between gap-2 sticky bottom-0 z-20">
           <button
             onClick={() => {
               if (onConvertProspectToBusiness) {
@@ -402,7 +433,7 @@ Si les gusta, con gusto podemos activarla para ustedes.`
                 onClose()
               }
             }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 hover:bg-[#FF4B00]/20 text-[#FF6A1A] font-black text-xs transition-all"
+            className="flex items-center gap-1 px-3 py-2 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 hover:bg-[#FF4B00]/20 text-[#FF6A1A] font-black text-xs transition-all"
           >
             <Sparkles size={14} /> Convertir Cliente
           </button>
@@ -410,13 +441,13 @@ Si les gusta, con gusto podemos activarla para ustedes.`
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs transition-all"
+              className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs transition-all"
             >
               Cerrar
             </button>
             <button
               onClick={handleSave}
-              className="px-5 py-2 rounded-xl bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs shadow-lg transition-all"
+              className="px-4 py-2 rounded-xl bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs shadow-lg transition-all"
             >
               Guardar Cambios
             </button>
