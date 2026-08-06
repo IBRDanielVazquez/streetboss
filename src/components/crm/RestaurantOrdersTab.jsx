@@ -225,7 +225,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
                     {o.address && <p className="text-gray-400">Dirección: {o.address}</p>}
                     
                     <div className="pt-1 flex flex-wrap gap-2 text-[11px]">
-                      <span className="bg-white/5 text-gray-300 px-2 py-0.5 rounded font-bold">
+                      <span className="bg-white/5 text-gray-300 px-2 py-0.5 rounded font-bold capitalize">
                         💳 Método: {o.payment_method || 'Efectivo'}
                       </span>
                       {o.has_terminal && (
@@ -233,9 +233,14 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
                           💳 Llevar Terminal
                         </span>
                       )}
-                      {o.cash_needs_change && o.cash_pay_with && (
+                      {(o.cash_needs_change || o.needs_change) && (o.cash_pay_with || o.pay_with_amount) && (
                         <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded font-bold">
-                          💵 Cambio para ${o.cash_pay_with}
+                          💵 Paga con ${o.cash_pay_with || o.pay_with_amount}
+                        </span>
+                      )}
+                      {(o.payment_method === 'transferencia' || o.pending_receipt) && (
+                        <span className="bg-blue-500/10 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded font-bold">
+                          📄 Pendiente de comprobante
                         </span>
                       )}
                     </div>

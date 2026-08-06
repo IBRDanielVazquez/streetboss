@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-08-06 — Implementación de Generador de Demos, Rediseño del Drawer y Despliegue en Vercel
+
+**Hora:** 10:45 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Incorporación del motor `generatePersonalizedDemoForProspect`, rediseño del Drawer Comercial para teléfonos móviles y despliegue en Vercel.
+
+### Cambios realizados
+
+- **Generador de Demos Personalizadas (`src/services/crmV3Service.js`):**
+  - Creada la función `generatePersonalizedDemoForProspect` que clona la plantilla según giro ajustando nombre del restaurante, logo, ciudad, dirección y teléfono para generar la demo `/demo/{slug}`.
+- **Ruta Pública `/demo/:trialId` (`src/App.jsx`):**
+  - Mapeada en React Router DOM apuntando a `DemoPublicMenuWrapper.jsx` para acceso directo desde los mensajes de WhatsApp.
+- **Rediseño del Drawer Comercial (`src/components/crm/ProspectDetailModal.jsx`):**
+  - Encabezado formateado con nombre en mayúsculas, estrellas ⭐⭐⭐⭐⭐, calificación Google, Giro y Ciudad.
+  - Matriz táctil de botones gigantes: `📞 Llamar`, `💬 WhatsApp`, `📘 Facebook`, `📸 Instagram`, `🌎 Sitio Web`, `📍 Maps`, `💬 Messenger`.
+  - Botón táctil destacado **`🎁 GENERAR DEMO`** en color `#FF4B00`.
+  - Generador de mensaje IA automatizado con enlace directo `/demo/{slug}` y botón de copia rápida `📋 Copiar mensaje`.
+- **Despliegue de Producción:**
+  - Compilación e implementación en Vercel activa para pruebas reales en campo con prospectos.
+
+---
+
 ## 2026-08-05 — Creación e Integración del Dashboard Móvil de Prospección Comercial
 
 **Hora:** 07:37 CST  

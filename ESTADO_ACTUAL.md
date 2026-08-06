@@ -1,13 +1,18 @@
 # ESTADO ACTUAL — STREETBOSS
 
-> Última actualización: 2026-08-05
+> Última actualización: 2026-08-06
 > Actualizado por: Antigravity (Google DeepMind)
 
 ## Estado General
 
-**Estado: 🟢 DASHBOARD MÓVIL DE PROSPECCIÓN Y BASE MAESTRA DEFINITIVA CONSOLIDADA (1,901 RESTAURANTES)**
+**Estado: 🟢 MVP PROSPECTING PLATFORM Y DASHBOARD MÓVIL EN VERCEL (1,901 RESTAURANTES)**
 
-Se ha construido e integrado el **Dashboard Móvil de Prospección Comercial de StreetBoss**, alimentado en tiempo real desde la Base Maestra Oficial (`data/MASTER_RESTAURANTS.xlsx`) mediante sincronización automatizada (`scripts/sync_master_prospects.py`). Incluye búsqueda instantánea, filtros multidimensionales (Giro, Ciudad/Municipio, Canales y Estado), Ficha del Negocio con 27 atributos, llamada rápida, enlace directo a Facebook, asignador de demos oficiales y generador dinámico de mensajes para WhatsApp.
+Se ha completado el **MVP Comercial de Prospección Móvil de StreetBoss**, incluyendo:
+- **Botón Prominente "🎁 GENERAR DEMO"**: Crea demos instantáneas en `/demo/{slug}` adaptadas al nombre y giro del negocio.
+- **Rediseño del Drawer Comercial (Ficha del Negocio)**: Estructura táctil optimizada para pulgar con botones gigantes de `📞 Llamar`, `💬 WhatsApp`, `📘 Facebook`, `📸 Instagram`, `🌎 Sitio Web`, `📍 Maps` y `💬 Messenger`.
+- **Generador de Mensaje IA**: Plantilla automatizada con enlace dinámico a la demo generada y copia rápida en 1 clic.
+- **Ruta Pública `/demo/:trialId`**: Totalmente integrada en la app React para visualización de cartas interactivas.
+- **Despliegue Público en Vercel**: Compilado y listo para uso en campo en dispositivos móviles (Safari, Chrome, Android, iOS).
 
 ---
 

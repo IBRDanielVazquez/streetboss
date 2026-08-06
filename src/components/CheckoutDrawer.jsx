@@ -171,24 +171,24 @@ export default function CheckoutDrawer({
     msg += `✅ *TOTAL: $${total}*\n\n`
     
     if (datosCliente.formaPago === 'efectivo') {
-      msg += `💵 *MÉTODOS DE PAGO:* Efectivo\n`
+      msg += `💵 *Método de pago:* Efectivo\n`
       if (datosCliente.necesitaCambio === 'si' && datosCliente.pagaraCon) {
         const pagaraMonto = Number(datosCliente.pagaraCon)
         const cambioCalculado = pagaraMonto > total ? (pagaraMonto - total) : 0
-        msg += `💵 *Pagaré con:* $${pagaraMonto} (Cambio estimado: $${cambioCalculado})\n`
+        msg += `💵 *¿Necesitas cambio?:* Sí, pagaré con $${pagaraMonto} (Cambio: $${cambioCalculado})\n`
       } else {
-        msg += `💵 *Pago:* Cantidad exacta (Sin cambio)\n`
+        msg += `💵 *¿Necesitas cambio?:* No, pago exacto\n`
       }
     } else if (datosCliente.formaPago === 'transferencia') {
       const bankInfo = paymentMethodsConfig.transferencia
-      msg += `📲 *MÉTODOS DE PAGO:* Transferencia bancaria\n`
+      msg += `📲 *Método de pago:* Transferencia bancaria\n`
       if (bankInfo?.banco || bankInfo?.clabe) {
         msg += `🏦 Banco: ${bankInfo.banco || 'N/A'} | CLABE: ${bankInfo.clabe || 'N/A'}\n`
       }
-      msg += `📌 *Comprobante:* El cliente adjuntará el comprobante de transferencia en WhatsApp.\n`
+      msg += `📌 *Pendiente de comprobante.* (El cliente adjuntará comprobante en WhatsApp)\n`
     } else if (datosCliente.formaPago === 'tarjeta') {
-      msg += `💳 *MÉTODOS DE PAGO:* Tarjeta al recibir\n`
-      msg += `💳 *Llevar terminal:* Sí\n`
+      msg += `💳 *Método de pago:* Tarjeta al recibir\n`
+      msg += `💳 El restaurante llevará una terminal para realizar el cobro.\n`
     }
 
     if (datosCliente.formaPago === 'transferencia') {

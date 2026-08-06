@@ -325,6 +325,107 @@ _Vende directo. Manda tú._`
   }
 }
 
+export function generatePersonalizedDemoForProspect(prospect) {
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const cList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+  const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+
+  const baseSlug = slugify(prospect.business_name || 'restaurante-demo')
+  
+  // Check if personalized demo already exists
+  let existingBusiness = bList.find(b => b.slug === baseSlug && !b.deleted_at)
+  if (existingBusiness) {
+    const demoUrl = `https://streetboss.mx/demo/${existingBusiness.slug}`
+    return { business: existingBusiness, demoUrl, slug: existingBusiness.slug }
+  }
+
+  // Find suggested demo base
+  let templateDemoId = prospect.assigned_demo || 'demo_taqueria'
+  let demoTemplate = bList.find(b => (b.business_id === templateDemoId || b.id === templateDemoId) && b.is_demo)
+  if (!demoTemplate) {
+    demoTemplate = bList.find(b => b.is_demo) || DEMOS_OFICIALES[0]
+  }
+
+  const newBusinessId = `demo_custom_${baseSlug}`
+  const newBusiness = {
+    id: newBusinessId,
+    business_id: newBusinessId,
+    name: prospect.business_name,
+    slug: baseSlug,
+    business_type: prospect.category || 'Restaurante',
+    is_demo: true,
+    demo_status: 'Activo',
+    status: 'activo',
+    template_version: '3.0',
+    base_demo_id: demoTemplate.business_id || demoTemplate.id,
+    owner_name: prospect.contact_name || '',
+    phone: prospect.phone || '',
+    whatsapp: prospect.whatsapp || prospect.phone || '529612466204',
+    email: prospect.email || '',
+    address: prospect.address || '',
+    colonia: prospect.colonia || '',
+    city: prospect.city || 'Tuxtla Gutiérrez',
+    state: prospect.state || 'Chiapas',
+    maps_url: prospect.maps_url || '',
+    facebook_url: prospect.facebook || '',
+    instagram_url: prospect.instagram || '',
+    website_url: prospect.website || '',
+    logo_url: '/brand/SB_FAVICON_512x512_V01.png',
+    banner_url: demoTemplate.banner_url || '/brand/StreetBoss_Logo_Horizontal_Oficial.webp',
+    brand_color: '#FF4B00',
+    main_message: `¡Bienvenido a ${prospect.business_name}! Pedidos al instante por WhatsApp.`,
+    description: `Demostración oficial personalizada para ${prospect.business_name} en StreetBoss.`,
+    schedule_text: 'Lun a Dom · 9:00 am – 10:00 pm',
+    is_open: true,
+    has_delivery: true,
+    delivery_mode: 'fijo',
+    base_delivery_fee: 30,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  }
+
+  // Clone categories and products from selected demo template
+  const demoCategories = cList.filter(c => c.business_id === (demoTemplate.business_id || demoTemplate.id))
+  const demoProducts = pList.filter(p => p.business_id === (demoTemplate.business_id || demoTemplate.id))
+
+  const newCategories = []
+  const newProducts = []
+
+  demoCategories.forEach(cat => {
+    const newCatId = `cat_${newBusinessId}_${Math.random().toString(36).slice(2, 7)}`
+    newCategories.push({
+      ...cat,
+      id: newCatId,
+      business_id: newBusinessId,
+      created_at: new Date().toISOString(),
+    })
+
+    const matchingProds = demoProducts.filter(p => p.category_id === cat.id)
+    matchingProds.forEach(prod => {
+      newProducts.push({
+        ...prod,
+        id: `prod_${newBusinessId}_${Math.random().toString(36).slice(2, 7)}`,
+        business_id: newBusinessId,
+        category_id: newCatId,
+        created_at: new Date().toISOString(),
+      })
+    })
+  })
+
+  bList.unshift(newBusiness)
+  cList.push(...newCategories)
+  pList.push(...newProducts)
+
+  localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+  localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
+  localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+
+  logAuditAction('generar_demo_personalizado', newBusinessId, { name: prospect.business_name, slug: baseSlug })
+
+  const demoUrl = `https://streetboss.mx/demo/${baseSlug}`
+  return { business: newBusiness, demoUrl, slug: baseSlug }
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CLIENTES ENGINE
 // ─────────────────────────────────────────────────────────────────────────────
@@ -836,11 +937,14 @@ export function recordPublicOrder(orderPayload) {
     status: orderPayload.status || 'pendiente_envio',
     payment_method: orderPayload.payment_method || 'efectivo',
     payment_status: orderPayload.payment_status || (orderPayload.payment_method === 'transferencia' ? 'comprobante_pendiente' : 'pendiente'),
-    cash_needs_change: !!orderPayload.cash_needs_change,
-    cash_pay_with: orderPayload.cash_pay_with || '',
+    cash_needs_change: !!(orderPayload.cash_needs_change || orderPayload.needs_change),
+    needs_change: !!(orderPayload.cash_needs_change || orderPayload.needs_change),
+    cash_pay_with: orderPayload.cash_pay_with || orderPayload.pay_with_amount || '',
+    pay_with_amount: orderPayload.cash_pay_with || orderPayload.pay_with_amount || '',
     has_terminal: !!orderPayload.has_terminal,
+    pending_receipt: orderPayload.payment_method === 'transferencia' || !!orderPayload.pending_receipt,
     comentarios_internos: orderPayload.comentarios_internos || '',
-    observaciones: orderPayload.observaciones || '',
+    observaciones: orderPayload.observaciones || orderPayload.notes || '',
     hora_confirmacion: orderPayload.hora_confirmacion || null,
     hora_entrega: orderPayload.hora_entrega || null,
     created_at: nowISO,
