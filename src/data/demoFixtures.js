@@ -5,11 +5,11 @@
  */
 
 export const DEMO_CONTACTS = {
-  DEFAULT_PHONE: '9610000000',
-  DEFAULT_WHATSAPP: '529610000000',
-  SALES_WHATSAPP: '529610000000',
-  SUPPORT_WHATSAPP: '529610000000',
-  FORMATTED_PHONE: '961 000 0000',
+  DEFAULT_PHONE: '9613725386',
+  DEFAULT_WHATSAPP: '529613725386',
+  SALES_WHATSAPP: '529613725386',
+  SUPPORT_WHATSAPP: '529613725386',
+  FORMATTED_PHONE: '961 372 5386',
 }
 
 export const DEMO_FIXTURES = {
@@ -18,8 +18,8 @@ export const DEMO_FIXTURES = {
     category: 'Taquería Mexicana',
     owner_name: 'Roberto Gómez',
     email: 'contacto@tacoselguero.demo.mx',
-    phone: '9611112233',
-    whatsapp: '529611112233',
+    phone: '9613725386',
+    whatsapp: '529613725386',
     address: 'Av. Central Poniente #450, Col. Centro',
     colonia: 'Centro',
     city: 'Tuxtla Gutiérrez',

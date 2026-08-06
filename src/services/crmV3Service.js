@@ -186,6 +186,8 @@ function initLocalStore() {
         return {
           ...b,
           name: bName,
+          phone: DEMO_CONTACTS.DEFAULT_PHONE,
+          whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
           business_type: official?.giro || official?.badge || b.business_type,
           banner_url: official?.banner_url || `/demos/${official?.id || b.id}/cover.jpg`,
           logo_url: official?.logo_url || `/demos/${official?.id || b.id}/profile.png`,
