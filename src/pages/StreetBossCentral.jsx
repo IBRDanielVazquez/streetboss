@@ -4,6 +4,7 @@ import CrearNegocioTab from '../components/crm/CrearNegocioTab'
 import ClientesTab from '../components/crm/ClientesTab'
 import ProspectosTab from '../components/crm/ProspectosTab'
 import PedidosCRMTab from '../components/crm/PedidosCRMTab'
+import VersionFooterBadge from '../components/VersionFooterBadge'
 import {
   Home,
   Store,
@@ -310,6 +311,9 @@ export default function StreetBossCentral() {
             </span>
           </div>
         )}
+
+        {/* Footer Discreto con Identificación de Versión */}
+        <VersionFooterBadge clientId="streetboss_hq" userId="superadmin_hq" />
       </main>
     </div>
   )

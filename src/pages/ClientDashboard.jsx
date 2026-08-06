@@ -17,6 +17,7 @@ import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
 import RestaurantOrdersTab from '../components/crm/RestaurantOrdersTab'
 import RestaurantPaymentMethodsTab from '../components/crm/RestaurantPaymentMethodsTab'
+import VersionFooterBadge from '../components/VersionFooterBadge'
 import {
   Store,
   Layers,
@@ -1012,6 +1013,9 @@ export default function ClientDashboard() {
         {tab === 'pedidos' && (
           <RestaurantOrdersTab businessId={business.business_id} businessName={business.name} />
         )}
+
+        {/* Footer Discreto con Identificación de Versión */}
+        <VersionFooterBadge clientId={business.slug} userId={business.owner_username || 'b2b_owner'} />
       </main>
 
       {/* Modal Editar Categoría */}

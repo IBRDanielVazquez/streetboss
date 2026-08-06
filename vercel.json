@@ -8,6 +8,10 @@
         {
           "key": "X-Robots-Tag",
           "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
         }
       ]
     },
@@ -17,6 +21,19 @@
         {
           "key": "X-Robots-Tag",
           "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
+        }
+      ]
+    },
+    {
+      "source": "/index.html",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate, max-age=0"
         }
       ]
     },
