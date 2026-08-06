@@ -5,14 +5,33 @@
 
 ## Estado General
 
-**Estado: 🟢 MVP PROSPECTING PLATFORM Y DASHBOARD MÓVIL EN VERCEL (1,901 RESTAURANTES)**
+**Estado: 🟢 CRM HQ, DASHBOARD B2B Y MÉTODOS DE PAGO TOTALMENTE OPERATIVOS Y DESPLEGADOS EN PRODUCCIÓN**
 
-Se ha completado el **MVP Comercial de Prospección Móvil de StreetBoss**, incluyendo:
-- **Botón Prominente "🎁 GENERAR DEMO"**: Crea demos instantáneas en `/demo/{slug}` adaptadas al nombre y giro del negocio.
-- **Rediseño del Drawer Comercial (Ficha del Negocio)**: Estructura táctil optimizada para pulgar con botones gigantes de `📞 Llamar`, `💬 WhatsApp`, `📘 Facebook`, `📸 Instagram`, `🌎 Sitio Web`, `📍 Maps` y `💬 Messenger`.
-- **Generador de Mensaje IA**: Plantilla automatizada con enlace dinámico a la demo generada y copia rápida en 1 clic.
-- **Ruta Pública `/demo/:trialId`**: Totalmente integrada en la app React para visualización de cartas interactivas.
-- **Despliegue Público en Vercel**: Compilado y listo para uso en campo en dispositivos móviles (Safari, Chrome, Android, iOS).
+Se han completado y desplegado a producción en **https://streetboss.com.mx** las mejoras prioritarias del CRM interno, Dashboard B2B, Checkout B2C y Seguridad:
+
+1. **Métodos de Pago B2B y B2C**:
+   - Persistencia aislada por restaurante en `payment_methods` (Efectivo, Transferencia, Tarjeta).
+   - **Efectivo**: Restricción de límite de cambio máximo en reparto a domicilio (`pagaraCon - total > max_cambio_monto`) con alerta de seguridad personalizada.
+   - **Transferencia**: Muestra Banco, Titular, CLABE, Número de Cuenta con botones **"Copiar CLABE"** y **"Copiar cuenta"** con toast de confirmación visual.
+   - **Tarjeta**: Adaptada para delivery ("Pago con tarjeta al recibir. El restaurante llevará la terminal.") y pickup ("Pago con tarjeta al recoger en el establecimiento."). Cero datos sensibles solicitados o almacenados.
+
+2. **Acceso Protegido por Contraseña al Dashboard B2B (`/panel/:slug`)**:
+   - Pantalla de inicio de sesión B2B mobile-first con conmutador de visibilidad de contraseña.
+   - Restricción de acceso sin sesión previa y botón **"Salir"** (Cerrar Sesión) en el header superior.
+   - Suplantación administrativa auditada habilitada desde `/central-hq`.
+
+3. **Formato Estricto "COMPARTIR ACCESO"**:
+   - Mensaje de WhatsApp generado con el formato exacto de Menú, Dashboard y Contraseña Temporal en `ClientesTab.jsx`.
+
+4. **Assets de Portada y Perfil para las 10 Demos Oficiales**:
+   - Generación de imágenes gastronómicas de alta calidad en 16:9 y avatares de perfil en `/public/demos/[demo-id]/`.
+   - Referencias actualizadas en `demoShowcase.js` y `crmV3Service.js`.
+
+5. **Eliminación Absoluta del Número `9612466204`**:
+   - 0 ocurrencias activas en código o vistas. Reemplazado por `DEMO_CONTACTS` (`529610000000`).
+
+6. **Despliegue a Producción Vercel**:
+   - Live en **https://streetboss.com.mx** (Deployment ID: `dpl_BrJwtCHfcVSSqy4azvZvpWagTHUC`, Commit Git: `fb7ff6643183e6ee4c90b0e52058353a8b9c3b40`).
 
 ---
 
@@ -31,41 +50,8 @@ Se ha completado el **MVP Comercial de Prospección Móvil de StreetBoss**, incl
 
 ---
 
-## 2. Rescate de Recursos Únicos hacia la Carpeta Oficial
+## 2. Estado de la Carpeta Oficial y Build de Producción
 
-Antes de mover las carpetas a cuarentena, se identificaron y copiaron todos sus activos únicos hacia `/Users/danielvazquez/Proyectos/StreetBoss/`:
-
-- **Documentación & Master Book (`docs/producto/`):**  
-  `STREETBOSS_MASTER_BOOK_v1.md`, `ROADMAP.md`, `PRODUCT.md`, `PROMPTS_MAESTROS.md`, `00-START-HERE.md`, `ANTIGRAVITY.md`, `CHATGPT.md`, `CLAUDE.md`, `CODEX.md`, `INDEX.md`, `NOTEBOOKLM.md`, carpeta `PRODUCT/`.
-- **Prompts Maestros (`prompts/compartidos/`):**  
-  `PROMPT_AUDITORIAS.md`, `PROMPT_AUDITORIAS_CODEX.md`, `PROMPT_CONTEXTO_GENERAL.md`, `PROMPT_NUEVO_PROYECTO.md`.
-- **Módulos de Código (`src/modules/`):**  
-  Módulo Virtual Tour 360° (`src/modules/virtual-tour/`) y módulo Digital Menu Futures (`src/modules/digital-menu-futures/`).
-- **Scripts de Utilidad (`scripts/`):**  
-  11 scripts JS de procesamiento (`add-geolocalizacion.js`, `enhance-demo-menus.js`, `update_demos.js`, etc.).
-- **Investigación de Mercado (`docs/research/`):**  
-  Estudio de mercado Chiapas y reportes Meta Ads (`docs/research/mercado-chiapas/`).
-- **Assets Gráficos (`assets/imagenes/`):**  
-  29 capturas PNG de interfaz (`assets/imagenes/desktop-screenshots/`).
-
----
-
-## 3. Estado de la Carpeta Oficial y Build de Producción
-
-- **Git Status:** Rama `main` activa, con historial y remotos oficiales intactos (`github.com/IBRDanielVazquez/streetboss.git`).
-- **Build Local (`npm run build`):** ✅ Compilación exitosa en 8.81s procesando 2,040 módulos (`vite build` exitoso).
-- **Protección `.gitignore`:** Preservadas las 5 reglas originales + `.env.*` y `!.env.example`.
-
----
-
-## 4. Consolidación de Identidad y Activos de Marca
-
-Se han copiado y validado las carpetas maestras de la identidad visual de StreetBoss:
-- **`brand-core/`:** Contiene los logotipos maestros en SVG y las especificaciones básicas de color, tipografía y reglas de la marca (9 archivos, 8.5 KB).
-- **`brand-assets/`:** Contiene el calendario de 90 días (51 posts, 39 reels), plantillas de diseño, librerías de copys, biblioteca de prompts y guías de producción (161 archivos, 42.8 MB).
-- **Integridad:** Validada mediante SHA-256 (100% de coincidencia exacta). Las carpetas residen como hermanas en la raíz del proyecto.
-
----
-
-> ⚠️ **Próximo Paso Requerido:** El usuario puede revisar la carpeta de cuarentena y autorizar la eliminación permanente cuando lo considere conveniente.
-
+- **Git Status:** Rama `remediacion-sbos-master-audit` activa, commit `fb7ff6643183e6ee4c90b0e52058353a8b9c3b40`.
+- **Build Local (`npm run build`):** ✅ Compilación exitosa en 6.07s procesando 1,644 módulos.
+- **Despliegue Vercel:** ✅ Producción activa aliased a `https://streetboss.com.mx`.
