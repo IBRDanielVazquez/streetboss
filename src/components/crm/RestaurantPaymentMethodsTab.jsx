@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { updateBusinessSettings } from '../../services/crmV3Service'
 import { CreditCard, DollarSign, Send, Save, CheckCircle, HelpCircle, ShieldCheck } from 'lucide-react'
 
-export default function RestaurantPaymentMethodsTab({ business, onUpdateBusiness }) {
+export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBusiness }) {
   const defaultMethods = {
-    efectivo: { activo: true, preguntar_cambio: true },
+    efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
     transferencia: {
       activo: false,
       titular: '',
@@ -21,19 +21,32 @@ export default function RestaurantPaymentMethodsTab({ business, onUpdateBusiness
     }
   }
 
-  const [paymentMethods, setPaymentMethods] = useState({
+  const [paymentMethods, setPaymentMethods] = useState(() => ({
     ...defaultMethods,
     ...(business.payment_methods || {}),
     efectivo: { ...defaultMethods.efectivo, ...(business.payment_methods?.efectivo || {}) },
     transferencia: { ...defaultMethods.transferencia, ...(business.payment_methods?.transferencia || {}) },
     tarjeta: { ...defaultMethods.tarjeta, ...(business.payment_methods?.tarjeta || {}) },
-  })
+  }))
+
+  useEffect(() => {
+    if (business.payment_methods) {
+      setPaymentMethods({
+        ...defaultMethods,
+        ...business.payment_methods,
+        efectivo: { ...defaultMethods.efectivo, ...(business.payment_methods?.efectivo || {}) },
+        transferencia: { ...defaultMethods.transferencia, ...(business.payment_methods?.transferencia || {}) },
+        tarjeta: { ...defaultMethods.tarjeta, ...(business.payment_methods?.tarjeta || {}) },
+      })
+    }
+  }, [business.payment_methods, business.business_id, business.slug])
 
   const [toastMsg, setToastMsg] = useState('')
 
   const handleSave = (e) => {
     e.preventDefault()
-    updateBusinessSettings(business.business_id, {
+    const targetId = business.slug || business.business_id || business.id
+    updateBusinessSettings(targetId, {
       payment_methods: paymentMethods
     })
     if (onUpdateBusiness) onUpdateBusiness()

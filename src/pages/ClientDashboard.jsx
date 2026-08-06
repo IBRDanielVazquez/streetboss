@@ -488,12 +488,12 @@ export default function ClientDashboard() {
         </button>
 
         <button
-          onClick={() => setTab('clientes')}
+          onClick={() => setTab('pedidos')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-            tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+            tab === 'pedidos' || tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <Users size={14} /> Mis Clientes
+          <ShoppingBag size={14} /> Pedidos y Clientes
         </button>
 
         <button
@@ -503,15 +503,6 @@ export default function ClientDashboard() {
           }`}
         >
           <CreditCard size={14} /> Métodos de Pago
-        </button>
-
-        <button
-          onClick={() => setTab('pedidos')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-            tab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
-          }`}
-        >
-          <ShoppingBag size={14} /> Gestión de Pedidos
         </button>
       </nav>
 
@@ -1102,19 +1093,41 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA 6: MIS CLIENTES */}
-        {tab === 'clientes' && (
-          <RestaurantCustomersTab businessId={business.business_id} businessName={business.name} />
+        {/* PESTAÑA UNIFICADA: PEDIDOS Y CLIENTES */}
+        {(tab === 'pedidos' || tab === 'clientes') && (
+          <div className="space-y-6">
+            <div className="flex bg-[#14161F] p-1.5 rounded-2xl border border-white/5 max-w-md">
+              <button
+                type="button"
+                onClick={() => setTab('pedidos')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  tab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <ShoppingBag size={14} /> Historial de Pedidos
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('clientes')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Users size={14} /> Base de Clientes
+              </button>
+            </div>
+
+            {tab === 'pedidos' ? (
+              <RestaurantOrdersTab businessId={business.slug || business.business_id || business.id} businessName={business.name} />
+            ) : (
+              <RestaurantCustomersTab businessId={business.slug || business.business_id || business.id} businessName={business.name} />
+            )}
+          </div>
         )}
 
-        {/* PESTAÑA 7: MÉTODOS DE PAGO B2B */}
+        {/* PESTAÑA: MÉTODOS DE PAGO B2B */}
         {tab === 'pagos' && (
           <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={reloadBusiness} />
-        )}
-
-        {/* PESTAÑA 8: GESTIÓN DE PEDIDOS DEL RESTAURANTE */}
-        {tab === 'pedidos' && (
-          <RestaurantOrdersTab businessId={business.business_id} businessName={business.name} />
         )}
 
         {/* Footer Discreto con Identificación de Versión */}

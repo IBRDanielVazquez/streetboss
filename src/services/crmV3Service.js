@@ -829,7 +829,7 @@ export function importProspects(prospectArray) {
 // ─────────────────────────────────────────────────────────────────────────────
 export function updateBusinessSettings(businessId, updates) {
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
-  const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId)
+  const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
   if (idx !== -1) {
     bList[idx] = {
       ...bList[idx],
@@ -1200,8 +1200,17 @@ export function recordPublicOrder(orderPayload) {
 }
 
 export function getBusinessCustomers(businessId) {
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const biz = bList.find(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
+  const validIds = new Set([
+    businessId,
+    biz?.id,
+    biz?.business_id,
+    biz?.slug
+  ].filter(Boolean))
+
   const customerList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
-  return customerList.filter(c => c.business_id === businessId)
+  return customerList.filter(c => validIds.has(c.business_id))
 }
 
 export function updateCustomerPromoConsent(customerId, hasConsent) {
@@ -1219,8 +1228,17 @@ export function getAllOrders() {
 }
 
 export function getOrdersByBusiness(businessId) {
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const biz = bList.find(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
+  const validIds = new Set([
+    businessId,
+    biz?.id,
+    biz?.business_id,
+    biz?.slug
+  ].filter(Boolean))
+
   const orders = getAllOrders()
-  return orders.filter(o => o.business_id === businessId)
+  return orders.filter(o => validIds.has(o.business_id))
 }
 
 export function updateOrderStatus(orderId, newStatus, extraData = {}) {
