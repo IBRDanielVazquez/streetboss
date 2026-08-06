@@ -5,33 +5,38 @@
 
 ## Estado General
 
-**Estado: 🟢 CRM HQ, DASHBOARD B2B Y MÉTODOS DE PAGO TOTALMENTE OPERATIVOS Y DESPLEGADOS EN PRODUCCIÓN**
+**Estado: 🟡 CORRECCIONES DE SEGURIDAD Y DATOS MIGRADO Y VERIFICADO EN MODO LOCAL (ESPERANDO AUTORIZACIÓN MANUAL PARA DEPLOY)**
 
-Se han completado y desplegado a producción en **https://streetboss.com.mx** las mejoras prioritarias del CRM interno, Dashboard B2B, Checkout B2C y Seguridad:
+Se han completado en código fuente local las 8 Fases del Plan de Remediación de Producción:
 
-1. **Métodos de Pago B2B y B2C**:
-   - Persistencia aislada por restaurante en `payment_methods` (Efectivo, Transferencia, Tarjeta).
-   - **Efectivo**: Restricción de límite de cambio máximo en reparto a domicilio (`pagaraCon - total > max_cambio_monto`) con alerta de seguridad personalizada.
-   - **Transferencia**: Muestra Banco, Titular, CLABE, Número de Cuenta con botones **"Copiar CLABE"** y **"Copiar cuenta"** con toast de confirmación visual.
-   - **Tarjeta**: Adaptada para delivery ("Pago con tarjeta al recibir. El restaurante llevará la terminal.") y pickup ("Pago con tarjeta al recoger en el establecimiento."). Cero datos sensibles solicitados o almacenados.
+1. **Eliminación de Backdoor `Sb987654!`**:
+   - Se eliminó la contraseña maestra global de `authenticateBusiness()`.
+   - Se requiere una contraseña por restaurante configurada individualmente.
+   - Función `setBusinessPassword()` valida longitud (mín. 8 caracteres) y registra auditoría.
 
-2. **Acceso Protegido por Contraseña al Dashboard B2B (`/panel/:slug`)**:
-   - Pantalla de inicio de sesión B2B mobile-first con conmutador de visibilidad de contraseña.
-   - Restricción de acceso sin sesión previa y botón **"Salir"** (Cerrar Sesión) en el header superior.
-   - Suplantación administrativa auditada habilitada desde `/central-hq`.
+2. **Modal de Contraseña de Una Sola Visualización**:
+   - `ClientesTab.jsx` incluye un modal interactivo para generar o establecer contraseñas.
+   - La contraseña generada es visible **UNA SOLA VEZ** al crearla/restablecerla.
+   - Al cerrar el modal, la contraseña desaparece permanentemente de la UI.
 
-3. **Formato Estricto "COMPARTIR ACCESO"**:
-   - Mensaje de WhatsApp generado con el formato exacto de Menú, Dashboard y Contraseña Temporal en `ClientesTab.jsx`.
+3. **Mensaje Estricto de "Compartir Acceso"**:
+   - Formato exacto reducido (Hola, Menú, Dashboard, Contraseña) sin emojis irrelevantes, planes ni datos de soporte.
+   - Generación de mensaje enlazada directamente a la visualización única del modal de contraseña.
 
-4. **Assets de Portada y Perfil para las 10 Demos Oficiales**:
-   - Generación de imágenes gastronómicas de alta calidad en 16:9 y avatares de perfil en `/public/demos/[demo-id]/`.
-   - Referencias actualizadas en `demoShowcase.js` y `crmV3Service.js`.
+4. **Migración Automática de localStorage (`migrateExistingData`)**:
+   - `migrateExistingData()` re-siembra e inyecta la nueva estructura (`banner_url`, `logo_url`, `payment_methods`, `temp_password`) en navegadores con datos preexistentes sin sobrescribir personalizaciones.
 
-5. **Eliminación Absoluta del Número `9612466204`**:
-   - 0 ocurrencias activas en código o vistas. Reemplazado por `DEMO_CONTACTS` (`529610000000`).
+5. **Clarificación de Pestañas**:
+   - Pestaña del panel B2B renombrada a `"Mis Clientes"` para eliminar ambigüedad con la pestaña `"CLIENTES"` (b2b clientes) del CRM HQ.
 
-6. **Despliegue a Producción Vercel**:
-   - Live en **https://streetboss.com.mx** (Deployment ID: `dpl_BrJwtCHfcVSSqy4azvZvpWagTHUC`, Commit Git: `fb7ff6643183e6ee4c90b0e52058353a8b9c3b40`).
+6. **Assets de Portada y Perfil**:
+   - Fallback en `DemosTab.jsx` corregido a `/demos/${demo.slug}/cover.jpg`.
+
+7. **Limpieza de Rutas Legacy**:
+   - Eliminada la ruta `/demo/:trialId` en `App.jsx` dejando `/menu/:trialId` como la única ruta oficial del menú público.
+
+8. **Modo Local Estricto**:
+   - Todos los cambios permanecen en git local. **Sin despliegue a Vercel hasta recibir autorización manual explicita.**
 
 ---
 

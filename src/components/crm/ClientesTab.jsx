@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { DEMO_CONTACTS } from '../../data/demoFixtures'
-import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction } from '../../services/crmV3Service'
-import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck } from 'lucide-react'
+import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword } from '../../services/crmV3Service'
+import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck, Eye, EyeOff, X } from 'lucide-react'
 
 export default function ClientesTab() {
   const [clients, setClients] = useState([])
@@ -9,7 +9,14 @@ export default function ClientesTab() {
   const [filterStatus, setFilterStatus] = useState('todos')
   const [editingClient, setEditingClient] = useState(null)
   const [copiedMsg, setCopiedMsg] = useState('')
-  const [previewModal, setPreviewModal] = useState(null) // { type: 'resumen' | 'reset', client, message }
+  const [previewModal, setPreviewModal] = useState(null)
+
+  // FASE 2: Modal de contraseña — contraseña solo visible una vez
+  const [passwordModal, setPasswordModal] = useState(null) // { client, generatedPassword, mode: 'generate' | 'set' }
+  const [newPasswordInput, setNewPasswordInput] = useState('')
+  const [confirmPasswordInput, setConfirmPasswordInput] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [showPasswordField, setShowPasswordField] = useState(false)
 
   const reloadClients = () => {
     setClients(getClients())
@@ -30,69 +37,52 @@ export default function ClientesTab() {
     setTimeout(() => setCopiedMsg(''), 2500)
   }
 
-  // Genera enlace de restablecimiento seguro con expiración de 24h (sin mostrar contraseñas en texto plano)
-  const generateResetLink = (client) => {
-    const token = `rst_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
-    return `https://streetboss.com.mx/panel/${client.slug}?action=reset_password&token=${token}&exp=${encodeURIComponent(expiresAt)}`
+  // FASE 2: Generar contraseña automática y mostrar modal
+  const handleGeneratePassword = (client) => {
+    const newPass = regenerateClientPassword(client.business_id)
+    if (newPass) {
+      setPasswordModal({ client, generatedPassword: newPass, mode: 'generate' })
+      reloadClients()
+    }
   }
 
-  // Mensaje para RESTABLECER ACCESO
-  const generateResetMessage = (client) => {
-    const resetUrl = generateResetLink(client)
-    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
-    const user = client.owner_username || client.email || `${client.slug}@streetboss.com.mx`
-
-    return `Hola, ${client.owner_name || client.name}.
-
-Has solicitado la recuperación de acceso para tu cuenta de *${client.name}*.
-
-⚙️ *Panel B2B:*
-${dashboardUrl}
-
-👤 *Usuario:* ${user}
-
-🔑 *Enlace seguro para crear/restablecer tu contraseña:*
-${resetUrl}
-
-⏱️ *Vigencia:* Este enlace es de un solo uso y expira en 24 horas. Por seguridad, no guardamos ni enviamos contraseñas en texto plano.`
+  // FASE 2: Establecer contraseña manual
+  const handleSetPassword = (client) => {
+    setPasswordModal({ client, generatedPassword: null, mode: 'set' })
+    setNewPasswordInput('')
+    setConfirmPasswordInput('')
+    setPasswordError('')
+    setShowPasswordField(false)
   }
 
-  // Mensaje para RESUMEN DE CUENTA
-  const generateAccountSummaryMessage = (client) => {
-    const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
-    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
-    const user = client.owner_username || client.email || `${client.slug}@streetboss.com.mx`
-    const resetUrl = generateResetLink(client)
-
-    return `📊 *RESUMEN OFICIAL DE CUENTA — STREETBOSS*
-
-🏢 *Negocio:* ${client.name}
-👤 *Propietario:* ${client.owner_name || 'N/A'}
-📦 *Plan:* ${client.plan_name || 'Restaurante Pro ($99/mes)'}
-🟢 *Estado de la cuenta:* ${client.status === 'activo' ? 'Activa ✅' : 'Pausada ⏳'}
-💳 *Estado de pago:* ${client.payment_status || 'Al día ✅'}
-
-📱 *Menú público:*
-${menuUrl}
-
-⚙️ *Panel de Administración B2B:*
-${dashboardUrl}
-
-👤 *Usuario:* ${user}
-
-💬 *Soporte técnico y atención a clientes:*
-https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
+  const handleConfirmSetPassword = () => {
+    if (!newPasswordInput || newPasswordInput.length < 8) {
+      setPasswordError('La contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+    if (newPasswordInput !== confirmPasswordInput) {
+      setPasswordError('Las contraseñas no coinciden.')
+      return
+    }
+    const result = setBusinessPassword(passwordModal.client.business_id, newPasswordInput)
+    if (result.success) {
+      setPasswordModal({ ...passwordModal, generatedPassword: newPasswordInput, mode: 'generate' })
+      setPasswordError('')
+      reloadClients()
+    } else {
+      setPasswordError(result.error)
+    }
   }
 
-  // Mensaje exacto para COMPARTIR ACCESO
-  const generateShareAccessMessage = (client) => {
+  // FASE 3: Mensaje exacto de compartir acceso — solo funciona con contraseña recién generada
+  const handleShareAccessFromModal = () => {
+    if (!passwordModal?.generatedPassword) return
+    const client = passwordModal.client
     const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
     const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
     const clientName = client.owner_name || client.name || 'Cliente'
-    const tempPassword = client.temp_password || 'Sb987654!'
 
-    return `Hola, ${clientName}.
+    const message = `Hola, ${clientName}.
 
 Menú:
 ${menuUrl}
@@ -101,15 +91,42 @@ Dashboard:
 ${dashboardUrl}
 
 Contraseña:
-${tempPassword}`
-  }
+${passwordModal.generatedPassword}`
 
-  const handleSendShareAccessWhatsApp = (client) => {
-    const message = generateShareAccessMessage(client)
     logAuditAction('compartir_acceso_b2b', client.business_id, { name: client.name })
     const phoneClean = normalizeMexicanPhone(client.whatsapp || client.phone || DEMO_CONTACTS.DEFAULT_PHONE)
     const waUrl = `https://wa.me/52${phoneClean}?text=${encodeURIComponent(message)}`
     window.open(waUrl, '_blank')
+  }
+
+  const closePasswordModal = () => {
+    setPasswordModal(null)
+    setNewPasswordInput('')
+    setConfirmPasswordInput('')
+    setPasswordError('')
+    setShowPasswordField(false)
+  }
+
+  // Mensaje para RESUMEN DE CUENTA (sin contraseña)
+  const generateAccountSummaryMessage = (client) => {
+    const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
+    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
+
+    return `📊 *RESUMEN DE CUENTA — STREETBOSS*
+
+🏢 *Negocio:* ${client.name}
+👤 *Propietario:* ${client.owner_name || 'N/A'}
+📦 *Plan:* ${client.plan_name || 'Restaurante Pro ($99/mes)'}
+🟢 *Estado:* ${client.status === 'activo' ? 'Activa ✅' : 'Pausada ⏳'}
+
+📱 *Menú público:*
+${menuUrl}
+
+⚙️ *Panel B2B:*
+${dashboardUrl}
+
+💬 *Soporte:*
+https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
   }
 
   const handleSendResetWhatsApp = (client) => {
@@ -294,14 +311,21 @@ ${tempPassword}`
 
                 </div>
 
-                {/* Fila 3: Acciones Administrativas (Resumen de cuenta, Restablecimiento de contraseña, Modificación) */}
+                {/* Fila 3: Acciones Administrativas */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
-                      onClick={() => handleSendShareAccessWhatsApp(client)}
+                      onClick={() => handleGeneratePassword(client)}
                       className="flex items-center gap-1.5 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-3.5 py-2 rounded-xl shadow-md transition-transform active:scale-95"
                     >
-                      <Send size={13} /> COMPARTIR ACCESO
+                      <Key size={13} /> GENERAR CONTRASEÑA Y COMPARTIR
+                    </button>
+
+                    <button
+                      onClick={() => handleSetPassword(client)}
+                      className="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs px-3.5 py-2 rounded-xl border border-amber-500/20 transition-transform active:scale-95"
+                    >
+                      <Lock size={13} /> Establecer Contraseña
                     </button>
 
                     <button
@@ -312,17 +336,10 @@ ${tempPassword}`
                     </button>
 
                     <button
-                      onClick={() => handleSendResetWhatsApp(client)}
-                      className="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs px-3.5 py-2 rounded-xl border border-amber-500/20 transition-transform active:scale-95"
-                    >
-                      <Key size={13} /> RESTABLECER ACCESO
-                    </button>
-
-                    <button
                       onClick={() => setPreviewModal({ type: 'resumen', client, message: generateAccountSummaryMessage(client) })}
                       className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs px-3 py-2 rounded-xl border border-white/5"
                     >
-                      <Copy size={13} /> Vista previa de mensaje
+                      <Copy size={13} /> Vista previa
                     </button>
                   </div>
 
@@ -379,8 +396,7 @@ ${tempPassword}`
               </button>
               <button
                 onClick={() => {
-                  if (previewModal.type === 'resumen') handleSendSummaryWhatsApp(previewModal.client)
-                  else handleSendResetWhatsApp(previewModal.client)
+                  handleSendSummaryWhatsApp(previewModal.client)
                   setPreviewModal(null)
                 }}
                 className="px-4 py-2 rounded-xl bg-[#FF4B00] text-white font-black text-xs flex items-center gap-1.5"
@@ -470,6 +486,102 @@ ${tempPassword}`
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* FASE 2: Modal de Contraseña — Se muestra UNA sola vez */}
+      {passwordModal && (
+        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" onClick={closePasswordModal}>
+          <div className="bg-[#14161F] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-base font-black text-white flex items-center gap-2">
+                <Key size={18} className="text-[#FF4B00]" />
+                {passwordModal.mode === 'set' ? 'Establecer Contraseña' : 'Contraseña Generada'}
+              </h3>
+              <button onClick={closePasswordModal} className="text-gray-400 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-400">
+              <span className="font-bold text-white">{passwordModal.client.name}</span> — {passwordModal.client.slug}
+            </p>
+
+            {/* Modo: Establecer contraseña manual */}
+            {passwordModal.mode === 'set' && !passwordModal.generatedPassword && (
+              <div className="space-y-3 text-xs">
+                {passwordError && (
+                  <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl font-bold">
+                    {passwordError}
+                  </div>
+                )}
+                <div>
+                  <label className="block text-gray-300 font-bold mb-1">Nueva contraseña (mín. 8 caracteres)</label>
+                  <div className="relative">
+                    <input
+                      type={showPasswordField ? 'text' : 'password'}
+                      value={newPasswordInput}
+                      onChange={e => setNewPasswordInput(e.target.value)}
+                      placeholder="••••••••"
+                      className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2.5 text-white font-mono focus:border-[#FF4B00] focus:outline-none"
+                    />
+                    <button type="button" onClick={() => setShowPasswordField(!showPasswordField)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+                      {showPasswordField ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-gray-300 font-bold mb-1">Confirmar contraseña</label>
+                  <input
+                    type={showPasswordField ? 'text' : 'password'}
+                    value={confirmPasswordInput}
+                    onChange={e => setConfirmPasswordInput(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2.5 text-white font-mono focus:border-[#FF4B00] focus:outline-none"
+                  />
+                </div>
+                <button
+                  onClick={handleConfirmSetPassword}
+                  className="w-full bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black py-2.5 rounded-xl text-xs"
+                >
+                  Guardar Contraseña
+                </button>
+              </div>
+            )}
+
+            {/* Modo: Contraseña generada/establecida — visible UNA vez */}
+            {passwordModal.generatedPassword && (
+              <div className="space-y-4">
+                <div className="bg-[#0D0E12] p-4 rounded-xl border border-emerald-500/20 space-y-2">
+                  <p className="text-[10px] text-emerald-400 font-black uppercase">Contraseña (visible solo ahora)</p>
+                  <p className="text-lg font-mono font-bold text-white tracking-wider select-all">
+                    {passwordModal.generatedPassword}
+                  </p>
+                </div>
+
+                <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl text-amber-300 text-[11px] font-bold">
+                  ⚠️ Al cerrar este modal, la contraseña no volverá a mostrarse.
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => copyText(passwordModal.generatedPassword, 'password_copied')}
+                    className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold py-2.5 rounded-xl text-xs border border-white/10"
+                  >
+                    {copiedMsg === 'password_copied' ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedMsg === 'password_copied' ? '¡Copiada!' : 'Copiar Contraseña'}
+                  </button>
+
+                  <button
+                    onClick={handleShareAccessFromModal}
+                    className="w-full flex items-center justify-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black py-3 rounded-xl text-xs shadow-lg"
+                  >
+                    <Send size={14} /> Compartir Acceso por WhatsApp
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

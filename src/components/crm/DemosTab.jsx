@@ -84,7 +84,7 @@ export default function DemosTab({ onSelectDemoForBusiness }) {
             {/* Banner e Imagen */}
             <div className="relative h-40 w-full overflow-hidden bg-slate-900">
               <img
-                src={demo.banner_url || demo.img || '/demos/img/tacos-el-guero.jpg'}
+                src={demo.banner_url || `/demos/${demo.slug || demo.id}/cover.jpg`}
                 alt={demo.name}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />

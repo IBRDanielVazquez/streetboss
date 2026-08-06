@@ -81,7 +81,7 @@ function initLocalStore() {
       address: 'Tuxtla Gutiérrez, Chiapas',
       city: 'Tuxtla Gutiérrez',
       state: 'Chiapas',
-      banner_url: demo.img || `/demos/${demo.id}/cover.jpg`,
+      banner_url: `/demos/${demo.id}/cover.jpg`,
       logo_url: `/demos/${demo.id}/profile.png`,
       brand_color: '#FF4B00',
       description: `Demostración oficial de ${demo.nombre} en StreetBoss.`,
@@ -90,6 +90,12 @@ function initLocalStore() {
       has_delivery: true,
       delivery_mode: 'fijo',
       base_delivery_fee: 30,
+      temp_password: generateSecurePassword(),
+      payment_methods: {
+        efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
+        transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
+        tarjeta: { activo: false, instrucciones: '', compra_minima: 0 }
+      },
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     }))
@@ -140,7 +146,59 @@ function initLocalStore() {
   }
 }
 
+// FASE 4: Migrar datos existentes en localStorage sin perder configuración personalizada
+const MIGRATION_VERSION_KEY = 'sb_v3_migration_version'
+const CURRENT_MIGRATION_VERSION = 2
+
+function migrateExistingData() {
+  const currentVersion = Number(localStorage.getItem(MIGRATION_VERSION_KEY) || '0')
+  if (currentVersion >= CURRENT_MIGRATION_VERSION) return
+
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  let changed = false
+
+  bList.forEach(b => {
+    // Migrar banner_url de path viejo a nuevo
+    if (b.banner_url && b.banner_url.includes('/demos/img/')) {
+      b.banner_url = `/demos/${b.slug || b.id}/cover.jpg`
+      changed = true
+    }
+    if (!b.banner_url) {
+      b.banner_url = `/demos/${b.slug || b.id}/cover.jpg`
+      changed = true
+    }
+
+    // Migrar logo_url
+    if (!b.logo_url || b.logo_url.includes('/brand/SB_FAVICON')) {
+      b.logo_url = `/demos/${b.slug || b.id}/profile.png`
+      changed = true
+    }
+
+    // Inyectar payment_methods si no existen
+    if (!b.payment_methods) {
+      b.payment_methods = {
+        efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
+        transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
+        tarjeta: { activo: false, instrucciones: '', compra_minima: 0 }
+      }
+      changed = true
+    }
+
+    // Generar temp_password si está vacía
+    if (!b.temp_password) {
+      b.temp_password = generateSecurePassword()
+      changed = true
+    }
+  })
+
+  if (changed) {
+    localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+  }
+  localStorage.setItem(MIGRATION_VERSION_KEY, String(CURRENT_MIGRATION_VERSION))
+}
+
 initLocalStore()
+migrateExistingData()
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DEMOS ENGINE
@@ -551,6 +609,20 @@ export function regenerateClientPassword(clientBusinessId) {
   return null
 }
 
+export function setBusinessPassword(businessId, newPassword) {
+  if (!newPassword || newPassword.length < 8) {
+    return { success: false, error: 'La contraseña debe tener al menos 8 caracteres.' }
+  }
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId)
+  if (idx === -1) return { success: false, error: 'Negocio no encontrado.' }
+  bList[idx].temp_password = newPassword
+  bList[idx].updated_at = new Date().toISOString()
+  localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+  logAuditAction('establecer_password', businessId, {})
+  return { success: true }
+}
+
 // Access dashboard administratively
 export function getAdministrativeAccessUrl(clientSlug) {
   logAuditAction('acceso_dashboard', clientSlug, { mode: 'suplantacion_auditada' })
@@ -564,8 +636,11 @@ export function authenticateBusiness(slug, password) {
     return { success: false, error: 'Restaurante no encontrado.' }
   }
 
-  const validPassword = business.temp_password || business.password || 'Sb987654!'
-  if (password === validPassword || password === 'Sb987654!') {
+  const validPassword = business.temp_password || business.password
+  if (!validPassword) {
+    return { success: false, error: 'Este restaurante no tiene contraseña configurada. Contacta a StreetBoss.' }
+  }
+  if (password === validPassword) {
     logAuditAction('login_b2b_exitoso', business.business_id, { slug })
     return { success: true, business }
   }

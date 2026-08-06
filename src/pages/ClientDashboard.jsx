@@ -488,7 +488,7 @@ export default function ClientDashboard() {
             tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <Users size={14} /> Clientes Privados
+          <Users size={14} /> Mis Clientes
         </button>
 
         <button
@@ -1097,7 +1097,7 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA 6: MIS CLIENTES PRIVADOS */}
+        {/* PESTAÑA 6: MIS CLIENTES */}
         {tab === 'clientes' && (
           <RestaurantCustomersTab businessId={business.business_id} businessName={business.name} />
         )}
