@@ -6,6 +6,12 @@ import {
   logoutHqAdmin,
   subscribeCentralSync
 } from '../services/crmV3Service'
+import DemosTab from '../components/crm/DemosTab'
+import CrearNegocioTab from '../components/crm/CrearNegocioTab'
+import ClientesTab from '../components/crm/ClientesTab'
+import ProspectosTab from '../components/crm/ProspectosTab'
+import PedidosCRMTab from '../components/crm/PedidosCRMTab'
+import VersionFooterBadge from '../components/VersionFooterBadge'
 import {
   Home,
   Store,
