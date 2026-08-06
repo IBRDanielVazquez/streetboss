@@ -1084,7 +1084,7 @@ export default function ClientDashboard() {
 
             {/* SECCIÓN EXTRA AL FINAL: CONFIGURACIÓN MÉTODOS DE PAGO */}
             <div className="pt-8 border-t border-white/10">
-              <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={reloadBusiness} />
+              <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={loadData} />
             </div>
           </div>
         )}
