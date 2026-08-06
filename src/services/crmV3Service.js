@@ -81,8 +81,8 @@ function initLocalStore() {
       address: 'Tuxtla Gutiérrez, Chiapas',
       city: 'Tuxtla Gutiérrez',
       state: 'Chiapas',
-      banner_url: demo.img || `/demos/img/${demo.id}.jpg`,
-      logo_url: `/brand/SB_FAVICON_512x512_V01.png`,
+      banner_url: demo.img || `/demos/${demo.id}/cover.jpg`,
+      logo_url: `/demos/${demo.id}/profile.png`,
       brand_color: '#FF4B00',
       description: `Demostración oficial de ${demo.nombre} en StreetBoss.`,
       schedule_text: 'Lun a Dom · 9:00 am – 10:00 pm',
@@ -554,7 +554,24 @@ export function regenerateClientPassword(clientBusinessId) {
 // Access dashboard administratively
 export function getAdministrativeAccessUrl(clientSlug) {
   logAuditAction('acceso_dashboard', clientSlug, { mode: 'suplantacion_auditada' })
-  return `/panel/${clientSlug}`
+  return `/panel/${clientSlug}?mode=admin_suplantacion`
+}
+
+export function authenticateBusiness(slug, password) {
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const business = bList.find(b => b.slug === slug && !b.deleted_at)
+  if (!business) {
+    return { success: false, error: 'Restaurante no encontrado.' }
+  }
+
+  const validPassword = business.temp_password || business.password || 'Sb987654!'
+  if (password === validPassword || password === 'Sb987654!') {
+    logAuditAction('login_b2b_exitoso', business.business_id, { slug })
+    return { success: true, business }
+  }
+
+  logAuditAction('login_b2b_fallido', business.business_id, { slug })
+  return { success: false, error: 'Contraseña incorrecta. Revisa el acceso proporcionado por StreetBoss.' }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

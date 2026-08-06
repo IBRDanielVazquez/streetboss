@@ -198,16 +198,16 @@ export const DEMOS_OFICIALES = [
 ]
 
 const showcaseMeta = {
-  'tacos-el-guero': { foodType: 'Tacos · Quesadillas · Bebidas', img: '/demos/img/tacos-el-guero.jpg', badge: 'Más pedido', color: 'from-orange-500/20 to-amber-500/5' },
-  'burger-house': { foodType: 'Burgers · Papas · Malteadas', img: '/demos/img/burger-house.jpg', badge: 'Burgers', color: 'from-red-600/20 to-orange-600/5' },
-  'pizza-house': { foodType: 'Pizza · Promos · Alitas', img: '/demos/img/pizza-house.jpg', badge: 'Pizza', color: 'from-red-500/20 to-rose-500/5' },
-  'cafe-central': { foodType: 'Café · Panadería · Brunch', img: '/demos/img/cafe-central.jpg', badge: 'Café', color: 'from-amber-600/20 to-yellow-600/5' },
-  'pollos-el-rey': { foodType: 'Pollo rostizado · Carbón · Paquetes', img: '/demos/img/pollos-el-rey.jpg', badge: 'Pollo', color: 'from-yellow-500/20 to-orange-500/5' },
-  'parrilla-el-carbon': { foodType: 'Cortes · Brasas · Carne asada', img: '/demos/img/parrilla-el-carbon.jpg', badge: 'Parrilla', color: 'from-orange-700/20 to-red-700/5' },
-  'tortas-el-barrio': { foodType: 'Tortas mexicanas · Combos', img: '/demos/img/tortas-el-barrio.jpg', badge: 'Tortas', color: 'from-orange-600/20 to-amber-600/5' },
-  'birrieria-jalisco': { foodType: 'Birria · Consomé · Quesabirrias', img: '/demos/img/birrieria-jalisco.jpg', badge: 'Birria', color: 'from-red-600/20 to-orange-600/5' },
-  'mariscos-el-puerto': { foodType: 'Camarones · Ceviches · Aguachiles', img: '/demos/img/mariscos-el-puerto.jpg', badge: 'Mariscos', color: 'from-blue-500/20 to-cyan-500/5' },
-  'china-express': { foodType: 'Arroz frito · Noodles · Pollo agridulce', img: '/demos/img/china-express.jpg', badge: 'China', color: 'from-red-600/20 to-red-800/5' },
+  'tacos-el-guero': { foodType: 'Tacos · Quesadillas · Bebidas', img: '/demos/tacos-el-guero/cover.jpg', logoUrl: '/demos/tacos-el-guero/profile.png', badge: 'Más pedido', color: 'from-orange-500/20 to-amber-500/5' },
+  'burger-house': { foodType: 'Burgers · Papas · Malteadas', img: '/demos/burger-house/cover.jpg', logoUrl: '/demos/burger-house/profile.png', badge: 'Burgers', color: 'from-red-600/20 to-orange-600/5' },
+  'pizza-house': { foodType: 'Pizza · Promos · Alitas', img: '/demos/pizza-house/cover.jpg', logoUrl: '/demos/pizza-house/profile.png', badge: 'Pizza', color: 'from-red-500/20 to-rose-500/5' },
+  'cafe-central': { foodType: 'Café · Panadería · Brunch', img: '/demos/cafe-central/cover.jpg', logoUrl: '/demos/cafe-central/profile.png', badge: 'Café', color: 'from-amber-600/20 to-yellow-600/5' },
+  'pollos-el-rey': { foodType: 'Pollo rostizado · Carbón · Paquetes', img: '/demos/pollos-el-rey/cover.jpg', logoUrl: '/demos/pollos-el-rey/profile.png', badge: 'Pollo', color: 'from-yellow-500/20 to-orange-500/5' },
+  'parrilla-el-carbon': { foodType: 'Cortes · Brasas · Carne asada', img: '/demos/parrilla-el-carbon/cover.jpg', logoUrl: '/demos/parrilla-el-carbon/profile.png', badge: 'Parrilla', color: 'from-orange-700/20 to-red-700/5' },
+  'tortas-el-barrio': { foodType: 'Tortas mexicanas · Combos', img: '/demos/tortas-el-barrio/cover.jpg', logoUrl: '/demos/tortas-el-barrio/profile.png', badge: 'Tortas', color: 'from-orange-600/20 to-amber-600/5' },
+  'birrieria-jalisco': { foodType: 'Birria · Consomé · Quesabirrias', img: '/demos/birrieria-jalisco/cover.jpg', logoUrl: '/demos/birrieria-jalisco/profile.png', badge: 'Birria', color: 'from-red-600/20 to-orange-600/5' },
+  'mariscos-el-puerto': { foodType: 'Camarones · Ceviches · Aguachiles', img: '/demos/mariscos-el-puerto/cover.jpg', logoUrl: '/demos/mariscos-el-puerto/profile.png', badge: 'Mariscos', color: 'from-blue-500/20 to-cyan-500/5' },
+  'china-express': { foodType: 'Arroz frito · Noodles · Pollo agridulce', img: '/demos/china-express/cover.jpg', logoUrl: '/demos/china-express/profile.png', badge: 'China', color: 'from-red-600/20 to-red-800/5' },
 }
 
 export const DEMO_SHOWCASE = DEMOS_OFICIALES.map((demo) => {
@@ -220,6 +220,8 @@ export const DEMO_SHOWCASE = DEMOS_OFICIALES.map((demo) => {
     trialId,
     menuUrl: `/menu/${trialId}`,
     whatsappUrl: `https://wa.me/${WHATSAPP_VENTAS}?text=${encodeURIComponent(`Hola, me interesa este demo: ${demo.nombre}`)}`,
+    banner_url: meta.img || `/demos/${demo.id}/cover.jpg`,
+    logo_url: meta.logoUrl || `/demos/${demo.id}/profile.png`,
     ...meta,
   }
 })

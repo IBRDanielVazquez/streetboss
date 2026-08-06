@@ -81,11 +81,35 @@ ${dashboardUrl}
 
 👤 *Usuario:* ${user}
 
-🔑 *Establecer o cambiar contraseña:*
-${resetUrl}
-
 💬 *Soporte técnico y atención a clientes:*
 https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
+  }
+
+  // Mensaje exacto para COMPARTIR ACCESO
+  const generateShareAccessMessage = (client) => {
+    const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
+    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
+    const clientName = client.owner_name || client.name || 'Cliente'
+    const tempPassword = client.temp_password || 'Sb987654!'
+
+    return `Hola, ${clientName}.
+
+Menú:
+${menuUrl}
+
+Dashboard:
+${dashboardUrl}
+
+Contraseña:
+${tempPassword}`
+  }
+
+  const handleSendShareAccessWhatsApp = (client) => {
+    const message = generateShareAccessMessage(client)
+    logAuditAction('compartir_acceso_b2b', client.business_id, { name: client.name })
+    const phoneClean = normalizeMexicanPhone(client.whatsapp || client.phone || DEMO_CONTACTS.DEFAULT_PHONE)
+    const waUrl = `https://wa.me/52${phoneClean}?text=${encodeURIComponent(message)}`
+    window.open(waUrl, '_blank')
   }
 
   const handleSendResetWhatsApp = (client) => {
@@ -274,10 +298,17 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
-                      onClick={() => handleSendSummaryWhatsApp(client)}
+                      onClick={() => handleSendShareAccessWhatsApp(client)}
                       className="flex items-center gap-1.5 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-3.5 py-2 rounded-xl shadow-md transition-transform active:scale-95"
                     >
-                      <Send size={13} /> ENVIAR RESUMEN DE CUENTA
+                      <Send size={13} /> COMPARTIR ACCESO
+                    </button>
+
+                    <button
+                      onClick={() => handleSendSummaryWhatsApp(client)}
+                      className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-gray-200 font-bold text-xs px-3.5 py-2 rounded-xl border border-white/10 transition-transform active:scale-95"
+                    >
+                      <Send size={13} /> Resumen de Cuenta
                     </button>
 
                     <button

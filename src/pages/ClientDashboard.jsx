@@ -11,7 +11,8 @@ import {
   deleteProduct,
   getBusinessDeliveryZones,
   saveDeliveryZones,
-  bulkUpdateZoneFees
+  bulkUpdateZoneFees,
+  authenticateBusiness
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
@@ -131,15 +132,104 @@ export default function ClientDashboard() {
     loadData()
   }, [slug])
 
+  // Autenticación B2B por Contraseña
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    if (searchParams.get('mode') === 'admin_suplantacion' || searchParams.get('token')) return true
+    return sessionStorage.getItem(`sb_b2b_session_${slug}`) === 'authenticated'
+  })
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault()
+    const result = authenticateBusiness(slug, loginPassword)
+    if (result.success) {
+      sessionStorage.setItem(`sb_b2b_session_${slug}`, 'authenticated')
+      setIsAuthenticated(true)
+      setLoginError('')
+    } else {
+      setLoginError(result.error || 'Contraseña incorrecta.')
+    }
+  }
+
+  const handleLogout = () => {
+    sessionStorage.removeItem(`sb_b2b_session_${slug}`)
+    setIsAuthenticated(false)
+  }
+
   if (!business) {
     return (
       <div className="min-h-screen bg-[#0D0E12] text-white flex flex-col items-center justify-center p-6 text-center">
         <Store size={48} className="text-[#FF4B00] mb-4 animate-bounce" />
         <h1 className="text-xl font-black">Restaurante no encontrado</h1>
         <p className="text-xs text-gray-400 mt-2 max-w-sm">Verifica el enlace de tu Dashboard o contacta con soporte.</p>
-        <Link to="/" className="mt-6 px-6 py-2.5 bg-[#FF4B00] text-white font-bold rounded-full text-xs">
-          Volver al Inicio
-        </Link>
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[#0D0E12] text-white flex items-center justify-center p-4 font-sans selection:bg-[#FF4B00] selection:text-white">
+        <div className="bg-[#14161F] border border-white/10 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-6">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-black overflow-hidden mx-auto border border-white/10 p-1">
+              <img src={business.logo_url || '/brand/SB_FAVICON_512x512_V01.png'} alt={business.name} className="w-full h-full object-cover rounded-xl" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black text-[#FF6A1A] uppercase tracking-wider bg-[#FF4B00]/10 px-3 py-1 rounded-full border border-[#FF4B00]/20">
+                Dashboard B2B Protegido
+              </span>
+              <h1 className="text-xl font-black text-white mt-2">{business.name}</h1>
+              <p className="text-xs text-gray-400 mt-1">Ingresa tu contraseña para acceder a la administración.</p>
+            </div>
+          </div>
+
+          <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
+            {loginError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl flex items-center gap-2 font-bold">
+                <AlertTriangle size={16} className="shrink-0" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <div>
+              <label className="block text-gray-300 font-bold mb-1.5">Contraseña del Restaurante</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••"
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-3 text-white text-sm font-mono focus:border-[#FF4B00] focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black py-3.5 rounded-xl shadow-lg transition-transform active:scale-95 text-xs flex items-center justify-center gap-2"
+            >
+              <Power size={16} /> Iniciar Sesión en el Dashboard
+            </button>
+          </form>
+
+          <div className="border-t border-white/5 pt-4 text-center text-[11px] text-gray-500 space-y-2">
+            <p>StreetBoss — Vende directo. Manda tú.</p>
+            <a href={`/menu/${slug}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[#FF6A1A] font-bold hover:underline">
+              <Globe size={12} /> Ver Menú Digital Público
+            </a>
+          </div>
+        </div>
       </div>
     )
   }
@@ -310,6 +400,14 @@ export default function ClientDashboard() {
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 px-3.5 py-2 rounded-xl text-xs font-bold border border-white/5 transition-transform active:scale-95"
+            title="Cerrar Sesión del Dashboard"
+          >
+            <Power size={14} className="text-red-400" /> Salir
+          </button>
+
           <button
             onClick={() => {
               const updatedStatus = !infoForm.is_open

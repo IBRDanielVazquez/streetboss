@@ -119,13 +119,20 @@ export default function CheckoutDrawer({
   const costoEnvio = datosCliente.tipo === 'llevar'
     ? (cobertura.precioEnvio || config.envio?.costoEnvio || 0)
     : 0
-  const total = subtotal + costoEnvio
+  const [copiedCuenta, setCopiedCuenta] = useState(false)
 
-  const handleCopyClabe = (clabeText) => {
-    if (!clabeText) return
-    navigator.clipboard.writeText(clabeText)
+  const handleCopyClabe = (clabe) => {
+    if (!clabe) return
+    navigator.clipboard.writeText(clabe)
     setCopiedClabe(true)
     setTimeout(() => setCopiedClabe(false), 2500)
+  }
+
+  const handleCopyCuenta = (cuenta) => {
+    if (!cuenta) return
+    navigator.clipboard.writeText(cuenta)
+    setCopiedCuenta(true)
+    setTimeout(() => setCopiedCuenta(false), 2500)
   }
 
   const enviarPedido = async () => {
@@ -202,21 +209,15 @@ export default function CheckoutDrawer({
       }
     } else if (datosCliente.formaPago === 'transferencia') {
       const bankInfo = paymentMethodsConfig.transferencia
-      msg += `📲 *Método de pago:* Transferencia bancaria\n`
+      msg += `📲 *Método de pago:* Transferencia\n`
       if (bankInfo?.banco || bankInfo?.clabe) {
         msg += `🏦 Banco: ${bankInfo.banco || 'N/A'} | CLABE: ${bankInfo.clabe || 'N/A'}\n`
       }
-      msg += `📌 *Pendiente de comprobante.* (El cliente adjuntará comprobante en WhatsApp)\n`
+      msg += `📌 *Comprobante:* Pendiente de adjuntar por el cliente.\n`
     } else if (datosCliente.formaPago === 'tarjeta') {
-      const labelTarjeta = datosCliente.tipo === 'recoger' ? 'Tarjeta al recoger' : 'Tarjeta al recibir'
-      msg += `💳 *Método de pago:* ${labelTarjeta}\n`
       msg += datosCliente.tipo === 'recoger'
-        ? `💳 Puedes pagar con tarjeta al llegar al establecimiento.\n`
-        : `💳 El restaurante llevará una terminal para realizar el cobro.\n`
-    }
-
-    if (datosCliente.formaPago === 'transferencia') {
-      msg += `\n📎 Adjunto comprobante de transferencia.`
+        ? `💳 *Método de pago:* Pago con tarjeta al recoger en el establecimiento.\n`
+        : `💳 *Método de pago:* Pago con tarjeta al recibir. El restaurante llevará la terminal.\n`
     }
 
     // 1. GUARDAR PEDIDO Y CLIENTE EN BD ANTES DE ABRIR WHATSAPP
@@ -618,7 +619,23 @@ export default function CheckoutDrawer({
                                 onClick={() => handleCopyClabe(paymentMethodsConfig.transferencia.clabe)}
                                 className="flex items-center gap-1 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-3 py-1.5 rounded-lg font-sans font-bold text-xs shadow-sm"
                               >
-                                {copiedClabe ? <Check size={14} /> : <Copy size={14} />} {copiedClabe ? '¡Copiada!' : 'COPIAR'}
+                                {copiedClabe ? <Check size={14} /> : <Copy size={14} />} {copiedClabe ? '¡Copiada!' : 'Copiar CLABE'}
+                              </button>
+                            </div>
+                          )}
+
+                          {paymentMethodsConfig.transferencia.numero_cuenta && (
+                            <div className="flex justify-between items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200 font-mono">
+                              <div>
+                                <span className="text-[10px] text-gray-400 block uppercase font-sans font-bold">Número de Cuenta / Tarjeta</span>
+                                <span className="font-bold text-gray-900 text-xs">{paymentMethodsConfig.transferencia.numero_cuenta}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyCuenta(paymentMethodsConfig.transferencia.numero_cuenta)}
+                                className="flex items-center gap-1 bg-gray-900 hover:bg-black text-white px-3 py-1.5 rounded-lg font-sans font-bold text-xs shadow-sm"
+                              >
+                                {copiedCuenta ? <Check size={14} /> : <Copy size={14} />} {copiedCuenta ? '¡Copiada!' : 'Copiar Cuenta'}
                               </button>
                             </div>
                           )}
