@@ -12,7 +12,8 @@ import {
   getBusinessDeliveryZones,
   saveDeliveryZones,
   bulkUpdateZoneFees,
-  authenticateBusiness
+  authenticateBusiness,
+  subscribeCentralSync
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
@@ -130,6 +131,10 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     loadData()
+    const unsubscribe = subscribeCentralSync(() => {
+      loadData()
+    })
+    return () => unsubscribe()
   }, [slug])
 
   // Autenticación B2B por Contraseña

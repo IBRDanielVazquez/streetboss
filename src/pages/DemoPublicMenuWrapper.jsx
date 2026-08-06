@@ -1,11 +1,20 @@
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getBusinessBySlug } from '../services/crmV3Service'
+import { getBusinessBySlug, subscribeCentralSync } from '../services/crmV3Service'
 import { DEMOS_OFICIALES } from '../data/demoShowcase'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import MenuDigital from './MenuDigital'
 
 export default function DemoPublicMenuWrapper() {
   const { trialId } = useParams()
+  const [refreshTick, setRefreshTick] = useState(0)
+
+  useEffect(() => {
+    const unsubscribe = subscribeCentralSync(() => {
+      setRefreshTick(prev => prev + 1)
+    })
+    return () => unsubscribe()
+  }, [trialId])
   
   // 1. Intentar cargar desde el motor multi-tenant (V3)
   const businessData = getBusinessBySlug(trialId)

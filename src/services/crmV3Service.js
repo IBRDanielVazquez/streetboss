@@ -61,6 +61,24 @@ export function slugify(text) {
 // ─────────────────────────────────────────────────────────────────────────────
 // INITIALIZATION / SEEDING
 // ─────────────────────────────────────────────────────────────────────────────
+// Central BroadcastChannel for instant cross-session sync
+const syncChannel = typeof window !== 'undefined' && 'BroadcastChannel' in window ? new BroadcastChannel('sb_central_bus') : null;
+
+function notifyCentralSync(event, payload = {}) {
+  if (syncChannel) {
+    try {
+      syncChannel.postMessage({ type: event, payload, timestamp: Date.now() });
+    } catch (e) {}
+  }
+}
+
+export function subscribeCentralSync(callback) {
+  if (!syncChannel) return () => {};
+  const handler = (e) => callback(e.data);
+  syncChannel.addEventListener('message', handler);
+  return () => syncChannel.removeEventListener('message', handler);
+}
+
 function initLocalStore() {
   let localBusinesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || 'null')
   if (!localBusinesses || localBusinesses.length === 0) {
@@ -90,7 +108,7 @@ function initLocalStore() {
       has_delivery: true,
       delivery_mode: 'fijo',
       base_delivery_fee: 30,
-      temp_password: generateSecurePassword(),
+      temp_password: '', // REQUERIMIENTO 10: No se generan contraseñas automáticamente
       payment_methods: {
         efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
         transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
@@ -146,9 +164,9 @@ function initLocalStore() {
   }
 }
 
-// FASE 4: Migrar datos existentes en localStorage sin perder configuración personalizada
+// FASE 4 & REQUERIMIENTO 10: Migrar datos sin asignar contraseñas automáticas
 const MIGRATION_VERSION_KEY = 'sb_v3_migration_version'
-const CURRENT_MIGRATION_VERSION = 2
+const CURRENT_MIGRATION_VERSION = 3
 
 function migrateExistingData() {
   const currentVersion = Number(localStorage.getItem(MIGRATION_VERSION_KEY) || '0')
@@ -174,19 +192,13 @@ function migrateExistingData() {
       changed = true
     }
 
-    // Inyectar payment_methods si no existen
+    // Inyectar payment_methods por defecto si no existen
     if (!b.payment_methods) {
       b.payment_methods = {
         efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
         transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
         tarjeta: { activo: false, instrucciones: '', compra_minima: 0 }
       }
-      changed = true
-    }
-
-    // Generar temp_password si está vacía
-    if (!b.temp_password) {
-      b.temp_password = generateSecurePassword()
       changed = true
     }
   })
@@ -766,9 +778,64 @@ export function updateBusinessSettings(businessId, updates) {
       updated_at: new Date().toISOString(),
     }
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+    notifyCentralSync('BUSINESS_UPDATED', { businessId, updates })
     return bList[idx]
   }
   return null
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AUTENTICACIÓN HQ ADMIN (CRM PRINCIPAL / CENTRAL-HQ)
+// ─────────────────────────────────────────────────────────────────────────────
+const HQ_ADMIN_SESSION_KEY = 'sb_hq_admin_session'
+const HQ_ADMIN_PASS_KEY = 'sb_hq_admin_password'
+
+export function getHqAdminSession() {
+  if (typeof window === 'undefined') return null
+  return JSON.parse(sessionStorage.getItem(HQ_ADMIN_SESSION_KEY) || 'null')
+}
+
+export function authenticateHqAdmin(username, password) {
+  const cleanUser = String(username || '').trim().toLowerCase()
+  const validUsernames = ['superadmin_hq', 'admin@streetboss.com.mx', 'admin', 'hq']
+  
+  if (!validUsernames.includes(cleanUser)) {
+    logAuditAction('login_hq_fallido', 'central-hq', { username, reason: 'usuario_invalido' })
+    return { success: false, error: 'Usuario administrador no reconocido.' }
+  }
+
+  const storedPass = localStorage.getItem(HQ_ADMIN_PASS_KEY) || 'StreetBossAdmin2026!'
+  if (password === storedPass) {
+    const session = {
+      user: cleanUser,
+      role: 'superadmin',
+      token: `hq_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+      loggedAt: new Date().toISOString()
+    }
+    sessionStorage.setItem(HQ_ADMIN_SESSION_KEY, JSON.stringify(session))
+    logAuditAction('login_hq_exitoso', 'central-hq', { user: cleanUser })
+    notifyCentralSync('HQ_LOGIN_SUCCESS', { user: cleanUser })
+    return { success: true, session }
+  }
+
+  logAuditAction('login_hq_fallido', 'central-hq', { username, reason: 'password_incorrecta' })
+  return { success: false, error: 'Contraseña administrativa incorrecta.' }
+}
+
+export function setHqAdminPassword(newPassword) {
+  if (!newPassword || newPassword.length < 8) {
+    return { success: false, error: 'La contraseña administrativa debe tener al menos 8 caracteres.' }
+  }
+  localStorage.setItem(HQ_ADMIN_PASS_KEY, newPassword)
+  logAuditAction('cambio_password_hq', 'central-hq', {})
+  notifyCentralSync('HQ_PASS_CHANGED', {})
+  return { success: true }
+}
+
+export function logoutHqAdmin() {
+  sessionStorage.removeItem(HQ_ADMIN_SESSION_KEY)
+  logAuditAction('logout_hq', 'central-hq', {})
+  notifyCentralSync('HQ_LOGOUT', {})
 }
 
 export function saveCategory(businessId, categoryData) {
