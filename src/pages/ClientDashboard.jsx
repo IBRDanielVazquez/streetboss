@@ -495,15 +495,6 @@ export default function ClientDashboard() {
         >
           <ShoppingBag size={14} /> Pedidos y Clientes
         </button>
-
-        <button
-          onClick={() => setTab('pagos')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-            tab === 'pagos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
-          }`}
-        >
-          <CreditCard size={14} /> Métodos de Pago
-        </button>
       </nav>
 
       {/* Contenido Principal */}
@@ -1090,6 +1081,11 @@ export default function ClientDashboard() {
                 </div>
               </div>
             )}
+
+            {/* SECCIÓN EXTRA AL FINAL: CONFIGURACIÓN MÉTODOS DE PAGO */}
+            <div className="pt-8 border-t border-white/10">
+              <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={reloadBusiness} />
+            </div>
           </div>
         )}
 
@@ -1123,11 +1119,6 @@ export default function ClientDashboard() {
               <RestaurantCustomersTab businessId={business.slug || business.business_id || business.id} businessName={business.name} />
             )}
           </div>
-        )}
-
-        {/* PESTAÑA: MÉTODOS DE PAGO B2B */}
-        {tab === 'pagos' && (
-          <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={reloadBusiness} />
         )}
 
         {/* Footer Discreto con Identificación de Versión */}
