@@ -31,6 +31,21 @@ export default function StreetBossCentral() {
 
   useEffect(() => {
     document.title = 'StreetBoss Central HQ'
+    let metaRobots = document.querySelector('meta[name="robots"]')
+    let created = false
+    if (!metaRobots) {
+      metaRobots = document.createElement('meta')
+      metaRobots.name = 'robots'
+      document.head.appendChild(metaRobots)
+      created = true
+    }
+    metaRobots.content = 'noindex, nofollow'
+
+    return () => {
+      if (created && metaRobots.parentNode) {
+        metaRobots.parentNode.removeChild(metaRobots)
+      }
+    }
   }, [])
 
   const handleSelectDemoForBusiness = (demoId) => {
@@ -133,7 +148,7 @@ export default function StreetBossCentral() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <Users size={16} /> Clientes Activos
+                <Users size={16} /> CLIENTES
               </div>
               <ChevronRight size={14} opacity={0.6} />
             </button>

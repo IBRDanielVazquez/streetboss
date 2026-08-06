@@ -1,0 +1,12 @@
+User-agent: *
+Disallow: /central-hq
+Disallow: /central-hq/
+Disallow: /panel/
+Disallow: /demo/admin
+Disallow: /streetboss-crm
+Disallow: /superadmin
+Disallow: /streetboss-admin
+Disallow: /demo-admin
+Disallow: /internal
+
+Sitemap: https://streetboss.com.mx/sitemap.xml

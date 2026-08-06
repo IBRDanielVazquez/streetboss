@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react'
+import { DEMO_CONTACTS } from '../data/demoFixtures'
 import { ArrowRight, Facebook, Instagram } from 'lucide-react'
 
 // Lazy load components that are below the fold
@@ -39,7 +40,7 @@ export default function Landing() {
           </div>
           
           <div className="flex items-center gap-4">
-            <a href="https://wa.me/529612466204" target="_blank" rel="noreferrer" className="bg-[#ff4b16] text-white font-black px-4 md:px-6 py-3 rounded-full text-sm md:text-base hover:scale-105 transition-transform whitespace-nowrap shadow-[0_0_24px_rgba(255,75,22,0.35)]">
+            <a href={`https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}`} target="_blank" rel="noreferrer" className="bg-[#ff4b16] text-white font-black px-4 md:px-6 py-3 rounded-full text-sm md:text-base hover:scale-105 transition-transform whitespace-nowrap shadow-[0_0_24px_rgba(255,75,22,0.35)]">
               Hablar con Ventas
             </a>
           </div>

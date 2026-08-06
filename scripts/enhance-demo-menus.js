@@ -657,7 +657,7 @@ const premiumJs = `
           '*Ubicación Maps:* ' + maps + '\\n\\n' +
           'Quedo pendiente del costo de envío para confirmar el total.'
         );
-        window.open('https://wa.me/529612466204?text=' + msg, '_blank');
+        window.open('https://wa.me/529610000000?text=' + msg, '_blank');
       };
 
       window.abrirWhatsApp = window.sbOpenCart;

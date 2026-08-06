@@ -97,7 +97,7 @@ export default function RestaurantPaymentMethodsTab({ business, onUpdateBusiness
           </div>
 
           {paymentMethods.efectivo.activo && (
-            <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-3">
+            <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-4">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -113,6 +113,57 @@ export default function RestaurantPaymentMethodsTab({ business, onUpdateBusiness
                   <span className="text-gray-400 text-[11px] block">Muestra el campo: "¿Necesitas cambio? No / Sí, pagaré con $___" y envía el monto desglosado en WhatsApp.</span>
                 </div>
               </label>
+
+              {/* LÍMITE MÁXIMO DE CAMBIO PARA REPARTO */}
+              <div className="pt-3 border-t border-white/5 space-y-3">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-bold text-white text-xs">LÍMITE MÁXIMO DE CAMBIO PARA REPARTO</h4>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={paymentMethods.efectivo.limite_cambio_activo !== false}
+                      onChange={e => setPaymentMethods({
+                        ...paymentMethods,
+                        efectivo: { ...paymentMethods.efectivo, limite_cambio_activo: e.target.checked }
+                      })}
+                      className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
+                    />
+                    <span className="text-gray-300 font-bold text-xs">Activar restricción</span>
+                  </label>
+                </div>
+
+                {paymentMethods.efectivo.limite_cambio_activo !== false && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="block text-gray-300 font-bold mb-1">Máximo de cambio disponible ($ MXN) *</label>
+                      <input
+                        type="number"
+                        value={paymentMethods.efectivo.max_cambio_monto || 500}
+                        onChange={e => setPaymentMethods({
+                          ...paymentMethods,
+                          efectivo: { ...paymentMethods.efectivo, max_cambio_monto: Number(e.target.value) }
+                        })}
+                        placeholder="Ej. 500"
+                        className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-gray-300 font-bold mb-1">Mensaje de seguridad personalizado</label>
+                      <input
+                        type="text"
+                        value={paymentMethods.efectivo.mensaje_limite_cambio || ''}
+                        onChange={e => setPaymentMethods({
+                          ...paymentMethods,
+                          efectivo: { ...paymentMethods.efectivo, mensaje_limite_cambio: e.target.value }
+                        })}
+                        placeholder="Por seguridad, nuestros repartidores no llevan cambio para cantidades mayores a $500."
+                        className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

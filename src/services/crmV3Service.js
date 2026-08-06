@@ -1,4 +1,5 @@
 import { supabase } from '../supabase'
+import { DEMO_FIXTURES, DEMO_CONTACTS } from '../data/demoFixtures'
 import { DEMOS_OFICIALES } from '../data/demoShowcase'
 
 // Key constants for local reactive persistence fallback
@@ -74,8 +75,8 @@ function initLocalStore() {
       status: 'activo',
       template_version: '3.0',
       owner_name: 'Demostración Oficial',
-      phone: '9612466204',
-      whatsapp: '529612466204',
+      phone: DEMO_CONTACTS.DEFAULT_PHONE,
+      whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
       email: `demo.${demo.clave}@streetboss.com.mx`,
       address: 'Tuxtla Gutiérrez, Chiapas',
       city: 'Tuxtla Gutiérrez',
@@ -224,7 +225,7 @@ export function createBusinessFromDemo({ demoId, formData }) {
     base_demo_id: demo.business_id,
     owner_name: formData.owner_name || '',
     phone: formData.phone || '',
-    whatsapp: formData.whatsapp || '529612466204',
+    whatsapp: formData.whatsapp || DEMO_CONTACTS.DEFAULT_WHATSAPP,
     email: formData.email || '',
     address: formData.address || '',
     ext_number: formData.ext_number || '',
@@ -330,13 +331,36 @@ export function generatePersonalizedDemoForProspect(prospect) {
   const cList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
 
-  const baseSlug = slugify(prospect.business_name || 'restaurante-demo')
+  const baseSlugName = slugify(prospect.business_name || 'restaurante-demo')
   
-  // Check if personalized demo already exists
-  let existingBusiness = bList.find(b => b.slug === baseSlug && !b.deleted_at)
+  // Check if demo already exists FOR THIS SPECIFIC PROSPECT (by ID, phone, or exact address)
+  let existingBusiness = bList.find(
+    b => !b.deleted_at && (
+      (prospect.id && b.prospect_id === prospect.id) ||
+      (prospect.phone && prospect.phone !== '' && b.phone === prospect.phone) ||
+      (b.name === prospect.business_name && b.city === prospect.city && b.address === prospect.address)
+    )
+  )
+
   if (existingBusiness) {
     const demoUrl = `https://streetboss.mx/demo/${existingBusiness.slug}`
     return { business: existingBusiness, demoUrl, slug: existingBusiness.slug }
+  }
+
+  // Ensure UNIQUE slug among all businesses so no 2 businesses overwrite each other
+  let uniqueSlug = baseSlugName
+  let counter = 1
+
+  if (bList.some(b => b.slug === uniqueSlug && !b.deleted_at)) {
+    const citySlug = slugify(prospect.city || '')
+    if (citySlug) {
+      uniqueSlug = `${baseSlugName}-${citySlug}`
+    }
+  }
+
+  while (bList.some(b => b.slug === uniqueSlug && !b.deleted_at)) {
+    counter++
+    uniqueSlug = `${baseSlugName}-${counter}`
   }
 
   // Find suggested demo base
@@ -346,12 +370,13 @@ export function generatePersonalizedDemoForProspect(prospect) {
     demoTemplate = bList.find(b => b.is_demo) || DEMOS_OFICIALES[0]
   }
 
-  const newBusinessId = `demo_custom_${baseSlug}`
+  const newBusinessId = `demo_custom_${uniqueSlug}`
   const newBusiness = {
     id: newBusinessId,
     business_id: newBusinessId,
+    prospect_id: prospect.id,
     name: prospect.business_name,
-    slug: baseSlug,
+    slug: uniqueSlug,
     business_type: prospect.category || 'Restaurante',
     is_demo: true,
     demo_status: 'Activo',
@@ -360,7 +385,7 @@ export function generatePersonalizedDemoForProspect(prospect) {
     base_demo_id: demoTemplate.business_id || demoTemplate.id,
     owner_name: prospect.contact_name || '',
     phone: prospect.phone || '',
-    whatsapp: prospect.whatsapp || prospect.phone || '529612466204',
+    whatsapp: prospect.whatsapp || prospect.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
     email: prospect.email || '',
     address: prospect.address || '',
     colonia: prospect.colonia || '',
@@ -420,10 +445,10 @@ export function generatePersonalizedDemoForProspect(prospect) {
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
 
-  logAuditAction('generar_demo_personalizado', newBusinessId, { name: prospect.business_name, slug: baseSlug })
+  logAuditAction('generar_demo_personalizado', newBusinessId, { name: prospect.business_name, slug: uniqueSlug })
 
-  const demoUrl = `https://streetboss.mx/demo/${baseSlug}`
-  return { business: newBusiness, demoUrl, slug: baseSlug }
+  const demoUrl = `https://streetboss.mx/demo/${uniqueSlug}`
+  return { business: newBusiness, demoUrl, slug: uniqueSlug }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

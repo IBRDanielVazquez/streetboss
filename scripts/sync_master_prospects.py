@@ -59,8 +59,7 @@ def sync_master_prospects():
             "source": str(row.get("source") or "Base Maestra Official").strip(),
             "status": str(row.get("status") or "Nuevo").strip(),
             "assigned_demo": str(row.get("assigned_demo") or "").strip(),
-            "notes": str(row.get("notes") or "").strip(),
-            "raw_attributes": {k: str(v) for k, v in row.items() if k not in ["id", "business_name"]}
+            "notes": str(row.get("notes") or "").strip()
         }
         cleaned_records.append(cleaned_item)
 

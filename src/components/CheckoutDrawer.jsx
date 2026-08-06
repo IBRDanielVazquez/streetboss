@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { X, CheckCircle, Store, Bike, Search, Send, Clock, AlertCircle, Copy, Check } from 'lucide-react'
 import { buscarPorCP, verificarCobertura } from '../data/sepomexTuxtla'
 import { recordPublicOrder, updateOrderStatus, normalizeMexicanPhone } from '../services/crmV3Service'
+import { DEMO_CONTACTS } from '../data/demoFixtures'
 
 // Genera folio único tipo SB-AXKF-7821
 const generarFolio = () => {
@@ -138,6 +139,25 @@ export default function CheckoutDrawer({
       }
     }
 
+    // Validación de límite de cambio en efectivo para repartos a domicilio
+    if (datosCliente.tipo === 'llevar' && datosCliente.formaPago === 'efectivo' && datosCliente.necesitaCambio === 'si') {
+      const pagaraMonto = Number(datosCliente.pagaraCon || 0)
+      if (!pagaraMonto || pagaraMonto <= total) {
+        return alert(`Por favor ingresa un monto válido con el que vas a pagar mayor al total ($${total}).`)
+      }
+
+      const efectivoCfg = paymentMethodsConfig.efectivo || {}
+      const limiteActivo = efectivoCfg.limite_cambio_activo !== false
+      const maxLimit = Number(efectivoCfg.max_cambio_monto || 500)
+      const cambioRequerido = pagaraMonto - total
+
+      if (limiteActivo && cambioRequerido > maxLimit) {
+        const msgSecurity = efectivoCfg.mensaje_limite_cambio ||
+          `Por seguridad, nuestros repartidores no pueden llevar más de $${maxLimit} para dar cambio. Elige una cantidad menor, paga con monto exacto o selecciona otro método de pago.`
+        return alert(msgSecurity)
+      }
+    }
+
     setIsSubmitting(true)
     const folio = generarFolio()
     const esLlevar = datosCliente.tipo === 'llevar'
@@ -171,7 +191,8 @@ export default function CheckoutDrawer({
     msg += `✅ *TOTAL: $${total}*\n\n`
     
     if (datosCliente.formaPago === 'efectivo') {
-      msg += `💵 *Método de pago:* Efectivo\n`
+      const labelForma = datosCliente.tipo === 'recoger' ? 'Efectivo al recoger' : 'Efectivo'
+      msg += `💵 *Método de pago:* ${labelForma}\n`
       if (datosCliente.necesitaCambio === 'si' && datosCliente.pagaraCon) {
         const pagaraMonto = Number(datosCliente.pagaraCon)
         const cambioCalculado = pagaraMonto > total ? (pagaraMonto - total) : 0
@@ -187,8 +208,11 @@ export default function CheckoutDrawer({
       }
       msg += `📌 *Pendiente de comprobante.* (El cliente adjuntará comprobante en WhatsApp)\n`
     } else if (datosCliente.formaPago === 'tarjeta') {
-      msg += `💳 *Método de pago:* Tarjeta al recibir\n`
-      msg += `💳 El restaurante llevará una terminal para realizar el cobro.\n`
+      const labelTarjeta = datosCliente.tipo === 'recoger' ? 'Tarjeta al recoger' : 'Tarjeta al recibir'
+      msg += `💳 *Método de pago:* ${labelTarjeta}\n`
+      msg += datosCliente.tipo === 'recoger'
+        ? `💳 Puedes pagar con tarjeta al llegar al establecimiento.\n`
+        : `💳 El restaurante llevará una terminal para realizar el cobro.\n`
     }
 
     if (datosCliente.formaPago === 'transferencia') {
@@ -226,7 +250,7 @@ export default function CheckoutDrawer({
     }
 
     // 2. CONSTRUIR ENLACE INTERNACIONAL WHATSAPP FORMATO MÉXICO (52 + 10 DÍGITOS)
-    const targetWhatsAppClean = normalizeMexicanPhone(config.whatsapp || config.telefono || '9612466204')
+    const targetWhatsAppClean = normalizeMexicanPhone(config.whatsapp || config.telefono || DEMO_CONTACTS.DEFAULT_PHONE)
     const whatsappUrl = `https://wa.me/52${targetWhatsAppClean}?text=${encodeURIComponent(msg)}`
 
     // 3. ABRIR WHATSAPP Y ACTUALIZAR ESTADO A ENVIADO_WA
@@ -512,8 +536,8 @@ export default function CheckoutDrawer({
                       <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'efectivo' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                         <input type="radio" name="pago" checked={datosCliente.formaPago === 'efectivo'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'efectivo'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
                         <div>
-                          <p className="font-bold text-gray-900 text-sm">💵 Efectivo</p>
-                          <p className="text-xs text-gray-500">Pagas al recibir o recoger tu pedido</p>
+                          <p className="font-bold text-gray-900 text-sm">💵 {datosCliente.tipo === 'recoger' ? 'Efectivo al recoger' : 'Efectivo'}</p>
+                          <p className="text-xs text-gray-500">{datosCliente.tipo === 'recoger' ? 'Pagas al recibir tu pedido en el local' : 'Pagas al recibir tu entrega a domicilio'}</p>
                         </div>
                       </label>
 
@@ -601,28 +625,32 @@ export default function CheckoutDrawer({
 
                           <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-800 text-[11px]">
                             <p className="font-bold">⚠️ Aviso Importante:</p>
-                            <p className="mt-0.5">{paymentMethodsConfig.transferencia.texto_solicitar_comprobante || 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.'}</p>
+                            <p className="mt-0.5">{paymentMethodsConfig.transferencia.texto_solicitar_comprobante || 'Una vez realizada la transferencia, envía tu comprobante junto con el pedido por WhatsApp.'}</p>
                           </div>
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* Opción 3: TARJETA AL RECIBIR */}
+                  {/* Opción 3: TARJETA AL RECIBIR / AL RECOGER */}
                   {paymentMethodsConfig.tarjeta?.activo && (
                     <div className="space-y-2">
                       <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'tarjeta' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                         <input type="radio" name="pago" checked={datosCliente.formaPago === 'tarjeta'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'tarjeta'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
                         <div>
-                          <p className="font-bold text-gray-900 text-sm">💳 Tarjeta / Terminal al recibir</p>
-                          <p className="text-xs text-gray-500">El repartidor o cajero llevará terminal física</p>
+                          <p className="font-bold text-gray-900 text-sm">💳 {datosCliente.tipo === 'recoger' ? 'Tarjeta al recoger' : 'Tarjeta al recibir'}</p>
+                          <p className="text-xs text-gray-500">{datosCliente.tipo === 'recoger' ? 'Pagas en terminal física al llegar al local' : 'El repartidor llevará una terminal física'}</p>
                         </div>
                       </label>
 
                       {datosCliente.formaPago === 'tarjeta' && (
                         <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1.5 text-xs text-gray-700 animate-in fade-in">
-                          <p className="font-bold text-gray-900">💳 Pago con tarjeta al recibir:</p>
-                          <p className="text-gray-600">{paymentMethodsConfig.tarjeta.instrucciones || 'Se aceptan tarjetas de crédito y débito. El pago se realiza al momento de la entrega.'}</p>
+                          <p className="font-bold text-gray-900">💳 {datosCliente.tipo === 'recoger' ? 'Tarjeta al recoger:' : 'Tarjeta al recibir:'}</p>
+                          <p className="text-gray-600">
+                            {datosCliente.tipo === 'recoger'
+                              ? 'Puedes pagar con tarjeta al llegar al establecimiento.'
+                              : (paymentMethodsConfig.tarjeta.instrucciones || 'El restaurante llevará una terminal para realizar el cobro.')}
+                          </p>
                         </div>
                       )}
                     </div>

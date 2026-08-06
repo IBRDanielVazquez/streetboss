@@ -262,7 +262,7 @@ export default function ProspectosTab({ onConvertProspectToBusiness }) {
               <label className="block font-bold text-gray-300 mb-1">Teléfono / WhatsApp</label>
               <input
                 type="text"
-                placeholder="9612466204"
+                placeholder="9610000000"
                 value={manualForm.phone}
                 onChange={e => setManualForm({ ...manualForm, phone: e.target.value, whatsapp: e.target.value })}
                 className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"

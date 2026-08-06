@@ -1,9 +1,10 @@
 import { ArrowLeft, ArrowRight, CheckCircle2, Facebook, Instagram, MessageCircle } from 'lucide-react'
 import { DEMO_SHOWCASE } from '../data/demoShowcase'
 
+import { DEMO_CONTACTS } from '../data/demoFixtures'
 const FACEBOOK_URL = 'https://www.facebook.com/share/1Csqs8gKqt/?mibextid=wwXIfr'
 const INSTAGRAM_URL = 'https://www.instagram.com/streetboss.mx/'
-const VENTAS_URL = 'https://wa.me/529612466204?text=Hola,%20quiero%20mi%20menu%20digital%20con%20la%20oferta%20de%2099%20pesos'
+const VENTAS_URL = `https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}?text=Hola,%20quiero%20mi%20menu%20digital%20con%20la%20oferta%20de%2099%20pesos`
 
 export default function Demos() {
   return (

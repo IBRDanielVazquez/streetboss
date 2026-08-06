@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { getClients, updateClientStatus, regenerateClientPassword, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone } from '../../services/crmV3Service'
-import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Archive, Edit3, Send, Check } from 'lucide-react'
+import { DEMO_CONTACTS } from '../../data/demoFixtures'
+import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction } from '../../services/crmV3Service'
+import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck } from 'lucide-react'
 
 export default function ClientesTab() {
   const [clients, setClients] = useState([])
@@ -8,8 +9,7 @@ export default function ClientesTab() {
   const [filterStatus, setFilterStatus] = useState('todos')
   const [editingClient, setEditingClient] = useState(null)
   const [copiedMsg, setCopiedMsg] = useState('')
-  const [regenPassResult, setRegenPassResult] = useState(null)
-  const [sendAccessModal, setSendAccessModal] = useState(null)
+  const [previewModal, setPreviewModal] = useState(null) // { type: 'resumen' | 'reset', client, message }
 
   const reloadClients = () => {
     setClients(getClients())
@@ -24,14 +24,84 @@ export default function ClientesTab() {
     reloadClients()
   }
 
-  const handleRegeneratePassword = (client) => {
-    const newPass = regenerateClientPassword(client.business_id)
-    setRegenPassResult({
-      name: client.name,
-      username: client.owner_username || client.email || `${client.slug}@streetboss.com.mx`,
-      newPass,
-    })
-    reloadClients()
+  const copyText = (text, tag) => {
+    navigator.clipboard.writeText(text)
+    setCopiedMsg(tag)
+    setTimeout(() => setCopiedMsg(''), 2500)
+  }
+
+  // Genera enlace de restablecimiento seguro con expiración de 24h (sin mostrar contraseñas en texto plano)
+  const generateResetLink = (client) => {
+    const token = `rst_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+    return `https://streetboss.com.mx/panel/${client.slug}?action=reset_password&token=${token}&exp=${encodeURIComponent(expiresAt)}`
+  }
+
+  // Mensaje para RESTABLECER ACCESO
+  const generateResetMessage = (client) => {
+    const resetUrl = generateResetLink(client)
+    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
+    const user = client.owner_username || client.email || `${client.slug}@streetboss.com.mx`
+
+    return `Hola, ${client.owner_name || client.name}.
+
+Has solicitado la recuperación de acceso para tu cuenta de *${client.name}*.
+
+⚙️ *Panel B2B:*
+${dashboardUrl}
+
+👤 *Usuario:* ${user}
+
+🔑 *Enlace seguro para crear/restablecer tu contraseña:*
+${resetUrl}
+
+⏱️ *Vigencia:* Este enlace es de un solo uso y expira en 24 horas. Por seguridad, no guardamos ni enviamos contraseñas en texto plano.`
+  }
+
+  // Mensaje para RESUMEN DE CUENTA
+  const generateAccountSummaryMessage = (client) => {
+    const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
+    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
+    const user = client.owner_username || client.email || `${client.slug}@streetboss.com.mx`
+    const resetUrl = generateResetLink(client)
+
+    return `📊 *RESUMEN OFICIAL DE CUENTA — STREETBOSS*
+
+🏢 *Negocio:* ${client.name}
+👤 *Propietario:* ${client.owner_name || 'N/A'}
+📦 *Plan:* ${client.plan_name || 'Restaurante Pro ($99/mes)'}
+🟢 *Estado de la cuenta:* ${client.status === 'activo' ? 'Activa ✅' : 'Pausada ⏳'}
+💳 *Estado de pago:* ${client.payment_status || 'Al día ✅'}
+
+📱 *Menú público:*
+${menuUrl}
+
+⚙️ *Panel de Administración B2B:*
+${dashboardUrl}
+
+👤 *Usuario:* ${user}
+
+🔑 *Establecer o cambiar contraseña:*
+${resetUrl}
+
+💬 *Soporte técnico y atención a clientes:*
+https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
+  }
+
+  const handleSendResetWhatsApp = (client) => {
+    const message = generateResetMessage(client)
+    logAuditAction('solicitar_restablecimiento_password', client.business_id, { name: client.name })
+    const phoneClean = normalizeMexicanPhone(client.whatsapp || client.phone || DEMO_CONTACTS.DEFAULT_PHONE)
+    const waUrl = `https://wa.me/52${phoneClean}?text=${encodeURIComponent(message)}`
+    window.open(waUrl, '_blank')
+  }
+
+  const handleSendSummaryWhatsApp = (client) => {
+    const message = generateAccountSummaryMessage(client)
+    logAuditAction('enviar_resumen_cuenta', client.business_id, { name: client.name })
+    const phoneClean = normalizeMexicanPhone(client.whatsapp || client.phone || DEMO_CONTACTS.DEFAULT_PHONE)
+    const waUrl = `https://wa.me/52${phoneClean}?text=${encodeURIComponent(message)}`
+    window.open(waUrl, '_blank')
   }
 
   const handleSaveEdit = (e) => {
@@ -40,43 +110,6 @@ export default function ClientesTab() {
     updateBusinessSettings(editingClient.business_id, editingClient)
     setEditingClient(null)
     reloadClients()
-  }
-
-  const copyText = (text, tag) => {
-    navigator.clipboard.writeText(text)
-    setCopiedMsg(tag)
-    setTimeout(() => setCopiedMsg(''), 2500)
-  }
-
-  const generateAccessMessage = (client) => {
-    const menuUrl = `https://streetboss.com.mx/menu/${client.slug}`
-    const dashboardUrl = `https://streetboss.com.mx/panel/${client.slug}`
-    const resetUrl = `https://streetboss.com.mx/panel/${client.slug}?action=reset_password`
-    const user = client.owner_username || client.email || `${client.slug}@streetboss.com.mx`
-
-    return `Hola, ${client.owner_name || client.name}.
-
-Tu cuenta de *${client.name}* está lista.
-
-📱 *Menú público:*
-${menuUrl}
-
-⚙️ *Panel de administración:*
-${dashboardUrl}
-
-👤 *Usuario:* ${user}
-
-🔑 *Para crear o restablecer tu contraseña:*
-${resetUrl}
-
-Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métodos de pago.`
-  }
-
-  const handleSendAccessWhatsApp = (client) => {
-    const message = generateAccessMessage(client)
-    const phoneClean = normalizeMexicanPhone(client.whatsapp || client.phone || '9612466204')
-    const waUrl = `https://wa.me/52${phoneClean}?text=${encodeURIComponent(message)}`
-    window.open(waUrl, '_blank')
   }
 
   const filteredClients = clients.filter(c => {
@@ -92,7 +125,7 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
       {/* Toast de copia */}
       {copiedMsg && (
         <div className="fixed top-4 right-4 z-50 bg-emerald-600 text-white px-5 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2">
-          <Check size={16} /> Enlace o texto copiado al portapapeles
+          <Check size={16} /> Enlace copiado al portapapeles
         </div>
       )}
 
@@ -100,17 +133,17 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
       <div className="bg-[#14161F] p-4 sm:p-6 rounded-2xl border border-white/5 shadow-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
-            <Users className="text-[#FF4B00]" size={24} /> Directorio de Clientes Activos
+            <Users className="text-[#FF4B00]" size={24} /> CLIENTES
           </h2>
           <p className="text-xs text-gray-400 mt-1">
-            Gestión B2B de restaurantes reales, enlaces de acceso y credenciales seguras.
+            Directorio consolidado de clientes B2B, enlaces oficiales, planes y credenciales seguras.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
           <input
             type="text"
-            placeholder="Buscar por cliente o teléfono..."
+            placeholder="Buscar por negocio, dueño o teléfono..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-[#FF4B00]"
@@ -128,13 +161,13 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
         </div>
       </div>
 
-      {/* Lista de Clientes */}
+      {/* Lista Única de Clientes */}
       <div className="space-y-4">
         {filteredClients.length === 0 ? (
           <div className="bg-[#14161F] p-12 text-center rounded-2xl border border-white/5 space-y-3">
             <span className="text-4xl block">🏪</span>
             <h3 className="text-white font-bold text-lg">No se encontraron clientes</h3>
-            <p className="text-gray-400 text-xs">Crea tu primer negocio real desde la pestaña "Crear negocio".</p>
+            <p className="text-gray-400 text-xs">Crea tu primer negocio real desde la pestaña "+ Crear Negocio".</p>
           </div>
         ) : (
           filteredClients.map(client => {
@@ -147,13 +180,14 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                 key={client.id}
                 className="bg-[#14161F] border border-white/5 hover:border-white/15 rounded-2xl p-5 sm:p-6 space-y-4 shadow-lg transition-all"
               >
+                {/* Fila 1: Info del negocio, plan y contadores */}
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-white/5 pb-4">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-black overflow-hidden shrink-0 border border-white/10">
                       <img src={client.logo_url || client.banner_url || '/brand/SB_FAVICON_512x512_V01.png'} alt={client.name} className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-base font-black text-white">{client.name}</h3>
                         <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase ${
                           client.status === 'activo'
@@ -162,11 +196,14 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                         }`}>
                           {client.status}
                         </span>
-                        <span className="bg-white/5 text-gray-400 text-[10px] px-2 py-0.5 rounded font-bold">
-                          {client.business_type || 'Restaurante'}
+                        <span className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
+                          {client.plan_name || 'Restaurante Pro ($99/m)'}
+                        </span>
+                        <span className="bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-bold">
+                          Pago: {client.payment_status || 'Al día'}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-gray-400 mt-1">
                         Propietario: <span className="text-gray-200 font-bold">{client.owner_name || 'N/A'}</span> · Tel/WA: <span className="text-emerald-400 font-mono">{client.whatsapp || client.phone}</span> · Alta: <span className="text-gray-300">{new Date(client.created_at || Date.now()).toLocaleDateString()}</span>
                       </p>
                     </div>
@@ -175,20 +212,20 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                   <div className="flex items-center gap-3 text-xs text-gray-400">
                     <div className="flex items-center gap-1 bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/5">
                       <Layers size={13} className="text-[#FF4B00]" />
-                      <span>{client.categories_count} Cat</span>
+                      <span>{client.categories_count || 0} Cat</span>
                     </div>
                     <div className="flex items-center gap-1 bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/5">
                       <Package size={13} className="text-[#FF4B00]" />
-                      <span>{client.products_count} Prod</span>
+                      <span>{client.products_count || 0} Prod</span>
                     </div>
                     <div className="flex items-center gap-1 bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/5">
                       <MapPin size={13} className="text-[#FF4B00]" />
-                      <span>{client.colonias_count} Zonas</span>
+                      <span>{client.colonias_count || 0} Zonas</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Tarjetas de Enlaces B2B con Acciones Rápidas */}
+                {/* Fila 2: Tarjetas de Enlaces B2B con Acciones Rápidas */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
                   {/* LINK 1: MENÚ PÚBLICO */}
@@ -204,8 +241,8 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                         <Copy size={12} /> Copiar
                       </button>
                       {cleanPhone && (
-                        <a href={`https://wa.me/52${cleanPhone}?text=${encodeURIComponent(`Aquí tienes el link de tu menú digital: ${menuUrl}`)}`} target="_blank" rel="noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1">
-                          <Send size={12} /> WhatsApp
+                        <a href={`https://wa.me/52${cleanPhone}?text=${encodeURIComponent(`Menú Digital Oficial de ${client.name}: ${menuUrl}`)}`} target="_blank" rel="noreferrer" className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1">
+                          <Send size={12} /> Compartir por WhatsApp
                         </a>
                       )}
                     </div>
@@ -224,8 +261,8 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                         <Copy size={12} /> Copiar
                       </button>
                       {cleanPhone && (
-                        <a href={`https://wa.me/52${cleanPhone}?text=${encodeURIComponent(`Aquí tienes el link de tu Dashboard B2B: ${dashboardUrl}`)}`} target="_blank" rel="noreferrer" className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1">
-                          <Send size={12} /> WhatsApp
+                        <a href={`https://wa.me/52${cleanPhone}?text=${encodeURIComponent(`Acceso a tu Panel B2B de ${client.name}: ${dashboardUrl}`)}`} target="_blank" rel="noreferrer" className="bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1">
+                          <Send size={12} /> Compartir por WhatsApp
                         </a>
                       )}
                     </div>
@@ -233,32 +270,39 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
 
                 </div>
 
-                {/* Botones de Acción B2B y Envío de Accesos */}
+                {/* Fila 3: Acciones Administrativas (Resumen de cuenta, Restablecimiento de contraseña, Modificación) */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
                   <div className="flex flex-wrap items-center gap-2">
                     <button
-                      onClick={() => handleSendAccessWhatsApp(client)}
+                      onClick={() => handleSendSummaryWhatsApp(client)}
                       className="flex items-center gap-1.5 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-xs px-3.5 py-2 rounded-xl shadow-md transition-transform active:scale-95"
                     >
-                      <Send size={13} /> ENVIAR ACCESOS AL CLIENTE
+                      <Send size={13} /> ENVIAR RESUMEN DE CUENTA
                     </button>
 
                     <button
-                      onClick={() => setSendAccessModal(client)}
-                      className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs px-3 py-2 rounded-xl border border-white/5"
+                      onClick={() => handleSendResetWhatsApp(client)}
+                      className="flex items-center gap-1.5 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs px-3.5 py-2 rounded-xl border border-amber-500/20 transition-transform active:scale-95"
                     >
-                      <Copy size={13} /> Ver Mensaje de Acceso
+                      <Key size={13} /> RESTABLECER ACCESO
                     </button>
 
                     <button
-                      onClick={() => setEditingClient(client)}
+                      onClick={() => setPreviewModal({ type: 'resumen', client, message: generateAccountSummaryMessage(client) })}
                       className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs px-3 py-2 rounded-xl border border-white/5"
                     >
-                      <Edit3 size={13} /> Editar datos
+                      <Copy size={13} /> Vista previa de mensaje
                     </button>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={() => setEditingClient(client)}
+                      className="flex items-center gap-1 bg-white/5 hover:bg-white/10 text-gray-300 font-bold text-xs px-3 py-2 rounded-xl border border-white/5"
+                    >
+                      <Edit3 size={13} /> Editar datos
+                    </button>
+
                     {client.status === 'activo' ? (
                       <button
                         onClick={() => handleStatusChange(client.business_id, 'pausado')}
@@ -282,34 +326,35 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
         )}
       </div>
 
-      {/* Modal Ver Mensaje de Accesos Seguros */}
-      {sendAccessModal && (
+      {/* Modal Vista Previa de Mensaje */}
+      {previewModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#14161F] border border-white/10 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b border-white/5 pb-2">
-              <h3 className="font-black text-white text-base">Mensaje de Acceso para {sendAccessModal.name}</h3>
-              <button onClick={() => setSendAccessModal(null)} className="text-gray-400 hover:text-white">✕</button>
+              <h3 className="font-black text-white text-base">Vista previa para {previewModal.client.name}</h3>
+              <button onClick={() => setPreviewModal(null)} className="text-gray-400 hover:text-white">✕</button>
             </div>
             
             <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/10 font-mono text-[11px] text-gray-300 space-y-2 whitespace-pre-wrap">
-              {generateAccessMessage(sendAccessModal)}
+              {previewModal.message}
             </div>
 
             <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
               <button
-                onClick={() => copyText(generateAccessMessage(sendAccessModal), 'access_msg')}
+                onClick={() => copyText(previewModal.message, 'prev_msg')}
                 className="px-4 py-2 rounded-xl bg-white/10 text-white font-bold text-xs"
               >
                 Copiar Texto
               </button>
               <button
                 onClick={() => {
-                  handleSendAccessWhatsApp(sendAccessModal)
-                  setSendAccessModal(null)
+                  if (previewModal.type === 'resumen') handleSendSummaryWhatsApp(previewModal.client)
+                  else handleSendResetWhatsApp(previewModal.client)
+                  setPreviewModal(null)
                 }}
                 className="px-4 py-2 rounded-xl bg-[#FF4B00] text-white font-black text-xs flex items-center gap-1.5"
               >
-                <Send size={13} /> Abrir WhatsApp
+                <Send size={13} /> Abrir en WhatsApp
               </button>
             </div>
           </div>
@@ -320,7 +365,7 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
       {editingClient && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <form onSubmit={handleSaveEdit} className="bg-[#14161F] border border-white/10 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
-            <h3 className="text-lg font-black text-white">Editar Datos del Cliente</h3>
+            <h3 className="text-lg font-black text-white">Editar Datos del Cliente B2B</h3>
 
             <div className="space-y-3 text-xs">
               <div>
@@ -349,8 +394,32 @@ Desde tu panel podrás administrar tu menú, horarios, zonas de entrega y métod
                   type="text"
                   value={editingClient.whatsapp}
                   onChange={e => setEditingClient({ ...editingClient, whatsapp: e.target.value })}
-                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-gray-300 font-bold mb-1">Plan Contratado</label>
+                  <input
+                    type="text"
+                    value={editingClient.plan_name || 'Restaurante Pro ($99/m)'}
+                    onChange={e => setEditingClient({ ...editingClient, plan_name: e.target.value })}
+                    className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-300 font-bold mb-1">Estado de Pago</label>
+                  <select
+                    value={editingClient.payment_status || 'Al día'}
+                    onChange={e => setEditingClient({ ...editingClient, payment_status: e.target.value })}
+                    className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+                  >
+                    <option value="Al día">Al día ✅</option>
+                    <option value="Pendiente">Pendiente ⏳</option>
+                    <option value="Atrasado">Atrasado ⚠️</option>
+                  </select>
+                </div>
               </div>
             </div>
 

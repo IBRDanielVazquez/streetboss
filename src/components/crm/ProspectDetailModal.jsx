@@ -54,6 +54,8 @@ https://streetboss.mx/demo/${selectedDemoObj.id}
 Si les gusta, con gusto podemos activarla para ustedes sin comisiones por pedido.`
   })
 
+  const [generatedSlug, setGeneratedSlug] = useState(baseSlug)
+
   // Handle "🎁 GENERAR DEMO"
   const handleGenerateDemo = () => {
     try {
@@ -62,7 +64,9 @@ Si les gusta, con gusto podemos activarla para ustedes sin comisiones por pedido
         assigned_demo: assignedDemo,
       })
 
-      const generatedUrl = res.demoUrl || `https://streetboss.mx/demo/${baseSlug}`
+      const finalSlug = res.slug || baseSlug
+      const generatedUrl = res.demoUrl || `https://streetboss.mx/demo/${finalSlug}`
+      setGeneratedSlug(finalSlug)
       setDemoUrl(generatedUrl)
       setDemoGenerated(true)
 
@@ -288,7 +292,7 @@ Si les gusta, con gusto podemos activarla para ustedes.`
               </div>
 
               <a
-                href={demoGenerated ? `/demo/${baseSlug}` : `/menu/${selectedDemoObj.id}`}
+                href={demoGenerated ? `/demo/${generatedSlug}` : `/menu/${selectedDemoObj.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-lg border border-white/10 text-xs flex items-center gap-1"
@@ -309,7 +313,7 @@ Si les gusta, con gusto podemos activarla para ustedes.`
 
             {demoGenerated && (
               <p className="text-center text-[11px] text-emerald-400 font-bold bg-emerald-500/10 py-1.5 px-3 rounded-xl border border-emerald-500/20">
-                ¡Demo creada exitosamente en <u>streetboss.mx/demo/{baseSlug}</u>!
+                ¡Demo creada exitosamente en <u>streetboss.mx/demo/{generatedSlug}</u>!
               </p>
             )}
           </div>

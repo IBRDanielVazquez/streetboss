@@ -54,7 +54,7 @@ demos.forEach(file => {
   
   // Extraer el link de WhatsApp del archivo actual
   const waMatch = html.match(/https:\/\/wa\.me\/[^"'\s]*/);
-  const waLink = waMatch ? waMatch[0] : 'https://wa.me/529612466204';
+  const waLink = waMatch ? waMatch[0] : 'https://wa.me/529610000000';
 
   const nuevoScript = `
   <script>

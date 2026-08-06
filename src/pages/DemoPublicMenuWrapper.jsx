@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { getBusinessBySlug } from '../services/crmV3Service'
 import { DEMOS_OFICIALES } from '../data/demoShowcase'
+import { DEMO_CONTACTS } from '../data/demoFixtures'
 import MenuDigital from './MenuDigital'
 
 export default function DemoPublicMenuWrapper() {
@@ -36,8 +37,8 @@ export default function DemoPublicMenuWrapper() {
       logo: businessData.logo_url || null,
       banner: businessData.banner_url || null,
       colorMarca: businessData.brand_color || '#FF4B00',
-      whatsapp: businessData.whatsapp || businessData.phone || '9612466204',
-      telefono: businessData.phone || '9612466204',
+      whatsapp: businessData.whatsapp || businessData.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
+      telefono: businessData.phone || DEMO_CONTACTS.DEFAULT_PHONE,
       mensajeClientes: businessData.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
       redes: {
         facebook: businessData.facebook_url,
@@ -88,8 +89,8 @@ export default function DemoPublicMenuWrapper() {
     logo: null,
     banner: demo.img,
     colorMarca: '#FF4B00',
-    whatsapp: '529612466204',
-    telefono: '9612466204',
+    whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
+    telefono: DEMO_CONTACTS.DEFAULT_PHONE,
     mensajeClientes: '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
     redes: {},
     direccion: 'Tuxtla Gutiérrez, Chiapas',

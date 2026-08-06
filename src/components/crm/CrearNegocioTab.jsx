@@ -291,7 +291,7 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
                 <input
                   type="text"
                   required
-                  placeholder="9612466204"
+                  placeholder="9610000000"
                   value={formData.whatsapp}
                   onChange={e => setFormData(prev => ({ ...prev, whatsapp: e.target.value }))}
                   className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:border-[#FF4B00] focus:outline-none"

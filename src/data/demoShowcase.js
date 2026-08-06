@@ -1,5 +1,5 @@
-// Catálogo estático de Demos Oficiales para la vitrina pública de StreetBoss (/demos)
-export const WHATSAPP_VENTAS = '529612466204'
+import { DEMO_CONTACTS } from './demoFixtures'
+export const WHATSAPP_VENTAS = DEMO_CONTACTS.SALES_WHATSAPP
 
 const prod = (id, nombre, precio, descripcion = '', foto = null) =>
   ({ id, nombre, precio, descripcion, agotado: false, activo: true, foto })
