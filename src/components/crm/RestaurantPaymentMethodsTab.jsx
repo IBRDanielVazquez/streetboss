@@ -23,32 +23,40 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
 
   const [paymentMethods, setPaymentMethods] = useState(() => ({
     ...defaultMethods,
-    ...(business.payment_methods || {}),
-    efectivo: { ...defaultMethods.efectivo, ...(business.payment_methods?.efectivo || {}) },
-    transferencia: { ...defaultMethods.transferencia, ...(business.payment_methods?.transferencia || {}) },
-    tarjeta: { ...defaultMethods.tarjeta, ...(business.payment_methods?.tarjeta || {}) },
+    ...(business?.payment_methods || {}),
+    efectivo: { ...defaultMethods.efectivo, ...(business?.payment_methods?.efectivo || {}) },
+    transferencia: { ...defaultMethods.transferencia, ...(business?.payment_methods?.transferencia || {}) },
+    tarjeta: { ...defaultMethods.tarjeta, ...(business?.payment_methods?.tarjeta || {}) },
   }))
 
   useEffect(() => {
-    if (business.payment_methods) {
-      setPaymentMethods({
-        ...defaultMethods,
-        ...business.payment_methods,
-        efectivo: { ...defaultMethods.efectivo, ...(business.payment_methods?.efectivo || {}) },
-        transferencia: { ...defaultMethods.transferencia, ...(business.payment_methods?.transferencia || {}) },
-        tarjeta: { ...defaultMethods.tarjeta, ...(business.payment_methods?.tarjeta || {}) },
-      })
-    }
-  }, [business.payment_methods, business.business_id, business.slug])
+    setPaymentMethods({
+      ...defaultMethods,
+      ...(business?.payment_methods || {}),
+      efectivo: { ...defaultMethods.efectivo, ...(business?.payment_methods?.efectivo || {}) },
+      transferencia: { ...defaultMethods.transferencia, ...(business?.payment_methods?.transferencia || {}) },
+      tarjeta: { ...defaultMethods.tarjeta, ...(business?.payment_methods?.tarjeta || {}) },
+    })
+  }, [business?.payment_methods, business?.business_id, business?.slug])
+
+  const safeEfectivo = paymentMethods?.efectivo || defaultMethods.efectivo
+  const safeTransferencia = paymentMethods?.transferencia || defaultMethods.transferencia
+  const safeTarjeta = paymentMethods?.tarjeta || defaultMethods.tarjeta
 
   const [toastMsg, setToastMsg] = useState('')
 
   const handleSave = (e) => {
     e.preventDefault()
     const targetId = business.slug || business.business_id || business.id
-    updateBusinessSettings(targetId, {
-      payment_methods: paymentMethods
-    })
+    if (targetId) {
+      updateBusinessSettings(targetId, {
+        payment_methods: {
+          efectivo: safeEfectivo,
+          transferencia: safeTransferencia,
+          tarjeta: safeTarjeta
+        }
+      })
+    }
     if (onUpdateBusiness) onUpdateBusiness()
     setToastMsg('Configuración de Métodos de Pago guardada con éxito.')
     setTimeout(() => setToastMsg(''), 3000)
@@ -70,7 +78,7 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
               <CreditCard className="text-[#FF4B00]" size={20} /> Configuración B2B de Métodos de Pago
             </h2>
             <p className="text-xs text-gray-400 mt-1">
-              Activa los métodos de pago que acepta {business.name}. Los cambios se reflejarán instantáneamente en tu menú digital público.
+              Activa los métodos de pago que acepta {business.name || 'tu negocio'}. Los cambios se reflejarán instantáneamente en tu menú digital público.
             </p>
           </div>
           <button type="submit" className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition-transform active:scale-95">
@@ -98,26 +106,26 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
             <label className="flex items-center gap-2 cursor-pointer bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/10">
               <input
                 type="checkbox"
-                checked={paymentMethods.efectivo.activo}
+                checked={!!safeEfectivo.activo}
                 onChange={e => setPaymentMethods({
                   ...paymentMethods,
-                  efectivo: { ...paymentMethods.efectivo, activo: e.target.checked }
+                  efectivo: { ...safeEfectivo, activo: e.target.checked }
                 })}
                 className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
               />
-              <span className="font-bold text-xs">{paymentMethods.efectivo.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
+              <span className="font-bold text-xs">{safeEfectivo.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
             </label>
           </div>
 
-          {paymentMethods.efectivo.activo && (
+          {safeEfectivo.activo && (
             <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-4">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={paymentMethods.efectivo.preguntar_cambio}
+                  checked={!!safeEfectivo.preguntar_cambio}
                   onChange={e => setPaymentMethods({
                     ...paymentMethods,
-                    efectivo: { ...paymentMethods.efectivo, preguntar_cambio: e.target.checked }
+                    efectivo: { ...safeEfectivo, preguntar_cambio: e.target.checked }
                   })}
                   className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
                 />
@@ -134,10 +142,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={paymentMethods.efectivo.limite_cambio_activo !== false}
+                      checked={safeEfectivo.limite_cambio_activo !== false}
                       onChange={e => setPaymentMethods({
                         ...paymentMethods,
-                        efectivo: { ...paymentMethods.efectivo, limite_cambio_activo: e.target.checked }
+                        efectivo: { ...safeEfectivo, limite_cambio_activo: e.target.checked }
                       })}
                       className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
                     />
@@ -145,16 +153,16 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                   </label>
                 </div>
 
-                {paymentMethods.efectivo.limite_cambio_activo !== false && (
+                {safeEfectivo.limite_cambio_activo !== false && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
                       <label className="block text-gray-300 font-bold mb-1">Máximo de cambio disponible ($ MXN) *</label>
                       <input
                         type="number"
-                        value={paymentMethods.efectivo.max_cambio_monto || 500}
+                        value={safeEfectivo.max_cambio_monto || 500}
                         onChange={e => setPaymentMethods({
                           ...paymentMethods,
-                          efectivo: { ...paymentMethods.efectivo, max_cambio_monto: Number(e.target.value) }
+                          efectivo: { ...safeEfectivo, max_cambio_monto: Number(e.target.value) }
                         })}
                         placeholder="Ej. 500"
                         className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold"
@@ -165,10 +173,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                       <label className="block text-gray-300 font-bold mb-1">Mensaje de seguridad personalizado</label>
                       <input
                         type="text"
-                        value={paymentMethods.efectivo.mensaje_limite_cambio || ''}
+                        value={safeEfectivo.mensaje_limite_cambio || ''}
                         onChange={e => setPaymentMethods({
                           ...paymentMethods,
-                          efectivo: { ...paymentMethods.efectivo, mensaje_limite_cambio: e.target.value }
+                          efectivo: { ...safeEfectivo, mensaje_limite_cambio: e.target.value }
                         })}
                         placeholder="Por seguridad, nuestros repartidores no llevan cambio para cantidades mayores a $500."
                         className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white"
@@ -197,28 +205,28 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
             <label className="flex items-center gap-2 cursor-pointer bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/10">
               <input
                 type="checkbox"
-                checked={paymentMethods.transferencia.activo}
+                checked={!!safeTransferencia.activo}
                 onChange={e => setPaymentMethods({
                   ...paymentMethods,
-                  transferencia: { ...paymentMethods.transferencia, activo: e.target.checked }
+                  transferencia: { ...safeTransferencia, activo: e.target.checked }
                 })}
                 className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
               />
-              <span className="font-bold text-xs">{paymentMethods.transferencia.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
+              <span className="font-bold text-xs">{safeTransferencia.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
             </label>
           </div>
 
-          {paymentMethods.transferencia.activo && (
+          {safeTransferencia.activo && (
             <div className="space-y-4 bg-[#0D0E12] p-4 rounded-xl border border-white/5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-gray-300 font-bold mb-1">Nombre del Titular de la Cuenta *</label>
                   <input
                     type="text"
-                    value={paymentMethods.transferencia.titular || ''}
+                    value={safeTransferencia.titular || ''}
                     onChange={e => setPaymentMethods({
                       ...paymentMethods,
-                      transferencia: { ...paymentMethods.transferencia, titular: e.target.value }
+                      transferencia: { ...safeTransferencia, titular: e.target.value }
                     })}
                     placeholder="Ej. Tacos El Güero S.A. de C.V."
                     className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold"
@@ -229,10 +237,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                   <label className="block text-gray-300 font-bold mb-1">Banco Receptores *</label>
                   <input
                     type="text"
-                    value={paymentMethods.transferencia.banco || ''}
+                    value={safeTransferencia.banco || ''}
                     onChange={e => setPaymentMethods({
                       ...paymentMethods,
-                      transferencia: { ...paymentMethods.transferencia, banco: e.target.value }
+                      transferencia: { ...safeTransferencia, banco: e.target.value }
                     })}
                     placeholder="Ej. BBVA Bancomer / Banorte"
                     className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold"
@@ -246,10 +254,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                   <input
                     type="text"
                     maxLength={18}
-                    value={paymentMethods.transferencia.clabe || ''}
+                    value={safeTransferencia.clabe || ''}
                     onChange={e => setPaymentMethods({
                       ...paymentMethods,
-                      transferencia: { ...paymentMethods.transferencia, clabe: e.target.value.replace(/\D/g, '') }
+                      transferencia: { ...safeTransferencia, clabe: e.target.value.replace(/\D/g, '') }
                     })}
                     placeholder="Ej. 012180000123456789"
                     className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold"
@@ -260,10 +268,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                   <label className="block text-gray-300 font-bold mb-1">Número de Tarjeta / Cuenta (Opcional)</label>
                   <input
                     type="text"
-                    value={paymentMethods.transferencia.numero_cuenta || ''}
+                    value={safeTransferencia.numero_cuenta || ''}
                     onChange={e => setPaymentMethods({
                       ...paymentMethods,
-                      transferencia: { ...paymentMethods.transferencia, numero_cuenta: e.target.value }
+                      transferencia: { ...safeTransferencia, numero_cuenta: e.target.value }
                     })}
                     placeholder="Ej. 4152 3130 0000 0000"
                     className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
@@ -275,10 +283,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                 <label className="block text-gray-300 font-bold mb-1">Texto para Solicitar Comprobante en el Checkout</label>
                 <textarea
                   rows={2}
-                  value={paymentMethods.transferencia.texto_solicitar_comprobante || ''}
+                  value={safeTransferencia.texto_solicitar_comprobante || ''}
                   onChange={e => setPaymentMethods({
                     ...paymentMethods,
-                    transferencia: { ...paymentMethods.transferencia, texto_solicitar_comprobante: e.target.value }
+                    transferencia: { ...safeTransferencia, texto_solicitar_comprobante: e.target.value }
                   })}
                   placeholder="Ej. Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp."
                   className="w-full bg-[#14161F] border border-white/10 rounded-xl p-3 text-white"
@@ -304,27 +312,27 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
             <label className="flex items-center gap-2 cursor-pointer bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/10">
               <input
                 type="checkbox"
-                checked={paymentMethods.tarjeta.activo}
+                checked={!!safeTarjeta.activo}
                 onChange={e => setPaymentMethods({
                   ...paymentMethods,
-                  tarjeta: { ...paymentMethods.tarjeta, activo: e.target.checked }
+                  tarjeta: { ...safeTarjeta, activo: e.target.checked }
                 })}
                 className="rounded border-gray-600 text-[#FF4B00] focus:ring-0"
               />
-              <span className="font-bold text-xs">{paymentMethods.tarjeta.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
+              <span className="font-bold text-xs">{safeTarjeta.activo ? 'Activo ✅' : 'Inactivo ❌'}</span>
             </label>
           </div>
 
-          {paymentMethods.tarjeta.activo && (
+          {safeTarjeta.activo && (
             <div className="space-y-4 bg-[#0D0E12] p-4 rounded-xl border border-white/5">
               <div>
                 <label className="block text-gray-300 font-bold mb-1">Instrucciones o Mensaje Visible en el Checkout</label>
                 <textarea
                   rows={2}
-                  value={paymentMethods.tarjeta.instrucciones || ''}
+                  value={safeTarjeta.instrucciones || ''}
                   onChange={e => setPaymentMethods({
                     ...paymentMethods,
-                    tarjeta: { ...paymentMethods.tarjeta, instrucciones: e.target.value }
+                    tarjeta: { ...safeTarjeta, instrucciones: e.target.value }
                   })}
                   placeholder="Ej. Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El pago se realiza al momento de la entrega."
                   className="w-full bg-[#14161F] border border-white/10 rounded-xl p-3 text-white"
@@ -335,10 +343,10 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                 <label className="block text-gray-300 font-bold mb-1">Compra Mínima para Pago con Tarjeta ($ MXN - Opcional)</label>
                 <input
                   type="number"
-                  value={paymentMethods.tarjeta.compra_minima || 0}
+                  value={safeTarjeta.compra_minima || 0}
                   onChange={e => setPaymentMethods({
                     ...paymentMethods,
-                    tarjeta: { ...paymentMethods.tarjeta, compra_minima: Number(e.target.value) }
+                    tarjeta: { ...safeTarjeta, compra_minima: Number(e.target.value) }
                   })}
                   placeholder="Ej. 150"
                   className="w-full bg-[#14161F] border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
