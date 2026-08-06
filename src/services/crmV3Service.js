@@ -1,6 +1,6 @@
 import { supabase } from '../supabase'
 import { DEMO_FIXTURES, DEMO_CONTACTS } from '../data/demoFixtures'
-import { DEMOS_OFICIALES } from '../data/demoShowcase'
+import { DEMOS_OFICIALES, DEMO_SHOWCASE } from '../data/demoShowcase'
 
 // Key constants for local reactive persistence fallback
 const STORAGE_KEYS = {
@@ -82,12 +82,12 @@ export function subscribeCentralSync(callback) {
 function initLocalStore() {
   let localBusinesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || 'null')
   if (!localBusinesses || localBusinesses.length === 0) {
-    const seededBusinesses = DEMOS_OFICIALES.map(demo => ({
+    const seededBusinesses = DEMO_SHOWCASE.map(demo => ({
       id: demo.id,
       business_id: demo.id,
-      name: demo.nombre,
+      name: demo.nombre || demo.name,
       slug: demo.id,
-      business_type: demo.giro || 'Restaurante',
+      business_type: demo.giro || demo.badge || 'Restaurante',
       is_demo: true,
       demo_status: 'Activo',
       status: 'activo',
@@ -95,14 +95,14 @@ function initLocalStore() {
       owner_name: 'Demostración Oficial',
       phone: DEMO_CONTACTS.DEFAULT_PHONE,
       whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
-      email: `demo.${demo.clave}@streetboss.com.mx`,
+      email: `demo.${demo.clave || demo.id}@streetboss.com.mx`,
       address: 'Tuxtla Gutiérrez, Chiapas',
       city: 'Tuxtla Gutiérrez',
       state: 'Chiapas',
-      banner_url: `/demos/${demo.id}/cover.jpg`,
-      logo_url: `/demos/${demo.id}/profile.png`,
+      banner_url: demo.banner_url || `/demos/${demo.id}/cover.jpg`,
+      logo_url: demo.logo_url || `/demos/${demo.id}/profile.png`,
       brand_color: '#FF4B00',
-      description: `Demostración oficial de ${demo.nombre} en StreetBoss.`,
+      description: `Demostración oficial de ${demo.nombre || demo.name} en StreetBoss.`,
       schedule_text: 'Lun a Dom · 9:00 am – 10:00 pm',
       is_open: true,
       has_delivery: true,
@@ -144,8 +144,8 @@ function initLocalStore() {
             price: prod.precio,
             description: prod.descripcion || '',
             image_url: prod.foto || '',
-            is_out_of_stock: false,
-            is_active: true,
+            is_out_of_stock: prod.agotado || false,
+            is_active: prod.activo !== false,
             is_featured: pIdx === 0,
             is_promo: false,
             position: pIdx,
@@ -161,6 +161,28 @@ function initLocalStore() {
     localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify([]))
     localStorage.setItem(STORAGE_KEYS.PROSPECTS, JSON.stringify([]))
     localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify([]))
+  } else {
+    // Sincronizar automáticamente imágenes y nombres oficiales de los 10 demos si existía caché antiguo
+    let updated = false
+    const refreshedBusinesses = localBusinesses.map(b => {
+      if (b.is_demo) {
+        const official = DEMO_SHOWCASE.find(d => d.id === b.id || d.id === b.business_id || d.id === b.slug)
+        if (official) {
+          updated = true
+          return {
+            ...b,
+            name: official.nombre || official.name,
+            business_type: official.giro || official.badge || b.business_type,
+            banner_url: official.banner_url || `/demos/${official.id}/cover.jpg`,
+            logo_url: official.logo_url || `/demos/${official.id}/profile.png`,
+          }
+        }
+      }
+      return b
+    })
+    if (updated) {
+      localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(refreshedBusinesses))
+    }
   }
 }
 
@@ -677,6 +699,12 @@ export function authenticateBusiness(slug, password) {
   const business = bList.find(b => b.slug === slug && !b.deleted_at)
   if (!business) {
     return { success: false, error: 'Restaurante no encontrado.' }
+  }
+
+  // Demos oficiales pueden acceder directamente sin contraseña obligatoria
+  if (business.is_demo) {
+    logAuditAction('login_b2b_exitoso', business.business_id, { slug, isDemo: true })
+    return { success: true, business }
   }
 
   const validPassword = business.temp_password || business.password

@@ -68,7 +68,7 @@ export default function Demos() {
                 <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${demo.color} opacity-0 transition-opacity duration-500 group-hover:opacity-100`} />
                 <div className="relative h-32 overflow-hidden sm:h-44">
                   <img
-                    src={demo.img}
+                    src={demo.banner_url || demo.img || `/demos/${demo.id}/cover.jpg`}
                     alt={demo.name}
                     width="900"
                     height="600"
@@ -79,6 +79,14 @@ export default function Demos() {
                   <span className="absolute left-2 top-2 rounded-full bg-[#f5b87a] px-2 py-1 text-[8px] font-black uppercase tracking-wider text-black sm:left-3 sm:top-3 sm:text-[10px]">
                     {demo.badge}
                   </span>
+                  {/* Foto de Perfil / Logo Oficial del Demo */}
+                  <div className="absolute -bottom-3 right-3 h-10 w-10 overflow-hidden rounded-full border-2 border-black bg-black shadow-lg sm:h-12 sm:w-12">
+                    <img
+                      src={demo.logoUrl || demo.logo_url || `/demos/${demo.id}/profile.png`}
+                      alt={`Perfil ${demo.name}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 </div>
                 <div className="relative z-10 flex flex-1 flex-col p-3 sm:p-5">
                   <p className="text-xl sm:text-2xl">{demo.emoji}</p>

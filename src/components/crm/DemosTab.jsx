@@ -107,6 +107,15 @@ export default function DemosTab({ onSelectDemoForBusiness }) {
               <span className="absolute top-3 left-3 bg-[#0D0E12]/80 backdrop-blur px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300">
                 {demo.business_type}
               </span>
+
+              {/* Logo / Foto de Perfil */}
+              <div className="absolute -bottom-3 right-4 h-12 w-12 overflow-hidden rounded-full border-2 border-[#14161F] bg-[#0D0E12] shadow-xl">
+                <img
+                  src={demo.logo_url || demo.logoUrl || `/demos/${demo.slug || demo.id}/profile.png`}
+                  alt={`Perfil ${demo.name}`}
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
 
             {/* Contenido Card */}

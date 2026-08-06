@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getBusinessBySlug, subscribeCentralSync } from '../services/crmV3Service'
-import { DEMOS_OFICIALES } from '../data/demoShowcase'
+import { DEMOS_OFICIALES, DEMO_SHOWCASE } from '../data/demoShowcase'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import MenuDigital from './MenuDigital'
 
@@ -43,8 +43,8 @@ export default function DemoPublicMenuWrapper() {
     const businessConfig = {
       trialId: businessData.slug || businessData.business_id,
       negocio: businessData.name,
-      logo: businessData.logo_url || null,
-      banner: businessData.banner_url || null,
+      logo: businessData.logo_url || `/demos/${businessData.slug || businessData.id}/profile.png`,
+      banner: businessData.banner_url || `/demos/${businessData.slug || businessData.id}/cover.jpg`,
       colorMarca: businessData.brand_color || '#FF4B00',
       whatsapp: businessData.whatsapp || businessData.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
       telefono: businessData.phone || DEMO_CONTACTS.DEFAULT_PHONE,
@@ -88,15 +88,15 @@ export default function DemoPublicMenuWrapper() {
   }
 
   // 2. Fallback a demos oficiales estáticos
-  const demo = DEMOS_OFICIALES.find(
+  const demo = DEMO_SHOWCASE.find(
     d => d.id === trialId || trialId?.startsWith(d.id) || trialId?.includes(d.clave)
-  ) || DEMOS_OFICIALES[0]
+  ) || DEMO_SHOWCASE[0]
 
   const demoConfig = {
     trialId: demo.id,
-    negocio: demo.nombre,
-    logo: null,
-    banner: demo.img,
+    negocio: demo.nombre || demo.name,
+    logo: demo.logo_url || demo.logoUrl || `/demos/${demo.id}/profile.png`,
+    banner: demo.banner_url || demo.img || `/demos/${demo.id}/cover.jpg`,
     colorMarca: '#FF4B00',
     whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
     telefono: DEMO_CONTACTS.DEFAULT_PHONE,
