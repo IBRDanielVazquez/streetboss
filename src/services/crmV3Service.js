@@ -365,8 +365,35 @@ export function getBusinessBySlug(slugOrId) {
   const products = pList.filter(p => p.business_id === business.business_id)
   const zones = zList.filter(z => z.business_id === business.business_id && z.is_active)
 
+  const defaultPaymentMethods = {
+    efectivo: { activo: true, preguntar_cambio: true },
+    transferencia: {
+      activo: false,
+      titular: '',
+      banco: '',
+      clabe: '',
+      numero_cuenta: '',
+      instrucciones: '',
+      texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.'
+    },
+    tarjeta: {
+      activo: false,
+      instrucciones: 'Se aceptan tarjetas de crédito y débito. El pago se realiza al momento de la entrega.',
+      compra_minima: 0
+    }
+  }
+
+  const payment_methods = {
+    ...defaultPaymentMethods,
+    ...(business.payment_methods || {}),
+    efectivo: { ...defaultPaymentMethods.efectivo, ...(business.payment_methods?.efectivo || {}) },
+    transferencia: { ...defaultPaymentMethods.transferencia, ...(business.payment_methods?.transferencia || {}) },
+    tarjeta: { ...defaultPaymentMethods.tarjeta, ...(business.payment_methods?.tarjeta || {}) },
+  }
+
   return {
     ...business,
+    payment_methods,
     categories,
     products,
     delivery_zones: zones,
@@ -807,6 +834,11 @@ export function recordPublicOrder(orderPayload) {
     whatsapp_message,
     whatsapp_status: orderPayload.whatsapp_status || 'pendiente_envio',
     status: orderPayload.status || 'pendiente_envio',
+    payment_method: orderPayload.payment_method || 'efectivo',
+    payment_status: orderPayload.payment_status || (orderPayload.payment_method === 'transferencia' ? 'comprobante_pendiente' : 'pendiente'),
+    cash_needs_change: !!orderPayload.cash_needs_change,
+    cash_pay_with: orderPayload.cash_pay_with || '',
+    has_terminal: !!orderPayload.has_terminal,
     comentarios_internos: orderPayload.comentarios_internos || '',
     observaciones: orderPayload.observaciones || '',
     hora_confirmacion: orderPayload.hora_confirmacion || null,
@@ -851,6 +883,22 @@ export function updateOrderStatus(orderId, newStatus, extraData = {}) {
     ordersList[idx] = {
       ...ordersList[idx],
       status: newStatus,
+      ...extraData,
+      updated_at: new Date().toISOString()
+    }
+    localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+    return ordersList[idx]
+  }
+  return null
+}
+
+export function updateOrderPaymentStatus(orderId, newPaymentStatus, extraData = {}) {
+  let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+  const idx = ordersList.findIndex(o => o.id === orderId || o.order_number === orderId)
+  if (idx !== -1) {
+    ordersList[idx] = {
+      ...ordersList[idx],
+      payment_status: newPaymentStatus,
       ...extraData,
       updated_at: new Date().toISOString()
     }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getOrdersByBusiness, updateOrderStatus } from '../../services/crmV3Service'
+import { getOrdersByBusiness, updateOrderStatus, updateOrderPaymentStatus } from '../../services/crmV3Service'
 import {
   ShoppingBag,
   Search,
@@ -15,13 +15,16 @@ import {
   Send,
   Calendar,
   AlertTriangle,
-  X
+  X,
+  CreditCard,
+  Check
 } from 'lucide-react'
 
 export default function RestaurantOrdersTab({ businessId, businessName }) {
   const [orders, setOrders] = useState([])
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('todos')
+  const [filterPaymentStatus, setFilterPaymentStatus] = useState('todos')
   const [editingOrder, setEditingOrder] = useState(null)
   const [toastMsg, setToastMsg] = useState('')
 
@@ -51,15 +54,17 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
         o.colonia?.toLowerCase().includes(q)
 
       const matchStatus = filterStatus === 'todos' || o.status === filterStatus
-      return matchSearch && matchStatus
+      const matchPayStatus = filterPaymentStatus === 'todos' || (o.payment_status || 'pendiente') === filterPaymentStatus
+      return matchSearch && matchStatus && matchPayStatus
     }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  }, [orders, search, filterStatus])
+  }, [orders, search, filterStatus, filterPaymentStatus])
 
   const handleSaveOrderEdit = (e) => {
     e.preventDefault()
     if (!editingOrder) return
 
     updateOrderStatus(editingOrder.id, editingOrder.status, {
+      payment_status: editingOrder.payment_status,
       comentarios_internos: editingOrder.comentarios_internos,
       observaciones: editingOrder.observaciones,
       hora_confirmacion: editingOrder.hora_confirmacion,
@@ -68,15 +73,15 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
 
     loadOrders()
     setEditingOrder(null)
-    showToast('Pedido actualizado correctamente')
+    showToast('Pedido y estado de pago actualizados')
   }
 
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pendiente_envio':
-        return <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Pendiente de envío ⏳</span>
+        return <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Pendiente ⏳</span>
       case 'enviado_wa':
-        return <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Enviado por WhatsApp 📱</span>
+        return <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Enviado WA 📱</span>
       case 'en_proceso':
         return <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">En preparación 🍳</span>
       case 'confirmado':
@@ -87,6 +92,23 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
         return <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Cancelado ❌</span>
       default:
         return <span className="bg-gray-800 text-gray-300 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Registrado</span>
+    }
+  }
+
+  const getPaymentStatusBadge = (paymentStatus) => {
+    switch (paymentStatus) {
+      case 'comprobante_pendiente':
+        return <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[10px] font-bold">Comprobante Pendiente ⌛</span>
+      case 'comprobante_recibido':
+        return <span className="bg-blue-500/10 text-blue-300 border border-blue-500/20 px-2 py-0.5 rounded text-[10px] font-bold">Comprobante Recibido 📄</span>
+      case 'pagado':
+      case 'pago_confirmado':
+        return <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded text-[10px] font-bold">Pagado 💵</span>
+      case 'rechazado':
+      case 'pago_rechazado':
+        return <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[10px] font-bold">Pago Rechazado ❌</span>
+      default:
+        return <span className="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px] font-bold">Pendiente de Pago</span>
     }
   }
 
@@ -107,7 +129,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
               <ShoppingBag className="text-[#FF4B00]" size={20} /> Gestión Interna de Pedidos
             </h2>
             <p className="text-xs text-gray-400 mt-1">
-              Administración de estados, comentarios internos y horarios de entrega para {businessName}.
+              Administración de pedidos, estados de entrega y pagos para {businessName}.
             </p>
           </div>
 
@@ -117,7 +139,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
         </div>
 
         {/* Buscador y Filtros */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="relative">
             <input
               type="text"
@@ -135,13 +157,28 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
               onChange={e => setFilterStatus(e.target.value)}
               className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
             >
-              <option value="todos">Todos los Estados</option>
+              <option value="todos">Todos los Estados de Entrega</option>
               <option value="pendiente_envio">Pendiente de Envío ⏳</option>
               <option value="enviado_wa">Enviado por WhatsApp 📱</option>
               <option value="en_proceso">En Preparación 🍳</option>
               <option value="confirmado">Confirmado ✅</option>
               <option value="entregado">Entregado 🎉</option>
               <option value="cancelado">Cancelado ❌</option>
+            </select>
+          </div>
+
+          <div>
+            <select
+              value={filterPaymentStatus}
+              onChange={e => setFilterPaymentStatus(e.target.value)}
+              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
+            >
+              <option value="todos">Todos los Estados de Pago</option>
+              <option value="pendiente">Pendiente de Pago</option>
+              <option value="comprobante_pendiente">Comprobante Pendiente ⌛</option>
+              <option value="comprobante_recibido">Comprobante Recibido 📄</option>
+              <option value="pagado">Pagado / Confirmado 💵</option>
+              <option value="rechazado">Pago Rechazado ❌</option>
             </select>
           </div>
         </div>
@@ -166,6 +203,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-black text-white font-mono text-sm">{o.order_number}</span>
                     {getStatusBadge(o.status)}
+                    {getPaymentStatusBadge(o.payment_status || 'pendiente')}
                     <span className="text-gray-400 text-[11px]">{new Date(o.created_at).toLocaleString()}</span>
                   </div>
 
@@ -178,13 +216,29 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div>
+                  <div className="space-y-1">
                     <p className="text-gray-300 font-bold">👤 {o.customer_name}</p>
                     <p className="text-emerald-400 font-mono">📱 {o.whatsapp || o.phone}</p>
-                    <p className="text-gray-400 mt-1">
-                      🛵 {o.delivery_type === 'domicilio' ? 'A Domicilio' : 'Pasar a Recoger'} · Colonia: <span className="text-gray-200">{o.colonia || 'N/A'}</span>
+                    <p className="text-gray-400">
+                      🛵 {o.delivery_type === 'domicilio' ? 'A Domicilio' : 'Pasar a Recoger'} · Colonia: <span className="text-gray-200 font-bold">{o.colonia || 'N/A'}</span>
                     </p>
                     {o.address && <p className="text-gray-400">Dirección: {o.address}</p>}
+                    
+                    <div className="pt-1 flex flex-wrap gap-2 text-[11px]">
+                      <span className="bg-white/5 text-gray-300 px-2 py-0.5 rounded font-bold">
+                        💳 Método: {o.payment_method || 'Efectivo'}
+                      </span>
+                      {o.has_terminal && (
+                        <span className="bg-purple-500/10 text-purple-300 border border-purple-500/20 px-2 py-0.5 rounded font-bold">
+                          💳 Llevar Terminal
+                        </span>
+                      )}
+                      {o.cash_needs_change && o.cash_pay_with && (
+                        <span className="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded font-bold">
+                          💵 Cambio para ${o.cash_pay_with}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className="bg-white/5 p-3 rounded-lg space-y-1">
@@ -216,31 +270,48 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
       {/* Modal Administración de Pedido (Uso Interno Propietario) */}
       {editingOrder && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <form onSubmit={handleSaveOrderEdit} className="bg-[#14161F] border border-white/10 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-xs">
+          <form onSubmit={handleSaveOrderEdit} className="bg-[#14161F] border border-white/10 rounded-2xl max-w-lg w-full p-6 space-y-4 shadow-2xl text-xs max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-white/5 pb-3">
               <div>
                 <h3 className="font-black text-white text-base">Administrar Pedido {editingOrder.order_number}</h3>
-                <p className="text-gray-400 text-[11px]">Campos administrativos exclusivos para el restaurante.</p>
+                <p className="text-gray-400 text-[11px]">Campos administrativos para {businessName}.</p>
               </div>
               <button type="button" onClick={() => setEditingOrder(null)} className="text-gray-400 hover:text-white">
                 <X size={18} />
               </button>
             </div>
 
-            <div>
-              <label className="block text-gray-300 font-bold mb-1">Estado del Pedido</label>
-              <select
-                value={editingOrder.status}
-                onChange={e => setEditingOrder({ ...editingOrder, status: e.target.value })}
-                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
-              >
-                <option value="pendiente_envio">Pendiente de Envío ⏳</option>
-                <option value="enviado_wa">Enviado por WhatsApp 📱</option>
-                <option value="en_proceso">En Preparación 🍳</option>
-                <option value="confirmado">Confirmado ✅</option>
-                <option value="entregado">Entregado 🎉</option>
-                <option value="cancelado">Cancelado ❌</option>
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-gray-300 font-bold mb-1">Estado de Entrega</label>
+                <select
+                  value={editingOrder.status}
+                  onChange={e => setEditingOrder({ ...editingOrder, status: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
+                >
+                  <option value="pendiente_envio">Pendiente de Envío ⏳</option>
+                  <option value="enviado_wa">Enviado por WhatsApp 📱</option>
+                  <option value="en_proceso">En Preparación 🍳</option>
+                  <option value="confirmado">Confirmado ✅</option>
+                  <option value="entregado">Entregado 🎉</option>
+                  <option value="cancelado">Cancelado ❌</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-bold mb-1">Estado del Pago</label>
+                <select
+                  value={editingOrder.payment_status || 'pendiente'}
+                  onChange={e => setEditingOrder({ ...editingOrder, payment_status: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
+                >
+                  <option value="pendiente">Pendiente de Pago</option>
+                  <option value="comprobante_pendiente">Comprobante Pendiente ⌛</option>
+                  <option value="comprobante_recibido">Comprobante Recibido 📄</option>
+                  <option value="pagado">Pagado / Confirmado 💵</option>
+                  <option value="rechazado">Pago Rechazado ❌</option>
+                </select>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -271,7 +342,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
                 rows={2}
                 value={editingOrder.comentarios_internos || ''}
                 onChange={e => setEditingOrder({ ...editingOrder, comentarios_internos: e.target.value })}
-                placeholder="Ej. El cliente pidió salsa verde extra por WhatsApp."
+                placeholder="Ej. El cliente pagó por transferencia y adjuntó su comprobante correctamente."
                 className="w-full bg-[#0D0E12] border border-white/10 rounded-xl p-3 text-white"
               />
             </div>

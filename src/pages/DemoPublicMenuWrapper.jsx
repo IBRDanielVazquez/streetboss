@@ -55,7 +55,16 @@ export default function DemoPublicMenuWrapper() {
         costoEnvio: Number(businessData.base_delivery_fee || 30),
         tiempoEntrega: businessData.estimated_delivery_time || '30–40 min'
       },
-      formasPago: { efectivo: true, transferencia: false, tarjeta: false },
+      payment_methods: businessData.payment_methods || {
+        efectivo: { activo: true, preguntar_cambio: true },
+        transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '' },
+        tarjeta: { activo: false, instrucciones: '' }
+      },
+      formasPago: {
+        efectivo: businessData.payment_methods?.efectivo?.activo !== false,
+        transferencia: !!businessData.payment_methods?.transferencia?.activo,
+        tarjeta: !!businessData.payment_methods?.tarjeta?.activo
+      },
     }
 
     return (
@@ -94,7 +103,12 @@ export default function DemoPublicMenuWrapper() {
       costoEnvio: 30,
       tiempoEntrega: '30–40 min'
     },
-    formasPago: { efectivo: true, transferencia: false, tarjeta: false },
+    payment_methods: {
+      efectivo: { activo: true, preguntar_cambio: true },
+      transferencia: { activo: true, titular: 'Taquería El Güero S.A.', banco: 'BBVA Bancomer', clabe: '012180000123456789', numero_cuenta: '1234567890', texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.' },
+      tarjeta: { activo: true, instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El repartidor lleva terminal inalámbrica.' }
+    },
+    formasPago: { efectivo: true, transferencia: true, tarjeta: true },
   }
 
   return (

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { X, CheckCircle, Store, Bike, Search, Send, Clock, AlertCircle } from 'lucide-react'
+import { X, CheckCircle, Store, Bike, Search, Send, Clock, AlertCircle, Copy, Check } from 'lucide-react'
 import { buscarPorCP, verificarCobertura } from '../data/sepomexTuxtla'
 import { recordPublicOrder, updateOrderStatus, normalizeMexicanPhone } from '../services/crmV3Service'
 
@@ -20,15 +20,17 @@ export default function CheckoutDrawer({
   onClearCarrito,
   onUpdateCartItem 
 }) {
-  const [paso, setPaso] = useState(1) // 1: Datos, 2: Entrega, 3: Resumen/Pago
+  const [paso, setPaso] = useState(1) // 1: Entrega, 2: Datos, 3: Pago y Resumen
   const [datosCliente, setDatosCliente] = useState({ 
     nombre: '', 
     whatsapp: '', 
     tipo: 'recoger', 
     formaPago: 'efectivo', 
+    necesitaCambio: 'no', // 'no' | 'si'
+    pagaraCon: '',
     cp: '',
-    estado: '',
-    municipio: '',
+    estado: 'Chiapas',
+    municipio: 'Tuxtla Gutiérrez',
     colonia: '',
     calle: '',
     numero: '',
@@ -40,9 +42,9 @@ export default function CheckoutDrawer({
   const [promoConsent, setPromoConsent] = useState(false)
   const [pedidoConfirmado, setPedidoConfirmado] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [copiedClabe, setCopiedClabe] = useState(false)
   // SEPOMEX & Zonas
   const [coloniasDisponibles, setColoniasDisponibles] = useState([])
-  const [buscandoCP, setBuscandoCP] = useState(false)
   const [cobertura, setCobertura] = useState({ cubierto: true, precioEnvio: 0 })
 
   // Zonas configuradas por el propietario
@@ -50,16 +52,20 @@ export default function CheckoutDrawer({
     return (config.envio?.zonas || []).filter(z => z.is_active !== false)
   }, [config.envio?.zonas])
 
-  // Autocompletar con SEPOMEX o Zonas configuradas
+  // Métodos de pago del negocio
+  const paymentMethodsConfig = useMemo(() => {
+    return config.payment_methods || {
+      efectivo: { activo: config.formasPago?.efectivo !== false, preguntar_cambio: true },
+      transferencia: { activo: !!config.formasPago?.transferencia, titular: '', banco: '', clabe: '', numero_cuenta: '' },
+      tarjeta: { activo: !!config.formasPago?.tarjeta, instrucciones: 'Llevamos terminal física al momento de la entrega.' }
+    }
+  }, [config.payment_methods, config.formasPago])
+
+  // Cargar colonias disponibles (sin exigir CP inicial)
   useEffect(() => {
     if (zonasConfiguradas.length > 0) {
-      // Si el restaurante tiene zonas configuradas, las colonias disponibles provienen EXCLUSIVAMENTE de sus zonas
-      let zonasFiltradas = zonasConfiguradas
-      if (datosCliente.cp.length === 5) {
-        const cpFiltradas = zonasConfiguradas.filter(z => String(z.postal_code || z.cp || '').trim() === datosCliente.cp.trim())
-        if (cpFiltradas.length > 0) zonasFiltradas = cpFiltradas
-      }
-      const coloniasZonas = Array.from(new Set(zonasFiltradas.map(z => z.settlement_name || z.colonia).filter(Boolean)))
+      // Usar estrictamente las colonias configuradas por el restaurante
+      const coloniasZonas = Array.from(new Set(zonasConfiguradas.map(z => z.settlement_name || z.colonia).filter(Boolean)))
       setColoniasDisponibles(coloniasZonas)
 
       if (coloniasZonas.length > 0 && (!datosCliente.colonia || !coloniasZonas.includes(datosCliente.colonia))) {
@@ -73,44 +79,27 @@ export default function CheckoutDrawer({
           municipio: 'Tuxtla Gutiérrez'
         }))
       }
-      return
     }
-
-    if (datosCliente.cp.length !== 5) {
-      setColoniasDisponibles([])
-      setDatosCliente(d => ({ ...d, estado: '', municipio: '', colonia: '' }))
-      setCobertura({ cubierto: true, precioEnvio: 0 })
-      return
-    }
-    setBuscandoCP(true)
-    buscarPorCP(datosCliente.cp).then(resultado => {
-      if (resultado && resultado.length > 0) {
-        const coloniasFiltradas = resultado.map(item => item.colonia)
-        setColoniasDisponibles(coloniasFiltradas)
-        const colInicial = coloniasFiltradas[0] || ''
-        setDatosCliente(d => ({ ...d, estado: resultado[0]?.estado || 'Chiapas', municipio: resultado[0]?.municipio || 'Tuxtla Gutiérrez', colonia: colInicial }))
-        
-        const zonas = config.envio?.zonas || []
-        const cob = verificarCobertura(datosCliente.cp, colInicial, zonas)
-        setCobertura(cob)
-      } else {
-        setColoniasDisponibles([])
-        setDatosCliente(d => ({ ...d, estado: 'CP no encontrado', municipio: '', colonia: '' }))
-      }
-      setBuscandoCP(false)
-    })
-  }, [datosCliente.cp, zonasConfiguradas])
+  }, [zonasConfiguradas])
 
   // Revalidar cobertura al cambiar colonia
   useEffect(() => {
     const zonas = config.envio?.zonas || []
-    if (datosCliente.cp.length === 5 || zonas.length > 0) {
+    if (datosCliente.colonia || zonas.length > 0) {
       const cob = verificarCobertura(datosCliente.cp, datosCliente.colonia, zonas)
       setCobertura(cob)
     } else {
       setCobertura({ cubierto: true, precioEnvio: 0 })
     }
   }, [datosCliente.colonia, datosCliente.cp])
+
+  // Ajustar formaPago por defecto si la seleccionada no está activa
+  useEffect(() => {
+    if (datosCliente.formaPago === 'efectivo' && paymentMethodsConfig.efectivo?.activo === false) {
+      if (paymentMethodsConfig.transferencia?.activo) setDatosCliente(d => ({ ...d, formaPago: 'transferencia' }))
+      else if (paymentMethodsConfig.tarjeta?.activo) setDatosCliente(d => ({ ...d, formaPago: 'tarjeta' }))
+    }
+  }, [paymentMethodsConfig, datosCliente.formaPago])
 
   // Cálculos O(1) usando el diccionario memoizado
   const { subtotal, itemsCarrito } = useMemo(() => {
@@ -126,11 +115,17 @@ export default function CheckoutDrawer({
     return { subtotal: sub, itemsCarrito: items }
   }, [carrito, productosPorId])
 
-  // Si hay zonas configuradas, usar el precio de cobertura; si no, usar el costo fijo del config
   const costoEnvio = datosCliente.tipo === 'llevar'
     ? (cobertura.precioEnvio || config.envio?.costoEnvio || 0)
     : 0
   const total = subtotal + costoEnvio
+
+  const handleCopyClabe = (clabeText) => {
+    if (!clabeText) return
+    navigator.clipboard.writeText(clabeText)
+    setCopiedClabe(true)
+    setTimeout(() => setCopiedClabe(false), 2500)
+  }
 
   const enviarPedido = async () => {
     if (isSubmitting) return
@@ -139,31 +134,29 @@ export default function CheckoutDrawer({
 
     if (datosCliente.tipo === 'llevar') {
       if (!datosCliente.calle.trim() || !datosCliente.numero.trim() || !datosCliente.colonia.trim()) {
-        return alert('Por favor ingresa tu calle, número y colonia para la entrega.')
+        return alert('Por favor ingresa tu colonia, calle y número para la entrega.')
       }
     }
 
     setIsSubmitting(true)
     const folio = generarFolio()
     const esLlevar = datosCliente.tipo === 'llevar'
+    const nowFormatted = new Date().toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' })
 
     let msg = `🍔 *NUEVO PEDIDO: ${config.negocio || 'StreetBoss'}*\n`
-    msg += `📋 *Folio:* ${folio}\n\n`
+    msg += `📋 *Folio:* ${folio}\n`
+    msg += `📅 *Fecha:* ${nowFormatted}\n\n`
     msg += `*CLIENTE:*\n👤 ${datosCliente.nombre.trim()}\n📱 ${datosCliente.whatsapp.trim()}\n\n`
     
     if (esLlevar) {
       msg += `*ENTREGA:* 🛵 Envío a Domicilio\n`
-      msg += `📍 ${datosCliente.calle.trim()} #${datosCliente.numero.trim()}`
+      msg += `📍 Colonia ${datosCliente.colonia.trim()}, ${datosCliente.calle.trim()} #${datosCliente.numero.trim()}`
       if (datosCliente.interior) msg += `, Int ${datosCliente.interior.trim()}`
       msg += `.\n`
-      if (datosCliente.colonia) msg += `Colonia ${datosCliente.colonia.trim()}`
-      if (datosCliente.cp) msg += `, CP ${datosCliente.cp}`
-      msg += `.\n`
-      
       if (datosCliente.entreCalles) msg += `🛣 *Entre:* ${datosCliente.entreCalles.trim()}\n`
       if (datosCliente.referencias) msg += `🔍 *Referencia:* ${datosCliente.referencias.trim()}\n`
     } else {
-      msg += `*ENTREGA:* 🏪 Pasar a Recoger\n`
+      msg += `*ENTREGA:* 🏪 Pasar a Recoger en Local\n`
     }
 
     msg += `\n*PEDIDO:*\n`
@@ -175,15 +168,34 @@ export default function CheckoutDrawer({
 
     msg += `\n*RESUMEN:*\n💰 Subtotal: $${subtotal}\n`
     if (esLlevar) msg += `🛵 Envío: $${costoEnvio === 0 ? 'GRATIS' : `$${costoEnvio}`}\n`
-    msg += `✅ *TOTAL: $${total}*\n`
+    msg += `✅ *TOTAL: $${total}*\n\n`
     
-    const pagoL = datosCliente.formaPago === 'efectivo' ? 'Efectivo (Paga al recibir)' : 
-                 datosCliente.formaPago === 'tarjeta' ? 'Tarjeta (Paga con terminal)' : 'Transferencia'
-    msg += `💵 Pago: ${pagoL}\n`
-    
-    if (datosCliente.formaPago === 'transferencia') msg += `\n📎 Adjunto comprobante de pago.`
+    if (datosCliente.formaPago === 'efectivo') {
+      msg += `💵 *MÉTODOS DE PAGO:* Efectivo\n`
+      if (datosCliente.necesitaCambio === 'si' && datosCliente.pagaraCon) {
+        const pagaraMonto = Number(datosCliente.pagaraCon)
+        const cambioCalculado = pagaraMonto > total ? (pagaraMonto - total) : 0
+        msg += `💵 *Pagaré con:* $${pagaraMonto} (Cambio estimado: $${cambioCalculado})\n`
+      } else {
+        msg += `💵 *Pago:* Cantidad exacta (Sin cambio)\n`
+      }
+    } else if (datosCliente.formaPago === 'transferencia') {
+      const bankInfo = paymentMethodsConfig.transferencia
+      msg += `📲 *MÉTODOS DE PAGO:* Transferencia bancaria\n`
+      if (bankInfo?.banco || bankInfo?.clabe) {
+        msg += `🏦 Banco: ${bankInfo.banco || 'N/A'} | CLABE: ${bankInfo.clabe || 'N/A'}\n`
+      }
+      msg += `📌 *Comprobante:* El cliente adjuntará el comprobante de transferencia en WhatsApp.\n`
+    } else if (datosCliente.formaPago === 'tarjeta') {
+      msg += `💳 *MÉTODOS DE PAGO:* Tarjeta al recibir\n`
+      msg += `💳 *Llevar terminal:* Sí\n`
+    }
 
-    // 1. GUARDAR PEDIDO Y CLIENTE EN BD ANTES DE ABRIR WHATSAPP (ESTADO PENDIENTE_ENVIO)
+    if (datosCliente.formaPago === 'transferencia') {
+      msg += `\n📎 Adjunto comprobante de transferencia.`
+    }
+
+    // 1. GUARDAR PEDIDO Y CLIENTE EN BD ANTES DE ABRIR WHATSAPP
     let savedOrderResult = null
     try {
       savedOrderResult = recordPublicOrder({
@@ -200,6 +212,10 @@ export default function CheckoutDrawer({
         delivery_fee: costoEnvio,
         total,
         delivery_type: datosCliente.tipo,
+        payment_method: datosCliente.formaPago,
+        cash_needs_change: datosCliente.necesitaCambio === 'si',
+        cash_pay_with: datosCliente.pagaraCon,
+        has_terminal: datosCliente.formaPago === 'tarjeta',
         promo_consent: promoConsent,
         whatsapp_message: msg,
         status: 'pendiente_envio',
@@ -306,8 +322,8 @@ export default function CheckoutDrawer({
                 setPaso(1);
                 setDatosCliente({ 
                   nombre: '', whatsapp: '', tipo: 'recoger', formaPago: 'efectivo', 
-                  cp: '', estado: '', municipio: '', colonia: '', calle: '', numero: '', 
-                  interior: '', entreCalles: '', referencias: '', observaciones: '' 
+                  necesitaCambio: 'no', pagaraCon: '', cp: '', estado: 'Chiapas', municipio: 'Tuxtla Gutiérrez', 
+                  colonia: '', calle: '', numero: '', interior: '', entreCalles: '', referencias: '', observaciones: '' 
                 });
                 onClose(); 
               }} 
@@ -344,39 +360,8 @@ export default function CheckoutDrawer({
         {/* CONTENT */}
         <div className="flex-1 overflow-y-auto p-6 bg-gray-50/50">
           
+          {/* PASO 1: TIPO DE ENTREGA Y SELECCIÓN DE COLONIA */}
           {paso === 1 && (
-            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-              <div>
-                <h4 className="font-bold text-gray-900 text-lg mb-1">Tus datos</h4>
-                <p className="text-sm text-gray-500 mb-4">Ingresa tu información de contacto</p>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Nombre Completo *</label>
-                    <input 
-                      type="text" 
-                      value={datosCliente.nombre} 
-                      onChange={e=>setDatosCliente(d=>({...d, nombre: e.target.value}))} 
-                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-sm" 
-                      placeholder="Ej. Juan Pérez" 
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">WhatsApp (10 dígitos) *</label>
-                    <input 
-                      type="tel" 
-                      maxLength={10}
-                      value={datosCliente.whatsapp} 
-                      onChange={e=>setDatosCliente(d=>({...d, whatsapp: e.target.value.replace(/\D/g,'')}))} 
-                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-sm" 
-                      placeholder="Ej. 9611234567" 
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {paso === 2 && (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
               <div>
                 <h4 className="font-bold text-gray-900 text-lg mb-1">Método de entrega</h4>
@@ -396,104 +381,83 @@ export default function CheckoutDrawer({
 
                 {datosCliente.tipo === 'llevar' && (
                   <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                    <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-2xl text-sm text-blue-800 flex items-start gap-3">
+                    <div className="bg-blue-50/50 border border-blue-100 p-4 rounded-2xl text-xs text-blue-800 flex items-start gap-2.5">
                       <span className="mt-0.5">ℹ️</span>
-                      <p className="leading-relaxed">Ingresa tu Código Postal para autocompletar tu ubicación y agilizar la entrega.</p>
+                      <p className="leading-relaxed">Selecciona tu colonia para calcular automáticamente la cobertura y costo de envío.</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="col-span-2 sm:col-span-1">
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Código Postal *</label>
-                        <div className="relative">
-                          <input type="text" maxLength={5} value={datosCliente.cp} onChange={e=>setDatosCliente(d=>({...d, cp: e.target.value.replace(/\D/g,'')}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Ej. 29000" />
-                          <Search size={16} className={`absolute left-3.5 top-3.5 ${buscandoCP ? 'text-orange-500 animate-spin' : 'text-gray-400'}`} />
-                        </div>
-                      </div>
-                      <div className="col-span-2 sm:col-span-1">
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Estado</label>
-                        <input type="text" value={datosCliente.estado} readOnly className="w-full bg-gray-100 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 outline-none" placeholder="Automático" />
-                      </div>
-                      <p className="leading-relaxed">Selecciona tu colonia para calcular el costo de envío.</p>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Colonia de entrega *</label>
+                      {coloniasDisponibles.length > 0 ? (
+                        <select
+                          value={datosCliente.colonia}
+                          onChange={e => {
+                            const colSel = e.target.value
+                            const zFound = zonasConfiguradas.find(z => (z.settlement_name || z.colonia) === colSel)
+                            setDatosCliente(d => ({
+                              ...d,
+                              colonia: colSel,
+                              cp: zFound?.postal_code || zFound?.cp || d.cp
+                            }))
+                          }}
+                          className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-orange-500 shadow-sm"
+                        >
+                          <option value="">-- Selecciona tu colonia --</option>
+                          {coloniasDisponibles.map(col => (
+                            <option key={col} value={col} className="bg-white text-gray-900 font-medium">{col}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          value={datosCliente.colonia}
+                          onChange={e => setDatosCliente(d => ({ ...d, colonia: e.target.value }))}
+                          className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-orange-500 shadow-sm"
+                          placeholder="Tu colonia"
+                        />
+                      )}
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Municipio</label>
-                        <input type="text" value={datosCliente.municipio} readOnly className="w-full bg-gray-100 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold text-gray-700 outline-none" placeholder="Automático" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Colonia *</label>
-                        {zonasConfiguradas.length > 0 ? (
-                          <select
-                            value={datosCliente.colonia}
-                            onChange={e => {
-                              const colSel = e.target.value
-                              const zFound = zonasConfiguradas.find(z => (z.settlement_name || z.colonia) === colSel)
-                              setDatosCliente(d => ({
-                                ...d,
-                                colonia: colSel,
-                                cp: zFound?.postal_code || zFound?.cp || d.cp,
-                                estado: 'Chiapas',
-                                municipio: 'Tuxtla Gutiérrez'
-                              }))
-                            }}
-                            className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-orange-500 shadow-sm"
-                          >
-                            <option value="">-- Selecciona tu colonia --</option>
-                            {coloniasDisponibles.map(col => (
-                              <option key={col} value={col} className="bg-white text-gray-900 font-medium">{col}</option>
-                            ))}
-                          </select>
-                        ) : coloniasDisponibles.length > 0 ? (
-                          <select
-                            value={datosCliente.colonia}
-                            onChange={e => setDatosCliente(d => ({ ...d, colonia: e.target.value }))}
-                            className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none focus:border-orange-500 shadow-sm"
-                          >
-                            <option value="">-- Selecciona tu colonia --</option>
-                            {coloniasDisponibles.map(col => (
-                              <option key={col} value={col} className="bg-white text-gray-900 font-medium">{col}</option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input type="text" value={datosCliente.colonia} onChange={e=>setDatosCliente(d=>({...d, colonia: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Tu colonia" />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Mensaje de cobertura */}
+                    {/* Mensaje de cobertura y tarifa */}
                     {datosCliente.colonia && config.envio?.zonas?.length > 0 && (
-                      <div className={`rounded-xl px-4 py-3 text-sm font-bold flex items-center gap-2 ${
+                      <div className={`rounded-xl px-4 py-3 text-xs font-bold flex items-center gap-2 ${
                         cobertura.cubierto
                           ? 'bg-green-50 text-green-700 border border-green-200'
                           : 'bg-red-50 text-red-700 border border-red-200'
                       }`}>
                         {cobertura.cubierto ? (
-                          <><span>✅</span> Entregamos en tu zona · <span className="font-black">${cobertura.precioEnvio} de envío</span></>
+                          <><span>✅</span> Cobertura disponible · <span className="font-black">${cobertura.precioEnvio === 0 ? 'GRATIS' : `$${cobertura.precioEnvio} de envío`}</span></>
                         ) : (
                           <><span>❌</span> Este negocio todavía no tiene reparto disponible en tu colonia.</>
                         )}
                       </div>
                     )}
 
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="col-span-3 sm:col-span-1">
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="col-span-2">
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Calle *</label>
-                        <input type="text" value={datosCliente.calle} onChange={e=>setDatosCliente(d=>({...d, calle: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Nombre de calle" />
+                        <input type="text" value={datosCliente.calle} onChange={e=>setDatosCliente(d=>({...d, calle: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Ej. Av. Central Norte" />
                       </div>
-                      <div className="col-span-1 sm:col-span-1">
+                      <div>
                         <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">No. Ext *</label>
                         <input type="text" value={datosCliente.numero} onChange={e=>setDatosCliente(d=>({...d, numero: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Ej. 123" />
                       </div>
-                      <div className="col-span-2 sm:col-span-1">
-                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Interior (Opc)</label>
-                        <input type="text" value={datosCliente.interior} onChange={e=>setDatosCliente(d=>({...d, interior: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Depto / Local" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Interior (Opcional)</label>
+                        <input type="text" value={datosCliente.interior} onChange={e=>setDatosCliente(d=>({...d, interior: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Depto / Int 2" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Código Postal (Opcional)</label>
+                        <input type="text" maxLength={5} value={datosCliente.cp} onChange={e=>setDatosCliente(d=>({...d, cp: e.target.value.replace(/\D/g,'')}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm" placeholder="Ej. 29000" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Entre calles y Referencias visuales (Opcional)</label>
-                      <textarea rows={2} value={datosCliente.referencias} onChange={e=>setDatosCliente(d=>({...d, referencias: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm resize-none" placeholder="Ej. Entre Av. Central y 1ra Sur. Portón negro frente al parque." />
+                      <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Entre calles y Referencias (Opcional)</label>
+                      <textarea rows={2} value={datosCliente.referencias} onChange={e=>setDatosCliente(d=>({...d, referencias: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm resize-none" placeholder="Ej. Entre 1ra y 2da Norte. Portón azul junto a la farmacia." />
                     </div>
                   </div>
                 )}
@@ -501,12 +465,190 @@ export default function CheckoutDrawer({
             </div>
           )}
 
+          {/* PASO 2: DATOS DEL CLIENTE */}
+          {paso === 2 && (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div>
+                <h4 className="font-bold text-gray-900 text-lg mb-1">Tus datos de contacto</h4>
+                <p className="text-sm text-gray-500 mb-4">Ingresa quién recibe el pedido</p>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Nombre Completo *</label>
+                    <input 
+                      type="text" 
+                      value={datosCliente.nombre} 
+                      onChange={e=>setDatosCliente(d=>({...d, nombre: e.target.value}))} 
+                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-sm" 
+                      placeholder="Ej. Juan Pérez" 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Número de WhatsApp (10 dígitos) *</label>
+                    <input 
+                      type="tel" 
+                      maxLength={10}
+                      value={datosCliente.whatsapp} 
+                      onChange={e=>setDatosCliente(d=>({...d, whatsapp: e.target.value.replace(/\D/g,'')}))} 
+                      className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-sm font-mono" 
+                      placeholder="Ej. 9611234567" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* PASO 3: MÉTODOS DE PAGO & RESUMEN & DETALLES */}
           {paso === 3 && (
             <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
               <div>
-                <h4 className="font-bold text-gray-900 text-lg mb-1">Resumen del pedido</h4>
-                <p className="text-sm text-gray-500 mb-4">Confirma los detalles de tu compra</p>
+                <h4 className="font-bold text-gray-900 text-lg mb-1">Método de pago</h4>
+                <p className="text-sm text-gray-500 mb-4">Selecciona cómo vas a pagar</p>
 
+                <div className="grid grid-cols-1 gap-2 mb-6">
+                  {/* Opción 1: EFECTIVO */}
+                  {paymentMethodsConfig.efectivo?.activo !== false && (
+                    <div className="space-y-2">
+                      <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'efectivo' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <input type="radio" name="pago" checked={datosCliente.formaPago === 'efectivo'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'efectivo'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm">💵 Efectivo</p>
+                          <p className="text-xs text-gray-500">Pagas al recibir o recoger tu pedido</p>
+                        </div>
+                      </label>
+
+                      {datosCliente.formaPago === 'efectivo' && paymentMethodsConfig.efectivo?.preguntar_cambio !== false && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-3 text-xs animate-in fade-in">
+                          <label className="block font-bold text-gray-800">¿Necesitas cambio?</label>
+                          <div className="flex gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="cambio"
+                                checked={datosCliente.necesitaCambio === 'no'}
+                                onChange={() => setDatosCliente(d => ({ ...d, necesitaCambio: 'no', pagaraCon: '' }))}
+                                className="text-orange-600"
+                              />
+                              <span className="text-gray-700 font-medium">No, pago exacto</span>
+                            </label>
+
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                name="cambio"
+                                checked={datosCliente.necesitaCambio === 'si'}
+                                onChange={() => setDatosCliente(d => ({ ...d, necesitaCambio: 'si' }))}
+                                className="text-orange-600"
+                              />
+                              <span className="text-gray-700 font-medium">Sí, necesito cambio</span>
+                            </label>
+                          </div>
+
+                          {datosCliente.necesitaCambio === 'si' && (
+                            <div>
+                              <label className="block text-gray-600 font-bold mb-1">¿Con cuánto vas a pagar? ($ MXN)</label>
+                              <input
+                                type="number"
+                                placeholder={`Ej. ${Math.ceil(total / 100) * 100 || 500}`}
+                                value={datosCliente.pagaraCon}
+                                onChange={e => setDatosCliente(d => ({ ...d, pagaraCon: e.target.value }))}
+                                className="w-full bg-white border border-gray-300 rounded-xl px-3 py-2 text-sm font-bold font-mono text-emerald-600"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Opción 2: TRANSFERENCIA BANCARIA */}
+                  {paymentMethodsConfig.transferencia?.activo && (
+                    <div className="space-y-2">
+                      <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'transferencia' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <input type="radio" name="pago" checked={datosCliente.formaPago === 'transferencia'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'transferencia'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm">📲 Transferencia Bancaria</p>
+                          <p className="text-xs text-gray-500">Datos bancarios listos para copiar</p>
+                        </div>
+                      </label>
+
+                      {datosCliente.formaPago === 'transferencia' && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-3 text-xs animate-in fade-in">
+                          <p className="font-bold text-gray-800">Datos para transferencia:</p>
+                          
+                          {paymentMethodsConfig.transferencia.banco && (
+                            <p className="text-gray-600">Banco: <span className="font-bold text-gray-900">{paymentMethodsConfig.transferencia.banco}</span></p>
+                          )}
+                          {paymentMethodsConfig.transferencia.titular && (
+                            <p className="text-gray-600">Titular: <span className="font-bold text-gray-900">{paymentMethodsConfig.transferencia.titular}</span></p>
+                          )}
+
+                          {paymentMethodsConfig.transferencia.clabe && (
+                            <div className="flex justify-between items-center bg-gray-50 p-2.5 rounded-lg border border-gray-200 font-mono">
+                              <div>
+                                <span className="text-[10px] text-gray-400 block uppercase font-sans font-bold">CLABE Interbancaria</span>
+                                <span className="font-bold text-gray-900 text-xs">{paymentMethodsConfig.transferencia.clabe}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyClabe(paymentMethodsConfig.transferencia.clabe)}
+                                className="flex items-center gap-1 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-3 py-1.5 rounded-lg font-sans font-bold text-xs shadow-sm"
+                              >
+                                {copiedClabe ? <Check size={14} /> : <Copy size={14} />} {copiedClabe ? '¡Copiada!' : 'COPIAR'}
+                              </button>
+                            </div>
+                          )}
+
+                          <div className="bg-amber-50 border border-amber-200 p-3 rounded-xl text-amber-800 text-[11px]">
+                            <p className="font-bold">⚠️ Aviso Importante:</p>
+                            <p className="mt-0.5">{paymentMethodsConfig.transferencia.texto_solicitar_comprobante || 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.'}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Opción 3: TARJETA AL RECIBIR */}
+                  {paymentMethodsConfig.tarjeta?.activo && (
+                    <div className="space-y-2">
+                      <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'tarjeta' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <input type="radio" name="pago" checked={datosCliente.formaPago === 'tarjeta'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'tarjeta'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm">💳 Tarjeta / Terminal al recibir</p>
+                          <p className="text-xs text-gray-500">El repartidor o cajero llevará terminal física</p>
+                        </div>
+                      </label>
+
+                      {datosCliente.formaPago === 'tarjeta' && (
+                        <div className="bg-white p-4 rounded-xl border border-gray-200 space-y-1.5 text-xs text-gray-700 animate-in fade-in">
+                          <p className="font-bold text-gray-900">💳 Pago con tarjeta al recibir:</p>
+                          <p className="text-gray-600">{paymentMethodsConfig.tarjeta.instrucciones || 'Se aceptan tarjetas de crédito y débito. El pago se realiza al momento de la entrega.'}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Casilla de Consentimiento Promocional Opcional */}
+                  <div className="mt-4 p-3 bg-[#FAFAFA] border border-gray-200 rounded-xl">
+                    <label className="flex items-start gap-2.5 cursor-pointer text-xs text-gray-700 font-medium">
+                      <input
+                        type="checkbox"
+                        checked={promoConsent}
+                        onChange={e => setPromoConsent(e.target.checked)}
+                        className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-0"
+                      />
+                      <span>Quiero recibir promociones y novedades de este negocio por WhatsApp.</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Observaciones o Instrucciones Especiales (Opcional)</label>
+                  <textarea rows={2} value={datosCliente.observaciones} onChange={e=>setDatosCliente(d=>({...d, observaciones: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm resize-none" placeholder="Ej. Sin cebolla, extra picante, timbre no funciona..." />
+                </div>
+
+                {/* Resumen Final de Productos */}
+                <h5 className="font-bold text-gray-900 text-sm mb-2">Resumen final del pedido</h5>
                 <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-4 mb-6 shadow-sm">
                   <div className="space-y-2">
                     {itemsCarrito.map(item => (
@@ -532,59 +674,10 @@ export default function CheckoutDrawer({
                       </div>
                     )}
                     <div className="flex justify-between font-black text-lg text-gray-900 pt-2">
-                      <span>Total</span>
+                      <span>Total a pagar</span>
                       <span style={{ color: config.colorMarca || '#ff4b16' }}>${total}</span>
                     </div>
                   </div>
-                </div>
-
-                <div className="mb-6">
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5 ml-1">Observaciones (Opcional)</label>
-                  <textarea rows={2} value={datosCliente.observaciones} onChange={e=>setDatosCliente(d=>({...d, observaciones: e.target.value}))} className="w-full bg-white text-gray-900 border border-gray-300 rounded-xl px-4 py-3 text-sm font-semibold outline-none placeholder-gray-400 focus:border-orange-500 shadow-sm resize-none" placeholder="Ej. Sin cebolla, extra picante..." />
-                </div>
-
-                <h5 className="font-bold text-gray-900 text-sm mb-3">Método de pago</h5>
-                <div className="grid grid-cols-1 gap-2">
-                  {config.formasPago?.efectivo !== false && (
-                    <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'efectivo' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                      <input type="radio" name="pago" checked={datosCliente.formaPago === 'efectivo'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'efectivo'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
-                      <div>
-                        <p className="font-bold text-gray-900 text-sm">💵 Efectivo</p>
-                        <p className="text-xs text-gray-500">Pagas al recibir tu pedido</p>
-                      </div>
-                    </label>
-                  )}
-                  {config.formasPago?.transferencia && (
-                    <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'transferencia' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                      <input type="radio" name="pago" checked={datosCliente.formaPago === 'transferencia'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'transferencia'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
-                      <div>
-                        <p className="font-bold text-gray-900 text-sm">📲 Transferencia</p>
-                        <p className="text-xs text-gray-500">Se te enviarán los datos por WhatsApp</p>
-                      </div>
-                    </label>
-                  )}
-                  {config.formasPago?.tarjeta && (
-                    <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'tarjeta' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                      <input type="radio" name="pago" checked={datosCliente.formaPago === 'tarjeta'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'tarjeta'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
-                      <div>
-                        <p className="font-bold text-gray-900 text-sm">💳 Tarjeta / Terminal</p>
-                        <p className="text-xs text-gray-500">El repartidor llevará terminal</p>
-                      </div>
-                    </label>
-                  )}
-
-                {/* Casilla de Consentimiento Promocional Opcional */}
-                <div className="mt-4 p-3 bg-[#FAFAFA] border border-gray-200 rounded-xl">
-                  <label className="flex items-start gap-2.5 cursor-pointer text-xs text-gray-700 font-medium">
-                    <input
-                      type="checkbox"
-                      checked={promoConsent}
-                      onChange={e => setPromoConsent(e.target.checked)}
-                      className="mt-0.5 rounded border-gray-300 text-orange-600 focus:ring-0"
-                    />
-                    <span>Quiero recibir promociones y novedades de este negocio por WhatsApp.</span>
-                  </label>
-                </div>
                 </div>
               </div>
             </div>
@@ -602,16 +695,16 @@ export default function CheckoutDrawer({
           {paso < 3 ? (
             <button 
               onClick={() => {
-                if(paso === 1 && (!datosCliente.nombre.trim() || datosCliente.whatsapp.length < 10)) {
-                  return alert('Revisa que tu nombre y WhatsApp (10 dígitos) estén completos.')
-                }
-                if(paso === 2 && datosCliente.tipo === 'llevar') {
-                  if (!datosCliente.calle.trim() || !datosCliente.numero.trim() || !datosCliente.colonia.trim()) {
-                    return alert('Revisa que la Colonia, Calle y Número estén completos para poder enviar tu pedido.')
+                if(paso === 1 && datosCliente.tipo === 'llevar') {
+                  if (!datosCliente.colonia.trim() || !datosCliente.calle.trim() || !datosCliente.numero.trim()) {
+                    return alert('Por favor completa tu Colonia, Calle y Número de casa.')
                   }
                   if (config.envio?.zonas?.length > 0 && !cobertura.cubierto) {
                     return alert('Este negocio todavía no tiene reparto disponible en tu colonia.')
                   }
+                }
+                if(paso === 2 && (!datosCliente.nombre.trim() || datosCliente.whatsapp.length < 10)) {
+                  return alert('Revisa que tu nombre y WhatsApp (10 dígitos) estén completos.')
                 }
                 setPaso(p => p + 1)
               }} 
