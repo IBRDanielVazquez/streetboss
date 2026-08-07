@@ -3,7 +3,7 @@
   "short_name": "StreetBoss",
   "description": "Menú digital para vender directo por WhatsApp sin comisiones",
   "start_url": "./",
-  "display": "standalone",
+  "display": "browser",
   "orientation": "portrait",
   "background_color": "#111111",
   "theme_color": "#ff4b16",

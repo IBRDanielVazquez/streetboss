@@ -104,11 +104,9 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
 
 Estuve revisando su perfil y preparé una demostración de cómo podría verse su negocio utilizando StreetBoss.
 
-Por el giro de su negocio seleccioné este ejemplo:
+👉 https://www.facebook.com/share/r/1K4Myg9LrS/?mibextid=wwXIfr
 
-👉 ${demoLinkEspecifico}
-
-También pueden conocer otras opciones y estilos disponibles aquí:
+¡Tenemos más demos! También pueden conocer otras opciones y estilos disponibles aquí:
 
 👉 ${linkGeneralDemos}
 
