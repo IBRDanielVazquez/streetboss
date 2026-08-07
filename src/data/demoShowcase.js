@@ -11,9 +11,9 @@ export const DEMOS_OFICIALES = [
     id: 'tacos-el-guero', clave: 'guero', nombre: 'Tacos El Güero', emoji: '🌮', giro: 'Taquería',
     menu: [
       cat('guero-c1', '🌮 Tacos', [
-        prod('guero-p1', 'Taco de pastor', 20, 'Con piña, cilantro y cebolla'),
-        prod('guero-p2', 'Taco de suadero', 20, 'Suadero suave con salsa verde'),
-        prod('guero-p3', 'Taco de bistec', 22, 'Bistec a la plancha'),
+        prod('guero-p1', 'Taco de pastor', 20, 'Con piña, cilantro y cebolla', '/demos/tacos-el-guero/products/taco-al-pastor.jpg'),
+        prod('guero-p2', 'Taco de suadero', 20, 'Suadero suave con salsa verde', '/demos/tacos-el-guero/products/taco-suadero.jpg'),
+        prod('guero-p3', 'Taco de bistec', 22, 'Bistec a la plancha', '/demos/tacos-el-guero/products/taco-bistec.jpg'),
         prod('guero-p4', 'Taco campechano', 24, 'Bistec con longaniza'),
       ]),
       cat('guero-c2', '🫓 Especiales', [
