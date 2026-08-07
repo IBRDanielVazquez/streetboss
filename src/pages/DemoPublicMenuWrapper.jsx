@@ -51,9 +51,46 @@ export default function DemoPublicMenuWrapper() {
     })
     return () => unsubscribe()
   }, [trialId])
-  
+
   // 1. Intentar cargar desde el motor multi-tenant (V3)
   const businessData = getBusinessBySlug(trialId)
+  
+  // 2. Fallback a demos oficiales estáticos
+  const demoFallback = DEMO_SHOWCASE.find(
+    d => d.id === trialId || d.clave === trialId || trialId?.startsWith(d.id) || trialId?.includes(d.clave)
+  ) || DEMO_SHOWCASE[0]
+
+  const activeName = businessData?.name || demoFallback?.nombre || demoFallback?.name || 'Menú Digital'
+  const activeDetails = resolveDemoDetails(businessData?.slug || businessData?.business_id || demoFallback?.id, activeName)
+  const activeLogo = (businessData?.logo_url && !businessData.logo_url.includes('SB_FAVICON')) 
+    ? businessData.logo_url 
+    : (demoFallback?.logo_url || activeDetails.logo)
+
+  useEffect(() => {
+    document.title = `${activeName} — Menú Digital`
+
+    const setMetaTag = (selector, attrName, attrVal, content) => {
+      let meta = document.querySelector(selector)
+      if (!meta) {
+        meta = document.createElement('meta')
+        meta.setAttribute(attrName, attrVal)
+        document.head.appendChild(meta)
+      }
+      meta.setAttribute('content', content)
+    }
+
+    const fullLogoUrl = activeLogo.startsWith('http') 
+      ? activeLogo 
+      : `${window.location.origin}${activeLogo.startsWith('/') ? '' : '/'}${activeLogo}`
+    const desc = businessData?.main_message || businessData?.description || `${activeDetails.foodType}. Haz tu pedido al instante por WhatsApp sin comisiones.`
+
+    setMetaTag('meta[property="og:title"]', 'property', 'og:title', `${activeName} — Menú Digital`)
+    setMetaTag('meta[property="og:description"]', 'property', 'og:description', desc)
+    setMetaTag('meta[property="og:image"]', 'property', 'og:image', fullLogoUrl)
+    setMetaTag('meta[name="twitter:title"]', 'name', 'twitter:title', `${activeName} — Menú Digital`)
+    setMetaTag('meta[name="twitter:description"]', 'name', 'twitter:description', desc)
+    setMetaTag('meta[name="twitter:image"]', 'name', 'twitter:image', fullLogoUrl)
+  }, [activeName, activeLogo, trialId, refreshTick])
   
   if (businessData) {
     const details = resolveDemoDetails(businessData.slug || businessData.business_id, businessData.name)

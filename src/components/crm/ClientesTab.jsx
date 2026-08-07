@@ -597,16 +597,37 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
           <div className="bg-[#14161F] border border-red-500/30 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-black text-red-400 flex items-center gap-2">
-                <Trash2 size={20} /> Eliminar Cliente
+                <Trash2 size={20} /> Eliminar Cliente B2B
               </h3>
               <button onClick={() => setDeleteModal(null)} className="p-1 text-gray-400 hover:text-white"><X size={18}/></button>
             </div>
 
             <p className="text-xs text-gray-300 leading-relaxed">
-              ¿Estás seguro de que deseas eliminar permanentemente a <strong className="text-white font-bold">{deleteModal.client.name}</strong>?
+              ¿Estás seguro de que deseas eliminar a <strong className="text-white font-bold">{deleteModal.client.name}</strong>?
             </p>
+
+            {/* Opción para eliminar o conservar clientes finales de este negocio */}
+            <div className="bg-[#0D0E12] p-3.5 rounded-2xl border border-white/10 space-y-2">
+              <label className="flex items-start gap-2.5 cursor-pointer text-xs font-bold text-gray-200">
+                <input
+                  type="checkbox"
+                  checked={deleteModal.deleteCustomers || false}
+                  onChange={e => setDeleteModal({ ...deleteModal, deleteCustomers: e.target.checked })}
+                  className="mt-0.5 rounded border-white/20 bg-black text-[#FF4B00] focus:ring-[#FF4B00]"
+                />
+                <div>
+                  <span className="text-white font-black">Eliminar también los clientes registrados en este negocio</span>
+                  <p className="text-[11px] font-normal text-gray-400 mt-0.5">
+                    {deleteModal.deleteCustomers 
+                      ? '⚠️ Se borrarán todos los clientes de consumo asociados a este negocio.'
+                      : '✅ Si desmarcas esta opción, los clientes de consumo de este negocio se conservarán en tu base de datos central.'}
+                  </p>
+                </div>
+              </label>
+            </div>
+
             <p className="text-[11px] text-gray-400">
-              Esta acción no se puede deshacer. Escribe <strong className="text-red-400 font-mono">ELIMINAR</strong> para confirmar.
+              Escribe <strong className="text-red-400 font-mono">ELIMINAR</strong> para confirmar.
             </p>
 
             <input
@@ -624,7 +645,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
               <button
                 disabled={deleteModal.confirmInput !== 'ELIMINAR'}
                 onClick={() => {
-                  deleteClient(deleteModal.client.business_id)
+                  deleteClient(deleteModal.client.business_id, deleteModal.deleteCustomers || false)
                   setDeleteModal(null)
                   reloadClients()
                 }}

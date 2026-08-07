@@ -301,15 +301,26 @@ export function deleteDemo(demoId) {
   }
 }
 
-export function deleteClient(businessId) {
+export function deleteClient(businessId, deleteCustomers = false) {
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
   const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId)
   if (idx !== -1) {
+    const deletedBusiness = bList[idx]
     bList[idx].deleted_at = new Date().toISOString()
     bList[idx].status = 'eliminado'
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
-    logAuditAction('eliminar_cliente', businessId, { name: bList[idx].name })
-    notifyCentralSync('CLIENT_DELETED', { businessId })
+
+    if (deleteCustomers) {
+      const custKey = STORAGE_KEYS.CUSTOMERS || 'sb_v3_business_customers'
+      const custs = JSON.parse(localStorage.getItem(custKey) || '[]')
+      const filteredCusts = custs.filter(
+        c => c.business_id !== businessId && c.business_slug !== deletedBusiness.slug && c.business_id !== deletedBusiness.id
+      )
+      localStorage.setItem(custKey, JSON.stringify(filteredCusts))
+    }
+
+    logAuditAction('eliminar_cliente', businessId, { name: deletedBusiness.name, deleteCustomers })
+    notifyCentralSync('CLIENT_DELETED', { businessId, deleteCustomers })
     return true
   }
   return false
