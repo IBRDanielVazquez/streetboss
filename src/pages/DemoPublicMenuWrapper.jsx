@@ -78,11 +78,18 @@ export default function DemoPublicMenuWrapper() {
         }))
     }))
 
+    const logoUrl = (businessData.logo_url && !businessData.logo_url.includes('SB_FAVICON')) 
+      ? (businessData.logo_url.startsWith('data:') ? businessData.logo_url : `${businessData.logo_url}${businessData.logo_url.includes('?') ? '&' : '?'}v=${businessData.updated_at ? new Date(businessData.updated_at).getTime() : Date.now()}`)
+      : details.logo
+    const bannerUrl = (businessData.banner_url && !businessData.banner_url.includes('/demos/img/'))
+      ? (businessData.banner_url.startsWith('data:') ? businessData.banner_url : `${businessData.banner_url}${businessData.banner_url.includes('?') ? '&' : '?'}v=${businessData.updated_at ? new Date(businessData.updated_at).getTime() : Date.now()}`)
+      : details.banner
+
     const businessConfig = {
       trialId: businessData.slug || businessData.business_id,
       negocio: businessData.name,
-      logo: (businessData.logo_url && !businessData.logo_url.includes('SB_FAVICON')) ? businessData.logo_url : details.logo,
-      banner: (businessData.banner_url && !businessData.banner_url.includes('/demos/img/')) ? businessData.banner_url : details.banner,
+      logo: logoUrl,
+      banner: bannerUrl,
       colorMarca: businessData.brand_color || '#FF4B00',
       whatsapp: businessData.whatsapp || businessData.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
       telefono: businessData.phone || DEMO_CONTACTS.DEFAULT_PHONE,

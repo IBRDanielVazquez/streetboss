@@ -23,8 +23,11 @@ import {
 export default function RestaurantOrdersTab({ businessId, businessName }) {
   const [orders, setOrders] = useState([])
   const [search, setSearch] = useState('')
-  const [filterStatus, setFilterStatus] = useState('todos')
-  const [filterPaymentStatus, setFilterPaymentStatus] = useState('todos')
+  const [filterPeriod, setFilterPeriod] = useState('todos') // 'todos', 'hoy', 'ayer', 'semana', 'mes', 'custom'
+  const [filterStatus, setFilterStatus] = useState('todos') // 'todos', 'pendiente_envio', 'en_proceso', 'confirmado', 'entregado', 'cancelado'
+  const [filterPaymentMethod, setFilterPaymentMethod] = useState('todos') // 'todos', 'efectivo', 'transferencia', 'tarjeta'
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [editingOrder, setEditingOrder] = useState(null)
   const [toastMsg, setToastMsg] = useState('')
 
@@ -42,8 +45,67 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
     setTimeout(() => setToastMsg(''), 3000)
   }
 
+  // MÉTRICAS KPI ("¿CÓMO VAMOS?")
+  const kpis = useMemo(() => {
+    const now = new Date()
+    const todayStr = now.toISOString().slice(0, 10)
+    const yesterday = new Date(now)
+    yesterday.setDate(now.getDate() - 1)
+    const yesterdayStr = yesterday.toISOString().slice(0, 10)
+
+    let hoyCount = 0, hoySales = 0
+    let ayerCount = 0, ayerSales = 0
+    let semanaCount = 0, semanaSales = 0
+    let mesCount = 0, mesSales = 0
+    let totalSales = 0
+    let confirmadosCount = 0, canceladosCount = 0
+
+    orders.forEach(o => {
+      const oDate = new Date(o.created_at || Date.now())
+      const dateStr = oDate.toISOString().slice(0, 10)
+      const total = Number(o.total || 0)
+
+      if (o.status !== 'cancelado') {
+        totalSales += total
+        if (dateStr === todayStr) { hoyCount++; hoySales += total }
+        if (dateStr === yesterdayStr) { ayerCount++; ayerSales += total }
+
+        const diffDays = (now - oDate) / (1000 * 60 * 60 * 24)
+        if (diffDays <= 7) { semanaCount++; semanaSales += total }
+
+        if (oDate.getMonth() === now.getMonth() && oDate.getFullYear() === now.getFullYear()) {
+          mesCount++; mesSales += total
+        }
+      }
+
+      if (o.status === 'confirmado' || o.status === 'entregado') confirmadosCount++
+      if (o.status === 'cancelado') canceladosCount++
+    })
+
+    const activeOrders = orders.filter(o => o.status !== 'cancelado')
+    const ticketPromedio = activeOrders.length > 0 ? Math.round(totalSales / activeOrders.length) : 0
+
+    return {
+      hoyCount, hoySales,
+      ayerCount, ayerSales,
+      semanaCount, semanaSales,
+      mesCount, mesSales,
+      totalOrders: orders.length,
+      totalSales,
+      ticketPromedio,
+      confirmadosCount,
+      canceladosCount
+    }
+  }, [orders])
+
   // Filtrado y Ordenamiento por más reciente
   const filteredOrders = useMemo(() => {
+    const now = new Date()
+    const todayStr = now.toISOString().slice(0, 10)
+    const yesterday = new Date(now)
+    yesterday.setDate(now.getDate() - 1)
+    const yesterdayStr = yesterday.toISOString().slice(0, 10)
+
     return orders.filter(o => {
       const q = search.toLowerCase().trim()
       const matchSearch =
@@ -53,11 +115,40 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
         o.whatsapp?.includes(q) ||
         o.colonia?.toLowerCase().includes(q)
 
-      const matchStatus = filterStatus === 'todos' || o.status === filterStatus
-      const matchPayStatus = filterPaymentStatus === 'todos' || (o.payment_status || 'pendiente') === filterPaymentStatus
-      return matchSearch && matchStatus && matchPayStatus
+      const matchStatus = filterStatus === 'todos' || o.status === filterStatus || (filterStatus === 'pendiente' && o.status === 'pendiente_envio')
+      
+      let matchMethod = true
+      if (filterPaymentMethod !== 'todos') {
+        const methodStr = (o.payment_method || o.metodo_pago || '').toLowerCase()
+        matchMethod = methodStr.includes(filterPaymentMethod)
+      }
+
+      let matchPeriod = true
+      const oDate = new Date(o.created_at || Date.now())
+      const dateStr = oDate.toISOString().slice(0, 10)
+
+      if (filterPeriod === 'hoy') matchPeriod = dateStr === todayStr
+      else if (filterPeriod === 'ayer') matchPeriod = dateStr === yesterdayStr
+      else if (filterPeriod === 'semana') matchPeriod = (now - oDate) / (1000 * 60 * 60 * 24) <= 7
+      else if (filterPeriod === 'mes') matchPeriod = oDate.getMonth() === now.getMonth() && oDate.getFullYear() === now.getFullYear()
+      else if (filterPeriod === 'custom' && startDate && endDate) {
+        matchPeriod = dateStr >= startDate && dateStr <= endDate
+      }
+
+      return matchSearch && matchStatus && matchMethod && matchPeriod
     }).sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  }, [orders, search, filterStatus, filterPaymentStatus])
+  }, [orders, search, filterStatus, filterPaymentMethod, filterPeriod, startDate, endDate])
+
+  const filteredSalesTotal = useMemo(() => {
+    return filteredOrders
+      .filter(o => o.status !== 'cancelado')
+      .reduce((sum, o) => sum + Number(o.total || 0), 0)
+  }, [filteredOrders])
+
+  const filteredTicketAverage = useMemo(() => {
+    const valid = filteredOrders.filter(o => o.status !== 'cancelado')
+    return valid.length > 0 ? Math.round(filteredSalesTotal / valid.length) : 0
+  }, [filteredOrders, filteredSalesTotal])
 
   const handleSaveOrderEdit = (e) => {
     e.preventDefault()
@@ -79,6 +170,7 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pendiente_envio':
+      case 'pendiente':
         return <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Pendiente ⏳</span>
       case 'enviado_wa':
         return <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-0.5 rounded-md font-bold text-[10px]">Enviado WA 📱</span>
@@ -121,65 +213,127 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
         </div>
       )}
 
+      {/* EXPERIENCIA "¿CÓMO VAMOS?" - TARJETAS KPI MOBILE FIRST */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-[#14161F] p-4 rounded-2xl border border-white/5 space-y-1 shadow-lg">
+          <p className="text-[10px] font-black uppercase text-gray-400 tracking-wider">HOY</p>
+          <p className="text-lg font-black text-emerald-400">${kpis.hoySales.toLocaleString('es-MX')}</p>
+          <p className="text-[11px] text-gray-400 font-bold">{kpis.hoyCount} pedidos</p>
+        </div>
+
+        <div className="bg-[#14161F] p-4 rounded-2xl border border-white/5 space-y-1 shadow-lg">
+          <p className="text-[10px] font-black uppercase text-gray-400 tracking-wider">ESTE MES</p>
+          <p className="text-lg font-black text-white">${kpis.mesSales.toLocaleString('es-MX')}</p>
+          <p className="text-[11px] text-gray-400 font-bold">{kpis.mesCount} pedidos</p>
+        </div>
+
+        <div className="bg-[#14161F] p-4 rounded-2xl border border-white/5 space-y-1 shadow-lg">
+          <p className="text-[10px] font-black uppercase text-gray-400 tracking-wider">TICKET PROMEDIO</p>
+          <p className="text-lg font-black text-[#FF6A1A]">${kpis.ticketPromedio.toLocaleString('es-MX')}</p>
+          <p className="text-[11px] text-gray-400 font-bold">por pedido</p>
+        </div>
+
+        <div className="bg-[#14161F] p-4 rounded-2xl border border-white/5 space-y-1 shadow-lg">
+          <p className="text-[10px] font-black uppercase text-gray-400 tracking-wider">BALANCE</p>
+          <p className="text-lg font-black text-blue-400">{kpis.confirmadosCount} confirmados</p>
+          <p className="text-[11px] text-red-400 font-bold">{kpis.canceladosCount} cancelados</p>
+        </div>
+      </div>
+
       {/* Header Gestor de Pedidos del Restaurante */}
       <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-white/5 pb-3">
           <div>
             <h2 className="text-base sm:text-lg font-black text-white flex items-center gap-2">
-              <ShoppingBag className="text-[#FF4B00]" size={20} /> Gestión Interna de Pedidos
+              <ShoppingBag className="text-[#FF4B00]" size={20} /> Resumen y Lista de Pedidos
             </h2>
             <p className="text-xs text-gray-400 mt-1">
-              Administración de pedidos, estados de entrega y pagos para {businessName}.
+              Filtra pedidos por período, estado y método de pago para {businessName}.
             </p>
           </div>
 
-          <span className="bg-[#FF4B00]/10 text-[#FF6A1A] border border-[#FF4B00]/20 px-3 py-1 rounded-full font-bold text-xs">
-            {orders.length} Pedidos Totales
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="bg-[#FF4B00]/10 text-[#FF6A1A] border border-[#FF4B00]/20 px-3 py-1 rounded-full font-bold text-xs">
+              {filteredOrders.length} Filtrados (${filteredSalesTotal.toLocaleString('es-MX')})
+            </span>
+          </div>
         </div>
 
         {/* Buscador y Filtros */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Buscar folio, cliente, WhatsApp o colonia..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white"
-            />
-            <Search className="absolute left-3 top-2.5 text-gray-500" size={15} />
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div className="relative col-span-1 sm:col-span-2">
+              <input
+                type="text"
+                placeholder="Buscar por folio, cliente, WhatsApp o colonia..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl pl-9 pr-3 py-2 text-white"
+              />
+              <Search className="absolute left-3 top-2.5 text-gray-500" size={15} />
+            </div>
+
+            <div>
+              <select
+                value={filterPeriod}
+                onChange={e => setFilterPeriod(e.target.value)}
+                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
+              >
+                <option value="todos">Período: Todos</option>
+                <option value="hoy">Período: Hoy</option>
+                <option value="ayer">Período: Ayer</option>
+                <option value="semana">Período: Esta Semana</option>
+                <option value="mes">Período: Este Mes</option>
+                <option value="custom">Rango Personalizado</option>
+              </select>
+            </div>
+
+            <div>
+              <select
+                value={filterStatus}
+                onChange={e => setFilterStatus(e.target.value)}
+                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
+              >
+                <option value="todos">Estado: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_proceso">En preparación</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="entregado">Entregado</option>
+                <option value="cancelado">Cancelado</option>
+              </select>
+            </div>
           </div>
 
-          <div>
-            <select
-              value={filterStatus}
-              onChange={e => setFilterStatus(e.target.value)}
-              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
-            >
-              <option value="todos">Todos los Estados de Entrega</option>
-              <option value="pendiente_envio">Pendiente de Envío ⏳</option>
-              <option value="enviado_wa">Enviado por WhatsApp 📱</option>
-              <option value="en_proceso">En Preparación 🍳</option>
-              <option value="confirmado">Confirmado ✅</option>
-              <option value="entregado">Entregado 🎉</option>
-              <option value="cancelado">Cancelado ❌</option>
-            </select>
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <select
+                value={filterPaymentMethod}
+                onChange={e => setFilterPaymentMethod(e.target.value)}
+                className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-bold"
+              >
+                <option value="todos">Método: Todos</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="tarjeta">Tarjeta</option>
+              </select>
+            </div>
 
-          <div>
-            <select
-              value={filterPaymentStatus}
-              onChange={e => setFilterPaymentStatus(e.target.value)}
-              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white"
-            >
-              <option value="todos">Todos los Estados de Pago</option>
-              <option value="pendiente">Pendiente de Pago</option>
-              <option value="comprobante_pendiente">Comprobante Pendiente ⌛</option>
-              <option value="comprobante_recibido">Comprobante Recibido 📄</option>
-              <option value="pagado">Pagado / Confirmado 💵</option>
-              <option value="rechazado">Pago Rechazado ❌</option>
-            </select>
+            {filterPeriod === 'custom' && (
+              <>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={e => setStartDate(e.target.value)}
+                  className="bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={e => setEndDate(e.target.value)}
+                  className="bg-[#0D0E12] border border-white/10 rounded-xl px-3 py-2 text-white font-mono"
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

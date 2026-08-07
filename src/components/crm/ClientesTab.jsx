@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { DEMO_CONTACTS } from '../../data/demoFixtures'
-import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword } from '../../services/crmV3Service'
-import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck, Eye, EyeOff, X } from 'lucide-react'
+import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword, deleteClient } from '../../services/crmV3Service'
+import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck, Eye, EyeOff, X, Trash2 } from 'lucide-react'
 
 export default function ClientesTab() {
   const [clients, setClients] = useState([])
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('todos')
   const [editingClient, setEditingClient] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(null) // { client, confirmInput }
   const [copiedMsg, setCopiedMsg] = useState('')
   const [previewModal, setPreviewModal] = useState(null)
 
@@ -354,7 +355,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                     {client.status === 'activo' ? (
                       <button
                         onClick={() => handleStatusChange(client.business_id, 'pausado')}
-                        className="flex items-center gap-1 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold text-xs px-3 py-2 rounded-xl border border-red-500/20"
+                        className="flex items-center gap-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-bold text-xs px-3 py-2 rounded-xl border border-amber-500/20"
                       >
                         <PauseCircle size={13} /> Suspender
                       </button>
@@ -366,6 +367,13 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                         <PlayCircle size={13} /> Activar
                       </button>
                     )}
+
+                    <button
+                      onClick={() => setDeleteModal({ client, confirmInput: '' })}
+                      className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 font-bold text-xs px-3 py-2 rounded-xl border border-red-500/30"
+                    >
+                      <Trash2 size={13} /> Eliminar Cliente
+                    </button>
                   </div>
                 </div>
               </div>
@@ -581,6 +589,50 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#14161F] border border-red-500/30 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-black text-red-400 flex items-center gap-2">
+                <Trash2 size={20} /> Eliminar Cliente
+              </h3>
+              <button onClick={() => setDeleteModal(null)} className="p-1 text-gray-400 hover:text-white"><X size={18}/></button>
+            </div>
+
+            <p className="text-xs text-gray-300 leading-relaxed">
+              ¿Estás seguro de que deseas eliminar permanentemente a <strong className="text-white font-bold">{deleteModal.client.name}</strong>?
+            </p>
+            <p className="text-[11px] text-gray-400">
+              Esta acción no se puede deshacer. Escribe <strong className="text-red-400 font-mono">ELIMINAR</strong> para confirmar.
+            </p>
+
+            <input
+              type="text"
+              value={deleteModal.confirmInput}
+              onChange={e => setDeleteModal({ ...deleteModal, confirmInput: e.target.value })}
+              placeholder="Escribe ELIMINAR"
+              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono text-xs focus:border-red-500 focus:outline-none"
+            />
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setDeleteModal(null)} className="px-4 py-2 bg-white/5 text-gray-300 font-bold text-xs rounded-xl hover:bg-white/10 transition-all">
+                Cancelar
+              </button>
+              <button
+                disabled={deleteModal.confirmInput !== 'ELIMINAR'}
+                onClick={() => {
+                  deleteClient(deleteModal.client.business_id)
+                  setDeleteModal(null)
+                  reloadClients()
+                }}
+                className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-black text-xs rounded-xl shadow transition-all"
+              >
+                Confirmar Eliminación
+              </button>
+            </div>
           </div>
         </div>
       )}

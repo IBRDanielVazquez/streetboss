@@ -190,8 +190,8 @@ function initLocalStore() {
           phone: DEMO_CONTACTS.DEFAULT_PHONE,
           whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
           business_type: official?.giro || official?.badge || b.business_type,
-          banner_url: `/demos/${demoFolder}/cover.jpg`,
-          logo_url: `/demos/${demoFolder}/profile.png`,
+          banner_url: b.banner_url || `/demos/${demoFolder}/cover.jpg`,
+          logo_url: b.logo_url || `/demos/${demoFolder}/profile.png`,
           payment_methods: {
             efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500, ...(b.payment_methods?.efectivo || {}) },
             transferencia: {
@@ -298,6 +298,20 @@ export function deleteDemo(demoId) {
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
     logAuditAction('eliminar_demo', demoId, { clientsAffectedCount: activeClientsUsingDemo.length })
   }
+}
+
+export function deleteClient(businessId) {
+  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId)
+  if (idx !== -1) {
+    bList[idx].deleted_at = new Date().toISOString()
+    bList[idx].status = 'eliminado'
+    localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+    logAuditAction('eliminar_cliente', businessId, { name: bList[idx].name })
+    notifyCentralSync('CLIENT_DELETED', { businessId })
+    return true
+  }
+  return false
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
