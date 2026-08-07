@@ -5,6 +5,42 @@ import { DEMOS_OFICIALES, DEMO_SHOWCASE } from '../data/demoShowcase'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import MenuDigital from './MenuDigital'
 
+const DEMO_META_MAP = {
+  'tacos-el-guero': { folder: 'tacos-el-guero', schedule: 'Lun a Dom · 6:00 pm – 2:00 am', foodType: 'Taquería · Tacos al Pastor y Especiales' },
+  'burger-house': { folder: 'burger-house', schedule: 'Lun a Dom · 1:00 pm – 11:00 pm', foodType: 'Burgers · Papas · Malteadas' },
+  'pizza-house': { folder: 'pizza-house', schedule: 'Lun a Dom · 12:00 pm – 10:30 pm', foodType: 'Pizzas · Promos · Alitas' },
+  'cafe-central': { folder: 'cafe-central', schedule: 'Lun a Dom · 7:00 am – 9:00 pm', foodType: 'Café · Panadería · Brunch' },
+  'pollos-el-rey': { folder: 'pollos-el-rey', schedule: 'Lun a Dom · 10:00 am – 6:00 pm', foodType: 'Pollo rostizado · Carbón · Paquetes' },
+  'parrilla-el-carbon': { folder: 'parrilla-el-carbon', schedule: 'Lun a Dom · 1:00 pm – 11:00 pm', foodType: 'Cortes · Brasas · Carne asada' },
+  'tortas-el-barrio': { folder: 'tortas-el-barrio', schedule: 'Lun a Dom · 8:00 am – 8:00 pm', foodType: 'Tortas mexicanas · Combos' },
+  'birrieria-jalisco': { folder: 'birrieria-jalisco', schedule: 'Lun a Dom · 8:00 am – 5:00 pm', foodType: 'Birria · Consomé · Quesabirrias' },
+  'mariscos-el-puerto': { folder: 'mariscos-el-puerto', schedule: 'Lun a Dom · 10:00 am – 7:00 pm', foodType: 'Camarones · Ceviches · Aguachiles' },
+  'china-express': { folder: 'china-express', schedule: 'Lun a Dom · 11:00 am – 9:00 pm', foodType: 'Arroz frito · Noodles · Pollo agridulce' },
+}
+
+function resolveDemoDetails(trialId, name) {
+  const s = `${trialId || ''} ${name || ''}`.toLowerCase()
+  let key = 'tacos-el-guero'
+  if (s.includes('burger')) key = 'burger-house'
+  else if (s.includes('pizza')) key = 'pizza-house'
+  else if (s.includes('cafe') || s.includes('central')) key = 'cafe-central'
+  else if (s.includes('pollo') || s.includes('rey')) key = 'pollos-el-rey'
+  else if (s.includes('parrilla') || s.includes('carbon')) key = 'parrilla-el-carbon'
+  else if (s.includes('torta') || s.includes('barrio')) key = 'tortas-el-barrio'
+  else if (s.includes('birria') || s.includes('jalisco')) key = 'birrieria-jalisco'
+  else if (s.includes('marisco') || s.includes('puerto')) key = 'mariscos-el-puerto'
+  else if (s.includes('china') || s.includes('express')) key = 'china-express'
+  else if (s.includes('guero') || s.includes('ejmpleo-2')) key = 'tacos-el-guero'
+
+  const meta = DEMO_META_MAP[key]
+  return {
+    logo: `/demos/${meta.folder}/profile.png`,
+    banner: `/demos/${meta.folder}/cover.jpg`,
+    schedule: meta.schedule,
+    foodType: meta.foodType
+  }
+}
+
 export default function DemoPublicMenuWrapper() {
   const { trialId } = useParams()
   const [refreshTick, setRefreshTick] = useState(0)
@@ -20,6 +56,8 @@ export default function DemoPublicMenuWrapper() {
   const businessData = getBusinessBySlug(trialId)
   
   if (businessData) {
+    const details = resolveDemoDetails(businessData.slug || businessData.business_id, businessData.name)
+
     // Formatear categorías y productos para MenuDigital
     const formattedMenu = (businessData.categories || []).map(cat => ({
       id: cat.id,
@@ -43,20 +81,21 @@ export default function DemoPublicMenuWrapper() {
     const businessConfig = {
       trialId: businessData.slug || businessData.business_id,
       negocio: businessData.name,
-      logo: businessData.logo_url || `/demos/${businessData.slug || businessData.id}/profile.png`,
-      banner: businessData.banner_url || `/demos/${businessData.slug || businessData.id}/cover.jpg`,
+      logo: (businessData.logo_url && !businessData.logo_url.includes('SB_FAVICON')) ? businessData.logo_url : details.logo,
+      banner: (businessData.banner_url && !businessData.banner_url.includes('/demos/img/')) ? businessData.banner_url : details.banner,
       colorMarca: businessData.brand_color || '#FF4B00',
       whatsapp: businessData.whatsapp || businessData.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
       telefono: businessData.phone || DEMO_CONTACTS.DEFAULT_PHONE,
       mensajeClientes: businessData.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
+      foodType: details.foodType,
       redes: {
         facebook: businessData.facebook_url || 'https://facebook.com',
         instagram: businessData.instagram_url || 'https://instagram.com',
         tiktok: 'https://tiktok.com',
       },
       direccion: businessData.address || `${businessData.colonia || 'Tuxtla Gutiérrez'}, Chiapas`,
-      horarios: businessData.schedule_text || 'Lun a Dom · 9:00 am – 10:00 pm',
-      urlMaps: businessData.maps_url || '',
+      horarios: businessData.schedule_text || details.schedule,
+      urlMaps: 'https://maps.google.com',
       envio: { 
         activo: businessData.has_delivery !== false, 
         zonas: businessData.delivery_zones || [], 
@@ -92,23 +131,26 @@ export default function DemoPublicMenuWrapper() {
     d => d.id === trialId || trialId?.startsWith(d.id) || trialId?.includes(d.clave)
   ) || DEMO_SHOWCASE[0]
 
+  const details = resolveDemoDetails(demo.id, demo.nombre || demo.name)
+
   const demoConfig = {
     trialId: demo.id,
     negocio: demo.nombre || demo.name,
-    logo: demo.logo_url || demo.logoUrl || `/demos/${demo.id}/profile.png`,
-    banner: demo.banner_url || demo.img || `/demos/${demo.id}/cover.jpg`,
+    logo: (demo.logo_url && !demo.logo_url.includes('SB_FAVICON')) ? demo.logo_url : details.logo,
+    banner: (demo.banner_url && !demo.banner_url.includes('/demos/img/')) ? demo.banner_url : details.banner,
     colorMarca: '#FF4B00',
     whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
     telefono: DEMO_CONTACTS.DEFAULT_PHONE,
     mensajeClientes: '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
+    foodType: details.foodType,
     redes: {
       facebook: 'https://facebook.com',
       instagram: 'https://instagram.com',
       tiktok: 'https://tiktok.com',
     },
     direccion: 'Tuxtla Gutiérrez, Chiapas',
-    horarios: 'Lun a Dom · 9:00 am – 10:00 pm',
-    urlMaps: '',
+    horarios: details.schedule,
+    urlMaps: 'https://maps.google.com',
     envio: { 
       activo: true, 
       zonas: [], 

@@ -81,14 +81,29 @@ records.forEach((row, idx) => {
     cleaned_records.push(item);
 });
 
-// Ordenar: A+, A, B, C, D y luego por score_oportunidad descendente
+// Ordenar: A+, A, B, C, D
+// Dentro de cada prioridad: ACTIVO, PROBABLEMENTE ACTIVO, ACTIVIDAD BAJA, INACTIVO / REVISAR, SIN DATOS
+// Y luego por score_oportunidad descendente
 const prioridadOrder = { 'A+': 1, 'A': 2, 'B': 3, 'C': 4, 'D': 5 };
+const actividadOrder = {
+    'ACTIVO': 1,
+    'PROBABLEMENTE ACTIVO': 2,
+    'ACTIVIDAD BAJA': 3,
+    'INACTIVO / REVISAR': 4,
+    'SIN DATOS': 5,
+    'SIN FACEBOOK': 6
+};
 
 cleaned_records.sort((a, b) => {
     let pA = prioridadOrder[a.prioridad_prospeccion] || 99;
     let pB = prioridadOrder[b.prioridad_prospeccion] || 99;
     
     if (pA !== pB) return pA - pB;
+    
+    let aA = actividadOrder[a.estado_actividad] || 99;
+    let aB = actividadOrder[b.estado_actividad] || 99;
+    
+    if (aA !== aB) return aA - aB;
     
     return (b.score_oportunidad || 0) - (a.score_oportunidad || 0);
 });

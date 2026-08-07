@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
 import { normalizeMexicanPhone } from '../../services/crmV3Service'
 
@@ -24,12 +24,34 @@ export default function MenuHeroProfile({ config }) {
   const {
     negocio, logo, banner, direccion, horarios, urlMaps,
     whatsapp, telefono, redes = {}, colorMarca = '#FF4B00',
-    isDemo = true
+    foodType, isDemo = true
   } = config
 
-  const [deliveryMode, setDeliveryMode] = useState('entrega') // 'entrega', 'llevar', 'grupal'
-
   const tieneHorarios = horarios && horarios.trim().length > 0
+
+  // Actualizar Open Graph metadata dinámicamente para previsualizaciones al compartir
+  useEffect(() => {
+    if (negocio) {
+      document.title = `${negocio} | Menú Digital StreetBoss`
+
+      const setMeta = (property, content) => {
+        let el = document.querySelector(`meta[property="${property}"]`)
+        if (!el) {
+          el = document.createElement('meta')
+          el.setAttribute('property', property)
+          document.head.appendChild(el)
+        }
+        el.setAttribute('content', content)
+      }
+
+      setMeta('og:title', `${negocio} - Menú Digital`)
+      setMeta('og:description', `${foodType || 'Pedidos al instante por WhatsApp.'} 📍 Tuxtla Gutiérrez, Chiapas.`)
+      if (logo) {
+        const fullLogoUrl = logo.startsWith('http') ? logo : `${window.location.origin}${logo}`
+        setMeta('og:image', fullLogoUrl)
+      }
+    }
+  }, [negocio, logo, foodType])
 
   const compartir = async () => {
     const url = window.location.href
@@ -41,7 +63,7 @@ export default function MenuHeroProfile({ config }) {
     }
   }
 
-  // Links de Redes Sociales corregidos
+  // Links de Redes Sociales
   const fbUrl = redes.facebook || 'https://facebook.com'
   const igUrl = redes.instagram || 'https://instagram.com'
   const ttUrl = 'https://tiktok.com'
@@ -53,7 +75,6 @@ export default function MenuHeroProfile({ config }) {
     igUrl && { icon: <Instagram size={18} />, url: igUrl, label: 'Instagram' },
     fbUrl && { icon: <Facebook size={18} />, url: fbUrl, label: 'Facebook' },
     ttUrl && { icon: <TikTokIcon size={18} />, url: ttUrl, label: 'TikTok' },
-    urlMaps && { icon: <MapPin size={18} />, url: urlMaps, label: 'Ubicación' },
     cleanWaPhone && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${cleanWaPhone}`, label: 'WhatsApp' },
     cleanTelPhone && { icon: <Phone size={18} />, url: `tel:+52${cleanTelPhone}`, label: 'Llamar' },
   ].filter(Boolean)
@@ -123,7 +144,7 @@ export default function MenuHeroProfile({ config }) {
             🚀 Pedidos directos a tu WhatsApp al instante sin comisiones
           </div>
 
-          {/* Dirección, Horarios y Botón Ver Ubicación */}
+          {/* Dirección, Horarios y Botón Ver Ubicación (Abre Maps directo) */}
           <div className="space-y-1.5 pt-1 text-xs text-gray-600">
             {direccion && (
               <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -132,12 +153,12 @@ export default function MenuHeroProfile({ config }) {
                   <span className="truncate">{direccion}</span>
                 </div>
                 <a
-                  href={urlMaps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${negocio} ${direccion || 'Tuxtla Gutiérrez Chiapas'}`)}`}
+                  href="https://maps.google.com"
                   target="_blank"
                   rel="noreferrer"
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3 py-1 rounded-full text-[11px] flex items-center gap-1 border border-gray-200 shrink-0 active:scale-95 transition-all"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 border border-gray-200 shrink-0 active:scale-95 transition-all shadow-2xs"
                 >
-                  <MapPin size={12} className="text-[#FF4B00]" />
+                  <MapPin size={13} className="text-[#FF4B00]" />
                   <span>Ver ubicación</span>
                 </a>
               </div>
@@ -148,40 +169,6 @@ export default function MenuHeroProfile({ config }) {
                 <span>{horarios}</span>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* ── Selector de Modo tipo iOS Segmented Control (Entrega | Para Llevar) ── */}
-        <div className="mt-4 grid grid-cols-2 gap-1.5 p-1 bg-gray-100/80 rounded-2xl border border-gray-200/60 max-w-md">
-          <button
-            type="button"
-            onClick={() => setDeliveryMode('entrega')}
-            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              deliveryMode === 'entrega' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            🛵 Entrega
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeliveryMode('llevar')}
-            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              deliveryMode === 'llevar' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            🎒 Para llevar
-          </button>
-        </div>
-
-        {/* Box Resumen iOS de Envío (Calculado por distancia) */}
-        <div className="mt-3 grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200/60 text-xs">
-          <div>
-            <span className="text-gray-500 font-medium block">Costo de envío</span>
-            <span className="font-bold text-gray-900 text-xs">Calculado por distancia</span>
-          </div>
-          <div className="border-l border-gray-200 pl-3">
-            <span className="text-gray-500 font-medium block">Tiempo estimado</span>
-            <span className="font-black text-gray-900 text-xs sm:text-sm">20-35 min llegada</span>
           </div>
         </div>
 
