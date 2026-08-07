@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
+import { normalizeMexicanPhone } from '../../services/crmV3Service'
 
 // Ícono TikTok SVG inline (Lucide no tiene TikTok)
 function TikTokIcon({ size = 16 }) {
@@ -40,18 +41,21 @@ export default function MenuHeroProfile({ config }) {
     }
   }
 
-  // Asegurar siempre redes por defecto para demostración profesional
-  const fbUrl = redes.facebook || 'https://facebook.com/streetboss.mx'
-  const igUrl = redes.instagram || 'https://instagram.com/streetboss.mx'
-  const ttUrl = redes.tiktok || 'https://tiktok.com/@streetboss.mx'
+  // Links de Redes Sociales corregidos
+  const fbUrl = redes.facebook || 'https://facebook.com'
+  const igUrl = redes.instagram || 'https://instagram.com'
+  const ttUrl = 'https://tiktok.com'
+
+  const cleanWaPhone = normalizeMexicanPhone(whatsapp || telefono || '9613725386')
+  const cleanTelPhone = normalizeMexicanPhone(telefono || whatsapp || '9613725386')
 
   const redesActivas = [
     igUrl && { icon: <Instagram size={18} />, url: igUrl, label: 'Instagram' },
     fbUrl && { icon: <Facebook size={18} />, url: fbUrl, label: 'Facebook' },
     ttUrl && { icon: <TikTokIcon size={18} />, url: ttUrl, label: 'TikTok' },
     urlMaps && { icon: <MapPin size={18} />, url: urlMaps, label: 'Ubicación' },
-    whatsapp && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${whatsapp}`, label: 'WhatsApp' },
-    telefono && { icon: <Phone size={18} />, url: `tel:+52${telefono}`, label: 'Llamar' },
+    cleanWaPhone && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${cleanWaPhone}`, label: 'WhatsApp' },
+    cleanTelPhone && { icon: <Phone size={18} />, url: `tel:+52${cleanTelPhone}`, label: 'Llamar' },
   ].filter(Boolean)
 
   return (
@@ -90,8 +94,8 @@ export default function MenuHeroProfile({ config }) {
       {/* ── Perfil Superpuesto tipo iOS App Header ── */}
       <div className="relative px-4 -mt-14 pb-4 max-w-4xl mx-auto">
         <div className="flex items-end justify-between gap-3">
-          {/* Avatar Perfil Restaurante */}
-          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-3xl border-4 border-white shadow-2xl overflow-hidden bg-white">
+          {/* Avatar Perfil Restaurante (Cuadrado con bordes suavizados de marca) */}
+          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl border-4 border-white shadow-xl overflow-hidden bg-white aspect-square flex items-center justify-center">
             {logo ? (
               <img src={logo} alt={negocio} className="w-full h-full object-cover" />
             ) : (
@@ -105,7 +109,7 @@ export default function MenuHeroProfile({ config }) {
           </div>
         </div>
 
-        {/* Info del Restaurante & Ratings */}
+        {/* Info del Restaurante & Badges Mercadológicos */}
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 leading-tight">
@@ -113,21 +117,10 @@ export default function MenuHeroProfile({ config }) {
             </h1>
           </div>
 
-          {/* Rating + Envíos + Tag */}
-          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 font-medium flex-wrap">
-            <span className="flex items-center gap-1 font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-              ★ 4.9 <span className="text-gray-400 font-normal">(1,200+)</span>
-            </span>
-            <span>·</span>
-            <span>15-25 min</span>
-            <span>·</span>
-            <span className="text-emerald-700 font-bold">$15.00 MXN envío</span>
-          </div>
-
-          {/* Badge "1000+ pidieron de nuevo" */}
+          {/* Tag Mercadológico Directo a WhatsApp */}
           <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            🔥 +1,000 clientes pidieron de nuevo este mes
+            🚀 Pedidos directos a tu WhatsApp al instante sin comisiones
           </div>
 
           {/* Dirección y Horarios */}
@@ -178,15 +171,15 @@ export default function MenuHeroProfile({ config }) {
           </button>
         </div>
 
-        {/* Box Resumen iOS de Envío */}
+        {/* Box Resumen iOS de Envío (Calculado por distancia) */}
         <div className="mt-3 grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200/60 text-xs">
           <div>
             <span className="text-gray-500 font-medium block">Costo de envío</span>
-            <span className="font-black text-gray-900 text-sm">$15.00 MXN</span>
+            <span className="font-bold text-gray-900 text-xs">Calculado por distancia</span>
           </div>
           <div className="border-l border-gray-200 pl-3">
             <span className="text-gray-500 font-medium block">Tiempo estimado</span>
-            <span className="font-black text-gray-900 text-sm">15-25 min llegada</span>
+            <span className="font-black text-gray-900 text-xs sm:text-sm">20-35 min llegada</span>
           </div>
         </div>
 

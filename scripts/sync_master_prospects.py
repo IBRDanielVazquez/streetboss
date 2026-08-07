@@ -74,6 +74,16 @@ def sync_master_prospects():
         if demo: item["assigned_demo"] = demo
         if notes: item["notes"] = notes
 
+        # Nuevos campos de prospeccion
+        estado_actividad = str(row.get("estado_actividad") or "SIN DATOS").strip()
+        score_op = row.get("score_oportunidad")
+        prioridad = str(row.get("prioridad_prospeccion") or "D").strip()
+
+        item["estado_actividad"] = estado_actividad
+        if pd.notna(score_op) and str(score_op).strip() != "":
+            item["score_oportunidad"] = int(score_op)
+        item["prioridad_prospeccion"] = prioridad
+
         cleaned_records.append(item)
 
     os.makedirs(os.path.dirname(OUTPUT_JSON_PATH), exist_ok=True)
