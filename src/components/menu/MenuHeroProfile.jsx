@@ -1,7 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// MenuHeroProfile — Hero tipo perfil de redes sociales
-// Banner horizontal + foto de perfil superpuesta + info del negocio
-// ─────────────────────────────────────────────────────────────────────────────
+import { useState } from 'react'
 import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
 
 // Ícono TikTok SVG inline (Lucide no tiene TikTok)
