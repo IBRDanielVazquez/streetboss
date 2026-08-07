@@ -1,33 +1,40 @@
 # ESTADO DE PROGRESO DE FOTOGRAFÍAS DE PRODUCTOS DE DEMOS
 
-- **Estado de API:** Cuota de generación exhausta temporalmente (Reset programado: 2026-08-07T13:01:59Z / ~3h 33m)
-- **Demo terminado:** Ninguno (Tacos El Güero en proceso)
-- **Demo actual:** 1. Tacos El Güero (`tacos-el-guero`)
-- **Último producto terminado:** Taco de bistec (`guero-p3`)
-- **Productos pendientes de Tacos El Güero:**
-  - `guero-p4`: Taco campechano
-  - `guero-p5`: Gringa de pastor
-  - `guero-p6`: Volcán
-  - `guero-p7`: Quesadilla con carne
-  - `guero-p8`: Agua de horchata
-  - `guero-p9`: Agua de jamaica
-  - `guero-p10`: Refresco
+- **Estado de API:** Límite de cuota alcanzado tras generar 13 fotos (Reset programado: 2026-08-07T19:03:58Z / ~4h 47m)
+- **Demos 100% completados:**
+  1. Tacos El Güero (`tacos-el-guero`) - 10/10 productos con fotografía propia
+- **Demo en proceso:** 2. Burger House (`burger-house`) - 6/8 productos completados
+- **Último producto terminado:** Malteada Fresa (`burger-p6`) -> `/demos/burger-house/products/malteada-fresa.jpg`
+- **Productos pendientes de Burger House:**
+  - `burger-p7`: Malteada Chocolate
+  - `burger-p8`: Refresco
 - **Demos pendientes:**
-  1. Burger House (`burger-house`)
-  2. Pizza House (`pizza-house`)
-  3. Café Central (`cafe-central`)
-  4. Pollos El Rey (`pollos-el-rey`)
-  5. Parrilla El Carbón (`parrilla-el-carbon`)
-  6. Tortas El Barrio (`tortas-el-barrio`)
-  7. Birriería Jalisco (`birrieria-jalisco`)
-  8. Mariscos El Puerto (`mariscos-el-puerto`)
-  9. China Express (`china-express`)
-- **Imágenes creadas:**
-  - `/public/demos/tacos-el-guero/products/taco-al-pastor.jpg`
-  - `/public/demos/tacos-el-guero/products/taco-suadero.jpg`
-  - `/public/demos/tacos-el-guero/products/taco-bistec.jpg`
-- **Imágenes ya vinculadas:**
-  - `guero-p1` -> `/demos/tacos-el-guero/products/taco-al-pastor.jpg`
-  - `guero-p2` -> `/demos/tacos-el-guero/products/taco-suadero.jpg`
-  - `guero-p3` -> `/demos/tacos-el-guero/products/taco-bistec.jpg`
-- **Siguiente producto exacto a generar:** `guero-p4` (Taco campechano) para `tacos-el-guero`.
+  2. Burger House (restan 2 productos)
+  3. Pizza House (`pizza-house`)
+  4. Café Central (`cafe-central`)
+  5. Pollos El Rey (`pollos-el-rey`)
+  6. Parrilla El Carbón (`parrilla-el-carbon`)
+  7. Tortas El Barrio (`tortas-el-barrio`)
+  8. Birriería Jalisco (`birrieria-jalisco`)
+  9. Mariscos El Puerto (`mariscos-el-puerto`)
+  10. China Express (`china-express`)
+- **Imágenes creadas en total (13 productos):**
+  - Tacos El Güero (10/10):
+    - `taco-al-pastor.jpg`
+    - `taco-suadero.jpg`
+    - `taco-bistec.jpg`
+    - `taco-campechano.jpg`
+    - `gringa-pastor.jpg`
+    - `volcan.jpg`
+    - `quesadilla-carne.jpg`
+    - `agua-horchata.jpg`
+    - `agua-jamaica.jpg`
+    - `refresco.jpg`
+  - Burger House (6/8):
+    - `burger-clasica.jpg`
+    - `burger-doble-bacon.jpg`
+    - `burger-mushroom-swiss.jpg`
+    - `papas-francesas.jpg`
+    - `aros-cebolla.jpg`
+    - `malteada-fresa.jpg`
+- **Siguiente producto exacto a generar:** `burger-p7` (Malteada Chocolate) para `burger-house`.
