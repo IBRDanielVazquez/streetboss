@@ -20,19 +20,19 @@ const cleaned_records = [];
 
 records.forEach((row, idx) => {
     let prospect_id = (row.id || `prospect_master_${idx + 1}`).toString().trim();
-    let name = (row.business_name || row.nombre || row['Nombre normalizado'] || row['Nombre original'] || "").toString().trim();
-    let cat = (row.category || row.giro || row['Categoría'] || "Restaurante").toString().trim();
-    let city = (row.city || row.ciudad || row['Ciudad'] || "Tuxtla Gutiérrez").toString().trim();
+    let name = (row.nombre || row.business_name || "").toString().trim();
+    let cat = (row.categoria || row.category || row.giro || "Restaurante").toString().trim();
+    let city = (row.city || row.ciudad || "Tuxtla Gutiérrez").toString().trim();
     
-    let phone = (row.phone || row['Teléfono'] || "").toString().replace(".0", "").trim();
-    let whatsapp = (row.whatsapp || row['WhatsApp'] || "").toString().replace(".0", "").trim();
+    let phone = (row.telefono || row.phone || "").toString().replace(".0", "").trim();
+    let whatsapp = (row.whatsapp || "").toString().replace(".0", "").trim();
     if (!whatsapp && phone) whatsapp = phone;
 
-    let fb = (row.facebook || row.facebook_url || row['Facebook'] || "").toString().trim();
-    let ig = (row.instagram || row.instagram_url || row['Instagram'] || "").toString().trim();
-    let web = (row.website || row.website_url || row['Sitio web'] || "").toString().trim();
-    let maps = (row.maps_url || row['Maps'] || "").toString().trim();
-    let addr = (row.address || row.direccion || row['Dirección'] || "").toString().trim();
+    let fb = (row.facebook || row.facebook_url || "").toString().trim();
+    let ig = (row.instagram || row.instagram_url || "").toString().trim();
+    let web = (row.sitio_web || row.website || row.website_url || "").toString().trim();
+    let maps = (row.maps_url || row.maps || "").toString().trim();
+    let addr = (row.direccion || row.address || "").toString().trim();
     
     let rating = (row.rating || "").toString().trim();
     let reviews = (row.reviews_count || "").toString().trim();
@@ -41,6 +41,7 @@ records.forEach((row, idx) => {
     let status = (row.status || "Nuevo").toString().trim();
     let demo = (row.assigned_demo || "").toString().trim();
     let notes = (row.notes || "").toString().trim();
+    let score_comercial = row.score_comercial || "";
 
     let item = {
         id: prospect_id,
@@ -59,6 +60,7 @@ records.forEach((row, idx) => {
     if (rating) item.rating = rating;
     if (reviews && reviews !== "0") item.reviews_count = reviews;
     if (score) item.completeness_score = parseInt(score, 10);
+    if (score_comercial) item.score_comercial = score_comercial;
 
     if (status && status !== "Nuevo") item.status = status;
     if (demo) item.assigned_demo = demo;
@@ -71,10 +73,24 @@ records.forEach((row, idx) => {
     item.estado_actividad = estado_actividad;
     if (score_op !== "" && score_op !== undefined && score_op !== null) {
         item.score_oportunidad = parseInt(score_op, 10);
+    } else {
+        item.score_oportunidad = 0;
     }
     item.prioridad_prospeccion = prioridad;
 
     cleaned_records.push(item);
+});
+
+// Ordenar: A+, A, B, C, D y luego por score_oportunidad descendente
+const prioridadOrder = { 'A+': 1, 'A': 2, 'B': 3, 'C': 4, 'D': 5 };
+
+cleaned_records.sort((a, b) => {
+    let pA = prioridadOrder[a.prioridad_prospeccion] || 99;
+    let pB = prioridadOrder[b.prioridad_prospeccion] || 99;
+    
+    if (pA !== pB) return pA - pB;
+    
+    return (b.score_oportunidad || 0) - (a.score_oportunidad || 0);
 });
 
 fs.mkdirSync(path.dirname(OUTPUT_JSON_PATH), { recursive: true });

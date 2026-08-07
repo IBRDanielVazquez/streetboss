@@ -123,12 +123,23 @@ export default function MenuHeroProfile({ config }) {
             🚀 Pedidos directos a tu WhatsApp al instante sin comisiones
           </div>
 
-          {/* Dirección y Horarios */}
-          <div className="space-y-1 pt-1 text-xs text-gray-500">
+          {/* Dirección, Horarios y Botón Ver Ubicación */}
+          <div className="space-y-1.5 pt-1 text-xs text-gray-600">
             {direccion && (
-              <div className="flex items-center gap-1.5">
-                <MapPin size={14} className="text-gray-400 shrink-0" />
-                <span className="truncate">{direccion}</span>
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <MapPin size={14} className="text-gray-400 shrink-0" />
+                  <span className="truncate">{direccion}</span>
+                </div>
+                <a
+                  href={urlMaps || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${negocio} ${direccion || 'Tuxtla Gutiérrez Chiapas'}`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3 py-1 rounded-full text-[11px] flex items-center gap-1 border border-gray-200 shrink-0 active:scale-95 transition-all"
+                >
+                  <MapPin size={12} className="text-[#FF4B00]" />
+                  <span>Ver ubicación</span>
+                </a>
               </div>
             )}
             {tieneHorarios && (
@@ -140,8 +151,8 @@ export default function MenuHeroProfile({ config }) {
           </div>
         </div>
 
-        {/* ── Selector de Modo tipo iOS Segmented Control (Entrega | Para Llevar | Pedido Grupal) ── */}
-        <div className="mt-4 grid grid-cols-3 gap-1.5 p-1 bg-gray-100/80 rounded-2xl border border-gray-200/60 max-w-md">
+        {/* ── Selector de Modo tipo iOS Segmented Control (Entrega | Para Llevar) ── */}
+        <div className="mt-4 grid grid-cols-2 gap-1.5 p-1 bg-gray-100/80 rounded-2xl border border-gray-200/60 max-w-md">
           <button
             type="button"
             onClick={() => setDeliveryMode('entrega')}
@@ -159,15 +170,6 @@ export default function MenuHeroProfile({ config }) {
             }`}
           >
             🎒 Para llevar
-          </button>
-          <button
-            type="button"
-            onClick={() => setDeliveryMode('grupal')}
-            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-              deliveryMode === 'grupal' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            👥 Pedido grupal
           </button>
         </div>
 

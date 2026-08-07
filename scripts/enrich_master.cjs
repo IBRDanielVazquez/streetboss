@@ -7,15 +7,16 @@ const workbook = xlsx.readFile(file_path);
 const sheetName = workbook.SheetNames[0];
 const worksheet = workbook.Sheets[sheetName];
 
-let data = xlsx.utils.sheet_to_json(worksheet);
+let data = xlsx.utils.sheet_to_json(worksheet, { defval: "" });
 
 const dateStr = new Date().toISOString().split('T')[0];
 
 let stats = {
     total: data.length,
     'A+': 0, 'A': 0, 'B': 0, 'C': 0, 'D': 0,
-    'Activos': 0, 'Probablemente activos': 0, 'Actividad baja': 0, 
-    'Inactivos / revisar': 0, 'Sin Facebook': 0, 'Sin datos': 0
+    'Con Facebook': 0, 'Sin Facebook': 0,
+    'Con WhatsApp': 0, 'Con teléfono': 0,
+    'Con Instagram': 0, 'Con sitio web': 0
 };
 
 data = data.map(row => {
@@ -24,31 +25,57 @@ data = data.map(row => {
     row.fecha_ultima_validacion = dateStr;
     
     let score = 0;
-    let fb = (row['Facebook'] || '').toString().trim();
+    
+    // nombre = 10
+    let nombre = (row['nombre'] || row['business_name'] || row['Nombre original'] || '').toString().trim();
+    if (nombre) score += 10;
+    
+    // categoria = 10
+    let categoria = (row['categoria'] || row['giro'] || row['category'] || '').toString().trim();
+    if (categoria) score += 10;
+    
+    // direccion = 10
+    let direccion = (row['direccion'] || row['address'] || '').toString().trim();
+    if (direccion) score += 10;
+    
+    // facebook = 20
+    let fb = (row['facebook'] || row['facebook_url'] || '').toString().trim();
     if (fb) {
         score += 20;
         row.estado_actividad = 'SIN DATOS';
-        stats['Sin datos']++;
+        stats['Con Facebook']++;
     } else {
         row.estado_actividad = 'SIN FACEBOOK';
         stats['Sin Facebook']++;
     }
     
-    let wa = (row['WhatsApp'] || '').toString().trim();
-    if (wa) score += 20;
+    // whatsapp = 20
+    let wa = (row['whatsapp'] || '').toString().trim();
+    if (wa) {
+        score += 20;
+        stats['Con WhatsApp']++;
+    }
     
-    let tel = (row['Teléfono'] || '').toString().trim();
-    if (tel) score += 15;
+    // telefono = 10
+    let tel = (row['telefono'] || row['phone'] || '').toString().trim();
+    if (tel) {
+        score += 10;
+        stats['Con teléfono']++;
+    }
     
-    let ig = (row['Instagram'] || '').toString().trim();
-    if (ig) score += 15;
+    // instagram = 10
+    let ig = (row['instagram'] || row['instagram_url'] || '').toString().trim();
+    if (ig) {
+        score += 10;
+        stats['Con Instagram']++;
+    }
     
-    let web = (row['Sitio web'] || '').toString().trim();
-    if (web) score += 10;
-    
-    let name1 = (row['Nombre original'] || '').toString().trim();
-    let name2 = (row['Nombre normalizado'] || '').toString().trim();
-    if (name1 || name2) score += 20;
+    // sitio_web = 10
+    let web = (row['sitio_web'] || row['website'] || row['website_url'] || '').toString().trim();
+    if (web) {
+        score += 10;
+        stats['Con sitio web']++;
+    }
     
     row.score_oportunidad = score;
     
