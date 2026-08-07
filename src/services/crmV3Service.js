@@ -178,8 +178,9 @@ function initLocalStore() {
     let updated = false
     const refreshedBusinesses = localBusinesses.map(b => {
       if (b.is_demo) {
-        const official = DEMO_SHOWCASE.find(d => d.id === b.id || d.id === b.business_id || d.id === b.slug)
+        const official = DEMO_SHOWCASE.find(d => d.id === b.id || d.id === b.business_id || d.id === b.slug || b.id.includes(d.clave) || b.slug?.includes(d.clave) || (d.id === 'tacos-el-guero' && b.slug === 'ejmpleo-2'))
         const bName = official?.nombre || official?.name || b.name || 'Negocio Demo'
+        const demoFolder = official?.id || (b.slug === 'ejmpleo-2' ? 'tacos-el-guero' : (b.slug || b.id))
         const existingTrans = b.payment_methods?.transferencia || {}
         
         updated = true
@@ -189,8 +190,8 @@ function initLocalStore() {
           phone: DEMO_CONTACTS.DEFAULT_PHONE,
           whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
           business_type: official?.giro || official?.badge || b.business_type,
-          banner_url: official?.banner_url || `/demos/${official?.id || b.id}/cover.jpg`,
-          logo_url: official?.logo_url || `/demos/${official?.id || b.id}/profile.png`,
+          banner_url: `/demos/${demoFolder}/cover.jpg`,
+          logo_url: `/demos/${demoFolder}/profile.png`,
           payment_methods: {
             efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500, ...(b.payment_methods?.efectivo || {}) },
             transferencia: {
@@ -216,7 +217,7 @@ function initLocalStore() {
 
 // FASE 4 & REQUERIMIENTO 10: Migrar datos sin asignar contraseñas automáticas
 const MIGRATION_VERSION_KEY = 'sb_v3_migration_version'
-const CURRENT_MIGRATION_VERSION = 3
+const CURRENT_MIGRATION_VERSION = 4
 
 function migrateExistingData() {
   const currentVersion = Number(localStorage.getItem(MIGRATION_VERSION_KEY) || '0')
@@ -226,19 +227,10 @@ function migrateExistingData() {
   let changed = false
 
   bList.forEach(b => {
-    // Migrar banner_url de path viejo a nuevo
-    if (b.banner_url && b.banner_url.includes('/demos/img/')) {
-      b.banner_url = `/demos/${b.slug || b.id}/cover.jpg`
-      changed = true
-    }
-    if (!b.banner_url) {
-      b.banner_url = `/demos/${b.slug || b.id}/cover.jpg`
-      changed = true
-    }
-
-    // Migrar logo_url
-    if (!b.logo_url || b.logo_url.includes('/brand/SB_FAVICON')) {
-      b.logo_url = `/demos/${b.slug || b.id}/profile.png`
+    const demoFolder = b.slug === 'ejmpleo-2' ? 'tacos-el-guero' : (b.slug || b.id)
+    if (b.is_demo || !b.logo_url || b.logo_url.includes('/brand/SB_FAVICON')) {
+      b.logo_url = `/demos/${demoFolder}/profile.png`
+      b.banner_url = `/demos/${demoFolder}/cover.jpg`
       changed = true
     }
 
