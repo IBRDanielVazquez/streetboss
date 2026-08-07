@@ -4,7 +4,7 @@ import { DEMO_CONTACTS } from '../../data/demoFixtures'
 
 export default function LandingPrecios() {
   return (
-    <section id="precios" className="py-32 relative bg-black overflow-hidden">
+    <section id="precios" className="py-32 relative bg-black overflow-hidden reveal-on-scroll">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
       <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold tracking-wider uppercase mb-6">

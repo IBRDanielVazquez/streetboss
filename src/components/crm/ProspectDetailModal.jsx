@@ -5,7 +5,7 @@ import { X, Phone, MessageCircle, Facebook, Instagram, MapPin, Sparkles, Copy, S
 
 // Utilidad para asignar el demo correcto basado en la categoría
 const getRecommendedDemo = (category = '') => {
-  const cat = category.toLowerCase()
+  const cat = String(category || '').toLowerCase()
   if (cat.includes('taco') || cat.includes('taqueria')) return DEMOS_OFICIALES.find(d => d.id === 'tacos-el-guero')
   if (cat.includes('pizza') || cat.includes('pizzeria')) return DEMOS_OFICIALES.find(d => d.id === 'pizza-house')
   if (cat.includes('hamburguesa') || cat.includes('burger')) return DEMOS_OFICIALES.find(d => d.id === 'burger-house')
@@ -32,57 +32,67 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
   
   // Ubicación
   const pAddress = prospect.address || prospect.direccion || ''
-  let pMaps = (prospect.maps_url || prospect.maps || '').trim()
+  let pMaps = String(prospect.maps_url || prospect.maps || '').trim()
   if (!pMaps && pAddress) {
     pMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(pName + ' ' + pAddress + ' ' + pCity)}`
   }
 
   // Contacto Base
-  const pWaRaw = (prospect.whatsapp || prospect.phone || prospect.telefono || '').replace(/\D/g, '')
+  const pWaRaw = String(prospect.whatsapp || prospect.phone || prospect.telefono || '').replace(/\D/g, '')
   const whatsappNumber = pWaRaw.length >= 10 ? (pWaRaw.length === 10 ? `52${pWaRaw}` : pWaRaw) : ''
   const waSendUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}` : ''
 
-  const pPhoneRaw = (prospect.phone || prospect.telefono || '').replace(/\D/g, '')
+  const pPhoneRaw = String(prospect.phone || prospect.telefono || '').replace(/\D/g, '')
   const directPhone = pPhoneRaw.length >= 10 ? pPhoneRaw : (whatsappNumber ? pWaRaw : '')
   const showCallButton = !!directPhone
 
-  const fbClean = (prospect.facebook || '').trim()
+  const fbClean = String(prospect.facebook || '').trim()
   const fbUrl = fbClean ? (fbClean.startsWith('http') ? fbClean : `https://${fbClean}`) : ''
   
   // Generar Messenger si hay FB (y extraer el username si es posible)
   let msgrUrl = ''
   if (fbClean) {
     if (fbClean.includes('facebook.com/profile.php?id=')) {
-      const id = fbClean.split('id=')[1].split('&')[0]
-      msgrUrl = `https://m.me/${id}`
+      const parts = fbClean.split('id=')
+      if (parts.length > 1) {
+        const id = parts[1].split('&')[0]
+        msgrUrl = `https://m.me/${id}`
+      }
     } else if (fbClean.includes('facebook.com/')) {
-      let username = fbClean.split('facebook.com/')[1].split('/')[0].split('?')[0]
-      msgrUrl = `https://m.me/${username}`
+      const parts = fbClean.split('facebook.com/')
+      if (parts.length > 1) {
+        let username = parts[1].split('/')[0].split('?')[0]
+        msgrUrl = `https://m.me/${username}`
+      }
     }
   }
 
-  const igClean = (prospect.instagram || '').trim()
+  const igClean = String(prospect.instagram || '').trim()
   const igUrl = igClean ? (igClean.startsWith('http') ? igClean : `https://instagram.com/${igClean.replace('@', '')}`) : ''
 
-  const webClean = (prospect.website || prospect.sitio_web || '').trim()
+  const webClean = String(prospect.website || prospect.sitio_web || '').trim()
   const webUrl = webClean ? (webClean.startsWith('http') ? webClean : `https://${webClean}`) : ''
 
   const initialCommercial = getProspectCommercialData(prospect.id)
   const selectedDemoObj = getRecommendedDemo(pCat)
-  const demoUrlForProspect = selectedDemoObj ? `https://streetboss.com.mx/demo/${selectedDemoObj.id}` : ''
+  const demoId = selectedDemoObj?.id || 'burger-house'
+  const demoClave = selectedDemoObj?.clave || 'burger'
+  const demoNombre = selectedDemoObj?.nombre || 'Burger House'
+  
+  const demoLinkEspecifico = `https://streetboss.mx/menu/${demoId}-${demoClave}-2026`
+  const linkGeneralDemos = 'https://streetboss.mx/#demos'
 
   // Estados Base
   const [status, setStatus] = useState(initialCommercial.status || 'NUEVO')
   const [notes, setNotes] = useState(prospect.notes || initialCommercial.notes || '')
   const [copied, setCopied] = useState(false)
   const [copiedProd, setCopiedProd] = useState(false)
-  const [copiedToast, setCopiedToast] = useState('')
 
   // Datos INTERESADOS
   const [confName, setConfName] = useState(initialCommercial.confName || pName)
   const [confCat, setConfCat] = useState(initialCommercial.confCat || pCat)
-  const [confPhone, setConfPhone] = useState(initialCommercial.confPhone || (prospect.whatsapp || prospect.telefono || prospect.phone || ''))
-  const [confDemo, setConfDemo] = useState(initialCommercial.confDemo || selectedDemoObj?.id || '')
+  const [confPhone, setConfPhone] = useState(initialCommercial.confPhone || String(prospect.whatsapp || prospect.telefono || prospect.phone || ''))
+  const [confDemo, setConfDemo] = useState(initialCommercial.confDemo || demoId)
 
   // Datos PRODUCCION
   const [prodMenuLink, setProdMenuLink] = useState(initialCommercial.prodMenuLink || '')
@@ -91,10 +101,24 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
   const [prodPass, setProdPass] = useState(initialCommercial.prodPass || '')
   const [prodStatus, setProdStatus] = useState(initialCommercial.prodStatus || 'PENDIENTE')
 
-  // Plantilla Comercial Centralizada (Regla 10)
-  const customMessage = demoUrlForProspect
-    ? `Hola 👋 Vi ${pName} y preparé un ejemplo de cómo podría verse su menú digital para recibir pedidos de forma más ordenada por WhatsApp.\n\nPuede verlo aquí:\n${demoUrlForProspect}\n\nSi le interesa, con gusto le explico cómo funciona.`
-    : `Hola 👋 Vi ${pName} y quería mostrarle una forma sencilla de tener su menú digital y recibir pedidos más ordenados directamente por WhatsApp.\n\n¿Le puedo compartir un ejemplo?`
+  const customMessage = `Hola, equipo de ${pName}.
+
+Estuve revisando su perfil y preparé una demostración de cómo podría verse su negocio utilizando StreetBoss.
+
+Por el giro de su negocio seleccioné este ejemplo:
+
+👉 ${demoLinkEspecifico}
+
+También pueden conocer otras opciones y estilos disponibles aquí:
+
+👉 ${linkGeneralDemos}
+
+StreetBoss les permite tener un escaparate digital optimizado para celular y recibir los pedidos directamente por WhatsApp.
+
+Si les interesa, podemos preparar una versión personalizada para su negocio.
+
+Saludos,
+StreetBoss`
 
   const deliveryMessage = `Hola, ${confName}.
 
@@ -121,39 +145,6 @@ Vende directo. Manda tú.`
 
   const waSendMsgUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMessage)}` : ''
   const waDeliveryUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(deliveryMessage)}` : ''
-
-  // Manejo Unificado de Contacto (Reglas 11, 12, 13, 15)
-  const handleContactChannel = (channelName, targetUrl, shouldCopyMessage = false) => {
-    const now = new Date().toISOString().split('T')[0]
-    const extraData = {}
-    if (!initialCommercial.contact_date) extraData.contact_date = now
-    
-    saveProspectCommercialData(prospect.id, {
-      last_contact: now,
-      last_contact_channel: channelName,
-      assigned_demo: selectedDemoObj?.id || '',
-      demo_sent: !!demoUrlForProspect,
-      ...extraData
-    })
-
-    if (onUpdateProspect) {
-      onUpdateProspect({ ...prospect, last_contact: now, __updateTrigger: Date.now() })
-    }
-
-    if (shouldCopyMessage) {
-      navigator.clipboard.writeText(customMessage)
-      setCopiedToast(`Mensaje copiado para ${channelName}`)
-      setTimeout(() => setCopiedToast(''), 3000)
-    }
-
-    if (targetUrl) {
-      if (targetUrl.startsWith('tel:')) {
-        window.location.href = targetUrl
-      } else {
-        window.open(targetUrl, '_blank')
-      }
-    }
-  }
 
   const getRatingStars = (score) => {
     if (score >= 85) return 5
@@ -250,60 +241,34 @@ Vende directo. Manda tú.`
   )
 
   const renderContactMatrix = () => (
-    <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3 relative">
-      {copiedToast && (
-        <div className="absolute -top-3 right-4 bg-blue-600 text-white text-[11px] font-black px-3 py-1 rounded-full shadow-lg animate-bounce">
-          {copiedToast}
-        </div>
-      )}
-
+    <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3">
       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Matriz de Contacto</h4>
       
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-        {waSendMsgUrl && (
-          <button
-            type="button"
-            onClick={() => handleContactChannel('WhatsApp', waSendMsgUrl, false)}
-            className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow"
-          >
+        {waSendUrl && (
+          <a href={waSendUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
             <MessageCircle size={18} /> WhatsApp
-          </button>
+          </a>
         )}
         {msgrUrl && (
-          <button
-            type="button"
-            onClick={() => handleContactChannel('Messenger', msgrUrl, true)}
-            className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow"
-          >
+          <a href={msgrUrl} target="_blank" rel="noopener noreferrer" onClick={handleCopyMessage} className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow" title="Copia el mensaje primero">
             <MessageCircle size={18} /> Messenger
-          </button>
+          </a>
         )}
         {fbUrl && (
-          <button
-            type="button"
-            onClick={() => handleContactChannel('Facebook', fbUrl, true)}
-            className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-blue-800/20 hover:bg-blue-800/30 border border-blue-700/40 text-blue-500 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow"
-          >
+          <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-blue-800/20 hover:bg-blue-800/30 border border-blue-700/40 text-blue-500 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
             <Facebook size={18} /> Facebook
-          </button>
+          </a>
         )}
         {showCallButton && (
-          <button
-            type="button"
-            onClick={() => handleContactChannel('Llamada', `tel:${directPhone}`, false)}
-            className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-[#1A1D29] hover:bg-[#222636] border border-white/10 text-white font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow"
-          >
+          <a href={`tel:${directPhone}`} className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-[#1A1D29] hover:bg-[#222636] border border-white/10 text-white font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
             <Phone size={18} className="text-emerald-400" /> Llamar
-          </button>
+          </a>
         )}
         {igUrl && (
-          <button
-            type="button"
-            onClick={() => handleContactChannel('Instagram', igUrl, true)}
-            className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow"
-          >
+          <a href={igUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-pink-600/20 hover:bg-pink-600/30 border border-pink-500/40 text-pink-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
             <Instagram size={18} /> Instagram
-          </button>
+          </a>
         )}
         {pMaps && (
           <a href={pMaps} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/40 text-amber-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
@@ -330,7 +295,7 @@ Vende directo. Manda tú.`
       <div className="flex justify-between items-center">
         <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Demo Recomendado</h4>
         <span className="text-purple-400 font-bold px-2 py-0.5 bg-purple-500/10 rounded border border-purple-500/20 text-[10px]">
-          {selectedDemoObj.nombre}
+          {demoNombre}
         </span>
       </div>
       <div className="grid grid-cols-2 gap-2">

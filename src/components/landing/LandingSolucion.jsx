@@ -3,7 +3,7 @@ import { MessageCircle, MapPin } from 'lucide-react'
 
 export default function LandingSolucion() {
   return (
-    <section id="solucion" className="py-24 md:py-32 relative bg-[#050505]">
+    <section id="solucion" className="py-24 md:py-32 relative bg-[#050505] reveal-on-scroll">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-16 md:mb-24">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6">

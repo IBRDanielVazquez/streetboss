@@ -6,7 +6,7 @@ export default function LandingCalculadora() {
   const comisionPromedio = 0.30
 
   return (
-    <section id="calculadora" className="py-24 bg-gradient-to-b from-[#050505] to-[#0a0a0a] relative border-b border-white/5">
+    <section id="calculadora" className="py-24 bg-gradient-to-b from-[#050505] to-[#0a0a0a] relative border-b border-white/5 reveal-on-scroll">
       <div className="max-w-4xl mx-auto px-6">
         <div className="text-center mb-12">
           <div className="w-12 h-12 bg-green-500/10 border border-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
