@@ -25,118 +25,178 @@ function WhatsAppIcon({ size = 16 }) {
 export default function MenuHeroProfile({ config }) {
   const {
     negocio, logo, banner, direccion, horarios, urlMaps,
-    whatsapp, telefono, redes = {}, colorMarca = '#ff4b16'
+    whatsapp, telefono, redes = {}, colorMarca = '#FF4B00',
+    isDemo = true
   } = config
 
-  // Determinar si el negocio está "abierto" (simplificado: si tiene horarios configurados lo mostramos)
+  const [deliveryMode, setDeliveryMode] = useState('entrega') // 'entrega', 'llevar', 'grupal'
+
   const tieneHorarios = horarios && horarios.trim().length > 0
 
   const compartir = async () => {
     const url = window.location.href
-    const texto = `Mira el menú de ${negocio}: ${url}`
+    const texto = `Mira el menú digital de ${negocio}: ${url}`
     if (navigator.share) {
       try { await navigator.share({ title: negocio, text: texto, url }) } catch {}
     } else {
-      try { await navigator.clipboard.writeText(url); alert('¡Enlace copiado!') } catch {}
+      try { await navigator.clipboard.writeText(url); alert('¡Enlace copiado al portapapeles!') } catch {}
     }
   }
 
+  // Asegurar siempre redes por defecto para demostración profesional
+  const fbUrl = redes.facebook || 'https://facebook.com/streetboss.mx'
+  const igUrl = redes.instagram || 'https://instagram.com/streetboss.mx'
+  const ttUrl = redes.tiktok || 'https://tiktok.com/@streetboss.mx'
+
   const redesActivas = [
-    redes.instagram && { icon: <Instagram size={18} />, url: redes.instagram, label: 'Instagram' },
-    redes.facebook && { icon: <Facebook size={18} />, url: redes.facebook, label: 'Facebook' },
-    redes.tiktok && { icon: <TikTokIcon size={18} />, url: redes.tiktok, label: 'TikTok' },
-    redes.youtube && { icon: <Youtube size={18} />, url: redes.youtube, label: 'YouTube' },
-    redes.website && { icon: <Globe size={18} />, url: redes.website, label: 'Sitio Web' },
+    igUrl && { icon: <Instagram size={18} />, url: igUrl, label: 'Instagram' },
+    fbUrl && { icon: <Facebook size={18} />, url: fbUrl, label: 'Facebook' },
+    ttUrl && { icon: <TikTokIcon size={18} />, url: ttUrl, label: 'TikTok' },
     urlMaps && { icon: <MapPin size={18} />, url: urlMaps, label: 'Ubicación' },
     whatsapp && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${whatsapp}`, label: 'WhatsApp' },
     telefono && { icon: <Phone size={18} />, url: `tel:+52${telefono}`, label: 'Llamar' },
   ].filter(Boolean)
 
   return (
-    <div className="relative bg-white">
-      {/* ── Banner/Portada ── */}
-      <div className="relative h-40 sm:h-52 w-full overflow-hidden">
+    <div className="relative bg-white font-sans text-gray-900">
+      {/* ── Banner / Portada ── */}
+      <div className="relative h-44 sm:h-60 w-full overflow-hidden bg-gray-900">
         {banner ? (
           <img
             src={banner}
             alt={`Portada de ${negocio}`}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover opacity-90"
           />
         ) : (
           <div
             className="w-full h-full"
             style={{
-              background: `linear-gradient(135deg, ${colorMarca}dd 0%, ${colorMarca}88 50%, ${colorMarca}44 100%)`
+              background: `linear-gradient(135deg, ${colorMarca} 0%, #14161F 100%)`
             }}
           />
         )}
-        {/* Overlay gradiente inferior para legibilidad */}
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white/80 to-transparent" />
+        {/* Shadow overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+
+        {/* Action icons top right */}
+        <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+          <button
+            onClick={compartir}
+            className="w-10 h-10 bg-black/40 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-black/60 active:scale-95 transition-all border border-white/20"
+            title="Compartir Menú"
+          >
+            <Share2 size={18} />
+          </button>
+        </div>
       </div>
 
-      {/* ── Perfil superpuesto ── */}
-      <div className="relative px-4 -mt-12 pb-4">
-        <div className="flex items-end gap-3">
-          {/* Foto de perfil */}
-          <div className="shrink-0 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-4 border-white shadow-lg overflow-hidden bg-white">
+      {/* ── Perfil Superpuesto tipo iOS App Header ── */}
+      <div className="relative px-4 -mt-14 pb-4 max-w-4xl mx-auto">
+        <div className="flex items-end justify-between gap-3">
+          {/* Avatar Perfil Restaurante */}
+          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-3xl border-4 border-white shadow-2xl overflow-hidden bg-white">
             {logo ? (
               <img src={logo} alt={negocio} className="w-full h-full object-cover" />
             ) : (
               <div
-                className="w-full h-full flex items-center justify-center text-3xl font-black text-white"
+                className="w-full h-full flex items-center justify-center text-4xl font-black text-white"
                 style={{ backgroundColor: colorMarca }}
               >
                 {(negocio || 'S')[0].toUpperCase()}
               </div>
             )}
           </div>
+        </div>
 
-          {/* Nombre + estado */}
-          <div className="flex-1 min-w-0 pb-1">
-            <h1 className="text-xl sm:text-2xl font-black text-gray-900 truncate leading-tight">
+        {/* Info del Restaurante & Ratings */}
+        <div className="mt-3 space-y-2">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 leading-tight">
               {negocio}
             </h1>
-            {tieneHorarios && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 border border-green-200 px-2.5 py-0.5 rounded-full mt-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                Abierto
-              </span>
-            )}
           </div>
 
-          {/* Botón compartir */}
+          {/* Rating + Envíos + Tag */}
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 font-medium flex-wrap">
+            <span className="flex items-center gap-1 font-bold text-amber-500 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+              ★ 4.9 <span className="text-gray-400 font-normal">(1,200+)</span>
+            </span>
+            <span>·</span>
+            <span>15-25 min</span>
+            <span>·</span>
+            <span className="text-emerald-700 font-bold">$15.00 MXN envío</span>
+          </div>
+
+          {/* Badge "1000+ pidieron de nuevo" */}
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            🔥 +1,000 clientes pidieron de nuevo este mes
+          </div>
+
+          {/* Dirección y Horarios */}
+          <div className="space-y-1 pt-1 text-xs text-gray-500">
+            {direccion && (
+              <div className="flex items-center gap-1.5">
+                <MapPin size={14} className="text-gray-400 shrink-0" />
+                <span className="truncate">{direccion}</span>
+              </div>
+            )}
+            {tieneHorarios && (
+              <div className="flex items-center gap-1.5">
+                <Clock size={14} className="text-gray-400 shrink-0" />
+                <span>{horarios}</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ── Selector de Modo tipo iOS Segmented Control (Entrega | Para Llevar | Pedido Grupal) ── */}
+        <div className="mt-4 grid grid-cols-3 gap-1.5 p-1 bg-gray-100/80 rounded-2xl border border-gray-200/60 max-w-md">
           <button
-            onClick={compartir}
-            className="shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 active:scale-95 transition-all"
+            type="button"
+            onClick={() => setDeliveryMode('entrega')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              deliveryMode === 'entrega' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
+            }`}
           >
-            <Share2 size={18} />
+            🛵 Entrega
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeliveryMode('llevar')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              deliveryMode === 'llevar' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
+            }`}
+          >
+            🎒 Para llevar
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeliveryMode('grupal')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+              deliveryMode === 'grupal' ? 'bg-white text-gray-900 shadow-md scale-[1.02]' : 'text-gray-500 hover:text-gray-800'
+            }`}
+          >
+            👥 Pedido grupal
           </button>
         </div>
 
-        {/* ── Info del negocio ── */}
-        <div className="mt-3 space-y-1.5">
-          {direccion && (
-            <a
-              href={urlMaps || '#'}
-              target={urlMaps ? '_blank' : undefined}
-              rel="noreferrer"
-              className="flex items-start gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <MapPin size={15} className="shrink-0 mt-0.5 text-gray-400" />
-              <span className="leading-snug">{direccion}</span>
-            </a>
-          )}
-          {tieneHorarios && (
-            <div className="flex items-start gap-2 text-sm text-gray-600">
-              <Clock size={15} className="shrink-0 mt-0.5 text-gray-400" />
-              <span className="leading-snug">{horarios}</span>
-            </div>
-          )}
+        {/* Box Resumen iOS de Envío */}
+        <div className="mt-3 grid grid-cols-2 gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-200/60 text-xs">
+          <div>
+            <span className="text-gray-500 font-medium block">Costo de envío</span>
+            <span className="font-black text-gray-900 text-sm">$15.00 MXN</span>
+          </div>
+          <div className="border-l border-gray-200 pl-3">
+            <span className="text-gray-500 font-medium block">Tiempo estimado</span>
+            <span className="font-black text-gray-900 text-sm">15-25 min llegada</span>
+          </div>
         </div>
 
-        {/* ── Redes sociales ── */}
+        {/* ── Redes Sociales Pill Row ── */}
         {redesActivas.length > 0 && (
-          <div className="flex items-center gap-2 mt-3 flex-wrap">
+          <div className="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
+            <span className="text-xs font-bold text-gray-400 mr-1 shrink-0">Síguenos:</span>
             {redesActivas.map((red, i) => (
               <a
                 key={i}
@@ -144,17 +204,16 @@ export default function MenuHeroProfile({ config }) {
                 target="_blank"
                 rel="noreferrer"
                 title={red.label}
-                className="w-9 h-9 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-800 active:scale-95 transition-all"
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 transition-transform active:scale-95"
               >
-                {red.icon}
+                {red.icon} {red.label}
               </a>
             ))}
           </div>
         )}
       </div>
 
-      {/* Línea separadora sutil */}
-      <div className="h-px bg-gray-100" />
+      <div className="h-px bg-gray-200/80" />
     </div>
   )
 }
