@@ -40,7 +40,6 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
   // Contacto Base
   const pWaRaw = String(prospect.whatsapp || prospect.phone || prospect.telefono || '').replace(/\D/g, '')
   const whatsappNumber = pWaRaw.length >= 10 ? (pWaRaw.length === 10 ? `52${pWaRaw}` : pWaRaw) : ''
-  const waSendUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}` : ''
 
   const pPhoneRaw = String(prospect.phone || prospect.telefono || '').replace(/\D/g, '')
   const directPhone = pPhoneRaw.length >= 10 ? pPhoneRaw : (whatsappNumber ? pWaRaw : '')
@@ -245,8 +244,8 @@ Vende directo. Manda tú.`
       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Matriz de Contacto</h4>
       
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-        {waSendUrl && (
-          <a href={waSendUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
+        {waSendMsgUrl && (
+          <a href={waSendMsgUrl} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1.5 py-3 px-2 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-black rounded-xl transition-all text-[10px] uppercase tracking-wider active:scale-95 shadow">
             <MessageCircle size={18} /> WhatsApp
           </a>
         )}

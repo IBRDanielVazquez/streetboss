@@ -42,8 +42,8 @@ export const DEMOS_OFICIALES = [
       ]),
       cat('burger-c3', '🥤 Bebidas', [
         prod('burger-p6', 'Malteada Fresa', 65, '', '/demos/burger-house/products/malteada-fresa.jpg'),
-        prod('burger-p7', 'Malteada Chocolate', 65),
-        prod('burger-p8', 'Refresco', 30),
+        prod('burger-p7', 'Malteada Chocolate', 65, '', '/demos/burger-house/products/malteada-chocolate.jpg'),
+        prod('burger-p8', 'Refresco', 30, '', '/demos/burger-house/products/refresco.jpg'),
       ]),
     ],
   },
@@ -51,17 +51,17 @@ export const DEMOS_OFICIALES = [
     id: 'pizza-house', clave: 'pizza', nombre: 'Pizza House', emoji: '🍕', giro: 'Pizzería',
     menu: [
       cat('pizza-c1', '🍕 Pizzas', [
-        prod('pizza-p1', 'Pepperoni', 120, 'Clásica con queso mozzarella'),
-        prod('pizza-p2', 'Hawaiana', 130, 'Jamón, piña y extra queso'),
-        prod('pizza-p3', 'Meat Lovers', 160, 'Pepperoni, salchicha, jamón y tocino'),
+        prod('pizza-p1', 'Pepperoni', 120, 'Clásica con queso mozzarella', '/demos/pizza-house/products/pizza-pepperoni.jpg'),
+        prod('pizza-p2', 'Hawaiana', 130, 'Jamón, piña y extra queso', '/demos/pizza-house/products/pizza-hawaiana.jpg'),
+        prod('pizza-p3', 'Meat Lovers', 160, 'Pepperoni, salchicha, jamón y tocino', '/demos/pizza-house/products/pizza-meat-lovers.jpg'),
       ]),
       cat('pizza-c2', '🍗 Entradas', [
-        prod('pizza-p4', 'Alitas BBQ', 99, '8 piezas con aderezo'),
-        prod('pizza-p5', 'Pan de Ajo', 45, 'Con queso fundido'),
+        prod('pizza-p4', 'Alitas BBQ', 99, '8 piezas con aderezo', '/demos/pizza-house/products/alitas-bbq.jpg'),
+        prod('pizza-p5', 'Pan de Ajo', 45, 'Con queso fundido', '/demos/pizza-house/products/pan-ajo.jpg'),
       ]),
       cat('pizza-c3', '🥤 Bebidas', [
-        prod('pizza-p6', 'Refresco 2L', 55),
-        prod('pizza-p7', 'Té Helado', 35),
+        prod('pizza-p6', 'Refresco 2L', 55, '', '/demos/pizza-house/products/refresco-2l.jpg'),
+        prod('pizza-p7', 'Té Helado', 35, '', '/demos/pizza-house/products/te-helado.jpg'),
       ]),
     ],
   },
@@ -69,9 +69,9 @@ export const DEMOS_OFICIALES = [
     id: 'cafe-central', clave: 'cafe', nombre: 'Café Central', emoji: '☕', giro: 'Cafetería',
     menu: [
       cat('cafe-c1', '☕ Bebidas Calientes', [
-        prod('cafe-p1', 'Americano', 40, 'Café de especialidad'),
-        prod('cafe-p2', 'Latte', 55, 'Espresso con leche cremada'),
-        prod('cafe-p3', 'Mocha', 65, 'Espresso, leche y chocolate'),
+        prod('cafe-p1', 'Americano', 40, 'Café de especialidad', '/demos/cafe-central/products/cafe-americano.jpg'),
+        prod('cafe-p2', 'Latte', 55, 'Espresso con leche cremada', '/demos/cafe-central/products/cafe-latte.jpg'),
+        prod('cafe-p3', 'Mocha', 65, 'Espresso, leche y chocolate', '/demos/cafe-central/products/cafe-mocha.jpg'),
       ]),
       cat('cafe-c2', '🥐 Pan y Postres', [
         prod('cafe-p4', 'Croissant', 45, 'Mantequilla 100%'),
