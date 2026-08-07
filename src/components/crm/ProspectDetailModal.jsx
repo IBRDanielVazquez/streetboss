@@ -5,7 +5,7 @@ import { X, Phone, MessageCircle, Facebook, Instagram, MapPin, Sparkles, Copy, S
 
 // Utilidad para asignar el demo correcto basado en la categoría
 const getRecommendedDemo = (category = '') => {
-  const cat = String(category || '').toLowerCase()
+  const cat = String(category || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   if (cat.includes('taco') || cat.includes('taqueria')) return DEMOS_OFICIALES.find(d => d.id === 'tacos-el-guero')
   if (cat.includes('pizza') || cat.includes('pizzeria')) return DEMOS_OFICIALES.find(d => d.id === 'pizza-house')
   if (cat.includes('hamburguesa') || cat.includes('burger')) return DEMOS_OFICIALES.find(d => d.id === 'burger-house')
