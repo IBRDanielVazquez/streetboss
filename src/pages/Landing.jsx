@@ -1,16 +1,14 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import { Facebook, Instagram } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 import LandingReelContainer from '../components/landing/LandingReelContainer'
-
-// Lazy load components that are below the fold
-const LandingSocialProof = lazy(() => import('../components/landing/LandingSocialProof'))
-const LandingCalculadora = lazy(() => import('../components/landing/LandingCalculadora'))
-const LandingSolucion = lazy(() => import('../components/landing/LandingSolucion'))
-const LandingPrecios = lazy(() => import('../components/landing/LandingPrecios'))
-const LandingDemosCTA = lazy(() => import('../components/landing/LandingDemosCTA'))
-const LandingFAQ = lazy(() => import('../components/landing/LandingFAQ'))
+import LandingSocialProof from '../components/landing/LandingSocialProof'
+import LandingCalculadora from '../components/landing/LandingCalculadora'
+import LandingSolucion from '../components/landing/LandingSolucion'
+import LandingPrecios from '../components/landing/LandingPrecios'
+import LandingDemosCTA from '../components/landing/LandingDemosCTA'
+import LandingFAQ from '../components/landing/LandingFAQ'
 
 const FACEBOOK_URL = 'https://www.facebook.com/share/1Csqs8gKqt/?mibextid=wwXIfr'
 const INSTAGRAM_URL = 'https://www.instagram.com/streetboss.mx/'
@@ -38,7 +36,7 @@ export default function Landing() {
                 alt="StreetBoss" 
                 width="600" 
                 height="337" 
-                className="h-16 sm:h-20 md:h-24 w-auto object-contain mix-blend-screen" 
+                className="h-14 sm:h-18 md:h-22 w-auto object-contain mix-blend-screen" 
               />
             </a>
           </div>
@@ -64,10 +62,10 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* ── Hero Section (Cinematográfico, Sin Botones) ── */}
-      <section className="relative pt-36 pb-16 md:pt-48 md:pb-24 overflow-hidden flex flex-col items-center justify-center text-center px-6">
+      {/* ── Hero Section (Cinematográfico, Instantáneo, Sin Botones) ── */}
+      <section className="relative pt-32 pb-14 md:pt-44 md:pb-20 overflow-hidden flex flex-col items-center justify-center text-center px-6">
         {/* Glow Cinematográfico sutil */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[55vw] h-[55vw] bg-[#ff4b16]/20 blur-[160px] rounded-full pointer-events-none opacity-60 animate-pulse-glow" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] bg-[#ff4b16]/20 blur-[140px] rounded-full pointer-events-none opacity-60 animate-pulse-glow" />
         <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         
         <div className="relative z-10 max-w-4xl mx-auto space-y-6">
@@ -92,15 +90,13 @@ export default function Landing() {
       {/* ── Contenedor 9:16 para Futuro Reel Video ── */}
       <LandingReelContainer />
 
-      {/* ── Carga Asíncrona de las secciones debajo del Hero ── */}
-      <Suspense fallback={<div className="h-[200px]" />}>
-        <LandingSocialProof />
-        <LandingCalculadora />
-        <LandingSolucion />
-        <LandingPrecios />
-        <LandingDemosCTA />
-        <LandingFAQ />
-      </Suspense>
+      {/* ── Secciones Directas (Carga Sincronizada Ultra Rápida) ── */}
+      <LandingSocialProof />
+      <LandingCalculadora />
+      <LandingSolucion />
+      <LandingPrecios />
+      <LandingDemosCTA />
+      <LandingFAQ />
 
       {/* ── Footer ── */}
       <footer className="border-t border-white/10 bg-[#030304] pt-16 pb-8">
