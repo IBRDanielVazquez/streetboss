@@ -28,6 +28,7 @@ export default function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/demos" element={<Demos />} />
           <Route path="/menu/:trialId" element={<DemoPublicMenu />} />
+          <Route path="/demo/:trialId" element={<DemoPublicMenu />} />
 
           {/* Nueva Ruta Interna Segura del CRM */}
           <Route path="/central-hq" element={<StreetBossCentral />} />

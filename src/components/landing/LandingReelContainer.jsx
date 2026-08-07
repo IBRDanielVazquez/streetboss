@@ -1,7 +1,17 @@
-import React from 'react'
-import { Sparkles } from 'lucide-react'
+import React, { useRef, useState } from 'react'
+import { Sparkles, Volume2, VolumeX } from 'lucide-react'
 
 export default function LandingReelContainer() {
+  const videoRef = useRef(null)
+  const [isMuted, setIsMuted] = useState(true)
+
+  const toggleSound = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted
+      setIsMuted(!isMuted)
+    }
+  }
+
   return (
     <section className="py-16 md:py-24 relative overflow-hidden bg-black border-b border-white/5 reveal-on-scroll">
       <div className="max-w-6xl mx-auto px-6">
@@ -24,12 +34,13 @@ export default function LandingReelContainer() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[580px] bg-[#ff4b16]/20 blur-[100px] rounded-full pointer-events-none" />
 
           {/* Smartphone Frame (Aspect 9:16) */}
-          <div className="relative aspect-[9/16] w-full rounded-[2.5rem] bg-[#0A0B0E] border-4 border-white/10 p-2 shadow-[0_25px_60px_-15px_rgba(255,75,22,0.3)] overflow-hidden">
+          <div className="relative aspect-[9/16] w-full rounded-[2.5rem] bg-[#0A0B0E] border-4 border-white/10 p-2 shadow-[0_25px_60px_-15px_rgba(255,75,22,0.3)] overflow-hidden group">
             
             {/* Reel Video Active */}
             <video
+              ref={videoRef}
               autoPlay
-              muted
+              muted={isMuted}
               loop
               playsInline
               preload="metadata"
@@ -39,6 +50,26 @@ export default function LandingReelContainer() {
               <source src="/brand/streetboss_reel.mp4" type="video/mp4" />
               <source src="/brand/streetboss_reel.mov" type="video/quicktime" />
             </video>
+
+            {/* Audio Toggle Button */}
+            <button
+              onClick={toggleSound}
+              type="button"
+              aria-label={isMuted ? 'Activar sonido del video' : 'Silenciar sonido del video'}
+              className="absolute bottom-5 right-5 z-20 flex items-center gap-2 bg-black/75 hover:bg-[#ff4b16] text-white px-3.5 py-2 rounded-full backdrop-blur-md border border-white/20 shadow-2xl transition-all hover:scale-105 active:scale-95 text-xs font-bold"
+            >
+              {isMuted ? (
+                <>
+                  <VolumeX size={16} className="text-[#ff4b16] group-hover:text-white" />
+                  <span>Activar sonido</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 size={16} className="text-emerald-400 animate-pulse" />
+                  <span>Sonido activo</span>
+                </>
+              )}
+            </button>
 
           </div>
         </div>

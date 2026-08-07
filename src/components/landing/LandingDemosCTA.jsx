@@ -27,7 +27,7 @@ export default function LandingDemosCTA() {
             return (
               <a
                 key={demo.id}
-                href={`/demo/${demo.clave}`}
+                href={`/menu/${demo.id}`}
                 target="_blank"
                 rel="noreferrer"
                 className="group bg-[#0A0B0E] border border-white/10 hover:border-[#ff4b16]/50 rounded-2xl p-3 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,75,22,0.15)]"
