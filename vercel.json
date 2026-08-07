@@ -55,6 +55,7 @@
     { "src": "/demo-admin(/.*)?", "status": 404, "dest": "/404.html" },
     { "src": "/internal(/.*)?", "status": 404, "dest": "/404.html" },
     { "handle": "filesystem" },
+    { "src": "/menu/(.*)", "dest": "/api/menu" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
