@@ -1,5 +1,6 @@
 # ESTADO DE PROGRESO DE FOTOGRAFÍAS DE PRODUCTOS DE DEMOS
 
+- **Estado de API:** Cuota de generación exhausta temporalmente (Reset programado: 2026-08-07T13:01:59Z / ~3h 33m)
 - **Demo terminado:** Ninguno (Tacos El Güero en proceso)
 - **Demo actual:** 1. Tacos El Güero (`tacos-el-guero`)
 - **Último producto terminado:** Taco de bistec (`guero-p3`)
