@@ -74,12 +74,12 @@ export const DEMOS_OFICIALES = [
         prod('cafe-p3', 'Mocha', 65, 'Espresso, leche y chocolate', '/demos/cafe-central/products/cafe-mocha.jpg'),
       ]),
       cat('cafe-c2', '🥐 Pan y Postres', [
-        prod('cafe-p4', 'Croissant', 45, 'Mantequilla 100%'),
-        prod('cafe-p5', 'Pastel de Zanahoria', 75, 'Con betún de queso'),
+        prod('cafe-p4', 'Croissant', 45, 'Mantequilla 100%', '/demos/cafe-central/products/cafe-croissant.jpg'),
+        prod('cafe-p5', 'Pastel de Zanahoria', 75, 'Con betún de queso', '/demos/cafe-central/products/cafe-pastel-zanahoria.jpg'),
       ]),
       cat('cafe-c3', '🍳 Brunch', [
-        prod('cafe-p6', 'Chilaquiles', 95, 'Verdes o rojos con huevo'),
-        prod('cafe-p7', 'Toast de Aguacate', 85, 'Pan masa madre con aguacate'),
+        prod('cafe-p6', 'Chilaquiles', 95, 'Verdes o rojos con huevo', '/demos/cafe-central/products/cafe-chilaquiles.jpg'),
+        prod('cafe-p7', 'Toast de Aguacate', 85, 'Pan masa madre con aguacate', '/demos/cafe-central/products/cafe-toast-aguacate.jpg'),
       ]),
     ],
   },
@@ -87,17 +87,20 @@ export const DEMOS_OFICIALES = [
     id: 'pollos-el-rey', clave: 'rey', nombre: 'Pollos El Rey', emoji: '🍗', giro: 'Rosticería',
     menu: [
       cat('rey-c1', '🍗 Pollo Rostizado', [
-        prod('rey-p1', 'Pollo Entero', 150, 'Incluye salsa y tortillas'),
-        prod('rey-p2', 'Medio Pollo', 85, 'Incluye salsa y tortillas'),
+        prod('rey-p1', 'Pollo Entero', 150, 'Incluye salsa y tortillas', '/demos/pollos-el-rey/products/pollo-entero.jpg'),
+        prod('rey-p2', 'Medio Pollo', 85, 'Incluye salsa y tortillas', '/demos/pollos-el-rey/products/medio-pollo.jpg'),
       ]),
       cat('rey-c2', '📦 Paquetes', [
-        prod('rey-p3', 'Paquete Familiar', 220, '1 Pollo y medio, arroz, frijoles y tortillas'),
+        prod('rey-p3', 'Paquete Familiar', 220, '1 Pollo y medio, arroz, frijoles y tortillas', '/demos/pollos-el-rey/products/paquete-familiar.jpg'),
         prod('rey-p4', 'Paquete Rey', 300, '2 Pollos, arroz, frijoles, ensalada y refresco'),
       ]),
       cat('rey-c3', '🥗 Complementos', [
         prod('rey-p5', 'Arroz', 35),
-        prod('rey-p6', 'Frijoles Charros', 40),
+        prod('rey-p6', 'Frijoles Charros', 40, '', '/demos/pollos-el-rey/products/frijoles-charros.jpg'),
         prod('rey-p7', 'Ensalada de Codito', 35),
+      ]),
+      cat('rey-c4', '🥤 Bebidas', [
+        prod('rey-p8', 'Refresco Familiar 2L', 45, 'Coca-Cola o Sabores', '/demos/pollos-el-rey/products/refresco-familiar.jpg'),
       ]),
     ],
   },
