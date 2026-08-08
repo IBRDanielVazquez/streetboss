@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import { Facebook, Instagram } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
@@ -30,7 +31,7 @@ export default function Landing() {
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 border-b ${scrolled ? 'bg-black/85 backdrop-blur-xl border-white/10 py-3 md:py-4 shadow-2xl' : 'bg-transparent border-transparent py-5 md:py-6'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center shrink-0">
-            <a href="/">
+            <Link to="/">
               <img 
                 src="/brand/StreetBoss_Logo_Horizontal_Oficial.webp" 
                 alt="StreetBoss" 
@@ -38,7 +39,7 @@ export default function Landing() {
                 height="337" 
                 className="h-14 sm:h-18 md:h-22 w-auto object-contain mix-blend-screen" 
               />
-            </a>
+            </Link>
           </div>
           
           <div className="hidden md:flex gap-8 text-sm font-bold text-gray-400">
@@ -103,7 +104,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-12">
             <div className="flex items-center">
-              <a href="/">
+              <Link to="/">
                 <img 
                   src="/brand/StreetBoss_Logo_Horizontal_Oficial.webp" 
                   alt="StreetBoss" 
@@ -112,7 +113,7 @@ export default function Landing() {
                   loading="lazy" 
                   className="h-16 md:h-20 w-auto object-contain mix-blend-screen" 
                 />
-              </a>
+              </Link>
             </div>
             
             <div className="flex flex-wrap justify-center gap-6 text-xs md:text-sm font-bold">

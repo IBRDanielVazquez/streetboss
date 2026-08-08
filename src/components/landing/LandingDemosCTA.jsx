@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { DEMOS_OFICIALES } from '../../data/demoShowcase'
 
@@ -25,11 +26,9 @@ export default function LandingDemosCTA() {
           {DEMOS_OFICIALES.map((demo) => {
             const firstProduct = demo.menu?.[0]?.productos?.[0]?.foto || `/demos/${demo.id}/cover.jpg`
             return (
-              <a
+              <Link
                 key={demo.id}
-                href={`/menu/${demo.id}`}
-                target="_blank"
-                rel="noreferrer"
+                to={`/menu/${demo.id}`}
                 className="group bg-[#0A0B0E] border border-white/10 hover:border-[#ff4b16]/50 rounded-2xl p-3 flex flex-col justify-between transition-all hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,75,22,0.15)]"
               >
                 <div className="aspect-[4/3] rounded-xl overflow-hidden mb-3 bg-black/40 relative">
@@ -54,18 +53,18 @@ export default function LandingDemosCTA() {
                   </div>
                   <p className="text-[11px] text-gray-400 mt-0.5">{demo.giro}</p>
                 </div>
-              </a>
+              </Link>
             )
           })}
         </div>
 
         <div className="text-center">
-          <a
-            href="/demos"
+          <Link
+            to="/demos"
             className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff4b16] px-8 py-4 text-sm md:text-base font-black text-white shadow-[0_0_30px_rgba(255,75,22,0.35)] transition-transform hover:scale-105"
           >
             Explorar catálogo completo de demos <ArrowRight size={18} />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
