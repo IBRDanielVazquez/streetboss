@@ -273,7 +273,6 @@ function initLocalStore() {
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(localProducts))
     }
   }
-  }
 }
 
 // FASE 4 & REQUERIMIENTO 10: Migrar datos sin asignar contraseñas automáticas
