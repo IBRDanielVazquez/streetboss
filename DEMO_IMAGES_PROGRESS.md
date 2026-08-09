@@ -10,21 +10,21 @@
   6. Parrilla El Carbón (`parrilla-el-carbon`) - 8/8 productos con fotografía propia
   7. Tortas El Barrio (`tortas-el-barrio`) - 7/7 productos con fotografía propia
   8. Birriería Jalisco (`birrieria-jalisco`) - 8/8 productos con fotografía propia
-- **Demo en proceso:** 9. Mariscos El Puerto (`mariscos-el-puerto`) - 0/8 productos completados
-- **Último producto terminado:** Refresco de Vidrio (`birria-p8`) -> `/demos/birrieria-jalisco/products/refresco-vidrio.png`
-- **Productos pendientes de Mariscos El Puerto:**
-  - `puerto-p1`: Tostada de Ceviche
-  - `puerto-p2`: Aguachile Verde
-  - `puerto-p3`: Coctel de Camarón
-  - `puerto-p4`: Filete Empanizado
-  - `puerto-p5`: Camarones al Mojo de Ajo
-  - `puerto-p6`: Mojarra Frita
-  - `puerto-p7`: Michelada
-  - `puerto-p8`: Limonada Mineral
+  9. Mariscos El Puerto (`mariscos-el-puerto`) - 8/8 productos con fotografía propia
+- **Demo en proceso:** 10. China Express (`china-express`) - 0/8 productos completados
+- **Último producto terminado:** Refresco de Vidrio (`puerto-p8`) -> `/demos/mariscos-el-puerto/products/refresco-vidrio.png`
+- **Productos pendientes de China Express (Último demo):**
+  - `china-p1`: Combo 1
+  - `china-p2`: Combo 2
+  - `china-p3`: Combo Familiar
+  - `china-p4`: Pollo Agridulce
+  - `china-p5`: Res con Brócoli
+  - `china-p6`: Chow Mein
+  - `china-p7`: Rollos Primavera
+  - `china-p8`: Wantan Frito
 - **Demos pendientes:**
-  9. Mariscos El Puerto (restan 8 productos)
-  10. China Express (`china-express`)
-- **Imágenes creadas en total (52 productos):**
+  10. China Express (restan 8 productos - ¡ÚLTIMO DEMO!)
+- **Imágenes creadas en total (60 productos):**
   - Tacos El Güero (10/10):
     - `taco-al-pastor.jpg`
     - `taco-suadero.jpg`
@@ -93,4 +93,13 @@
     - `kilo-birria.png`
     - `agua-horchata.png`
     - `refresco-vidrio.png`
-- **Siguiente producto exacto a generar:** `puerto-p1` (Tostada de Ceviche) para `mariscos-el-puerto`.
+  - Mariscos El Puerto (8/8):
+    - `tostada-ceviche.png`
+    - `aguachile-verde.png`
+    - `coctel-camaron.png`
+    - `filete-pescado.png`
+    - `camarones-ajillo.png`
+    - `camarones-empanizados.png`
+    - `agua-horchata.png`
+    - `refresco-vidrio.png`
+- **Siguiente producto exacto a generar:** `china-p1` (Combo 1) para `china-express`.

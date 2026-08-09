@@ -164,18 +164,18 @@ export const DEMOS_OFICIALES = [
     id: 'mariscos-el-puerto', clave: 'puerto', nombre: 'Mariscos El Puerto', emoji: '🦐', giro: 'Marisquería',
     menu: [
       cat('puerto-c1', '🦐 Ceviches y Aguachiles', [
-        prod('puerto-p1', 'Tostada de Ceviche', 45, 'Ceviche de pescado fresco'),
-        prod('puerto-p2', 'Aguachile Verde', 160, 'Camarón curtido al limón con chile serrano'),
-        prod('puerto-p3', 'Coctel de Camarón', 130, 'Receta tradicional veracruzana'),
+        prod('puerto-p1', 'Tostada de Ceviche', 45, 'Ceviche de pescado fresco', '/demos/mariscos-el-puerto/products/tostada-ceviche.png'),
+        prod('puerto-p2', 'Aguachile Verde', 160, 'Camarón curtido al limón con chile serrano', '/demos/mariscos-el-puerto/products/aguachile-verde.png'),
+        prod('puerto-p3', 'Coctel de Camarón', 130, 'Receta tradicional veracruzana', '/demos/mariscos-el-puerto/products/coctel-camaron.png'),
       ]),
       cat('puerto-c2', '🐟 Platos Fuertes', [
-        prod('puerto-p4', 'Filete Empanizado', 140, 'Con arroz y ensalada'),
-        prod('puerto-p5', 'Camarones al Mojo de Ajo', 160, 'Con arroz y ensalada'),
-        prod('puerto-p6', 'Mojarra Frita', 180, 'Pescado entero frito'),
+        prod('puerto-p4', 'Filete de Pescado', 140, 'Filete empanizado con arroz y ensalada', '/demos/mariscos-el-puerto/products/filete-pescado.png'),
+        prod('puerto-p5', 'Camarones al Ajillo', 160, 'Con ajo dorado, mantequilla y arroz', '/demos/mariscos-el-puerto/products/camarones-ajillo.png'),
+        prod('puerto-p6', 'Camarones Empanizados', 170, 'Camarones crujientes con ensalada', '/demos/mariscos-el-puerto/products/camarones-empanizados.png'),
       ]),
       cat('puerto-c3', '🍺 Bebidas', [
-        prod('puerto-p7', 'Michelada', 85),
-        prod('puerto-p8', 'Limonada Mineral', 40),
+        prod('puerto-p7', 'Agua de Horchata', 30, '', '/demos/mariscos-el-puerto/products/agua-horchata.png'),
+        prod('puerto-p8', 'Refresco de Vidrio', 30, '', '/demos/mariscos-el-puerto/products/refresco-vidrio.png'),
       ]),
     ],
   },
