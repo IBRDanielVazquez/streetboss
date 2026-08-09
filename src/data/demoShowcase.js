@@ -183,18 +183,18 @@ export const DEMOS_OFICIALES = [
     id: 'china-express', clave: 'china', nombre: 'China Express', emoji: '🥡', giro: 'Comida China',
     menu: [
       cat('china-c1', '🥡 Combos', [
-        prod('china-p1', 'Combo 1', 110, 'Arroz frito, 1 guiso a elegir y rollo primavera'),
-        prod('china-p2', 'Combo 2', 140, 'Arroz frito, 2 guisos a elegir y rollo primavera'),
-        prod('china-p3', 'Combo Familiar', 250, 'Charola de arroz y 3 medios litros de guisos'),
+        prod('china-p1', 'Combo 1', 110, 'Arroz frito, 1 guiso a elegir y rollo primavera', '/demos/china-express/products/combo-1.png'),
+        prod('china-p2', 'Combo 2', 140, 'Arroz frito, 2 guisos a elegir y rollo primavera', '/demos/china-express/products/combo-2.png'),
+        prod('china-p3', 'Combo Familiar', 250, 'Charola de arroz y 3 medios litros de guisos', '/demos/china-express/products/combo-familiar.png'),
       ]),
       cat('china-c2', '🍜 Especialidades', [
-        prod('china-p4', 'Pollo Agridulce', 85, 'Porción de medio litro'),
-        prod('china-p5', 'Res con Brócoli', 95, 'Porción de medio litro'),
-        prod('china-p6', 'Chow Mein', 80, 'Fideos con vegetales'),
+        prod('china-p4', 'Pollo Agridulce', 85, 'Porción de medio litro', '/demos/china-express/products/pollo-agridulce.png'),
+        prod('china-p5', 'Res con Brócoli', 95, 'Porción de medio litro', '/demos/china-express/products/res-brocoli.png'),
+        prod('china-p6', 'Chow Mein', 80, 'Fideos con vegetales', '/demos/china-express/products/chow-mein.png'),
       ]),
-      cat('china-c3', '🥟 Entradas', [
-        prod('china-p7', 'Rollos Primavera', 35, '2 piezas'),
-        prod('china-p8', 'Wantan Frito', 45, '5 piezas'),
+      cat('china-c3', '🥟 Entradas y Bebidas', [
+        prod('china-p7', 'Arroz Frito', 40, 'Porción individual', '/demos/china-express/products/arroz-frito.png'),
+        prod('china-p8', 'Refresco de Vidrio', 30, 'Coca-Cola o Sabores', '/demos/china-express/products/refresco-vidrio.png'),
       ]),
     ],
   }
