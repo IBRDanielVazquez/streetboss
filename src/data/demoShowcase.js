@@ -145,18 +145,18 @@ export const DEMOS_OFICIALES = [
     id: 'birrieria-jalisco', clave: 'birria', nombre: 'Birriería Jalisco', emoji: '🥣', giro: 'Birriería',
     menu: [
       cat('birria-c1', '🥣 Birria', [
-        prod('birria-p1', 'Plato de Birria', 120, 'Servido con tortillas hechas a mano'),
-        prod('birria-p2', 'Taco de Birria', 30, 'Tortilla suave con carne jugosa'),
-        prod('birria-p3', 'Quesabirria', 45, 'Tortilla grande con queso y birria'),
-        prod('birria-p4', 'Consomé', 35, 'Caldo caliente preparado'),
+        prod('birria-p1', 'Plato de Birria', 120, 'Servido con tortillas hechas a mano', '/demos/birrieria-jalisco/products/plato-birria.png'),
+        prod('birria-p2', 'Taco de Birria', 30, 'Tortilla suave con carne jugosa', '/demos/birrieria-jalisco/products/taco-birria.png'),
+        prod('birria-p3', 'Quesabirria', 45, 'Tortilla grande con queso y birria', '/demos/birrieria-jalisco/products/quesabirria.png'),
+        prod('birria-p4', 'Consomé', 35, 'Caldo caliente preparado', '/demos/birrieria-jalisco/products/consome.png'),
       ]),
       cat('birria-c2', '📦 Paquetes', [
-        prod('birria-p5', 'Paquete Jalisco', 150, '3 Quesabirrias + Consomé'),
-        prod('birria-p6', 'Kilo de Birria', 400, 'Para compartir en familia'),
+        prod('birria-p5', 'Paquete Jalisco', 150, '3 Quesabirrias + Consomé', '/demos/birrieria-jalisco/products/paquete-jalisco.png'),
+        prod('birria-p6', 'Kilo de Birria', 400, 'Para compartir en familia', '/demos/birrieria-jalisco/products/kilo-birria.png'),
       ]),
       cat('birria-c3', '🥤 Bebidas', [
-        prod('birria-p7', 'Agua de Horchata', 25),
-        prod('birria-p8', 'Refresco de Vidrio', 25),
+        prod('birria-p7', 'Agua de Horchata', 25, '', '/demos/birrieria-jalisco/products/agua-horchata.png'),
+        prod('birria-p8', 'Refresco de Vidrio', 25, '', '/demos/birrieria-jalisco/products/refresco-vidrio.png'),
       ]),
     ],
   },

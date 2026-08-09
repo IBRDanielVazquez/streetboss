@@ -9,22 +9,22 @@
   5. Pollos El Rey (`pollos-el-rey`) - 5/5 productos con fotografía propia
   6. Parrilla El Carbón (`parrilla-el-carbon`) - 8/8 productos con fotografía propia
   7. Tortas El Barrio (`tortas-el-barrio`) - 7/7 productos con fotografía propia
-- **Demo en proceso:** 8. Birriería Jalisco (`birrieria-jalisco`) - 0/8 productos completados
-- **Último producto terminado:** Agua de sabor (`tortas-p7`) -> `/demos/tortas-el-barrio/products/agua-sabor.png`
-- **Productos pendientes de Birriería Jalisco:**
-  - `birria-p1`: Plato de Birria
-  - `birria-p2`: Taco de Birria
-  - `birria-p3`: Quesabirria
-  - `birria-p4`: Consomé
-  - `birria-p5`: Paquete Jalisco (3 Quesabirrias + Consomé)
-  - `birria-p6`: Kilo de Birria
-  - `birria-p7`: Agua de Horchata
-  - `birria-p8`: Refresco de Vidrio
+  8. Birriería Jalisco (`birrieria-jalisco`) - 8/8 productos con fotografía propia
+- **Demo en proceso:** 9. Mariscos El Puerto (`mariscos-el-puerto`) - 0/8 productos completados
+- **Último producto terminado:** Refresco de Vidrio (`birria-p8`) -> `/demos/birrieria-jalisco/products/refresco-vidrio.png`
+- **Productos pendientes de Mariscos El Puerto:**
+  - `puerto-p1`: Tostada de Ceviche
+  - `puerto-p2`: Aguachile Verde
+  - `puerto-p3`: Coctel de Camarón
+  - `puerto-p4`: Filete Empanizado
+  - `puerto-p5`: Camarones al Mojo de Ajo
+  - `puerto-p6`: Mojarra Frita
+  - `puerto-p7`: Michelada
+  - `puerto-p8`: Limonada Mineral
 - **Demos pendientes:**
-  8. Birriería Jalisco (restan 8 productos)
-  9. Mariscos El Puerto (`mariscos-el-puerto`)
+  9. Mariscos El Puerto (restan 8 productos)
   10. China Express (`china-express`)
-- **Imágenes creadas en total (44 productos):**
+- **Imágenes creadas en total (52 productos):**
   - Tacos El Güero (10/10):
     - `taco-al-pastor.jpg`
     - `taco-suadero.jpg`
@@ -84,4 +84,13 @@
     - `combo-sencillo.png`
     - `papas-francesas.png`
     - `agua-sabor.png`
-- **Siguiente producto exacto a generar:** `birria-p1` (Plato de Birria) para `birrieria-jalisco`.
+  - Birriería Jalisco (8/8):
+    - `plato-birria.png`
+    - `taco-birria.png`
+    - `quesabirria.png`
+    - `consome.png`
+    - `paquete-jalisco.png`
+    - `kilo-birria.png`
+    - `agua-horchata.png`
+    - `refresco-vidrio.png`
+- **Siguiente producto exacto a generar:** `puerto-p1` (Tostada de Ceviche) para `mariscos-el-puerto`.
