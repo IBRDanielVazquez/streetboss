@@ -1,30 +1,29 @@
 # ESTADO DE PROGRESO DE FOTOGRAFÍAS DE PRODUCTOS DE DEMOS
 
-- **Estado de API:** Límite de cuota alcanzado tras generar 30 fotos (Reset programado: 2026-08-13T18:38:59Z / ~5 días)
+- **Estado de API:** Generación externa en ChatGPT (Imágenes de alta resolución PNG)
 - **Demos 100% completados:**
   1. Tacos El Güero (`tacos-el-guero`) - 10/10 productos con fotografía propia
   2. Burger House (`burger-house`) - 8/8 productos con fotografía propia
   3. Pizza House (`pizza-house`) - 7/7 productos con fotografía propia
   4. Café Central (`cafe-central`) - 7/7 productos con fotografía propia
   5. Pollos El Rey (`pollos-el-rey`) - 5/5 productos con fotografía propia
-- **Demo en proceso:** 6. Parrilla El Carbón (`parrilla-el-carbon`) - 0/8 productos completados
-- **Último producto terminado:** Refresco Familiar (`rey-p8`) -> `/demos/pollos-el-rey/products/refresco-familiar.jpg`
-- **Productos pendientes de Parrilla El Carbón:**
-  - `carbon-p1`: Arrachera (300g)
-  - `carbon-p2`: Rib Eye (350g)
-  - `carbon-p3`: Sirloin (300g)
-  - `carbon-p4`: Tacos de Arrachera
-  - `carbon-p5`: Queso Fundido
-  - `carbon-p6`: Choripán
-  - `carbon-p7`: Cerveza Nacional
-  - `carbon-p8`: Limonada
+  6. Parrilla El Carbón (`parrilla-el-carbon`) - 8/8 productos con fotografía propia
+- **Demo en proceso:** 7. Tortas El Barrio (`tortas-el-barrio`) - 0/7 productos completados
+- **Último producto terminado:** Limonada (`carbon-p8`) -> `/demos/parrilla-el-carbon/products/limonada.png`
+- **Productos pendientes de Tortas El Barrio:**
+  - `tortas-p1`: Torta de Milanesa
+  - `tortas-p2`: Torta de Pierna Horneada
+  - `tortas-p3`: Torta Cubana
+  - `tortas-p4`: Combo Barrio (Cubana + Refresco)
+  - `tortas-p5`: Combo Sencillo (Milanesa + Refresco)
+  - `tortas-p6`: Papas a la francesa
+  - `tortas-p7`: Agua de sabor
 - **Demos pendientes:**
-  6. Parrilla El Carbón (restan 8 productos)
-  7. Tortas El Barrio (`tortas-el-barrio`)
+  7. Tortas El Barrio (restan 7 productos)
   8. Birriería Jalisco (`birrieria-jalisco`)
   9. Mariscos El Puerto (`mariscos-el-puerto`)
   10. China Express (`china-express`)
-- **Imágenes creadas en total (29 productos):**
+- **Imágenes creadas en total (37 productos):**
   - Tacos El Güero (10/10):
     - `taco-al-pastor.jpg`
     - `taco-suadero.jpg`
@@ -67,4 +66,13 @@
     - `paquete-familiar.jpg`
     - `frijoles-charros.jpg`
     - `refresco-familiar.jpg`
-- **Siguiente producto exacto a generar:** `carbon-p1` (Arrachera) para `parrilla-el-carbon`.
+  - Parrilla El Carbón (8/8):
+    - `arrachera.png`
+    - `rib-eye.png`
+    - `sirloin.png`
+    - `tacos-arrachera.png`
+    - `queso-fundido.png`
+    - `choripan.png`
+    - `cerveza-nacional.png`
+    - `limonada.png`
+- **Siguiente producto exacto a generar:** `tortas-p1` (Torta de Milanesa) para `tortas-el-barrio`.

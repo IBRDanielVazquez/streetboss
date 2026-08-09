@@ -108,18 +108,18 @@ export const DEMOS_OFICIALES = [
     id: 'parrilla-el-carbon', clave: 'carbon', nombre: 'Parrilla El Carbón', emoji: '🥩', giro: 'Parrilla',
     menu: [
       cat('carbon-c1', '🥩 Cortes', [
-        prod('carbon-p1', 'Arrachera (300g)', 220, 'Corte suave con guacamole'),
-        prod('carbon-p2', 'Rib Eye (350g)', 350, 'Corte premium jugoso'),
-        prod('carbon-p3', 'Sirloin (300g)', 200, 'Acompañado de papa asada'),
+        prod('carbon-p1', 'Arrachera (300g)', 220, 'Corte suave con guacamole', '/demos/parrilla-el-carbon/products/arrachera.png'),
+        prod('carbon-p2', 'Rib Eye (350g)', 350, 'Corte premium jugoso', '/demos/parrilla-el-carbon/products/rib-eye.png'),
+        prod('carbon-p3', 'Sirloin (300g)', 200, 'Acompañado de papa asada', '/demos/parrilla-el-carbon/products/sirloin.png'),
       ]),
       cat('carbon-c2', '🌮 Tacos y Entradas', [
-        prod('carbon-p4', 'Tacos de Arrachera', 120, 'Orden de 3 tacos'),
-        prod('carbon-p5', 'Queso Fundido', 95, 'Con chorizo o champiñones'),
-        prod('carbon-p6', 'Choripán', 85, 'Chorizo argentino en pan artesanal'),
+        prod('carbon-p4', 'Tacos de Arrachera', 120, 'Orden de 3 tacos', '/demos/parrilla-el-carbon/products/tacos-arrachera.png'),
+        prod('carbon-p5', 'Queso Fundido', 95, 'Con chorizo o champiñones', '/demos/parrilla-el-carbon/products/queso-fundido.png'),
+        prod('carbon-p6', 'Choripán', 85, 'Chorizo argentino en pan artesanal', '/demos/parrilla-el-carbon/products/choripan.png'),
       ]),
       cat('carbon-c3', '🍺 Bebidas', [
-        prod('carbon-p7', 'Cerveza Nacional', 45),
-        prod('carbon-p8', 'Limonada', 35),
+        prod('carbon-p7', 'Cerveza Nacional', 45, '', '/demos/parrilla-el-carbon/products/cerveza-nacional.png'),
+        prod('carbon-p8', 'Limonada', 35, '', '/demos/parrilla-el-carbon/products/limonada.png'),
       ]),
     ],
   },
