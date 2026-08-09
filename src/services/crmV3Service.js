@@ -210,9 +210,69 @@ function initLocalStore() {
       }
       return b
     })
+
+    // Sincronizar también productos e imágenes de los demos oficiales en localStorage
+    let productsUpdated = false
+    const localCategories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+    const localProducts = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+
+    DEMOS_OFICIALES.forEach(demo => {
+      demo.menu.forEach((cat, cIdx) => {
+        const catId = `cat_${demo.id}_${cIdx}`
+        let catObj = localCategories.find(c => c.id === catId || (c.business_id === demo.id && c.name === cat.nombre))
+        if (!catObj) {
+          catObj = {
+            id: catId,
+            business_id: demo.id,
+            name: cat.nombre,
+            category_type: cat.tipo || 'normal',
+            is_plus: cat.esPlus || false,
+            is_visible: true,
+            position: cIdx,
+            created_at: new Date().toISOString(),
+          }
+          localCategories.push(catObj)
+          productsUpdated = true
+        }
+
+        cat.productos.forEach((prod, pIdx) => {
+          const prodId = `prod_${demo.id}_${cIdx}_${pIdx}`
+          let prodObj = localProducts.find(p => p.id === prodId || (p.business_id === demo.id && p.name === prod.nombre))
+          if (prodObj) {
+            if (prod.foto && prodObj.image_url !== prod.foto) {
+              prodObj.image_url = prod.foto
+              productsUpdated = true
+            }
+          } else {
+            localProducts.push({
+              id: prodId,
+              business_id: demo.id,
+              category_id: catObj.id,
+              name: prod.nombre,
+              price: prod.precio,
+              description: prod.descripcion || '',
+              image_url: prod.foto || '',
+              is_out_of_stock: prod.agotado || false,
+              is_active: prod.activo !== false,
+              is_featured: pIdx === 0,
+              is_promo: false,
+              position: pIdx,
+              created_at: new Date().toISOString(),
+            })
+            productsUpdated = true
+          }
+        })
+      })
+    })
+
     if (updated) {
       localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(refreshedBusinesses))
     }
+    if (productsUpdated) {
+      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(localCategories))
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(localProducts))
+    }
+  }
   }
 }
 
@@ -756,7 +816,27 @@ export function getBusinessBySlug(slugOrId) {
   if (!business) return null
 
   const categories = cList.filter(c => c.business_id === business.business_id)
-  const products = pList.filter(p => p.business_id === business.business_id)
+  let products = pList.filter(p => p.business_id === business.business_id)
+
+  if (business.is_demo) {
+    const officialDemo = DEMOS_OFICIALES.find(d => d.id === business.id || d.id === business.business_id || d.id === business.slug || (d.clave && (business.id?.includes(d.clave) || business.slug?.includes(d.clave))))
+    if (officialDemo) {
+      const officialProdsMap = new Map()
+      officialDemo.menu.forEach(cat => {
+        cat.productos.forEach(p => {
+          if (p.foto) officialProdsMap.set(p.nombre.toLowerCase().trim(), p.foto)
+        })
+      })
+      products = products.map(p => {
+        const officialFoto = officialProdsMap.get(p.name?.toLowerCase().trim())
+        if (officialFoto && (!p.image_url || p.image_url !== officialFoto)) {
+          return { ...p, image_url: officialFoto }
+        }
+        return p
+      })
+    }
+  }
+
   const zones = zList.filter(z => z.business_id === business.business_id && z.is_active)
 
   const defaultPaymentMethods = {
