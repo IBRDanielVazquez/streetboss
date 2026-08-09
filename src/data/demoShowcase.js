@@ -92,12 +92,12 @@ export const DEMOS_OFICIALES = [
       ]),
       cat('rey-c2', '📦 Paquetes', [
         prod('rey-p3', 'Paquete Familiar', 220, '1 Pollo y medio, arroz, frijoles y tortillas', '/demos/pollos-el-rey/products/paquete-familiar.jpg'),
-        prod('rey-p4', 'Paquete Rey', 300, '2 Pollos, arroz, frijoles, ensalada y refresco'),
+        prod('rey-p4', 'Paquete Rey', 300, '2 Pollos, arroz, frijoles, ensalada y refresco', 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=800&auto=format&fit=crop'),
       ]),
       cat('rey-c3', '🥗 Complementos', [
-        prod('rey-p5', 'Arroz', 35),
+        prod('rey-p5', 'Arroz', 35, 'Porción de arroz rojo sazonado', 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&auto=format&fit=crop'),
         prod('rey-p6', 'Frijoles Charros', 40, '', '/demos/pollos-el-rey/products/frijoles-charros.jpg'),
-        prod('rey-p7', 'Ensalada de Codito', 35),
+        prod('rey-p7', 'Ensalada de Codito', 35, 'Ensalada cremosa de coditos', 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&auto=format&fit=crop'),
       ]),
       cat('rey-c4', '🥤 Bebidas', [
         prod('rey-p8', 'Refresco Familiar 2L', 45, 'Coca-Cola o Sabores', '/demos/pollos-el-rey/products/refresco-familiar.jpg'),
@@ -172,6 +172,7 @@ export const DEMOS_OFICIALES = [
         prod('puerto-p4', 'Filete de Pescado', 140, 'Filete empanizado con arroz y ensalada', '/demos/mariscos-el-puerto/products/filete-pescado.png'),
         prod('puerto-p5', 'Camarones al Ajillo', 160, 'Con ajo dorado, mantequilla y arroz', '/demos/mariscos-el-puerto/products/camarones-ajillo.png'),
         prod('puerto-p6', 'Camarones Empanizados', 170, 'Camarones crujientes con ensalada', '/demos/mariscos-el-puerto/products/camarones-empanizados.png'),
+        prod('puerto-p9', 'Mojarra Frita', 180, 'Pescado mojarra entero frito crujiente con arroz y ensalada', 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&auto=format&fit=crop'),
       ]),
       cat('puerto-c3', '🍺 Bebidas', [
         prod('puerto-p7', 'Agua de Horchata', 30, '', '/demos/mariscos-el-puerto/products/agua-horchata.png'),
