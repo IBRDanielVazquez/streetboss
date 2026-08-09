@@ -127,17 +127,17 @@ export const DEMOS_OFICIALES = [
     id: 'tortas-el-barrio', clave: 'tortas', nombre: 'Tortas El Barrio', emoji: '🥪', giro: 'Tortería',
     menu: [
       cat('tortas-c1', '🥪 Tortas Clásicas', [
-        prod('tortas-p1', 'Milanesa', 65, 'Milanesa de res, frijoles y aguacate'),
-        prod('tortas-p2', 'Pierna Horneada', 70, 'Pierna de cerdo preparada'),
-        prod('tortas-p3', 'Cubana', 95, 'Milanesa, pierna, jamón, queso y salchicha'),
+        prod('tortas-p1', 'Milanesa', 65, 'Milanesa de res, frijoles y aguacate', '/demos/tortas-el-barrio/products/torta-milanesa.png'),
+        prod('tortas-p2', 'Pierna Horneada', 70, 'Pierna de cerdo preparada', '/demos/tortas-el-barrio/products/torta-pierna.png'),
+        prod('tortas-p3', 'Cubana', 95, 'Milanesa, pierna, jamón, queso y salchicha', '/demos/tortas-el-barrio/products/torta-cubana.png'),
       ]),
       cat('tortas-c2', '🥤 Combos', [
-        prod('tortas-p4', 'Combo Barrio', 110, 'Torta Cubana + Refresco'),
-        prod('tortas-p5', 'Combo Sencillo', 85, 'Torta de Milanesa + Refresco'),
+        prod('tortas-p4', 'Combo Barrio', 110, 'Torta Cubana + Refresco', '/demos/tortas-el-barrio/products/combo-barrio.png'),
+        prod('tortas-p5', 'Combo Sencillo', 85, 'Torta de Milanesa + Refresco', '/demos/tortas-el-barrio/products/combo-sencillo.png'),
       ]),
       cat('tortas-c3', '🍟 Extras', [
-        prod('tortas-p6', 'Papas a la francesa', 35),
-        prod('tortas-p7', 'Agua de sabor', 25),
+        prod('tortas-p6', 'Papas a la francesa', 35, '', '/demos/tortas-el-barrio/products/papas-francesas.png'),
+        prod('tortas-p7', 'Agua de sabor', 25, '', '/demos/tortas-el-barrio/products/agua-sabor.png'),
       ]),
     ],
   },
