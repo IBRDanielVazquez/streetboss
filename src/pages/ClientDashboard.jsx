@@ -43,7 +43,8 @@ import {
   Share2,
   Users,
   ShoppingBag,
-  CreditCard
+  CreditCard,
+  ChevronRight
 } from 'lucide-react'
 
 // Helper: Convert File object to Base64 WebP Data URL for local storage persistence
@@ -70,7 +71,8 @@ function readFileAsDataURL(file) {
 export default function ClientDashboard() {
   const { slug } = useParams()
   const [business, setBusiness] = useState(null)
-  const [tab, setTab] = useState('info') // 'info', 'rrss', 'categorias', 'productos', 'zonas'
+  const [tab, setTab] = useState('inicio') // Default to 'inicio' for Mobile-First Bottom Nav
+  const [menuSubTab, setMenuSubTab] = useState('productos') // Sub-tab for menu management
   const [savedSuccess, setSavedSuccess] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -103,6 +105,7 @@ export default function ClientDashboard() {
         postal_code: b.postal_code || '',
         schedule_text: b.schedule_text || '',
         is_open: b.is_open !== false,
+        main_message: b.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
         
         // Delivery Settings (Reparto)
         has_delivery: b.has_delivery !== false,
@@ -440,8 +443,17 @@ export default function ClientDashboard() {
         </div>
       </header>
 
-      {/* Navegación por Pestañas */}
-      <nav className="bg-[#14161F]/60 backdrop-blur border-b border-white/5 px-4 sm:px-8 py-3 flex gap-2 overflow-x-auto">
+      {/* Navegación por Pestañas (Escritorio) */}
+      <nav className="hidden md:flex bg-[#14161F]/60 backdrop-blur border-b border-white/5 px-4 sm:px-8 py-3 gap-2 overflow-x-auto">
+        <button
+          onClick={() => setTab('inicio')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'inicio' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <Home size={14} /> Inicio
+        </button>
+
         <button
           onClick={() => setTab('info')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
@@ -494,6 +506,15 @@ export default function ClientDashboard() {
           }`}
         >
           <ShoppingBag size={14} /> Pedidos y Clientes
+        </button>
+
+        <button
+          onClick={() => setTab('compartir')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'compartir' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <Share2 size={14} /> Compartir
         </button>
       </nav>
 
@@ -1121,6 +1142,394 @@ export default function ClientDashboard() {
           </div>
         )}
 
+        {/* PESTAÑA NUEVA: INICIO (Dashboard Resumen & Control) */}
+        {tab === 'inicio' && (
+          <div className="space-y-6 animate-fade-in">
+            {/* Tarjeta de bienvenida y estado general */}
+            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 flex items-center justify-center font-black text-[#FF4B00] text-lg">
+                    SB
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-black text-white">{business.name}</h2>
+                    <p className="text-xs text-gray-400">Resumen y Control Operativo</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updatedStatus = !infoForm.is_open
+                    setInfoForm(prev => ({ ...prev, is_open: updatedStatus }))
+                    updateBusinessSettings(business.business_id, { is_open: updatedStatus })
+                    showToast(updatedStatus ? 'Restaurante ABIERTO' : 'Restaurante CERRADO')
+                  }}
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black transition-all ${
+                    infoForm.is_open
+                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  }`}
+                >
+                  <Power size={14} /> {infoForm.is_open ? 'ABIERTO AHORA' : 'CERRADO (PAUSADO)'}
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-2">
+                  <span className="text-gray-400 block font-bold uppercase tracking-wider text-[10px]">Menú Digital Público</span>
+                  <a
+                    href={`/menu/${business.slug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-emerald-400 font-bold hover:underline flex items-center gap-1.5 text-sm"
+                  >
+                    <ExternalLink size={16} /> /menu/{business.slug}
+                  </a>
+                </div>
+
+                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-2">
+                  <span className="text-gray-400 block font-bold uppercase tracking-wider text-[10px]">Horario de Atención</span>
+                  <span className="text-white font-medium text-sm block">{infoForm.schedule_text || 'Sin horario configurado'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Configuración del Mensaje Destacado */}
+            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
+              <h3 className="text-sm font-black text-white uppercase tracking-wider text-gray-300">Mensaje Destacado en Menú</h3>
+              <p className="text-xs text-gray-400">
+                Este mensaje aparece de manera fija en la parte superior del menú público. Límite de 80 caracteres.
+              </p>
+              
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={80}
+                  value={infoForm.main_message}
+                  onChange={e => setInfoForm({ ...infoForm, main_message: e.target.value })}
+                  placeholder="Ej. 🚀 Envío gratis en tu primer pedido / 🔥 Promoción especial hoy"
+                  className="flex-1 bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-[#FF4B00]"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateBusinessSettings(business.business_id, { main_message: infoForm.main_message })
+                    showToast('Mensaje destacado guardado')
+                  }}
+                  className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all active:scale-95"
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* PESTAÑA NUEVA: COMPARTIR MENÚ (Preview & Share) */}
+        {tab === 'compartir' && (
+          <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl animate-fade-in">
+            <div>
+              <h2 className="text-lg font-black text-white flex items-center gap-2 border-b border-white/5 pb-3">
+                <Share2 size={20} className="text-[#FF4B00]" /> Compartir Menú Digital
+              </h2>
+              <p className="text-xs text-gray-400 mt-2">
+                Comparte el enlace de tu menú digital en tus redes sociales o directamente con tus clientes para recibir pedidos directos.
+              </p>
+            </div>
+
+            {/* Vista previa simulada de tarjeta social (WhatsApp/FB) */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold text-gray-400 block uppercase tracking-wider">Previsualización Social (Open Graph)</span>
+              <div className="bg-[#0D0E12] border border-white/10 rounded-2xl overflow-hidden max-w-sm shadow-inner text-xs">
+                {infoForm.banner_url ? (
+                  <div className="h-40 bg-black overflow-hidden relative">
+                    <img src={infoForm.banner_url} alt="Portada" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div className="h-40 bg-black/40 flex items-center justify-center text-gray-600">
+                    <ImageIcon size={32} />
+                  </div>
+                )}
+                <div className="p-4 space-y-1">
+                  <span className="text-emerald-500 font-mono text-[10px] block">streetboss.com.mx</span>
+                  <strong className="text-white font-bold text-sm block">{business.name} — Menú Digital</strong>
+                  <p className="text-gray-400 text-[11px] line-clamp-2">
+                    {infoForm.description || `Menú digital oficial de ${business.name}. Haz tu pedido al instante por WhatsApp sin comisiones.`}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Acciones de compartir */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  const url = `https://streetboss.com.mx/menu/${business.slug}`
+                  navigator.clipboard.writeText(url)
+                  showToast('¡Enlace copiado al portapapeles!')
+                }}
+                className="bg-white/5 hover:bg-white/10 border border-white/5 text-gray-200 hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-2"
+              >
+                <Copy size={16} /> Copiar Enlace
+              </button>
+
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent(`¡Hola! Te comparto el menú digital de *${business.name}*. Entra aquí para ver nuestros productos y haz tu pedido directo por WhatsApp sin comisiones: https://streetboss.com.mx/menu/${business.slug}`)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-2"
+              >
+                <Send size={16} /> Compartir por WhatsApp
+              </a>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const shareData = {
+                    title: `${business.name} — Menú Digital`,
+                    text: `Te comparto el menú digital de ${business.name}. Haz tu pedido directo por WhatsApp sin comisiones.`,
+                    url: `https://streetboss.com.mx/menu/${business.slug}`
+                  }
+                  if (navigator.share) {
+                    navigator.share(shareData).catch(() => {})
+                  } else {
+                    navigator.clipboard.writeText(shareData.url)
+                    showToast('¡Enlace copiado al portapapeles!')
+                  }
+                }}
+                className="bg-[#FF4B00]/10 hover:bg-[#FF4B00]/20 border border-[#FF4B00]/20 text-[#FF4B00] px-4 py-3 rounded-xl text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-2"
+              >
+                <Share2 size={16} /> Compartir Menú
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* PESTAÑA NUEVA: MENÚ MÓVIL (Categorías & Productos Agrupados) */}
+        {tab === 'menu' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex bg-[#14161F] p-1.5 rounded-2xl border border-white/5 max-w-xs">
+              <button
+                type="button"
+                onClick={() => setMenuSubTab('categorias')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all ${
+                  menuSubTab === 'categorias' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Layers size={14} /> Categorías
+              </button>
+              <button
+                type="button"
+                onClick={() => setMenuSubTab('productos')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-bold transition-all ${
+                  menuSubTab === 'productos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Package size={14} /> Productos
+              </button>
+            </div>
+
+            {menuSubTab === 'categorias' ? (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center bg-[#14161F] p-4 rounded-2xl border border-white/5">
+                  <h2 className="text-base font-black text-white">Categorías del Menú</h2>
+                  <button
+                    onClick={() => setEditingCategory({ name: '', is_visible: true, is_plus: false })}
+                    className="flex items-center gap-1.5 bg-[#FF4B00] text-white px-4 py-2 rounded-xl text-xs font-black"
+                  >
+                    <Plus size={14} /> Nueva Categoría
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {business.categories?.map(cat => (
+                    <div key={cat.id} className="bg-[#14161F] p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                      <div>
+                        <h3 className="font-bold text-sm text-white">{cat.name}</h3>
+                        <span className="text-[10px] text-gray-400">
+                          {cat.is_visible ? 'Visible en menú' : 'Oculta'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setEditingCategory(cat)}
+                          className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300"
+                        >
+                          <Edit2 size={14} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCat(cat.id)}
+                          className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center bg-[#14161F] p-4 rounded-2xl border border-white/5">
+                  <h2 className="text-base font-black text-white">Catálogo de Productos</h2>
+                  <button
+                    onClick={() => setEditingProduct({
+                      name: '',
+                      price: 50,
+                      description: '',
+                      category_id: business.categories[0]?.id || '',
+                      is_active: true,
+                      is_out_of_stock: false,
+                      is_hidden: false,
+                      image_url: ''
+                    })}
+                    className="flex items-center gap-1.5 bg-[#FF4B00] text-white px-4 py-2 rounded-xl text-xs font-black"
+                  >
+                    <Plus size={14} /> Nuevo Producto
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {business.products?.map(prod => (
+                    <div key={prod.id} className="bg-[#14161F] p-4 rounded-2xl border border-white/5 space-y-3 flex flex-col justify-between">
+                      <div className="space-y-2">
+                        <div className="h-32 rounded-xl bg-black overflow-hidden relative">
+                          {prod.image_url ? (
+                            <img src={prod.image_url} alt={prod.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-600">
+                              <ImageIcon size={24} />
+                            </div>
+                          )}
+                          <span className="absolute top-2 right-2 px-2 py-1 rounded-lg bg-black/80 font-black text-emerald-400 text-xs">
+                            ${prod.price}
+                          </span>
+                        </div>
+
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="font-bold text-sm text-white">{prod.name}</h3>
+                        </div>
+                        <p className="text-xs text-gray-400 line-clamp-2">{prod.description}</p>
+                      </div>
+
+                      <div className="pt-3 border-t border-white/5 space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!prod.is_out_of_stock}
+                              onChange={() => handleToggleAgotado(prod.id)}
+                              className="rounded border-white/20 text-[#FF4B00] focus:ring-0"
+                            />
+                            <span className={`font-bold ${!prod.is_out_of_stock ? 'text-emerald-400' : 'text-amber-400 font-black'}`}>
+                              {!prod.is_out_of_stock ? 'DISPONIBLE' : 'AGOTADO'}
+                            </span>
+                          </label>
+
+                          <button
+                            type="button"
+                            onClick={() => handleToggleOculto(prod.id)}
+                            className={`flex items-center gap-1 text-[11px] font-bold ${prod.is_hidden ? 'text-gray-500' : 'text-gray-300'}`}
+                          >
+                            {prod.is_hidden ? <EyeOff size={13} /> : <Eye size={13} />}
+                            {prod.is_hidden ? 'Oculto' : 'Visible'}
+                          </button>
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-1">
+                          <button onClick={() => setEditingProduct(prod)} className="p-1.5 rounded-lg bg-white/5 text-gray-300">
+                            <Edit2 size={14} />
+                          </button>
+                          <button onClick={() => handleDeleteProd(prod.id)} className="p-1.5 rounded-lg bg-red-500/10 text-red-400">
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* PESTAÑA NUEVA: MÁS (Lista de Opciones Móviles) */}
+        {tab === 'mas' && (
+          <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl animate-fade-in text-xs font-bold">
+            <div>
+              <h2 className="text-lg font-black text-white border-b border-white/5 pb-3">Más Opciones</h2>
+              <p className="text-xs text-gray-400 mt-2 font-normal">
+                Accede a las configuraciones adicionales, métodos de pago y zonas de entrega para tu restaurante.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2.5">
+              <button
+                type="button"
+                onClick={() => setTab('compartir')}
+                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <Share2 size={18} className="text-[#FF4B00]" />
+                  <div>
+                    <span className="text-white block font-bold">Compartir Menú</span>
+                    <span className="text-[10px] text-gray-400 font-normal">Obtén el enlace, código y opciones para tus clientes</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-500" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTab('rrss')}
+                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <Globe size={18} className="text-[#FF4B00]" />
+                  <div>
+                    <span className="text-white block font-bold">Redes Sociales</span>
+                    <span className="text-[10px] text-gray-400 font-normal">Enlaces a Facebook, Instagram, TikTok y YouTube</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-500" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTab('zonas')}
+                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <MapPin size={18} className="text-[#FF4B00]" />
+                  <div>
+                    <span className="text-white block font-bold">Servicio a Domicilio y Pagos</span>
+                    <span className="text-[10px] text-gray-400 font-normal">Zonas de reparto, tarifas de envío y métodos de pago</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-500" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setTab('clientes')}
+                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
+              >
+                <div className="flex items-center gap-3">
+                  <Users size={18} className="text-[#FF4B00]" />
+                  <div>
+                    <span className="text-white block font-bold">Base de Clientes</span>
+                    <span className="text-[10px] text-gray-400 font-normal">Visualiza los datos y consentimientos de tus compradores</span>
+                  </div>
+                </div>
+                <ChevronRight size={16} className="text-gray-500" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Footer Discreto con Identificación de Versión */}
         <VersionFooterBadge clientId={business.slug} userId={business.owner_username || 'b2b_owner'} />
       </main>
@@ -1261,6 +1670,59 @@ export default function ClientDashboard() {
           </form>
         </div>
       )}
+
+      {/* Barra de Navegación Inferior (Bottom Navigation) Mobile First */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#14161F] border-t border-white/5 px-2 py-2 flex justify-around items-center shadow-[0_-5px_20px_rgba(0,0,0,0.5)] pb-[calc(12px+env(safe-area-inset-bottom))]">
+        <button
+          onClick={() => setTab('inicio')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
+            tab === 'inicio' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Home size={20} />
+          <span>Inicio</span>
+        </button>
+
+        <button
+          onClick={() => { setTab('menu'); if (menuSubTab === '') setMenuSubTab('productos') }}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
+            tab === 'menu' || tab === 'categorias' || tab === 'productos' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Package size={20} />
+          <span>Menú</span>
+        </button>
+
+        <button
+          onClick={() => setTab('info')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
+            tab === 'info' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Store size={20} />
+          <span>Negocio</span>
+        </button>
+
+        <button
+          onClick={() => setTab('pedidos')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
+            tab === 'pedidos' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <ShoppingBag size={20} />
+          <span>Pedidos</span>
+        </button>
+
+        <button
+          onClick={() => setTab('mas')}
+          className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
+            tab === 'mas' || tab === 'rrss' || tab === 'zonas' || tab === 'clientes' || tab === 'compartir' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Layers size={20} />
+          <span>Más</span>
+        </button>
+      </nav>
     </div>
   )
 }

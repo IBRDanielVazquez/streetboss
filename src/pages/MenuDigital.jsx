@@ -176,11 +176,16 @@ const { subtotal, cantidadTotal } = useMemo(() => {
             </div>
             <button
               type="button"
+              disabled={config.is_open === false}
               onClick={() => setCheckoutVis(true)}
-              className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-transform"
-              style={{ backgroundColor: config.colorMarca || '#FF4B00' }}
+              className={`px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all ${
+                config.is_open !== false
+                  ? 'bg-[#FF4B00] hover:bg-[#FF6A1A] text-white'
+                  : 'bg-red-500 text-white opacity-60 cursor-not-allowed'
+              }`}
+              style={config.is_open !== false ? { backgroundColor: config.colorMarca || '#FF4B00' } : {}}
             >
-              <span>Carrito</span>
+              <span>{config.is_open !== false ? 'Carrito' : 'Cerrado'}</span>
               <span className="bg-white text-gray-900 w-5 h-5 rounded-full flex items-center justify-center font-extrabold text-xs shadow-xs">
                 {cantidadTotal}
               </span>

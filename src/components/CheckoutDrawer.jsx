@@ -762,10 +762,18 @@ export default function CheckoutDrawer({
           ) : (
             <button 
               onClick={enviarPedido} 
-              disabled={isSubmitting}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-xl active:scale-95 transition-transform shadow-lg shadow-green-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
+              disabled={isSubmitting || config.is_open === false}
+              className={`flex-1 font-black py-4 rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 ${
+                config.is_open !== false
+                  ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/20'
+                  : 'bg-red-500 text-white opacity-60 cursor-not-allowed'
+              }`}
             >
-              {isSubmitting ? 'Guardando Pedido...' : 'Confirmar Pedido ✓'}
+              {isSubmitting 
+                ? 'Guardando Pedido...' 
+                : config.is_open !== false 
+                  ? 'Confirmar Pedido ✓' 
+                  : 'CERRADO (NO SE ADMITEN PEDIDOS)'}
             </button>
           )}
         </div>

@@ -24,7 +24,7 @@ export default function MenuHeroProfile({ config }) {
   const {
     negocio, logo, banner, direccion, horarios, urlMaps,
     whatsapp, telefono, redes = {}, colorMarca = '#FF4B00',
-    foodType, isDemo = true
+    foodType, isDemo = true, is_open = true, mensajeClientes
   } = config
 
   const tieneHorarios = horarios && horarios.trim().length > 0
@@ -63,10 +63,12 @@ export default function MenuHeroProfile({ config }) {
     }
   }
 
-  // Links de Redes Sociales
-  const fbUrl = redes.facebook || 'https://facebook.com'
-  const igUrl = redes.instagram || 'https://instagram.com'
-  const ttUrl = 'https://tiktok.com'
+  // Links de Redes Sociales dinámicas filtrando strings vacíos
+  const fbUrl = redes.facebook && redes.facebook.trim() !== '' ? redes.facebook : null
+  const igUrl = redes.instagram && redes.instagram.trim() !== '' ? redes.instagram : null
+  const ttUrl = redes.tiktok && redes.tiktok.trim() !== '' ? redes.tiktok : null
+  const ytUrl = redes.youtube && redes.youtube.trim() !== '' ? redes.youtube : null
+  const wsUrl = redes.website && redes.website.trim() !== '' ? redes.website : null
 
   const cleanWaPhone = normalizeMexicanPhone(whatsapp || telefono || '9613725386')
   const cleanTelPhone = normalizeMexicanPhone(telefono || whatsapp || '9613725386')
@@ -75,12 +77,22 @@ export default function MenuHeroProfile({ config }) {
     igUrl && { icon: <Instagram size={18} />, url: igUrl, label: 'Instagram' },
     fbUrl && { icon: <Facebook size={18} />, url: fbUrl, label: 'Facebook' },
     ttUrl && { icon: <TikTokIcon size={18} />, url: ttUrl, label: 'TikTok' },
+    ytUrl && { icon: <Youtube size={18} />, url: ytUrl, label: 'YouTube' },
+    wsUrl && { icon: <Globe size={18} />, url: wsUrl, label: 'Sitio Web' },
     cleanWaPhone && { icon: <WhatsAppIcon size={18} />, url: `https://wa.me/52${cleanWaPhone}`, label: 'WhatsApp' },
     cleanTelPhone && { icon: <Phone size={18} />, url: `tel:+52${cleanTelPhone}`, label: 'Llamar' },
   ].filter(Boolean)
 
   return (
     <div className="relative bg-white font-sans text-gray-900">
+      {/* Banner de Mensaje Destacado Dinámico Superior */}
+      {mensajeClientes && mensajeClientes.trim().length > 0 && (
+        <div className="bg-[#FF4B00] text-white text-center py-2 px-4 text-xs font-black tracking-wide shadow-sm flex items-center justify-center gap-2 relative overflow-hidden">
+          <div className="absolute inset-0 bg-white/10 animate-pulse" />
+          <span className="relative z-10">{mensajeClientes}</span>
+        </div>
+      )}
+
       {/* ── Banner / Portada ── */}
       <div className="relative h-44 sm:h-60 w-full overflow-hidden bg-gray-900">
         {banner ? (
@@ -115,7 +127,7 @@ export default function MenuHeroProfile({ config }) {
       {/* ── Perfil Superpuesto tipo iOS App Header ── */}
       <div className="relative px-4 -mt-14 pb-4 max-w-4xl mx-auto">
         <div className="flex items-end justify-between gap-3">
-          {/* Avatar Perfil Restaurante (Cuadrado con bordes suavizados de marca) */}
+          {/* Avatar Perfil Restaurante */}
           <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl border-4 border-white shadow-xl overflow-hidden bg-white aspect-square flex items-center justify-center">
             {logo ? (
               <img src={logo} alt={negocio} className="w-full h-full object-cover" />
@@ -130,7 +142,7 @@ export default function MenuHeroProfile({ config }) {
           </div>
         </div>
 
-        {/* Info del Restaurante & Badges Mercadológicos */}
+        {/* Info del Restaurante & Badges */}
         <div className="mt-3 space-y-2">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-gray-900 leading-tight">
@@ -138,13 +150,23 @@ export default function MenuHeroProfile({ config }) {
             </h1>
           </div>
 
-          {/* Tag Mercadológico Directo a WhatsApp */}
-          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-lg">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            🚀 Pedidos directos a tu WhatsApp al instante sin comisiones
+          {/* Badges de Estado Operativo */}
+          <div className="flex gap-2 flex-wrap items-center">
+            <div className={`inline-flex items-center gap-1.5 text-[11px] font-black px-3 py-1 rounded-lg border ${
+              is_open !== false
+                ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
+                : 'text-red-800 bg-red-50 border-red-200'
+            }`}>
+              <span className={`w-2 h-2 rounded-full ${is_open !== false ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+              {is_open !== false ? 'ABIERTO AHORA' : 'CERRADO POR EL MOMENTO'}
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gray-800 bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg">
+              🚀 Pedidos directos a tu WhatsApp
+            </div>
           </div>
 
-          {/* Dirección, Horarios y Botón Ver Ubicación (Abre Maps directo) */}
+          {/* Dirección, Horarios y Ubicación */}
           <div className="space-y-1.5 pt-1 text-xs text-gray-600">
             {direccion && (
               <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -152,15 +174,17 @@ export default function MenuHeroProfile({ config }) {
                   <MapPin size={14} className="text-gray-400 shrink-0" />
                   <span className="truncate">{direccion}</span>
                 </div>
-                <a
-                  href="https://maps.google.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 border border-gray-200 shrink-0 active:scale-95 transition-all shadow-2xs"
-                >
-                  <MapPin size={13} className="text-[#FF4B00]" />
-                  <span>Ver ubicación</span>
-                </a>
+                {urlMaps && urlMaps.trim() !== '' && (
+                  <a
+                    href={urlMaps}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 border border-gray-200 shrink-0 active:scale-95 transition-all shadow-2xs"
+                  >
+                    <MapPin size={13} className="text-[#FF4B00]" />
+                    <span>Ver ubicación</span>
+                  </a>
+                )}
               </div>
             )}
             {tieneHorarios && (
@@ -172,7 +196,7 @@ export default function MenuHeroProfile({ config }) {
           </div>
         </div>
 
-        {/* ── Redes Sociales Pill Row ── */}
+        {/* Redes Sociales Activas */}
         {redesActivas.length > 0 && (
           <div className="flex items-center gap-2 mt-4 overflow-x-auto no-scrollbar pb-1">
             <span className="text-xs font-bold text-gray-400 mr-1 shrink-0">Síguenos:</span>
@@ -196,3 +220,4 @@ export default function MenuHeroProfile({ config }) {
     </div>
   )
 }
+

@@ -1,7 +1,69 @@
-import { supabase } from '../supabase'
+import { supabase, getSupabaseClient, isSupabaseConfigured } from '../supabase'
 import { DEMO_FIXTURES, DEMO_CONTACTS } from '../data/demoFixtures'
 import { DEMOS_OFICIALES, DEMO_SHOWCASE } from '../data/demoShowcase'
 import masterProspectsData from '../data/master_prospects.json'
+
+// Background helper to synchronize business data to Supabase
+export async function syncBusinessToSupabase(business) {
+  if (!isSupabaseConfigured) return
+  if (!business) return
+  try {
+    const client = getSupabaseClient(business.slug)
+    const payload = {
+      business_id: business.business_id || business.id,
+      name: business.name,
+      slug: business.slug,
+      business_type: business.business_type || 'Restaurante',
+      is_demo: !!business.is_demo,
+      demo_status: business.demo_status || 'Activo',
+      status: business.status || 'activo',
+      template_version: business.template_version || '3.0',
+      base_demo_id: business.base_demo_id || null,
+      owner_name: business.owner_name || '',
+      phone: business.phone || '',
+      whatsapp: business.whatsapp || '',
+      email: business.email || '',
+      address: business.address || '',
+      ext_number: business.ext_number || '',
+      int_number: business.int_number || '',
+      colonia: business.colonia || '',
+      postal_code: business.postal_code || '',
+      city: business.city || 'Tuxtla Gutiérrez',
+      municipality: business.municipality || 'Tuxtla Gutiérrez',
+      state: business.state || 'Chiapas',
+      maps_url: business.maps_url || '',
+      facebook_url: business.facebook_url || '',
+      instagram_url: business.instagram_url || '',
+      tiktok_url: business.tiktok_url || '',
+      website_url: business.website_url || '',
+      logo_url: business.logo_url || '',
+      banner_url: business.banner_url || '',
+      brand_color: business.brand_color || '#FF4B00',
+      main_message: business.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
+      description: business.description || '',
+      schedule_text: business.schedule_text || 'Lun a Dom · 9:00 am – 10:00 pm',
+      is_open: business.is_open !== false,
+      has_delivery: business.has_delivery !== false,
+      delivery_mode: business.delivery_mode || 'fijo',
+      base_delivery_fee: Number(business.base_delivery_fee ?? 30.00),
+      estimated_delivery_time: business.estimated_delivery_time || '30–40 min',
+      owner_username: business.owner_username || '',
+      temp_password: business.temp_password || '',
+      updated_at: new Date().toISOString()
+    }
+
+    const { error } = await client
+      .from('sb_businesses')
+      .upsert(payload, { onConflict: 'business_id' })
+
+    if (error) {
+      console.error('[Supabase Sync Error] failed to upsert business to Supabase:', error.message)
+    }
+  } catch (err) {
+    console.error('[Supabase Sync Exception] unexpected error during sync:', err)
+  }
+}
+
 
 // Key constants for local reactive persistence fallback
 const STORAGE_KEYS = {
@@ -344,6 +406,7 @@ export function updateDemoStatus(demoId, newStatus) {
     bList[idx].updated_at = new Date().toISOString()
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
     logAuditAction('cambiar_permisos', demoId, { demoStatus: newStatus })
+    syncBusinessToSupabase(bList[idx]).catch(() => {})
   }
 }
 
@@ -409,12 +472,16 @@ export function createBusinessFromDemo({ demoId, formData }) {
   const password = generateSecurePassword()
   const username = formData.email || `${finalSlug}@streetboss.com.mx`
 
+  // Base64 logo and cover handling, separating it from the demo images to avoid visual contamination
+  const defaultLogo = '/brand/SB_FAVICON_512x512_V01.png'
+  const defaultCover = '/brand/StreetBoss_Logo_Horizontal_Oficial.webp'
+
   const newBusiness = {
     id: newBusinessId,
     business_id: newBusinessId,
     name: finalName,
     slug: finalSlug,
-    business_type: formData.business_type || demo.business_type || 'Restaurante',
+    business_type: formData.business_type || 'Restaurante',
     is_demo: false,
     demo_status: 'Inactivo',
     status: 'activo',
@@ -437,11 +504,11 @@ export function createBusinessFromDemo({ demoId, formData }) {
     instagram_url: formData.instagram_url || '',
     tiktok_url: formData.tiktok_url || '',
     website_url: formData.website_url || '',
-    logo_url: formData.logo_url || demo.logo_url,
-    banner_url: formData.banner_url || demo.banner_url,
+    logo_url: formData.logo_url || defaultLogo,
+    banner_url: formData.banner_url || defaultCover,
     brand_color: formData.brand_color || '#FF4B00',
     main_message: formData.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
-    description: formData.description || demo.description,
+    description: formData.description || `Menú digital oficial de ${finalName}. Haz tu pedido por WhatsApp.`,
     schedule_text: formData.schedule_text || 'Lun a Dom · 9:00 am – 10:00 pm',
     is_open: true,
     has_delivery: true,
@@ -449,6 +516,11 @@ export function createBusinessFromDemo({ demoId, formData }) {
     base_delivery_fee: 30,
     owner_username: username,
     temp_password: password,
+    payment_methods: {
+      efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
+      transferencia: { activo: false, titular: '', banco: '', clabe: '', numero_cuenta: '', instrucciones: '', texto_solicitar_comprobante: '' },
+      tarjeta: { activo: false, instrucciones: '', compra_minima: 0 }
+    },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   }
@@ -491,6 +563,9 @@ export function createBusinessFromDemo({ demoId, formData }) {
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
 
   logAuditAction('crear_cliente', newBusinessId, { name: finalName, owner: formData.owner_name })
+  
+  // Sync core business record to Supabase
+  syncBusinessToSupabase(newBusiness).catch(() => {})
 
   const menuUrl = `https://streetboss.com.mx/menu/${finalSlug}`
   const dashboardUrl = `https://streetboss.com.mx/panel/${finalSlug}`
@@ -508,7 +583,7 @@ ${dashboardUrl}
 👤 *Usuario:* ${username}
 🔑 *Contraseña temporal:* ${password}
 
-Desde tu Dashboard podrás actualizar productos, precios, fotografías, horarios, promociones, redes sociales y zonas de entrega.
+Desde tu Dashboard podrás actualizar productos, precios, horarios, promociones, redes sociales y zonas de entrega.
 
 StreetBoss
 _Vende directo. Manda tú._`
@@ -881,6 +956,7 @@ export function updateClientStatus(clientBusinessId, newStatus) {
     bList[idx].updated_at = new Date().toISOString()
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
     logAuditAction('suspender_cliente', clientBusinessId, { status: newStatus })
+    syncBusinessToSupabase(bList[idx]).catch(() => {})
   }
 }
 
@@ -893,6 +969,7 @@ export function regenerateClientPassword(clientBusinessId) {
     bList[idx].updated_at = new Date().toISOString()
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
     logAuditAction('regenerar_password', clientBusinessId, {})
+    syncBusinessToSupabase(bList[idx]).catch(() => {})
     return newPass
   }
   return null
@@ -909,6 +986,7 @@ export function setBusinessPassword(businessId, newPassword) {
   bList[idx].updated_at = new Date().toISOString()
   localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
   logAuditAction('establecer_password', businessId, {})
+  syncBusinessToSupabase(bList[idx]).catch(() => {})
   return { success: true }
 }
 
@@ -1058,6 +1136,7 @@ export function updateBusinessSettings(businessId, updates) {
     }
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
     notifyCentralSync('BUSINESS_UPDATED', { businessId, updates })
+    syncBusinessToSupabase(bList[idx]).catch(() => {})
     return bList[idx]
   }
   return null
