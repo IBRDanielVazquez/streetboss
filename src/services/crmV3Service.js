@@ -77,6 +77,28 @@ const STORAGE_KEYS = {
   ORDERS: 'sb_v3_orders',
 }
 
+// Auto-clean one-shot logic in production to automatically wipe old local testing data
+if (typeof window !== 'undefined') {
+  const WIPE_FLAG = 'sb_v3_wipe_clean_20260811'
+  if (!localStorage.getItem(WIPE_FLAG)) {
+    const localBusinesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+    const hasNonDemos = Array.isArray(localBusinesses) && localBusinesses.some(b => !b.is_demo)
+    if (hasNonDemos) {
+      console.log('[StreetBoss AutoWipe] Purging legacy local test data...')
+      localStorage.removeItem(STORAGE_KEYS.BUSINESSES)
+      localStorage.removeItem(STORAGE_KEYS.CATEGORIES)
+      localStorage.removeItem(STORAGE_KEYS.PRODUCTS)
+      localStorage.removeItem(STORAGE_KEYS.DELIVERY_ZONES)
+      localStorage.removeItem(STORAGE_KEYS.CUSTOMERS)
+      localStorage.removeItem(STORAGE_KEYS.ORDERS)
+      localStorage.removeItem(STORAGE_KEYS.AUDIT)
+      localStorage.removeItem(STORAGE_KEYS.PROSPECTS)
+    }
+    localStorage.setItem(WIPE_FLAG, 'completed')
+  }
+}
+
+
 // Helper: Normalizador de teléfono de México (10 dígitos limpios)
 export function normalizeMexicanPhone(phone) {
   let digits = String(phone || '').replace(/\D/g, '')
