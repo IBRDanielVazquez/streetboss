@@ -4,7 +4,8 @@ import {
   authenticateHqAdmin,
   setHqAdminPassword,
   logoutHqAdmin,
-  subscribeCentralSync
+  subscribeCentralSync,
+  clearSystemData
 } from '../services/crmV3Service'
 import DemosTab from '../components/crm/DemosTab'
 import CrearNegocioTab from '../components/crm/CrearNegocioTab'
@@ -35,7 +36,8 @@ import {
   Eye,
   EyeOff,
   Check,
-  AlertCircle
+  AlertCircle,
+  Trash2
 } from 'lucide-react'
 
 export default function StreetBossCentral() {
@@ -102,6 +104,23 @@ export default function StreetBossCentral() {
   const handleHqLogout = () => {
     logoutHqAdmin()
     setAdminSession(null)
+  }
+
+  const handleWipeData = async () => {
+    const confirmWipe = window.confirm(
+      '🚨 ATENCIÓN: ¿Estás seguro de que deseas eliminar TODOS los clientes B2B, B2C y comanda de prueba para empezar de cero?\\n\\nEsto borrará permanentemente todos los restaurantes creados, sus categorías, productos, clientes y órdenes, conservando únicamente las plantillas demo oficiales y este panel HQ.'
+    )
+    if (!confirmWipe) return
+
+    try {
+      const result = await clearSystemData()
+      if (result.success) {
+        alert('✅ Entorno restaurado correctamente. Se han conservado únicamente los demos oficiales de clonación.')
+        window.location.reload()
+      }
+    } catch (err) {
+      alert('❌ Error al restaurar el entorno: ' + err.message)
+    }
   }
 
   const handleConfirmResetHqPass = (e) => {
@@ -376,6 +395,13 @@ export default function StreetBossCentral() {
               <LogOut size={12} /> Salir
             </button>
           </div>
+
+          <button
+            onClick={handleWipeData}
+            className="w-full mt-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 hover:text-red-300 px-3 py-2 rounded-xl text-[10px] font-black flex items-center justify-center gap-1.5 transition-all active:scale-[0.98]"
+          >
+            <Trash2 size={12} /> Empezar de cero (Wipe)
+          </button>
         </div>
       </aside>
 

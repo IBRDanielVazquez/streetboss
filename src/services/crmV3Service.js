@@ -142,6 +142,43 @@ export function subscribeCentralSync(callback) {
   return () => syncChannel.removeEventListener('message', handler);
 }
 
+export async function clearSystemData() {
+  try {
+    // 1. Delete all non-demo businesses in Supabase
+    if (isSupabaseConfigured) {
+      const { error } = await supabase
+        .from('sb_businesses')
+        .delete()
+        .eq('is_demo', false)
+      
+      if (error) {
+        console.error('[Supabase Reset Error] failed to delete businesses:', error.message)
+      }
+    }
+  } catch (err) {
+    console.error('[Supabase Reset Exception] unexpected error during database wipe:', err)
+  }
+
+  // 2. Clear all local storage keys to erase client traces
+  localStorage.removeItem(STORAGE_KEYS.BUSINESSES)
+  localStorage.removeItem(STORAGE_KEYS.CATEGORIES)
+  localStorage.removeItem(STORAGE_KEYS.PRODUCTS)
+  localStorage.removeItem(STORAGE_KEYS.DELIVERY_ZONES)
+  localStorage.removeItem(STORAGE_KEYS.CUSTOMERS)
+  localStorage.removeItem(STORAGE_KEYS.ORDERS)
+  localStorage.removeItem(STORAGE_KEYS.LOGS)
+  localStorage.removeItem(STORAGE_KEYS.PROSPECTS)
+
+  // 3. Re-seed local store to leave official demos intact
+  initLocalStore()
+
+  if (syncChannel) {
+    syncChannel.postMessage({ type: 'DATABASE_WIPED' })
+  }
+
+  return { success: true }
+}
+
 function initLocalStore() {
   let localBusinesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || 'null')
   if (!localBusinesses || localBusinesses.length === 0) {
