@@ -116,67 +116,76 @@ input:-webkit-autofill:active {
 }
 
 /* ── Dashboard Font Accessibility & iOS Zoom Fix for Older Adults ── */
-.dashboard-accessibility-fonts .text-xs,
-.dashboard-accessibility-fonts .sm\:text-xs,
-.dashboard-accessibility-fonts .md\:text-xs,
-.dashboard-accessibility-fonts .lg\:text-xs {
-  font-size: 0.9rem !important; /* ~14.4px (up from 12px) */
-  line-height: 1.35rem !important;
-}
-
-.dashboard-accessibility-fonts .text-\[10px\],
-.dashboard-accessibility-fonts .text-\[11px\],
-.dashboard-accessibility-fonts .sm\:text-\[10px\],
-.dashboard-accessibility-fonts .sm\:text-\[11px\] {
-  font-size: 0.85rem !important; /* ~13.6px (up from 10px) */
-}
-
-.dashboard-accessibility-fonts .text-sm,
-.dashboard-accessibility-fonts .sm\:text-sm,
-.dashboard-accessibility-fonts .md\:text-sm,
-.dashboard-accessibility-fonts .lg\:text-sm {
-  font-size: 1rem !important; /* 16px (up from 14px) */
-  line-height: 1.5rem !important;
-}
-
-.dashboard-accessibility-fonts .text-base,
-.dashboard-accessibility-fonts .sm\:text-base,
-.dashboard-accessibility-fonts .md\:text-base,
-.dashboard-accessibility-fonts .lg\:text-base {
-  font-size: 1.1rem !important; /* ~17.6px (up from 16px) */
-  line-height: 1.65rem !important;
-}
-
-.dashboard-accessibility-fonts .text-lg,
-.dashboard-accessibility-fonts .sm\:text-lg,
-.dashboard-accessibility-fonts .md\:text-lg,
-.dashboard-accessibility-fonts .lg\:text-lg {
-  font-size: 1.25rem !important; /* 20px (up from 18px) */
-  line-height: 1.75rem !important;
-}
-
-.dashboard-accessibility-fonts .text-xl,
-.dashboard-accessibility-fonts .sm\:text-xl,
-.dashboard-accessibility-fonts .md\:text-xl,
-.dashboard-accessibility-fonts .lg\:text-xl {
-  font-size: 1.45rem !important; /* ~23.2px (up from 20px) */
-  line-height: 2rem !important;
-}
-
-.dashboard-accessibility-fonts .text-2xl,
-.dashboard-accessibility-fonts .sm\:text-2xl,
-.dashboard-accessibility-fonts .md\:text-2xl,
-.dashboard-accessibility-fonts .lg\:text-2xl {
-  font-size: 1.75rem !important; /* 28px (up from 24px) */
-  line-height: 2.25rem !important;
-}
-
 .dashboard-accessibility-fonts input,
 .dashboard-accessibility-fonts select,
 .dashboard-accessibility-fonts textarea,
 .dashboard-accessibility-fonts button,
 .dashboard-accessibility-fonts label {
-  font-size: 1rem !important; /* Forzar 16px base para evitar auto-zoom en Safari iOS sin alterar layouts */
+  font-size: 1rem !important; /* ~16px for comfortable iOS fields anti-zoom */
+}
+
+/* Scaled sizes apply only when .font-size-large toggle is active */
+.dashboard-accessibility-fonts.font-size-large .text-xs,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-xs,
+.dashboard-accessibility-fonts.font-size-large .md\:text-xs,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-xs {
+  font-size: 0.95rem !important; /* ~15.2px */
+  line-height: 1.4rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-\[10px\],
+.dashboard-accessibility-fonts.font-size-large .text-\[11px\],
+.dashboard-accessibility-fonts.font-size-large .sm\:text-\[10px\],
+.dashboard-accessibility-fonts.font-size-large .sm\:text-\[11px\] {
+  font-size: 0.88rem !important; /* ~14px */
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-sm,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-sm,
+.dashboard-accessibility-fonts.font-size-large .md\:text-sm,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-sm {
+  font-size: 1.05rem !important; /* ~16.8px */
+  line-height: 1.55rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-base,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-base,
+.dashboard-accessibility-fonts.font-size-large .md\:text-base,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-base {
+  font-size: 1.18rem !important; /* ~18.8px */
+  line-height: 1.7rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-lg,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-lg,
+.dashboard-accessibility-fonts.font-size-large .md\:text-lg,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-lg {
+  font-size: 1.32rem !important; /* ~21.1px */
+  line-height: 1.8rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-xl,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-xl,
+.dashboard-accessibility-fonts.font-size-large .md\:text-xl,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-xl {
+  font-size: 1.55rem !important; /* ~24.8px */
+  line-height: 2.05rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large .text-2xl,
+.dashboard-accessibility-fonts.font-size-large .sm\:text-2xl,
+.dashboard-accessibility-fonts.font-size-large .md\:text-2xl,
+.dashboard-accessibility-fonts.font-size-large .lg\:text-2xl {
+  font-size: 1.85rem !important; /* ~29.6px */
+  line-height: 2.3rem !important;
+}
+
+.dashboard-accessibility-fonts.font-size-large input,
+.dashboard-accessibility-fonts.font-size-large select,
+.dashboard-accessibility-fonts.font-size-large textarea,
+.dashboard-accessibility-fonts.font-size-large button,
+.dashboard-accessibility-fonts.font-size-large label {
+  font-size: 1.05rem !important; /* ~16.8px */
 }
 
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getBusinessBySlug, subscribeCentralSync } from '../services/crmV3Service'
+import { getBusinessBySlug, subscribeCentralSync, resolveBusinessBySlug } from '../services/crmV3Service'
 import { DEMOS_OFICIALES, DEMO_SHOWCASE } from '../data/demoShowcase'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 import MenuDigital from './MenuDigital'
@@ -44,6 +44,7 @@ function resolveDemoDetails(trialId, name) {
 export default function DemoPublicMenuWrapper() {
   const { trialId } = useParams()
   const [refreshTick, setRefreshTick] = useState(0)
+  const [businessData, setBusinessData] = useState(() => getBusinessBySlug(trialId))
 
   useEffect(() => {
     const unsubscribe = subscribeCentralSync(() => {
@@ -52,9 +53,14 @@ export default function DemoPublicMenuWrapper() {
     return () => unsubscribe()
   }, [trialId])
 
-  // 1. Intentar cargar desde el motor multi-tenant (V3)
-  const businessData = getBusinessBySlug(trialId)
-  
+  useEffect(() => {
+    resolveBusinessBySlug(trialId).then(resolved => {
+      if (resolved) {
+        setBusinessData(resolved)
+      }
+    })
+  }, [trialId, refreshTick])
+
   // 2. Fallback a demos oficiales estáticos
   const demoFallback = DEMO_SHOWCASE.find(
     d => d.id === trialId || d.clave === trialId || trialId?.startsWith(d.id) || trialId?.includes(d.clave)

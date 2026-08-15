@@ -1007,6 +1007,150 @@ export function getBusinessBySlug(slugOrId) {
   }
 }
 
+export async function downloadMenuFromSupabase(businessId) {
+  if (!isSupabaseConfigured) return
+  try {
+    // 1. Descargar categorías
+    const { data: catData, error: catErr } = await supabase
+      .from('sb_menu_categories')
+      .select('*')
+      .eq('business_id', businessId)
+
+    if (catErr) throw catErr
+    if (catData) {
+      let localCats = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+      localCats = localCats.filter(c => c.business_id !== businessId)
+      catData.forEach(dbCat => {
+        localCats.push({
+          id: dbCat.id,
+          business_id: dbCat.business_id,
+          name: dbCat.name,
+          category_type: dbCat.category_type || 'normal',
+          is_plus: dbCat.is_plus || false,
+          is_visible: dbCat.is_visible !== false,
+          position: dbCat.position || 0,
+        })
+      })
+      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(localCats))
+    }
+
+    // 2. Descargar productos
+    const { data: prodData, error: prodErr } = await supabase
+      .from('sb_menu_products')
+      .select('*')
+      .eq('business_id', businessId)
+
+    if (prodErr) throw prodErr
+    if (prodData) {
+      let localProds = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+      localProds = localProds.filter(p => p.business_id !== businessId)
+      prodData.forEach(dbProd => {
+        localProds.push({
+          id: dbProd.id,
+          business_id: dbProd.business_id,
+          category_id: dbProd.category_id,
+          name: dbProd.name,
+          price: Number(dbProd.price || 0),
+          description: dbProd.description || '',
+          image_url: dbProd.image_url || '',
+          is_out_of_stock: dbProd.is_out_of_stock || false,
+          is_active: dbProd.is_active !== false,
+          is_featured: dbProd.is_featured || false,
+          is_promo: dbProd.is_promo || false,
+          position: dbProd.position || 0,
+        })
+      })
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(localProds))
+    }
+  } catch (err) {
+    console.error('[Supabase Menu Sync Exception] failed to download categories or products:', err)
+  }
+}
+
+export async function resolveBusinessBySlug(slugOrId) {
+  // Primero ver si existe localmente
+  const localB = getBusinessBySlug(slugOrId)
+  if (localB && !localB.is_demo) {
+    return localB
+  }
+
+  // Si está en Supabase, descargarlo y guardarlo localmente
+  if (isSupabaseConfigured) {
+    try {
+      const { data, error } = await supabase
+        .from('sb_businesses')
+        .select('*')
+        .or(`slug.eq.${slugOrId},business_id.eq.${slugOrId},id.eq.${slugOrId}`)
+        .eq('status', 'activo')
+        .is('deleted_at', null)
+        .maybeSingle()
+
+      if (error) throw error
+      if (data) {
+        const mappedBiz = {
+          id: data.id,
+          business_id: data.business_id,
+          name: data.name,
+          slug: data.slug,
+          business_type: data.business_type || 'Restaurante',
+          is_demo: data.is_demo || false,
+          status: data.status || 'activo',
+          template_version: data.template_version || '3.0',
+          base_demo_id: data.base_demo_id || null,
+          owner_name: data.owner_name || '',
+          phone: data.phone || '',
+          whatsapp: data.whatsapp || '',
+          email: data.email || '',
+          address: data.address || '',
+          ext_number: data.ext_number || '',
+          int_number: data.int_number || '',
+          colonia: data.colonia || '',
+          postal_code: data.postal_code || '',
+          city: data.city || '',
+          maps_url: data.maps_url || '',
+          facebook_url: data.facebook_url || '',
+          instagram_url: data.instagram_url || '',
+          tiktok_url: data.tiktok_url || '',
+          website_url: data.website_url || '',
+          logo_url: data.logo_url || '',
+          banner_url: data.banner_url || '',
+          brand_color: data.brand_color || '#FF4B00',
+          main_message: data.main_message || '',
+          description: data.description || '',
+          schedule_text: data.schedule_text || '',
+          schedule_daily: data.schedule_daily || {},
+          is_open: data.is_open !== false,
+          has_delivery: data.has_delivery !== false,
+          delivery_mode: data.delivery_mode || 'fijo',
+          base_delivery_fee: Number(data.base_delivery_fee || 30),
+          estimated_delivery_time: data.estimated_delivery_time || '30–40 min',
+          owner_username: data.owner_username || '',
+          temp_password: data.temp_password || 'StreetBoss2026!',
+        }
+
+        let bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+        const idx = bList.findIndex(b => b.business_id === mappedBiz.business_id)
+        if (idx !== -1) {
+          bList[idx] = mappedBiz
+        } else {
+          bList.push(mappedBiz)
+        }
+        localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
+
+        // Descargar catálogo de menú en background
+        await downloadMenuFromSupabase(mappedBiz.business_id)
+
+        // Retornar el negocio completo con sus categorías y productos cargados
+        return getBusinessBySlug(mappedBiz.slug)
+      }
+    } catch (err) {
+      console.error('[Supabase Resolve Business Exception] failed to download business details:', err)
+    }
+  }
+
+  return localB
+}
+
 export function updateClientStatus(clientBusinessId, newStatus) {
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
   const idx = bList.findIndex(b => b.business_id === clientBusinessId || b.id === clientBusinessId)

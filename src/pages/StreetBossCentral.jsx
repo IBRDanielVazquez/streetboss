@@ -62,6 +62,15 @@ export default function StreetBossCentral() {
   const [resetPassError, setResetPassError] = useState('')
   const [resetPassSuccess, setResetPassSuccess] = useState('')
 
+  // Preferencia de Tamaño de Letra (Accesibilidad HQ)
+  const [fontSizePreference, setFontSizePreference] = useState(() => localStorage.getItem('sb_hq_font_size') || 'normal')
+
+  const toggleFontSize = () => {
+    const nextSize = fontSizePreference === 'normal' ? 'large' : 'normal'
+    setFontSizePreference(nextSize)
+    localStorage.setItem('sb_hq_font_size', nextSize)
+  }
+
   useEffect(() => {
     document.title = 'StreetBoss Central HQ'
     let metaRobots = document.querySelector('meta[name="robots"]')
@@ -247,7 +256,7 @@ export default function StreetBossCentral() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0E12] text-white font-sans flex flex-col md:flex-row selection:bg-[#FF4B00] selection:text-white dashboard-accessibility-fonts">
+    <div className={`min-h-screen bg-[#0D0E12] text-white font-sans flex flex-col md:flex-row selection:bg-[#FF4B00] selection:text-white dashboard-accessibility-fonts ${fontSizePreference === 'large' ? 'font-size-large' : ''}`}>
       {/* Mobile Top Header */}
       <div className="md:hidden bg-[#14161F] border-b border-white/5 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <div className="flex items-center gap-2">
@@ -289,6 +298,25 @@ export default function StreetBossCentral() {
             <Shield size={14} className="text-[#FF4B00]" />
             <span className="font-bold text-gray-200">Hub Operativo V3</span>
           </div>
+
+          {/* Selector de Tamaño de Letra (Accesibilidad B2B Central) */}
+          <button
+            type="button"
+            onClick={toggleFontSize}
+            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-2xl border text-xs font-black transition-all active:scale-98 ${
+              fontSizePreference === 'large'
+                ? 'bg-[#FF4B00]/10 text-[#FF6A1A] border-[#FF4B00]/30 shadow-inner'
+                : 'bg-[#0D0E12] text-gray-400 border-white/5 hover:bg-white/5'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold tracking-tighter">A{fontSizePreference === 'large' ? '++' : '+'}</span>
+              <span>Tamaño de Texto</span>
+            </span>
+            <span className="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-white/5 text-gray-300">
+              {fontSizePreference === 'large' ? 'Grande' : 'Normal'}
+            </span>
+          </button>
 
           {/* Menú de Navegación del Hub */}
           <nav className="space-y-2 text-sm sm:text-base font-bold">

@@ -15,7 +15,8 @@ import {
   authenticateBusiness,
   subscribeCentralSync,
   syncOrdersFromSupabase,
-  subscribeToOrdersRealtime
+  subscribeToOrdersRealtime,
+  resolveBusinessBySlug
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
@@ -87,6 +88,16 @@ export default function ClientDashboard() {
   // Modal Productos
   const [editingProduct, setEditingProduct] = useState(null)
 
+  // Preferencia de Tamaño de Letra (Accesibilidad)
+  const [fontSizePreference, setFontSizePreference] = useState(() => localStorage.getItem('sb_b2b_font_size') || 'normal')
+
+  const toggleFontSize = () => {
+    const nextSize = fontSizePreference === 'normal' ? 'large' : 'normal'
+    setFontSizePreference(nextSize)
+    localStorage.setItem('sb_b2b_font_size', nextSize)
+    showToast(nextSize === 'large' ? 'Fuentes Grandes Activadas' : 'Tamaño Estándar Activado')
+  }
+
   // Zonas de Entrega
   const [zones, setZones] = useState([])
   const [cpSearch, setCpSearch] = useState('')
@@ -135,9 +146,13 @@ export default function ClientDashboard() {
   }
 
   useEffect(() => {
-    loadData()
-    const unsubscribe = subscribeCentralSync(() => {
+    resolveBusinessBySlug(slug).then(() => {
       loadData()
+    })
+    const unsubscribe = subscribeCentralSync(() => {
+      resolveBusinessBySlug(slug).then(() => {
+        loadData()
+      })
     })
     return () => unsubscribe()
   }, [slug])
@@ -427,7 +442,7 @@ export default function ClientDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0E12] text-white font-sans selection:bg-[#FF4B00] selection:text-white pb-24 dashboard-accessibility-fonts">
+    <div className={`min-h-screen bg-[#0D0E12] text-white font-sans selection:bg-[#FF4B00] selection:text-white pb-24 dashboard-accessibility-fonts ${fontSizePreference === 'large' ? 'font-size-large' : ''}`}>
       {/* Toast Notificación */}
       {savedSuccess && (
         <div className="fixed top-4 right-4 z-50 bg-emerald-600 text-white px-5 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2 animate-bounce">
@@ -477,6 +492,21 @@ export default function ClientDashboard() {
             }`}
           >
             <Power size={14} /> {infoForm.is_open ? 'ABIERTO' : 'CERRADO (PAUSADO)'}
+          </button>
+
+          {/* Selector de Tamaño de Letra (Accesibilidad B2B) */}
+          <button
+            type="button"
+            onClick={toggleFontSize}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-black border transition-transform active:scale-95 ${
+              fontSizePreference === 'large'
+                ? 'bg-[#FF4B00]/10 text-[#FF6A1A] border-[#FF4B00]/30 shadow-inner'
+                : 'bg-white/5 text-gray-300 border-white/5 hover:bg-white/10'
+            }`}
+            title={fontSizePreference === 'large' ? 'Volver al tamaño de letra normal' : 'Agrandar tamaño de letra para mejor lectura'}
+          >
+            <span className="font-mono font-black tracking-tighter text-xs">A{fontSizePreference === 'large' ? '++' : '+'}</span>
+            <span className="hidden md:inline text-[10px] uppercase tracking-wider">Texto {fontSizePreference === 'large' ? 'Grande' : 'Normal'}</span>
           </button>
 
           <a
