@@ -116,20 +116,67 @@ input:-webkit-autofill:active {
 }
 
 /* ── Dashboard Font Accessibility & iOS Zoom Fix for Older Adults ── */
-html:has(.dashboard-accessibility-fonts) {
-  font-size: 21px !important; /* Scale root from 16px to 21px, scaling all rem values (responsive classes sm:*, md:*, etc.) */
+.dashboard-accessibility-fonts .text-xs,
+.dashboard-accessibility-fonts .sm\:text-xs,
+.dashboard-accessibility-fonts .md\:text-xs,
+.dashboard-accessibility-fonts .lg\:text-xs {
+  font-size: 0.9rem !important; /* ~14.4px (up from 12px) */
+  line-height: 1.35rem !important;
 }
-@supports not selector(:has(*)) {
-  .dashboard-accessibility-fonts {
-    font-size: 21px !important;
-  }
+
+.dashboard-accessibility-fonts .text-\[10px\],
+.dashboard-accessibility-fonts .text-\[11px\],
+.dashboard-accessibility-fonts .sm\:text-\[10px\],
+.dashboard-accessibility-fonts .sm\:text-\[11px\] {
+  font-size: 0.85rem !important; /* ~13.6px (up from 10px) */
 }
+
+.dashboard-accessibility-fonts .text-sm,
+.dashboard-accessibility-fonts .sm\:text-sm,
+.dashboard-accessibility-fonts .md\:text-sm,
+.dashboard-accessibility-fonts .lg\:text-sm {
+  font-size: 1rem !important; /* 16px (up from 14px) */
+  line-height: 1.5rem !important;
+}
+
+.dashboard-accessibility-fonts .text-base,
+.dashboard-accessibility-fonts .sm\:text-base,
+.dashboard-accessibility-fonts .md\:text-base,
+.dashboard-accessibility-fonts .lg\:text-base {
+  font-size: 1.1rem !important; /* ~17.6px (up from 16px) */
+  line-height: 1.65rem !important;
+}
+
+.dashboard-accessibility-fonts .text-lg,
+.dashboard-accessibility-fonts .sm\:text-lg,
+.dashboard-accessibility-fonts .md\:text-lg,
+.dashboard-accessibility-fonts .lg\:text-lg {
+  font-size: 1.25rem !important; /* 20px (up from 18px) */
+  line-height: 1.75rem !important;
+}
+
+.dashboard-accessibility-fonts .text-xl,
+.dashboard-accessibility-fonts .sm\:text-xl,
+.dashboard-accessibility-fonts .md\:text-xl,
+.dashboard-accessibility-fonts .lg\:text-xl {
+  font-size: 1.45rem !important; /* ~23.2px (up from 20px) */
+  line-height: 2rem !important;
+}
+
+.dashboard-accessibility-fonts .text-2xl,
+.dashboard-accessibility-fonts .sm\:text-2xl,
+.dashboard-accessibility-fonts .md\:text-2xl,
+.dashboard-accessibility-fonts .lg\:text-2xl {
+  font-size: 1.75rem !important; /* 28px (up from 24px) */
+  line-height: 2.25rem !important;
+}
+
 .dashboard-accessibility-fonts input,
 .dashboard-accessibility-fonts select,
 .dashboard-accessibility-fonts textarea,
 .dashboard-accessibility-fonts button,
 .dashboard-accessibility-fonts label {
-  font-size: 0.95rem !important; /* Comfortably large inputs relative to the scaled root */
+  font-size: 1rem !important; /* Forzar 16px base para evitar auto-zoom en Safari iOS sin alterar layouts */
 }
 
 
