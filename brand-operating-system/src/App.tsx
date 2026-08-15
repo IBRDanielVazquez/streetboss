@@ -22,6 +22,27 @@ import highlightsData from './data/highlights.json';
 import assetsData from './data/assets.json';
 import './index.css';
 
+const useCompletedPosts = () => {
+  const [completed, setCompleted] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('sbos_completed');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+  const toggleComplete = (id: string) => {
+    setCompleted(prev => {
+      const isDone = prev.includes(id);
+      const next = isDone ? prev.filter(i => i !== id) : [...prev, id];
+      localStorage.setItem('sbos_completed', JSON.stringify(next));
+      return next;
+    });
+  };
+  return { completed, toggleComplete };
+};
+
+
 const copyText = (text: string) => {
   navigator.clipboard.writeText(text);
   alert('Copiado al portapapeles');
@@ -389,7 +410,8 @@ const CalendarPostModal = ({ post, list, num, weekInfo, onClose, onNav }: any) =
 };
 
 const CalendarView = ({ network, profile, posts }: any) => {
-  const [mainTab, setMainTab] = useState('calendario');
+  const [mainTab, setMainTab] = useState('pendientes');
+  const { completed, toggleComplete } = useCompletedPosts();
   const [week, setWeek] = useState('all');
   const [fCat, setFCat] = useState('all');
   const [fFormat, setFFormat] = useState('all');
@@ -406,8 +428,10 @@ const CalendarView = ({ network, profile, posts }: any) => {
     let list = [...posts];
     if (fCat !== 'all') list = list.filter((p: any) => categoryOf(p) === fCat);
     if (fFormat !== 'all') list = list.filter((p: any) => p.format === fFormat);
+    if (mainTab === 'pendientes') list = list.filter((p: any) => !completed.includes(p.id));
+    if (mainTab === 'realizados') list = list.filter((p: any) => completed.includes(p.id));
     return list.sort(chronoSort);
-  }, [posts, fCat, fFormat]);
+  }, [posts, fCat, fFormat, mainTab, completed]);
   const byWeek = useMemo(() => { const g: any = {}; ordered.forEach((p: any) => { (g[p.week] = g[p.week] || []).push(p); }); return g; }, [ordered]);
   const allWeeks = Array.from(new Set(posts.map((p: any) => p.week))).sort((a: any, b: any) => a - b);
   const visibleWeeks = (week === 'all' ? allWeeks : [Number(week)]).filter((w: any) => byWeek[w]);
@@ -422,13 +446,14 @@ const CalendarView = ({ network, profile, posts }: any) => {
       </div>
 
       <div className="tabs">
-        <div className={`tab ${mainTab==='calendario'?'active':''}`} onClick={() => setMainTab('calendario')}>Calendario</div>
+        <div className={`tab ${mainTab==='pendientes'?'active':''}`} onClick={() => setMainTab('pendientes')}>Pendientes</div>
+        <div className={`tab ${mainTab==='realizados'?'active':''}`} onClick={() => setMainTab('realizados')}>Realizados</div>
         <div className={`tab ${mainTab==='perfil'?'active':''}`} onClick={() => setMainTab('perfil')}>Perfil & Bios</div>
       </div>
 
       {mainTab === 'perfil' && profile && <ProfileView profile={profile} />}
 
-      {mainTab === 'calendario' && (
+      {(mainTab === 'pendientes' || mainTab === 'realizados') && (
         <>
           <div className="ig-toolbar">
             <label className="ig-filter">
@@ -470,13 +495,21 @@ const CalendarView = ({ network, profile, posts }: any) => {
                   {list.map((post: any) => (
                     <div key={post.id} className="ig-card" onClick={() => setSel(post)}>
                       <div className="ig-card-idrow">
-                        <span className="ig-card-id">{num(post)}</span>
+                        <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                          <input 
+                            type="checkbox" 
+                            checked={completed.includes(post.id)}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              toggleComplete(post.id);
+                            }}
+                            style={{width:'18px', height:'18px', cursor:'pointer'}}
+                          />
+                          <span className="ig-card-id">{num(post)}</span>
+                        </div>
                         <span className="ig-card-pos">Sem {post.week} · {weekInfo[post.id]?.pos}/{weekInfo[post.id]?.total}</span>
                       </div>
-                      <div className="ig-card-when">
-                        <span className="ig-card-day">{diaFecha(post.date)}</span>
-                        <span className="ig-card-time">{post.time}</span>
-                      </div>
+                      
                       <div className="ig-card-title">{post.title}</div>
                       <div className="ig-tags">
                         <span className="tag tag-format">{post.format}</span>
@@ -497,88 +530,13 @@ const CalendarView = ({ network, profile, posts }: any) => {
   );
 };
 
-const GenericNetworkView = () => {
-  const location = useLocation();
-  const network = location.pathname.replace('/', '') || 'Instagram';
-  
-  const profile = profilesData.find(p => p.network.toLowerCase() === network.toLowerCase());
-  const posts = postsData.filter(p => p.network.toLowerCase() === network.toLowerCase());
-  
-  const [activeTab, setActiveTab] = useState('perfil');
-  const [selectedPost, setSelectedPost] = useState(null);
-
-  const formats = Array.from(new Set(posts.map(p => p.format)));
-
-  return (
-    <div className="main-content">
-      <div className="header">
-        <h2>{network}</h2>
-        <p style={{color:'var(--text-secondary)', marginTop:'8px'}}>Configuración y Biblioteca de Activos</p>
-      </div>
-
-      <div className="tabs">
-        <div className={`tab ${activeTab === 'perfil' ? 'active' : ''}`} onClick={() => setActiveTab('perfil')}>
-          Perfil & Bios
-        </div>
-        {network.toLowerCase() === 'instagram' && (
-          <div className={`tab ${activeTab === 'destacados' ? 'active' : ''}`} onClick={() => setActiveTab('destacados')}>
-            Destacados
-          </div>
-        )}
-        {formats.map(f => (
-          <div key={f} className={`tab ${activeTab === f ? 'active' : ''}`} onClick={() => setActiveTab(f as string)}>
-            {f.charAt(0).toUpperCase() + f.slice(1)} ({posts.filter(p => p.format === f).length})
-          </div>
-        ))}
-      </div>
-
-      {activeTab === 'perfil' && profile && <ProfileView profile={profile} />}
-      
-      {activeTab === 'destacados' && network.toLowerCase() === 'instagram' && (
-        <div className="grid-metrics">
-          {highlightsData.map(hl => (
-            <div key={hl.id} className="metric-card">
-              <h4>{hl.name}</h4>
-              <p style={{fontSize:'12px', marginTop:'8px'}}>{hl.contentDesc}</p>
-              <br/>
-              <p style={{fontSize:'12px', fontWeight:600}}>PROMPT PORTADA:</p>
-              <p style={{fontSize:'12px'}}>{hl.prompt}</p>
-              <CopyBtn text={hl.prompt} label="Copiar Prompt" />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {formats.includes(activeTab) && (
-        <div className="grid-posts">
-          {posts.filter(p => p.format === activeTab).map(post => (
-            <div key={post.id} className="post-card" onClick={() => setSelectedPost(post as any)}>
-              <div className="post-card-header">
-                <span style={{fontSize:'12px', fontWeight:600}}>{post.id}</span>
-                <span className="post-card-badge badge-ready">{post.status}</span>
-              </div>
-              <div className="post-card-body">
-                <h4 style={{textTransform:'capitalize'}}>{post.title}</h4>
-                <p>{post.hook}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      <PostModal post={selectedPost} onClose={() => setSelectedPost(null)} />
-    </div>
-  );
-};
 
 const NetworkView = () => {
   const location = useLocation();
   const network = location.pathname.replace('/', '') || 'Instagram';
   const profile = profilesData.find(p => p.network.toLowerCase() === network.toLowerCase());
   const posts = postsData.filter(p => p.network.toLowerCase() === network.toLowerCase());
-  const n = network.toLowerCase();
-  if (n === 'instagram' || n === 'facebook') return <CalendarView network={network} profile={profile} posts={posts} />;
-  return <GenericNetworkView />;
+  return <CalendarView network={network} profile={profile} posts={posts} />;
 };
 
 export default function App() {

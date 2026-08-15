@@ -115,3 +115,44 @@ input:-webkit-autofill:active {
   }
 }
 
+/* ── Dashboard Font Accessibility & iOS Zoom Fix for Older Adults ── */
+.dashboard-accessibility-fonts {
+  font-size: 15px;
+}
+.dashboard-accessibility-fonts .text-xs {
+  font-size: 0.875rem !important; /* 14px instead of 12px */
+  line-height: 1.25rem !important;
+}
+.dashboard-accessibility-fonts .text-\[10px\],
+.dashboard-accessibility-fonts .text-\[11px\] {
+  font-size: 0.8rem !important; /* ~13px */
+}
+.dashboard-accessibility-fonts .text-sm {
+  font-size: 1rem !important; /* 16px instead of 14px */
+  line-height: 1.5rem !important;
+}
+.dashboard-accessibility-fonts .text-base {
+  font-size: 1.125rem !important; /* 18px instead of 16px */
+  line-height: 1.75rem !important;
+}
+.dashboard-accessibility-fonts .text-lg {
+  font-size: 1.25rem !important; /* 20px instead of 18px */
+  line-height: 1.75rem !important;
+}
+.dashboard-accessibility-fonts .text-xl {
+  font-size: 1.5rem !important; /* 24px instead of 20px */
+  line-height: 2rem !important;
+}
+.dashboard-accessibility-fonts .text-2xl {
+  font-size: 1.875rem !important; /* 30px instead of 24px */
+  line-height: 2.25rem !important;
+}
+.dashboard-accessibility-fonts input,
+.dashboard-accessibility-fonts select,
+.dashboard-accessibility-fonts textarea,
+.dashboard-accessibility-fonts button,
+.dashboard-accessibility-fonts label {
+  font-size: 1rem !important; /* Clean readable 16px inputs prevent auto-zoom on mobile iOS Safari */
+}
+
+
