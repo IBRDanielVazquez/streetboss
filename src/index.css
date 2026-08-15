@@ -116,43 +116,20 @@ input:-webkit-autofill:active {
 }
 
 /* ── Dashboard Font Accessibility & iOS Zoom Fix for Older Adults ── */
-.dashboard-accessibility-fonts {
-  font-size: 17px;
+html:has(.dashboard-accessibility-fonts) {
+  font-size: 21px !important; /* Scale root from 16px to 21px, scaling all rem values (responsive classes sm:*, md:*, etc.) */
 }
-.dashboard-accessibility-fonts .text-xs {
-  font-size: 1rem !important; /* 16px instead of 12px for readable small texts */
-  line-height: 1.5rem !important;
-}
-.dashboard-accessibility-fonts .text-\[10px\],
-.dashboard-accessibility-fonts .text-\[11px\] {
-  font-size: 0.9rem !important; /* ~14.4px instead of 10px/11px */
-}
-.dashboard-accessibility-fonts .text-sm {
-  font-size: 1.15rem !important; /* ~18.4px instead of 14px */
-  line-height: 1.75rem !important;
-}
-.dashboard-accessibility-fonts .text-base {
-  font-size: 1.25rem !important; /* 20px instead of 16px */
-  line-height: 1.85rem !important;
-}
-.dashboard-accessibility-fonts .text-lg {
-  font-size: 1.4rem !important; /* ~22.4px instead of 18px */
-  line-height: 2rem !important;
-}
-.dashboard-accessibility-fonts .text-xl {
-  font-size: 1.65rem !important; /* ~26.4px instead of 20px */
-  line-height: 2.25rem !important;
-}
-.dashboard-accessibility-fonts .text-2xl {
-  font-size: 2rem !important; /* 32px instead of 24px */
-  line-height: 2.5rem !important;
+@supports not selector(:has(*)) {
+  .dashboard-accessibility-fonts {
+    font-size: 21px !important;
+  }
 }
 .dashboard-accessibility-fonts input,
 .dashboard-accessibility-fonts select,
 .dashboard-accessibility-fonts textarea,
 .dashboard-accessibility-fonts button,
 .dashboard-accessibility-fonts label {
-  font-size: 1.125rem !important; /* Clear 18px fields for easy touch and readability */
+  font-size: 0.95rem !important; /* Comfortably large inputs relative to the scaled root */
 }
 
 
