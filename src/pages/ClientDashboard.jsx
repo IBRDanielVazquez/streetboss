@@ -13,7 +13,9 @@ import {
   saveDeliveryZones,
   bulkUpdateZoneFees,
   authenticateBusiness,
-  subscribeCentralSync
+  subscribeCentralSync,
+  syncOrdersFromSupabase,
+  subscribeToOrdersRealtime
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
@@ -149,6 +151,51 @@ export default function ClientDashboard() {
   const [loginPassword, setLoginPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+
+  // Sincronización de pedidos en tiempo real con Supabase
+  useEffect(() => {
+    if (!business || !isAuthenticated) return
+
+    // Descargar historial inicial de órdenes
+    syncOrdersFromSupabase(business.business_id).then(() => {
+      loadData()
+    })
+
+    // Suscribirse al canal en tiempo real
+    const unsubscribeRealtime = subscribeToOrdersRealtime(business.business_id, (newOrder, eventType) => {
+      loadData()
+      if (eventType === 'INSERT') {
+        showToast(`🔔 ¡NUEVO PEDIDO RECIBIDO! ${newOrder.order_number} de ${newOrder.customer_name}`)
+        // Sonido de notificación
+        try {
+          const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+          const osc = audioCtx.createOscillator()
+          const gain = audioCtx.createGain()
+          osc.connect(gain)
+          gain.connect(audioCtx.destination)
+          osc.type = 'sine'
+          osc.frequency.value = 587.33 // D5
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime)
+          osc.start()
+          osc.stop(audioCtx.currentTime + 0.15)
+          setTimeout(() => {
+            const osc2 = audioCtx.createOscillator()
+            osc2.connect(gain)
+            osc2.type = 'sine'
+            osc2.frequency.value = 880 // A5
+            osc2.start()
+            osc2.stop(audioCtx.currentTime + 0.25)
+          }, 180)
+        } catch (e) {
+          console.log('Audio error:', e)
+        }
+      }
+    })
+
+    return () => {
+      unsubscribeRealtime()
+    }
+  }, [business?.business_id, isAuthenticated])
 
   const handleLoginSubmit = (e) => {
     e.preventDefault()

@@ -1554,6 +1554,72 @@ export function recordPublicOrder(orderPayload) {
   ordersList.unshift(newOrder)
   localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
 
+  // Sincronizar pedido a Supabase
+  if (isSupabaseConfigured) {
+    supabase
+      .from('sb_orders')
+      .insert({
+        order_id: newOrder.id,
+        order_number: newOrder.order_number,
+        business_id: newOrder.business_id,
+        business_name: newOrder.business_name,
+        customer_id: newOrder.customer_id,
+        customer_name: newOrder.customer_name,
+        phone: newOrder.phone,
+        whatsapp: newOrder.whatsapp,
+        email: newOrder.email,
+        delivery_type: newOrder.delivery_type,
+        colonia: newOrder.colonia,
+        postal_code: newOrder.postal_code,
+        address: newOrder.address,
+        items: newOrder.items,
+        subtotal: newOrder.subtotal,
+        delivery_fee: newOrder.delivery_fee,
+        total: newOrder.total,
+        whatsapp_message: newOrder.whatsapp_message,
+        whatsapp_status: newOrder.whatsapp_status,
+        status: newOrder.status,
+        payment_method: newOrder.payment_method,
+        payment_status: newOrder.payment_status,
+        cash_needs_change: newOrder.cash_needs_change,
+        cash_pay_with: String(newOrder.cash_pay_with),
+        has_terminal: newOrder.has_terminal,
+        pending_receipt: newOrder.pending_receipt,
+        comentarios_internos: newOrder.comentarios_internos,
+        observaciones: newOrder.observaciones,
+      })
+      .then(({ error }) => {
+        if (error) console.error('[Supabase Order Sync Error] failed to sync order:', error.message)
+      })
+
+    const targetCustomer = existingCustomer || (customerList && customerList[0])
+    if (targetCustomer) {
+      supabase
+        .from('sb_business_customers')
+        .upsert({
+          customer_id: targetCustomer.id,
+          business_id: targetCustomer.business_id,
+          name: targetCustomer.name,
+          phone: targetCustomer.phone,
+          whatsapp: targetCustomer.whatsapp,
+          phone_normalized: targetCustomer.phone_normalized,
+          email: targetCustomer.email,
+          colonia: targetCustomer.colonia,
+          postal_code: targetCustomer.postal_code,
+          address: targetCustomer.address,
+          first_order_at: targetCustomer.first_order_at,
+          last_order_at: targetCustomer.last_order_at,
+          orders_count: targetCustomer.orders_count,
+          total_spent: targetCustomer.total_spent,
+          promo_consent: targetCustomer.promo_consent,
+          promo_consent_at: targetCustomer.promo_consent_at,
+        })
+        .then(({ error }) => {
+          if (error) console.error('[Supabase Customer Sync Error] failed to sync customer:', error.message)
+        })
+    }
+  }
+
   return { order: newOrder, customerId }
 }
 
@@ -1610,9 +1676,155 @@ export function updateOrderStatus(orderId, newStatus, extraData = {}) {
       updated_at: new Date().toISOString()
     }
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+
+    // Sincronizar actualización de estado a Supabase
+    if (isSupabaseConfigured) {
+      supabase
+        .from('sb_orders')
+        .update({
+          status: newStatus,
+          ...extraData,
+          updated_at: new Date().toISOString()
+        })
+        .or(`order_id.eq.${orderId},order_number.eq.${orderId}`)
+        .then(({ error }) => {
+          if (error) console.error('[Supabase Order Update Error] failed to update status:', error.message)
+        })
+    }
+
     return ordersList[idx]
   }
   return null
+}
+
+export async function syncOrdersFromSupabase(businessId) {
+  if (!isSupabaseConfigured) return
+  try {
+    const { data, error } = await supabase
+      .from('sb_orders')
+      .select('*')
+      .eq('business_id', businessId)
+    
+    if (error) throw error
+    if (data && data.length > 0) {
+      let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+      data.forEach(dbOrder => {
+        const localIdx = ordersList.findIndex(o => o.id === dbOrder.order_id || o.order_number === dbOrder.order_number)
+        const formattedOrder = {
+          id: dbOrder.order_id,
+          order_number: dbOrder.order_number,
+          business_id: dbOrder.business_id,
+          business_name: dbOrder.business_name,
+          customer_id: dbOrder.customer_id,
+          customer_name: dbOrder.customer_name,
+          phone: dbOrder.phone,
+          whatsapp: dbOrder.whatsapp,
+          email: dbOrder.email,
+          delivery_type: dbOrder.delivery_type,
+          colonia: dbOrder.colonia,
+          postal_code: dbOrder.postal_code,
+          address: dbOrder.address,
+          items: dbOrder.items,
+          subtotal: Number(dbOrder.subtotal),
+          delivery_fee: Number(dbOrder.delivery_fee),
+          total: Number(dbOrder.total),
+          whatsapp_message: dbOrder.whatsapp_message,
+          whatsapp_status: dbOrder.whatsapp_status,
+          status: dbOrder.status,
+          payment_method: dbOrder.payment_method,
+          payment_status: dbOrder.payment_status,
+          cash_needs_change: dbOrder.cash_needs_change,
+          cash_pay_with: dbOrder.cash_pay_with,
+          has_terminal: dbOrder.has_terminal,
+          pending_receipt: dbOrder.pending_receipt,
+          comentarios_internos: dbOrder.comentarios_internos,
+          observaciones: dbOrder.observaciones,
+          created_at: dbOrder.created_at,
+        }
+
+        if (localIdx !== -1) {
+          ordersList[localIdx] = formattedOrder
+        } else {
+          ordersList.unshift(formattedOrder)
+        }
+      })
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+    }
+  } catch (err) {
+    console.error('[Supabase Sync Orders Exception] failed to download orders:', err)
+  }
+}
+
+export function subscribeToOrdersRealtime(businessId, onNewOrderCallback) {
+  if (!isSupabaseConfigured) return () => {}
+  
+  console.log('[Supabase Realtime] Suscribiéndose a órdenes en tiempo real para:', businessId)
+  const channel = supabase
+    .channel(`realtime:sb_orders:${businessId}`)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'sb_orders', filter: `business_id=eq.${businessId}` },
+      (payload) => {
+        console.log('[Supabase Realtime Event] Recibido:', payload)
+        const dbOrder = payload.new
+        if (!dbOrder || !dbOrder.order_id) return
+
+        let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+        const localIdx = ordersList.findIndex(o => o.id === dbOrder.order_id || o.order_number === dbOrder.order_number)
+        const formattedOrder = {
+          id: dbOrder.order_id,
+          order_number: dbOrder.order_number,
+          business_id: dbOrder.business_id,
+          business_name: dbOrder.business_name,
+          customer_id: dbOrder.customer_id,
+          customer_name: dbOrder.customer_name,
+          phone: dbOrder.phone,
+          whatsapp: dbOrder.whatsapp,
+          email: dbOrder.email,
+          delivery_type: dbOrder.delivery_type,
+          colonia: dbOrder.colonia,
+          postal_code: dbOrder.postal_code,
+          address: dbOrder.address,
+          items: dbOrder.items,
+          subtotal: Number(dbOrder.subtotal),
+          delivery_fee: Number(dbOrder.delivery_fee),
+          total: Number(dbOrder.total),
+          whatsapp_message: dbOrder.whatsapp_message,
+          whatsapp_status: dbOrder.whatsapp_status,
+          status: dbOrder.status,
+          payment_method: dbOrder.payment_method,
+          payment_status: dbOrder.payment_status,
+          cash_needs_change: dbOrder.cash_needs_change,
+          cash_pay_with: dbOrder.cash_pay_with,
+          has_terminal: dbOrder.has_terminal,
+          pending_receipt: dbOrder.pending_receipt,
+          comentarios_internos: dbOrder.comentarios_internos,
+          observaciones: dbOrder.observaciones,
+          created_at: dbOrder.created_at,
+        }
+
+        if (payload.eventType === 'DELETE') {
+          const deletedId = payload.old?.order_id
+          ordersList = ordersList.filter(o => o.id !== deletedId)
+        } else if (localIdx !== -1) {
+          ordersList[localIdx] = formattedOrder
+        } else {
+          ordersList.unshift(formattedOrder)
+        }
+
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+        
+        if (onNewOrderCallback) {
+          onNewOrderCallback(formattedOrder, payload.eventType)
+        }
+      }
+    )
+    .subscribe()
+
+  return () => {
+    console.log('[Supabase Realtime] Desuscribiéndose de órdenes para:', businessId)
+    supabase.removeChannel(channel)
+  }
 }
 
 export function updateOrderPaymentStatus(orderId, newPaymentStatus, extraData = {}) {
@@ -1626,8 +1838,153 @@ export function updateOrderPaymentStatus(orderId, newPaymentStatus, extraData = 
       updated_at: new Date().toISOString()
     }
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+
+    // Sincronizar actualización de estado de pago a Supabase
+    if (isSupabaseConfigured) {
+      supabase
+        .from('sb_orders')
+        .update({
+          payment_status: newPaymentStatus,
+          ...extraData,
+          updated_at: new Date().toISOString()
+        })
+        .or(`order_id.eq.${orderId},order_number.eq.${orderId}`)
+        .then(({ error }) => {
+          if (error) console.error('[Supabase Payment Update Error] failed to update payment status:', error.message)
+        })
+    }
+
     return ordersList[idx]
   }
   return null
+}
+
+export async function syncAllOrdersFromSupabase() {
+  if (!isSupabaseConfigured) return
+  try {
+    const { data, error } = await supabase
+      .from('sb_orders')
+      .select('*')
+    
+    if (error) throw error
+    if (data && data.length > 0) {
+      let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+      data.forEach(dbOrder => {
+        const localIdx = ordersList.findIndex(o => o.id === dbOrder.order_id || o.order_number === dbOrder.order_number)
+        const formattedOrder = {
+          id: dbOrder.order_id,
+          order_number: dbOrder.order_number,
+          business_id: dbOrder.business_id,
+          business_name: dbOrder.business_name,
+          customer_id: dbOrder.customer_id,
+          customer_name: dbOrder.customer_name,
+          phone: dbOrder.phone,
+          whatsapp: dbOrder.whatsapp,
+          email: dbOrder.email,
+          delivery_type: dbOrder.delivery_type,
+          colonia: dbOrder.colonia,
+          postal_code: dbOrder.postal_code,
+          address: dbOrder.address,
+          items: dbOrder.items,
+          subtotal: Number(dbOrder.subtotal),
+          delivery_fee: Number(dbOrder.delivery_fee),
+          total: Number(dbOrder.total),
+          whatsapp_message: dbOrder.whatsapp_message,
+          whatsapp_status: dbOrder.whatsapp_status,
+          status: dbOrder.status,
+          payment_method: dbOrder.payment_method,
+          payment_status: dbOrder.payment_status,
+          cash_needs_change: dbOrder.cash_needs_change,
+          cash_pay_with: dbOrder.cash_pay_with,
+          has_terminal: dbOrder.has_terminal,
+          pending_receipt: dbOrder.pending_receipt,
+          comentarios_internos: dbOrder.comentarios_internos,
+          observaciones: dbOrder.observaciones,
+          created_at: dbOrder.created_at,
+        }
+
+        if (localIdx !== -1) {
+          ordersList[localIdx] = formattedOrder
+        } else {
+          ordersList.unshift(formattedOrder)
+        }
+      })
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+    }
+  } catch (err) {
+    console.error('[Supabase Sync All Orders Exception] failed to download orders:', err)
+  }
+}
+
+export function subscribeToAllOrdersRealtime(onNewOrderCallback) {
+  if (!isSupabaseConfigured) return () => {}
+  
+  console.log('[Supabase Realtime] Suscribiéndose a todas las órdenes en tiempo real')
+  const channel = supabase
+    .channel('realtime:all_sb_orders')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'sb_orders' },
+      (payload) => {
+        console.log('[Supabase Realtime Event Global] Recibido:', payload)
+        const dbOrder = payload.new
+        if (!dbOrder || !dbOrder.order_id) return
+
+        let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+        const localIdx = ordersList.findIndex(o => o.id === dbOrder.order_id || o.order_number === dbOrder.order_number)
+        const formattedOrder = {
+          id: dbOrder.order_id,
+          order_number: dbOrder.order_number,
+          business_id: dbOrder.business_id,
+          business_name: dbOrder.business_name,
+          customer_id: dbOrder.customer_id,
+          customer_name: dbOrder.customer_name,
+          phone: dbOrder.phone,
+          whatsapp: dbOrder.whatsapp,
+          email: dbOrder.email,
+          delivery_type: dbOrder.delivery_type,
+          colonia: dbOrder.colonia,
+          postal_code: dbOrder.postal_code,
+          address: dbOrder.address,
+          items: dbOrder.items,
+          subtotal: Number(dbOrder.subtotal),
+          delivery_fee: Number(dbOrder.delivery_fee),
+          total: Number(dbOrder.total),
+          whatsapp_message: dbOrder.whatsapp_message,
+          whatsapp_status: dbOrder.whatsapp_status,
+          status: dbOrder.status,
+          payment_method: dbOrder.payment_method,
+          payment_status: dbOrder.payment_status,
+          cash_needs_change: dbOrder.cash_needs_change,
+          cash_pay_with: dbOrder.cash_pay_with,
+          has_terminal: dbOrder.has_terminal,
+          pending_receipt: dbOrder.pending_receipt,
+          comentarios_internos: dbOrder.comentarios_internos,
+          observaciones: dbOrder.observaciones,
+          created_at: dbOrder.created_at,
+        }
+
+        if (payload.eventType === 'DELETE') {
+          const deletedId = payload.old?.order_id
+          ordersList = ordersList.filter(o => o.id !== deletedId)
+        } else if (localIdx !== -1) {
+          ordersList[localIdx] = formattedOrder
+        } else {
+          ordersList.unshift(formattedOrder)
+        }
+
+        localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+        
+        if (onNewOrderCallback) {
+          onNewOrderCallback(formattedOrder, payload.eventType)
+        }
+      }
+    )
+    .subscribe()
+
+  return () => {
+    console.log('[Supabase Realtime Global] Desuscribiéndose de todas las órdenes')
+    supabase.removeChannel(channel)
+  }
 }
 

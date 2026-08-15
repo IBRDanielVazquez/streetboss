@@ -5,7 +5,9 @@ import {
   setHqAdminPassword,
   logoutHqAdmin,
   subscribeCentralSync,
-  clearSystemData
+  clearSystemData,
+  syncAllOrdersFromSupabase,
+  subscribeToAllOrdersRealtime
 } from '../services/crmV3Service'
 import DemosTab from '../components/crm/DemosTab'
 import CrearNegocioTab from '../components/crm/CrearNegocioTab'
@@ -88,6 +90,23 @@ export default function StreetBossCentral() {
       }
     }
   }, [])
+
+  // Sincronización y monitoreo de TODOS los pedidos en tiempo real en Central HQ
+  useEffect(() => {
+    if (!adminSession) return
+
+    // Sincronizar inicialmente todos los pedidos
+    syncAllOrdersFromSupabase()
+
+    // Suscribirse a cambios en tiempo real
+    const unsubscribeAllRealtime = subscribeToAllOrdersRealtime((newOrder, eventType) => {
+      window.dispatchEvent(new CustomEvent('sb_orders_updated', { detail: { order: newOrder, eventType } }))
+    })
+
+    return () => {
+      unsubscribeAllRealtime()
+    }
+  }, [adminSession])
 
   const handleHqLogin = (e) => {
     e.preventDefault()

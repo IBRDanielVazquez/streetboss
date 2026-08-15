@@ -33,6 +33,13 @@ export default function PedidosCRMTab() {
 
   useEffect(() => {
     loadOrders()
+    const handleOrdersUpdated = () => {
+      loadOrders()
+    }
+    window.addEventListener('sb_orders_updated', handleOrdersUpdated)
+    return () => {
+      window.removeEventListener('sb_orders_updated', handleOrdersUpdated)
+    }
   }, [])
 
   const showToast = (msg) => {
