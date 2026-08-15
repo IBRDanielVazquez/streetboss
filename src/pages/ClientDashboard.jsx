@@ -1503,76 +1503,94 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* PESTAÑA NUEVA: MÁS (Lista de Opciones Móviles) */}
+        {/* PESTAÑA NUEVA: MÁS (Configuración estilo iOS Settings) */}
         {tab === 'mas' && (
-          <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl animate-fade-in text-xs font-bold">
-            <div>
-              <h2 className="text-lg font-black text-white border-b border-white/5 pb-3">Más Opciones</h2>
+          <div className="space-y-6 animate-fade-in">
+            {/* Header del menú */}
+            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 shadow-xl">
+              <h2 className="text-lg font-black text-white border-b border-white/5 pb-3">
+                Configuración del Sistema
+              </h2>
               <p className="text-xs text-gray-400 mt-2 font-normal">
-                Accede a las configuraciones adicionales, métodos de pago y zonas de entrega para tu restaurante.
+                Ajustes adicionales de reparto, canales sociales, métodos de cobro y base de comensales.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-2.5">
-              <button
-                type="button"
-                onClick={() => setTab('compartir')}
-                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
-              >
-                <div className="flex items-center gap-3">
-                  <Share2 size={18} className="text-[#FF4B00]" />
-                  <div>
-                    <span className="text-white block font-bold">Compartir Menú</span>
-                    <span className="text-[10px] text-gray-400 font-normal">Obtén el enlace, código y opciones para tus clientes</span>
+            {/* Menú agrupado tipo iOS Settings */}
+            <div className="bg-[#14161F] rounded-2xl border border-white/5 overflow-hidden shadow-xl">
+              <div className="divide-y divide-white/5">
+                {/* 1. Compartir Menú */}
+                <button
+                  type="button"
+                  onClick={() => setTab('compartir')}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 text-left transition-all active:scale-[0.99] group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center shadow-md">
+                      <Share2 size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <span className="text-white block font-black text-sm group-hover:text-[#FF4B00] transition-colors">Compartir Menú</span>
+                      <span className="text-xs text-gray-400 font-normal">Enlace público, códigos y QR para comensales</span>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500" />
-              </button>
+                  <ChevronRight size={18} className="text-gray-500" />
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setTab('rrss')}
-                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
-              >
-                <div className="flex items-center gap-3">
-                  <Globe size={18} className="text-[#FF4B00]" />
-                  <div>
-                    <span className="text-white block font-bold">Redes Sociales</span>
-                    <span className="text-[10px] text-gray-400 font-normal">Enlaces a Facebook, Instagram, TikTok y YouTube</span>
+                {/* 2. Redes Sociales */}
+                <button
+                  type="button"
+                  onClick={() => setTab('rrss')}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 text-left transition-all active:scale-[0.99] group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center shadow-md">
+                      <Globe size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <span className="text-white block font-black text-sm group-hover:text-[#FF4B00] transition-colors">Redes Sociales</span>
+                      <span className="text-xs text-gray-400 font-normal">Perfiles de Instagram, Facebook, TikTok y YouTube</span>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500" />
-              </button>
+                  <ChevronRight size={18} className="text-gray-500" />
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setTab('zonas')}
-                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
-              >
-                <div className="flex items-center gap-3">
-                  <MapPin size={18} className="text-[#FF4B00]" />
-                  <div>
-                    <span className="text-white block font-bold">Servicio a Domicilio y Pagos</span>
-                    <span className="text-[10px] text-gray-400 font-normal">Zonas de reparto, tarifas de envío y métodos de pago</span>
+                {/* 3. Zonas de Reparto y Pagos */}
+                <button
+                  type="button"
+                  onClick={() => setTab('zonas')}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 text-left transition-all active:scale-[0.99] group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center shadow-md">
+                      <MapPin size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <span className="text-white block font-black text-sm group-hover:text-[#FF4B00] transition-colors">Zonas de Envío y Pagos</span>
+                      <span className="text-xs text-gray-400 font-normal">Costos por colonia, pedidos mínimos y cuentas bancarias</span>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500" />
-              </button>
+                  <ChevronRight size={18} className="text-gray-500" />
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setTab('clientes')}
-                className="w-full flex items-center justify-between p-4 bg-[#0D0E12] border border-white/5 hover:border-white/10 rounded-xl text-left transition-transform active:scale-[0.99]"
-              >
-                <div className="flex items-center gap-3">
-                  <Users size={18} className="text-[#FF4B00]" />
-                  <div>
-                    <span className="text-white block font-bold">Base de Clientes</span>
-                    <span className="text-[10px] text-gray-400 font-normal">Visualiza los datos y consentimientos de tus compradores</span>
+                {/* 4. Cartera de Clientes */}
+                <button
+                  type="button"
+                  onClick={() => setTab('clientes')}
+                  className="w-full flex items-center justify-between px-5 py-4 hover:bg-white/5 text-left transition-all active:scale-[0.99] group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-500 flex items-center justify-center shadow-md">
+                      <Users size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <span className="text-white block font-black text-sm group-hover:text-[#FF4B00] transition-colors">Mis Clientes (B2C)</span>
+                      <span className="text-xs text-gray-400 font-normal">Directorio de clientes, consumos y consentimientos</span>
+                    </div>
                   </div>
-                </div>
-                <ChevronRight size={16} className="text-gray-500" />
-              </button>
+                  <ChevronRight size={18} className="text-gray-500" />
+                </button>
+              </div>
             </div>
           </div>
         )}
