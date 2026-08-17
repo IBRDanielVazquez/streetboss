@@ -1,42 +1,31 @@
 # ESTADO ACTUAL — STREETBOSS
 
-> Última actualización: 2026-08-06
+> Última actualización: 2026-08-17
 > Actualizado por: Antigravity (Google DeepMind)
 
 ## Estado General
 
-**Estado: 🟡 CORRECCIONES DE SEGURIDAD Y DATOS MIGRADO Y VERIFICADO EN MODO LOCAL (ESPERANDO AUTORIZACIÓN MANUAL PARA DEPLOY)**
+**Estado: 🟢 OPERATIVO EN CALIENTE CON DESPLIEGUE DIRECTO VERCEL & SINCRONIZACIÓN REALTIME DE COMANDAS**
 
-Se han completado en código fuente local las 8 Fases del Plan de Remediación de Producción:
+Se ha finalizado y desplegado en producción la sincronización en caliente y la accesibilidad responsiva tipo iOS:
 
-1. **Eliminación de Backdoor `Sb987654!`**:
-   - Se eliminó la contraseña maestra global de `authenticateBusiness()`.
-   - Se requiere una contraseña por restaurante configurada individualmente.
-   - Función `setBusinessPassword()` valida longitud (mín. 8 caracteres) y registra auditoría.
+1. **Sincronización de Pedidos en Tiempo Real (Supabase)**:
+   - Pedidos de clientes B2C se escriben asíncronamente en la tabla centralizada `sb_orders` en la nube de Supabase.
+   - Dashboard B2B del restaurante y la pestaña central HQ de Pedidos se suscriben reactivamente a los inserts/updates de Supabase.
+   - Notificación sonora nativa (timbre de audio doble en D5 y A5 usando la API Web Audio de JS) y Toasts verdes automáticos al recibir un pedido.
 
-2. **Modal de Contraseña de Una Sola Visualización**:
-   - `ClientesTab.jsx` incluye un modal interactivo para generar o establecer contraseñas.
-   - La contraseña generada es visible **UNA SOLA VEZ** al crearla/restablecerla.
-   - Al cerrar el modal, la contraseña desaparece permanentemente de la UI.
+2. **Resolución Asíncrona de Negocios Clonados (Base en la Nube)**:
+   - Implementadas `resolveBusinessBySlug` y `downloadMenuFromSupabase` para evitar que los restaurantes creados desde la Central HQ den "Negocio no encontrado" en otros dispositivos.
+   - Al cargar el panel o el menú, el frontend descarga la información del restaurante, su catálogo de platos y categorías directamente de Supabase y lo persiste en local.
 
-3. **Mensaje Estricto de "Compartir Acceso"**:
-   - Formato exacto reducido (Hola, Menú, Dashboard, Contraseña) sin emojis irrelevantes, planes ni datos de soporte.
-   - Generación de mensaje enlazada directamente a la visualización única del modal de contraseña.
+3. **Accesibilidad Tipográfica Interactiva (Modo iOS Dynamic Type)**:
+   - Removido el forzado estático global de fuentes grandes para evitar layouts amontonados. Por defecto la UI es compacta e idéntica a una App Móvil nativa.
+   - Inyectado un botón selector interactivo `[A+] / [A++]` en el Header del panel y en el Sidebar de la Central HQ.
+   - El modo de texto grande escala moderadamente de forma reactiva del 10% al 15% las tipografías principales respetando márgenes y celdas.
 
-4. **Migración Automática de localStorage (`migrateExistingData`)**:
-   - `migrateExistingData()` re-siembra e inyecta la nueva estructura (`banner_url`, `logo_url`, `payment_methods`, `temp_password`) en navegadores con datos preexistentes sin sobrescribir personalizaciones.
-
-5. **Clarificación de Pestañas**:
-   - Pestaña del panel B2B renombrada a `"Mis Clientes"` para eliminar ambigüedad con la pestaña `"CLIENTES"` (b2b clientes) del CRM HQ.
-
-6. **Assets de Portada y Perfil**:
-   - Fallback en `DemosTab.jsx` corregido a `/demos/${demo.slug}/cover.jpg`.
-
-7. **Limpieza de Rutas Legacy**:
-   - Eliminada la ruta `/demo/:trialId` en `App.jsx` dejando `/menu/:trialId` como la única ruta oficial del menú público.
-
-8. **Modo Local Estricto**:
-   - Todos los cambios permanecen en git local. **Sin despliegue a Vercel hasta recibir autorización manual explicita.**
+4. **Despliegues Directos Vercel (CD Manual)**:
+   - Dado que los hooks de compilación automática en GitHub no están activos en este proyecto de Vercel, se estableció el flujo de despliegue directo por terminal: `npx vercel --prod --yes`.
+   - Producción actualizada en caliente y propagada en https://streetboss.com.mx de forma inmediata tras cada commit aprobado.
 
 ---
 

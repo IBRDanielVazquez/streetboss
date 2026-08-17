@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-08-17 — Sincronización Realtime, Corrección de Pruebas Clonadas y Accesibilidad iOS Dynamic Type
+
+**Hora:** 12:00 CST  
+**Agente:** Antigravity (Google DeepMind)  
+**Acción:** Implementación de suscripciones en tiempo real para pedidos, cargador asíncrono multi-dispositivo para nuevos restaurantes y selector interactivo de tipografía Dynamic Type.
+
+### Cambios realizados
+
+- **Suscripciones de Pedidos en Tiempo Real (`src/services/crmV3Service.js`):**
+  - Conexión vía sockets al canal en vivo de Supabase para la tabla `sb_orders` en caliente.
+  - Alerta sonora doble (timbre nativo en D5 y A5 usando la API Web Audio) y Toasts reactivos al recibir una comanda nueva.
+- **Resolución Asíncrona de Negocios en Nube (`resolveBusinessBySlug` & `downloadMenuFromSupabase`):**
+  - El frontend ahora busca restaurantes y menús en Supabase si no existen en el `localStorage` del cliente o comensal.
+  - Sincroniza y guarda localmente la información general, categorías y productos clonados para permitir accesos B2B/B2C al instante de su creación.
+- **Modulador de Accesibilidad iOS Dynamic Type:**
+  - Selector interactivo `[A+] / [A++]` integrado en el Header del panel y Sidebar del Hub Central.
+  - Se eliminó el escalado intrusivo y se refinaron los tamaños para equiparar a WhatsApp, Rappi y Uber Eats (botones e iconos nativos a 10px-11px, inputs a 16px exactos para evitar el zoom molesto en iOS Safari).
+- **Flujo de Integración Continua Manual (`npx vercel --prod --yes`):**
+  - Desplegada y aliaseada la última build estable del software en vivo en el dominio oficial `streetboss.com.mx`.
+
+---
+
 ## 2026-08-06 — Implementación de Generador de Demos, Rediseño del Drawer y Despliegue en Vercel
 
 **Hora:** 10:45 CST  
