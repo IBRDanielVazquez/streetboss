@@ -1,7 +1,16 @@
 import React from 'react'
-import { Plus, Minus } from 'lucide-react'
+import { Plus, Minus, Pencil, Trash2 } from 'lucide-react'
 
-const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAgregar, onQuitar, colorMarca = '#FF4B00' }) {
+const ProductoMenuCard = React.memo(function ProductoMenuCard({
+  prod,
+  cant,
+  onAgregar,
+  onQuitar,
+  colorMarca = '#FF4B00',
+  editMode = false,
+  onEdit,
+  onDelete,
+}) {
   const isAgotado = prod.agotado || prod.is_out_of_stock
   const isFeatured = prod.is_featured || prod.is_promo
 
@@ -37,7 +46,7 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
         )}
 
         {/* Floating Circular Plus Button on Image */}
-        {!isAgotado && cant === 0 && (
+        {!editMode && !isAgotado && cant === 0 && (
           <button
             onClick={() => onAgregar(prod)}
             className="absolute bottom-2.5 right-2.5 w-9 h-9 bg-black/90 hover:bg-black text-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-all border border-white/20"
@@ -45,6 +54,27 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
           >
             <Plus size={18} />
           </button>
+        )}
+
+        {editMode && (
+          <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onEdit?.(prod)}
+              className="w-10 h-10 bg-white/95 backdrop-blur text-gray-900 rounded-full flex items-center justify-center shadow-lg border border-white active:scale-90"
+              aria-label={`Editar ${prod.nombre}`}
+            >
+              <Pencil size={17} />
+            </button>
+            <button
+              type="button"
+              onClick={() => onDelete?.(prod.id)}
+              className="w-10 h-10 bg-red-600/95 backdrop-blur text-white rounded-full flex items-center justify-center shadow-lg border border-white/40 active:scale-90"
+              aria-label={`Eliminar ${prod.nombre}`}
+            >
+              <Trash2 size={17} />
+            </button>
+          </div>
         )}
       </div>
 
@@ -68,7 +98,7 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
             </span>
           </div>
 
-          {!isAgotado && (
+          {!editMode && !isAgotado && (
             cant > 0 && (
               <div className="flex items-center gap-1.5 bg-gray-100 rounded-full p-1 border border-gray-200">
                 <button
@@ -87,6 +117,17 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
                 </button>
               </div>
             )
+          )}
+
+          {editMode && (
+            <button
+              type="button"
+              onClick={() => onEdit?.(prod)}
+              className="min-h-10 px-3 rounded-full text-white text-[11px] font-black flex items-center gap-1.5 active:scale-95"
+              style={{ backgroundColor: colorMarca }}
+            >
+              <Pencil size={13} /> Editar
+            </button>
           )}
         </div>
       </div>

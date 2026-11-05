@@ -6,6 +6,7 @@ import {
   logoutHqAdmin,
   subscribeCentralSync,
   clearSystemData,
+  syncClientsFromSupabase,
   syncAllOrdersFromSupabase,
   subscribeToAllOrdersRealtime
 } from '../services/crmV3Service'
@@ -14,7 +15,7 @@ import CrearNegocioTab from '../components/crm/CrearNegocioTab'
 import ClientesTab from '../components/crm/ClientesTab'
 import ProspectosTab from '../components/crm/ProspectosTab'
 import PedidosCRMTab from '../components/crm/PedidosCRMTab'
-import VersionFooterBadge from '../components/VersionFooterBadge'
+import AnalyticsHQTab from '../components/crm/AnalyticsHQTab'
 import {
   Home,
   Store,
@@ -39,11 +40,12 @@ import {
   EyeOff,
   Check,
   AlertCircle,
-  Trash2
+  Trash2,
+  BarChart3
 } from 'lucide-react'
 
 export default function StreetBossCentral() {
-  const [activeTab, setActiveTab] = useState('demos')
+  const [activeTab, setActiveTab] = useState('inicio')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedDemoId, setSelectedDemoId] = useState('')
   const [prospectToConvert, setProspectToConvert] = useState(null)
@@ -82,6 +84,10 @@ export default function StreetBossCentral() {
       created = true
     }
     metaRobots.content = 'noindex, nofollow'
+
+    // Recupera y publica altas históricas aun antes del acceso HQ; los datos
+    // viven en el navegador y deben migrarse apenas se abre esta ruta.
+    syncClientsFromSupabase()
 
     // Sincronización en tiempo real entre pestañas/sesiones
     const unsubscribe = subscribeCentralSync((eventData) => {
@@ -136,7 +142,7 @@ export default function StreetBossCentral() {
 
   const handleWipeData = async () => {
     const confirmWipe = window.confirm(
-      '🚨 ATENCIÓN: ¿Estás seguro de que deseas eliminar TODOS los clientes B2B, B2C y comanda de prueba para empezar de cero?\\n\\nEsto borrará permanentemente todos los restaurantes creados, sus categorías, productos, clientes y órdenes, conservando únicamente las plantillas demo oficiales y este panel HQ.'
+      '🚨 ATENCIÓN: ¿Estás seguro de que deseas eliminar TODOS los clientes B2B, B2C y comandas existentes para empezar de cero?\\n\\nEsto borrará permanentemente todos los restaurantes creados, sus categorías, productos, clientes y órdenes, conservando únicamente las plantillas demo oficiales y este panel HQ.'
     )
     if (!confirmWipe) return
 
@@ -247,38 +253,40 @@ export default function StreetBossCentral() {
             </button>
           </form>
 
-          <div className="pt-4 border-t border-white/5 text-center text-[11px] text-gray-500">
-            StreetBoss HQ v3.0 · Conexión Segura Centralizada
-          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className={`min-h-screen bg-[#0D0E12] text-white font-sans flex flex-col md:flex-row selection:bg-[#FF4B00] selection:text-white dashboard-accessibility-fonts ${fontSizePreference === 'large' ? 'font-size-large' : ''}`}>
-      {/* Mobile Top Header */}
-      <div className="md:hidden bg-[#14161F] border-b border-white/5 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-2">
+    <div className={`min-h-screen bg-[radial-gradient(circle_at_top_right,_#3A1B13_0%,_#151722_38%,_#090A0E_78%)] text-white font-sans flex flex-col selection:bg-[#FF4B00] selection:text-white dashboard-accessibility-fonts ${fontSizePreference === 'large' ? 'font-size-large' : ''}`}>
+      {/* Barra superior única tipo iOS */}
+      <header className="bg-[#11131A]/70 backdrop-blur-2xl border-b border-white/10 px-4 sm:px-7 py-3 flex items-center justify-between sticky top-0 z-50">
+        <button type="button" onClick={() => setActiveTab('inicio')} className="flex items-center gap-2 active:scale-95">
           <img
             src="/brand/StreetBoss_Logo_Horizontal_Oficial.webp"
             alt="StreetBoss"
-            className="h-8 w-auto mix-blend-screen"
+            className="h-7 sm:h-8 w-auto mix-blend-screen"
           />
-          <span className="text-[10px] font-black uppercase text-[#FF6A1A] bg-[#FF4B00]/10 px-2 py-0.5 rounded-md">HQ Hub</span>
-        </div>
-
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="p-2 text-gray-300 hover:text-white bg-white/5 rounded-lg"
-        >
-          {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          <span className="hidden sm:inline text-[10px] font-black uppercase text-[#FF6A1A] bg-[#FF4B00]/10 px-2 py-1 rounded-full">Central HQ</span>
         </button>
-      </div>
 
-      {/* LEFT SIDEBAR HUB (Navegación Lateral Izquierda inspirada en HighLevel) */}
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={toggleFontSize} className={`min-h-10 rounded-full border px-3 text-[11px] font-black ${fontSizePreference === 'large' ? 'border-[#FF4B00]/40 bg-[#FF4B00]/15 text-[#FF6A1A]' : 'border-white/10 bg-white/5 text-white/70'}`}>
+            A{fontSizePreference === 'large' ? '++' : '+'}
+          </button>
+          <button type="button" onClick={() => setShowResetPassModal(true)} className="min-h-10 rounded-full border border-white/10 bg-white/5 px-3 text-white/65 hover:text-white" title="Cambiar clave">
+            <Key size={16} />
+          </button>
+          <button type="button" onClick={handleHqLogout} className="min-h-10 rounded-full border border-red-500/15 bg-red-500/10 px-3 text-red-400" title="Salir">
+            <LogOut size={16} />
+          </button>
+        </div>
+      </header>
+
+      {/* Navegación histórica retirada de la interfaz; se conserva el código durante la transición */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-[#14161F] border-r border-white/5 flex flex-col justify-between transition-transform duration-300 ${
+        className={`hidden fixed top-0 left-0 z-40 h-screen w-64 bg-[#11131A]/88 backdrop-blur-2xl border-r border-white/10 flex-col justify-between transition-transform duration-300 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -382,6 +390,16 @@ export default function StreetBossCentral() {
             </button>
 
             <button
+              onClick={() => { setActiveTab('analitica'); setSidebarOpen(false) }}
+              className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all ${
+                activeTab === 'analitica' ? 'bg-[#FF4B00] text-white shadow-lg font-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <div className="flex items-center gap-3.5"><BarChart3 size={20} /> Analítica HQ</div>
+              <ChevronRight size={16} opacity={0.6} />
+            </button>
+
+            <button
               onClick={() => { setActiveTab('crear'); setSidebarOpen(false) }}
               className={`w-full flex items-center gap-3.5 px-4 py-3.5 rounded-2xl transition-all ${
                 activeTab === 'crear' ? 'bg-[#FF4B00] text-white shadow-lg font-black' : 'text-gray-400 hover:bg-white/5 hover:text-white'
@@ -453,25 +471,24 @@ export default function StreetBossCentral() {
       </aside>
 
       {/* ÁREA DE TRABAJO PRINCIPAL */}
-      <main className="flex-1 p-4 sm:p-8 min-h-screen overflow-y-auto">
+      <main className="w-full flex-1 p-4 pb-32 sm:p-8 sm:pb-36 min-h-screen overflow-y-auto">
         {/* INICIO / RESUMEN */}
         {activeTab === 'inicio' && (
-          <div className="space-y-10 max-w-6xl mx-auto pt-4">
-            <div className="bg-[#14161F] p-8 rounded-[2rem] border border-white/5 space-y-3 shadow-xl">
-              <h2 className="text-3xl sm:text-4xl font-black text-white">Hub Central StreetBoss</h2>
-              <p className="text-sm sm:text-lg text-gray-400">
-                Selecciona un módulo o carpeta a continuación para administrar la plataforma.
-              </p>
+          <div className="space-y-7 max-w-6xl mx-auto pt-2 sm:pt-4">
+            <div className="px-1 sm:px-2 pt-2">
+              <p className="text-[10px] font-black uppercase tracking-[0.25em] text-[#FF6A1A]">StreetBoss Central</p>
+              <h2 className="mt-1 text-3xl sm:text-4xl font-black tracking-tight text-white">Hola, Boss.</h2>
+              <p className="mt-1 text-sm text-white/45">Elige una app para comenzar.</p>
             </div>
 
             {/* iOS Springboard Icon Layout */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8 justify-items-center bg-[#14161F]/40 p-8 sm:p-12 rounded-[2.5rem] border border-white/5">
+            <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-6 gap-x-4 gap-y-8 justify-items-center bg-white/[0.045] backdrop-blur-xl p-5 sm:p-10 rounded-[2.5rem] border border-white/10 shadow-2xl">
               {/* App 1: Demos */}
               <button
                 onClick={() => setActiveTab('demos')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-orange-500 to-red-600 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-orange-500/10 group-hover:shadow-orange-500/20">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-orange-500 to-red-600 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-orange-950/40">
                   <Store size={36} className="text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-[#FF6A1A] transition-colors">
@@ -485,7 +502,7 @@ export default function StreetBossCentral() {
                 onClick={() => setActiveTab('prospectos')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-blue-500/10 group-hover:shadow-blue-500/20">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-blue-950/40">
                   <UserPlus size={36} className="text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-blue-400 transition-colors">
@@ -499,7 +516,7 @@ export default function StreetBossCentral() {
                 onClick={() => setActiveTab('clientes')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-emerald-500/10 group-hover:shadow-emerald-500/20">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-emerald-950/40">
                   <Users size={36} className="text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-emerald-400 transition-colors">
@@ -513,7 +530,7 @@ export default function StreetBossCentral() {
                 onClick={() => setActiveTab('crear')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-purple-500/10 group-hover:shadow-purple-500/20">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-purple-950/40">
                   <Sparkles size={36} className="text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-pink-400 transition-colors">
@@ -527,7 +544,7 @@ export default function StreetBossCentral() {
                 onClick={() => setActiveTab('pedidos')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-yellow-400 to-amber-500 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-yellow-500/10 group-hover:shadow-yellow-500/20">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-yellow-400 to-amber-500 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-amber-950/40">
                   <ShoppingBag size={36} className="text-white" />
                 </div>
                 <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-yellow-400 transition-colors">
@@ -536,18 +553,27 @@ export default function StreetBossCentral() {
                 <span className="text-[10px] font-bold text-gray-500 mt-0.5 uppercase">Registro</span>
               </button>
 
-              {/* App 6: Wipe System */}
+              {/* App 6: Configuración */}
+              <button onClick={() => setActiveTab('analitica')} className="group flex flex-col items-center focus:outline-none">
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-cyan-500 to-blue-700 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-blue-950/40">
+                  <BarChart3 size={36} />
+                </div>
+                <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-cyan-400 transition-colors">Analítica</span>
+                <span className="text-[10px] font-bold text-gray-500 mt-0.5 uppercase">Métricas</span>
+              </button>
+
+              {/* App 7: Configuración */}
               <button
-                onClick={handleWipeData}
+                onClick={() => setActiveTab('configuracion')}
                 className="group flex flex-col items-center focus:outline-none"
               >
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-[1.8rem] bg-gradient-to-tr from-rose-500 to-red-700 flex items-center justify-center text-white shadow-lg border border-white/10 transition-transform group-hover:scale-105 active:scale-95 shadow-red-500/10 group-hover:shadow-red-500/20">
-                  <Trash2 size={36} className="text-white" />
+                <div className="w-[76px] h-[76px] sm:w-24 sm:h-24 rounded-[1.65rem] bg-gradient-to-tr from-slate-500 to-slate-800 flex items-center justify-center text-white shadow-xl border border-white/20 transition-transform group-hover:scale-105 active:scale-95 shadow-black/40">
+                  <Settings size={36} className="text-white" />
                 </div>
-                <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-red-400 transition-colors">
-                  Empezar Cero
+                <span className="text-sm sm:text-base font-black text-white text-center mt-3 group-hover:text-slate-300 transition-colors">
+                  Ajustes
                 </span>
-                <span className="text-[10px] font-bold text-gray-500 mt-0.5 uppercase">Wipe</span>
+                <span className="text-[10px] font-bold text-gray-500 mt-0.5 uppercase">Sistema</span>
               </button>
             </div>
           </div>
@@ -579,6 +605,10 @@ export default function StreetBossCentral() {
         {/* PEDIDOS */}
         {activeTab === 'pedidos' && (
           <PedidosCRMTab />
+        )}
+
+        {activeTab === 'analitica' && (
+          <AnalyticsHQTab />
         )}
 
         {/* OPERACIÓN (PRÓXIMAMENTE) */}
@@ -678,9 +708,32 @@ export default function StreetBossCentral() {
           </div>
         )}
 
-        {/* Footer Discreto con Identificación de Versión */}
-        <VersionFooterBadge clientId="streetboss_hq" userId="superadmin_hq" />
       </main>
+
+      {/* Dock inferior tipo iOS */}
+      <nav className="fixed bottom-3 left-3 right-3 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-[min(720px,calc(100%-32px))] z-50 rounded-[1.6rem] border border-white/15 bg-[#161821]/88 px-2 py-2 shadow-2xl backdrop-blur-2xl flex items-center justify-around pb-[calc(8px+env(safe-area-inset-bottom))]">
+        {[
+          { id: 'inicio', label: 'Inicio', icon: Home },
+          { id: 'demos', label: 'Demos', icon: Store },
+          { id: 'prospectos', label: 'Prospectos', icon: UserPlus },
+          { id: 'crear', label: 'Crear', icon: PlusCircle },
+          { id: 'clientes', label: 'Clientes', icon: Users },
+          { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag },
+        ].map(item => {
+          const DockIcon = item.icon
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              className={`min-w-12 sm:min-w-20 rounded-2xl px-1.5 sm:px-3 py-1.5 flex flex-col items-center gap-1 text-[8px] sm:text-[9px] font-black transition-all ${activeTab === item.id ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-white/55 hover:text-white'}`}
+            >
+              <DockIcon size={19} />
+              <span>{item.label}</span>
+            </button>
+          )
+        })}
+      </nav>
     </div>
   )
 }

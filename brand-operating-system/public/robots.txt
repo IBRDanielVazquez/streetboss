@@ -1,4 +1,0 @@
-# Panel interno de StreetBoss (Command Center).
-# Bloqueado a buscadores para NO afectar el SEO del sitio oficial streetboss.com.mx
-User-agent: *
-Disallow: /

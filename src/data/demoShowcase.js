@@ -48,7 +48,79 @@ export const DEMOS_OFICIALES = [
     ],
   },
   {
-    id: 'pizza-house', clave: 'pizza', nombre: 'Pizza House', emoji: '🍕', giro: 'Pizzería',
+    id: 'la-vitola', clave: 'vitola', nombre: 'La Vitola', emoji: '🍔', giro: 'Hamburguesas y hot dogs', is_demo: false,
+    description: 'Hamburguesas Angus, hot dogs artesanales y bebidas preparadas al momento.',
+    address: 'Calle Central Norte #46, Col. Terán, Tuxtla Gutiérrez, Chiapas, C.P. 29050',
+    colonia: 'Terán',
+    postal_code: '29050',
+    city: 'Tuxtla Gutiérrez',
+    state: 'Chiapas',
+    phone: '9613209433',
+    whatsapp: '529613209433',
+    schedule_text: 'Horario por confirmar',
+    delivery_mode: 'zonas',
+    base_delivery_fee: 20,
+    delivery_price_per_km: 10,
+    delivery_zones: [
+      { id: 'vitola-zone-29050-teran', postal_code: '29050', colonia: 'Terán', distance_km: 0, delivery_fee: 20, is_active: true },
+    ],
+    payment_methods: {
+      efectivo: { activo: true, preguntar_cambio: true },
+      transferencia: { activo: false },
+      tarjeta: { activo: false },
+    },
+    menu: [
+      cat('sabor-c1', '🍔 Hamburguesas', [
+        prod('sabor-p1', 'Hamburguesa Clásica', 95, 'Carne Angus a la parrilla, pan artesanal, vegetales frescos y queso fundido.', '/demos/la-vitola/products/hamburguesa-clasica.png'),
+        prod('sabor-p2', 'Hamburguesa Hawaian Space', 100, 'Carne Angus, piña caramelizada, queso fundido y aderezo especial.', '/demos/la-vitola/products/hamburguesa-hawaian-space.png'),
+        prod('sabor-p3', 'Hamburguesa Mermelada de Tocino', 110, 'Carne Angus, pan artesanal y mermelada de tocino con toque dulce y ahumado.', '/demos/la-vitola/products/hamburguesa-mermelada-tocino.png'),
+        prod('sabor-p4', 'Hamburguesa Especial Rellena', 130, 'Carne Angus rellena de mezcla de quesos fundidos en pan artesanal.', '/demos/la-vitola/products/hamburguesa-especial-rellena.png'),
+      ]),
+      cat('sabor-c2', '🌭 Hot Dogs', [
+        prod('sabor-p5', 'Hot Dog Clásico', 70, 'Salchicha premium en pan artesanal con ingredientes frescos.', '/demos/la-vitola/products/hot-dog-clasico.png'),
+        prod('sabor-p6', 'Pizza Dog', 75, 'Salchicha artesanal con queso fundido y pepperoni.', '/demos/la-vitola/products/pizza-dog.png'),
+      ]),
+      cat('sabor-c3', '🥤 Refrescos', [
+        prod('sabor-p7', 'Coca', 30, '', '/demos/burger-house/products/refresco.jpg'),
+        prod('sabor-p8', 'Manzana', 30, '', '/demos/burger-house/products/refresco.jpg'),
+        prod('sabor-p9', 'Limonada', 30, '', '/demos/la-vitola/products/limonada.png'),
+        prod('sabor-p10', 'Limón Fresa', 45, '', '/demos/la-vitola/products/limon-fresa.png'),
+        prod('sabor-p11', 'Limón Hierbabuena', 45, '', '/demos/la-vitola/products/limon-hierbabuena.png'),
+        prod('sabor-p12', 'Limón Chía', 45, '', '/demos/la-vitola/products/limon-chia.png'),
+      ]),
+      cat('sabor-c4', '🧊 Aguas Frescas', [
+        prod('sabor-p13', 'Limonada', 30, '', '/demos/la-vitola/products/limonada.png'),
+        prod('sabor-p14', 'Limón Fresa', 45, '', '/demos/la-vitola/products/limon-fresa.png'),
+        prod('sabor-p15', 'Limón Hierbabuena', 45, '', '/demos/la-vitola/products/limon-hierbabuena.png'),
+        prod('sabor-p16', 'Limón Chía', 45, '', '/demos/la-vitola/products/limon-chia.png'),
+      ]),
+    ],
+  },
+  {
+    id: 'pizza-house', clave: 'pizza', nombre: 'Pizza Nostra', emoji: '🍕', giro: 'Pizzería artesanal',
+    description: 'Pizzas artesanales recién horneadas. Dirección y datos configurados exclusivamente para pruebas.',
+    phone: '9613725386',
+    whatsapp: '529613725386',
+    address: '5a Norte Poniente #120, Col. Moctezuma (dirección ficticia para pruebas)',
+    colonia: 'Moctezuma',
+    schedule_text: 'Lun a Dom · 12:00 pm – 10:30 pm',
+    delivery_zones: [
+      { id: 'pizza-zone-1', postal_code: '29030', colonia: 'Moctezuma', delivery_fee: 25, is_active: true },
+      { id: 'pizza-zone-2', postal_code: '29000', colonia: 'Centro', delivery_fee: 30, is_active: true },
+      { id: 'pizza-zone-3', postal_code: '29000', colonia: 'El Magueyito', delivery_fee: 30, is_active: true },
+      { id: 'pizza-zone-4', postal_code: '29030', colonia: 'Las Arboledas', delivery_fee: 35, is_active: true },
+    ],
+    payment_methods: {
+      efectivo: {
+        activo: true,
+        preguntar_cambio: true,
+        limite_cambio_activo: true,
+        max_cambio_monto: 500,
+        mensaje_limite_cambio: 'Por seguridad, el repartidor solo puede llevar hasta $500 para dar cambio.'
+      },
+      transferencia: { activo: false },
+      tarjeta: { activo: false },
+    },
     menu: [
       cat('pizza-c1', '🍕 Pizzas', [
         prod('pizza-p1', 'Pepperoni', 120, 'Clásica con queso mozzarella', '/demos/pizza-house/products/pizza-pepperoni.jpg'),
@@ -204,6 +276,7 @@ export const DEMOS_OFICIALES = [
 const showcaseMeta = {
   'tacos-el-guero': { foodType: 'Tacos · Quesadillas · Bebidas', img: '/demos/tacos-el-guero/cover.jpg', logoUrl: '/demos/tacos-el-guero/profile.png', badge: 'Más pedido', color: 'from-orange-500/20 to-amber-500/5' },
   'burger-house': { foodType: 'Burgers · Papas · Malteadas', img: '/demos/burger-house/cover.jpg', logoUrl: '/demos/burger-house/profile.png', badge: 'Burgers', color: 'from-red-600/20 to-orange-600/5' },
+  'la-vitola': { foodType: 'Hamburguesas · Hot dogs · Bebidas', img: '/demos/la-vitola/cover.jpg', logoUrl: '/demos/la-vitola/profile.png', badge: 'Hamburguesas', color: 'from-amber-600/20 to-red-700/5' },
   'pizza-house': { foodType: 'Pizza · Promos · Alitas', img: '/demos/pizza-house/cover.jpg', logoUrl: '/demos/pizza-house/profile.png', badge: 'Pizza', color: 'from-red-500/20 to-rose-500/5' },
   'cafe-central': { foodType: 'Café · Panadería · Brunch', img: '/demos/cafe-central/cover.jpg', logoUrl: '/demos/cafe-central/profile.png', badge: 'Café', color: 'from-amber-600/20 to-yellow-600/5' },
   'pollos-el-rey': { foodType: 'Pollo rostizado · Carbón · Paquetes', img: '/demos/pollos-el-rey/cover.jpg', logoUrl: '/demos/pollos-el-rey/profile.png', badge: 'Pollo', color: 'from-yellow-500/20 to-orange-500/5' },

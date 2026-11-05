@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import masterProspectsData from '../../data/master_prospects.json'
 import ProspectDetailModal from './ProspectDetailModal'
 import PagosTab from './PagosTab'
-import { getProspectCommercialData, saveProspectCommercialData } from '../../services/crmV3Service'
+import { getProspectCommercialData, saveProspectCommercialData, syncProspectCommercialDataFromSupabase } from '../../services/crmV3Service'
 import { Search, MapPin, ChevronRight, SlidersHorizontal, X, Star } from 'lucide-react'
 
 export default function MobileProspectingDashboard({ onConvertProspectToBusiness }) {
@@ -29,6 +29,30 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
   const [showFiltersModal, setShowFiltersModal] = useState(false)
   const [activeTab, setActiveTab] = useState('PROSPECTOS')
   const [displayLimit, setDisplayLimit] = useState(40)
+
+  useEffect(() => {
+    let active = true
+    const refreshCommercialData = async () => {
+      try {
+        await syncProspectCommercialDataFromSupabase()
+        if (active) setProspects(current => [...current])
+      } catch (error) {
+        console.error('[Prospect Sync Error] No se pudo recuperar el seguimiento central:', error.message)
+      }
+    }
+
+    void refreshCommercialData()
+    const handleResume = () => {
+      if (document.visibilityState === 'visible') void refreshCommercialData()
+    }
+    window.addEventListener('focus', refreshCommercialData)
+    document.addEventListener('visibilitychange', handleResume)
+    return () => {
+      active = false
+      window.removeEventListener('focus', refreshCommercialData)
+      document.removeEventListener('visibilitychange', handleResume)
+    }
+  }, [])
   
   const cities = useMemo(() => {
     const set = new Set(prospects.map(p => p.city || p.ciudad).filter(Boolean))
@@ -88,22 +112,28 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
       const comm = getProspectCommercialData(p.id)
       let cStatus = comm?.status || p.status || 'NUEVO'
       
-      const validStates = ['CONTACTADO', 'INTERESADO', 'PRODUCCION', 'CLIENTE', 'NO_INTERESADO']
+      const validStates = ['CONTACTADO', 'NO_CONTESTA', 'INTERESADO', 'PRODUCCION', 'DEMO_CREADO', 'CLIENTE', 'NO_INTERESADO']
       if (!validStates.includes(cStatus)) {
         cStatus = 'NUEVO'
       }
 
-      return { ...p, currentStatus: cStatus }
+      return {
+        ...p,
+        currentStatus: cStatus,
+        noWhatsapp: comm?.noWhatsapp === true,
+        personalProfile: comm?.personalProfile === true,
+      }
     })
   }, [prospects])
 
   const tabsCounts = useMemo(() => {
-    let counts = { PROSPECTOS: 0, CONTACTADOS: 0, INTERESADOS: 0, PRODUCCIÓN: 0, CLIENTES: 0, 'NO INTERESADOS': 0 }
+    let counts = { PROSPECTOS: 0, CONTACTADOS: 0, 'NO CONTESTAN': 0, INTERESADOS: 0, 'DEMO CREADO': 0, CLIENTES: 0, 'NO INTERESADOS': 0 }
     prospectosConEstado.forEach(p => {
       if (p.currentStatus === 'NUEVO') counts.PROSPECTOS++
       else if (p.currentStatus === 'CONTACTADO') counts.CONTACTADOS++
+      else if (p.currentStatus === 'NO_CONTESTA') counts['NO CONTESTAN']++
       else if (p.currentStatus === 'INTERESADO') counts.INTERESADOS++
-      else if (p.currentStatus === 'PRODUCCION') counts.PRODUCCIÓN++
+      else if (p.currentStatus === 'PRODUCCION' || p.currentStatus === 'DEMO_CREADO') counts['DEMO CREADO']++
       else if (p.currentStatus === 'CLIENTE') counts.CLIENTES++
       else if (p.currentStatus === 'NO_INTERESADO') counts['NO INTERESADOS']++
     })
@@ -114,13 +144,17 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
     const query = search.toLowerCase().trim()
     let mappedStatus = 'NUEVO'
     if (activeTab === 'CONTACTADOS') mappedStatus = 'CONTACTADO'
+    if (activeTab === 'NO CONTESTAN') mappedStatus = 'NO_CONTESTA'
     if (activeTab === 'INTERESADOS') mappedStatus = 'INTERESADO'
-    if (activeTab === 'PRODUCCIÓN') mappedStatus = 'PRODUCCION'
+    if (activeTab === 'DEMO CREADO') mappedStatus = 'DEMO_CREADO'
     if (activeTab === 'CLIENTES') mappedStatus = 'CLIENTE'
     if (activeTab === 'NO INTERESADOS') mappedStatus = 'NO_INTERESADO'
 
     return prospectosConEstado.filter(p => {
-      if (p.currentStatus !== mappedStatus) return false
+      const matchesStatus = mappedStatus === 'DEMO_CREADO'
+        ? ['DEMO_CREADO', 'PRODUCCION'].includes(p.currentStatus)
+        : p.currentStatus === mappedStatus
+      if (!matchesStatus) return false
 
       const name = p.nombre || p.business_name || p.name || ''
       const phone = p.whatsapp || p.telefono || p.phone || ''
@@ -138,7 +172,7 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
       const pCat = p.category || p.giro
       if (selectedCategory !== 'Todas' && pCat !== selectedCategory) return false
 
-      if (onlyWhatsapp && !phone) return false
+      if (onlyWhatsapp && (!phone || p.noWhatsapp)) return false
       if (onlyFacebook && !p.facebook) return false
 
       return true
@@ -146,7 +180,7 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
   }, [prospectosConEstado, activeTab, search, selectedCity, selectedCategory, onlyWhatsapp, onlyFacebook])
 
   const renderTabs = () => {
-    const TABS = ['PROSPECTOS', 'CONTACTADOS', 'INTERESADOS', 'PRODUCCIÓN', 'CLIENTES', 'NO INTERESADOS', 'PAGOS']
+    const TABS = ['PROSPECTOS', 'CONTACTADOS', 'NO CONTESTAN', 'INTERESADOS', 'DEMO CREADO', 'CLIENTES', 'NO INTERESADOS', 'PAGOS']
     
     return (
       <div className="bg-[#14161F] p-2 rounded-2xl border border-white/5 shadow-xl">
@@ -260,7 +294,9 @@ export default function MobileProspectingDashboard({ onConvertProspectToBusiness
 
                   <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center gap-2">
-                      {pPhone && <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[10px] font-bold">WA</span>}
+                      {pPhone && !prospect.noWhatsapp && <span className="bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded text-[10px] font-bold">WA</span>}
+                      {prospect.noWhatsapp && <span className="bg-amber-500/10 text-amber-300 px-1.5 py-0.5 rounded text-[10px] font-bold">SIN WA</span>}
+                      {prospect.personalProfile && <span className="bg-blue-500/10 text-blue-300 px-1.5 py-0.5 rounded text-[10px] font-bold">PERFIL PERSONAL</span>}
                       {prospect.facebook && <span className="bg-blue-500/10 text-blue-400 px-1.5 py-0.5 rounded text-[10px] font-bold">FB</span>}
                       {prospect.instagram && <span className="bg-pink-500/10 text-pink-400 px-1.5 py-0.5 rounded text-[10px] font-bold">IG</span>}
                     </div>

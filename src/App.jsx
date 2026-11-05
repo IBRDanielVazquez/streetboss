@@ -7,6 +7,7 @@ const Demos = lazy(() => import('./pages/Demos'))
 const DemoPublicMenu = lazy(() => import('./pages/DemoPublicMenuWrapper'))
 const StreetBossCentral = lazy(() => import('./pages/StreetBossCentral'))
 const ClientDashboard = lazy(() => import('./pages/ClientDashboard'))
+const TutorialPublic = lazy(() => import('./pages/TutorialPublic'))
 
 function RouteLoader() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/demos" element={<Demos />} />
           <Route path="/menu/:trialId" element={<DemoPublicMenu />} />
           <Route path="/demo/:trialId" element={<DemoPublicMenu />} />
+          <Route path="/tutoriales/:tutorialId" element={<TutorialPublic />} />
 
           {/* Nueva Ruta Interna Segura del CRM */}
           <Route path="/central-hq" element={<StreetBossCentral />} />

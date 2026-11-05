@@ -1,59 +1,34 @@
-import React from 'react'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2, ArrowUpRight } from 'lucide-react'
 import { DEMO_CONTACTS } from '../../data/demoFixtures'
 
 export default function LandingPrecios() {
+  const message = encodeURIComponent('Quiero StreetBoss por $499 MXN el primer año. Desde el segundo año: $99 MXN/mes o $990 MXN/año.')
   return (
-    <section id="precios" className="py-32 relative bg-black overflow-hidden reveal-on-scroll">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 blur-[150px] rounded-full pointer-events-none" />
-      <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-bold tracking-wider uppercase mb-6">
-          OFERTA DE LANZAMIENTO
-        </div>
-        
-        <h2 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">Sin comisiones. Sin sorpresas.</h2>
-        <p className="text-xl text-gray-400 mb-16 max-w-xl mx-auto">
-          Elige el plan que mejor se adapte a tu restaurante. Todo el poder de StreetBoss para disparar tus ventas online.
-        </p>
-        
-        <div className="max-w-2xl mx-auto text-left">
-          <div className="bg-[#111115] border-2 border-[#ff4b16] rounded-3xl p-8 md:p-12 shadow-[0_0_50px_rgba(255,75,22,0.15)] relative overflow-hidden">
-            <div className="absolute top-6 right-6 bg-[#ff4b16] text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">
-              Oferta Especial
+    <section id="precios" className="relative overflow-hidden bg-black py-20 md:py-28 reveal-on-scroll">
+      <div className="relative mx-auto max-w-6xl px-5">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div>
+            <p className="mb-5 text-sm font-black uppercase tracking-widest text-[#ff6b3d]">Vende directo. Manda tú.</p>
+            <h2 className="text-4xl font-black leading-tight tracking-tight md:text-6xl">Un año para que<br />te pidan directo.</h2>
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-gray-300">Comparte tu menú en tus redes, en tu local o por WhatsApp. Tus clientes eligen sus platillos y te envían el pedido. La relación se queda en tu negocio.</p>
+            <div className="mt-8 space-y-4">
+              {['Tu escaparate con fotos, categorías y precios.', 'Pedidos organizados directo a tu WhatsApp.', 'Actualiza tu menú desde tu celular.', 'Tú defines horarios, reparto y formas de pago.'].map(text => <p key={text} className="flex items-start gap-3 text-base text-gray-200"><CheckCircle2 size={20} className="mt-0.5 shrink-0 text-[#ff6b3d]" />{text}</p>)}
             </div>
-
-            <div className="text-center md:text-left space-y-4 mb-8">
-              <h3 className="text-2xl font-bold text-white">Plan Restaurante Pro</h3>
-              <div className="flex items-baseline justify-center md:justify-start gap-2">
-                <span className="text-5xl md:text-6xl font-black text-white">$99</span>
-                <span className="text-gray-400 font-bold">MXN / primer mes</span>
+          </div>
+          <div className="rounded-[2rem] border border-[#ff4b16]/70 bg-[#121318] p-6 shadow-[0_0_70px_#ff4b1615] sm:p-10">
+            <p className="font-bold text-[#ffae94]">Tu primer año con StreetBoss</p>
+            <p className="mt-5 flex flex-wrap items-baseline gap-3"><span className="text-7xl font-black tracking-tighter">$499</span><span className="font-bold text-gray-300">MXN / primer año</span></p>
+            <p className="mt-4 text-lg font-bold">Un solo pago. 12 meses completos.</p>
+            <p className="mt-2 leading-relaxed text-gray-300">Sin mensualidades durante el primer año. Sin comisión por venta.</p>
+            <a href={`https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}?text=${message}`} target="_blank" rel="noreferrer" className="mt-8 flex min-h-14 items-center justify-center gap-2 rounded-full bg-[#ff4b16] px-5 py-4 text-center font-black text-white transition hover:bg-[#e83e0a]">Quiero mi año por $499 <ArrowUpRight size={20} className="shrink-0" /></a>
+            <div className="mt-7 border-t border-white/10 pt-6">
+              <h3 className="font-bold">¿Y a partir del segundo año?</h3>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <p className="rounded-2xl border border-white/10 p-4"><strong className="block text-2xl">$99</strong><span className="text-sm text-gray-300">MXN al mes</span></p>
+                <p className="rounded-2xl border border-[#ff4b16]/30 bg-[#ff4b16]/5 p-4"><strong className="block text-2xl">$990</strong><span className="text-sm text-gray-300">MXN por año</span></p>
               </div>
-              <p className="text-xs text-gray-500 font-medium">Posteriormente $299 MXN/mes. Cancela cuando quieras.</p>
+              <p className="mt-3 text-sm leading-relaxed text-gray-400">Al pagar el año completo, usas 12 meses y pagas el equivalente a 10 mensualidades. Ahorras $198 MXN frente a 12 pagos mensuales.</p>
             </div>
-
-            <div className="space-y-4 mb-8">
-              {[
-                'Menú web ilimitado Mobile-First',
-                'Checkout directo a tu WhatsApp con plantilla estructurada',
-                'Dominio o enlace listo para compartir (ej: streetboss.mx/tu-restaurante)',
-                'Panel de administración para actualizar precios y fotos',
-                'Código QR personalizado para imprimir en tus mesas'
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                  <CheckCircle2 size={18} className="text-[#f5b87a] shrink-0 mt-0.5" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-            
-            <a 
-              href={`https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}?text=Hola,%20quiero%20mi%20menu%20digital`} 
-              target="_blank" 
-              rel="noreferrer" 
-              className="block text-center w-full bg-[#ff4b16] text-white font-black py-4 rounded-full hover:scale-105 transition-transform shadow-[0_0_30px_rgba(255,75,22,0.4)] text-base"
-            >
-              📱 Quiero mi menú digital
-            </a>
           </div>
         </div>
       </div>

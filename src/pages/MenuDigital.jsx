@@ -1,9 +1,10 @@
-import { useState, useMemo, useCallback } from 'react'
-import { Plus, Minus, X, CheckCircle, Store, Bike, Share } from 'lucide-react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
+import { Plus, Minus, X, CheckCircle, Store, Bike, Share, Pencil, Trash2 } from 'lucide-react'
 import ProductoMenuCard from '../components/ProductoMenuCard'
 import CheckoutDrawer from '../components/CheckoutDrawer'
 import MenuHeroProfile from '../components/menu/MenuHeroProfile'
 import { AlertTriangle } from 'lucide-react'
+import { trackMenuEvent } from '../services/menuAnalyticsService'
 
 // Genera folio único tipo SB-AXKF-7821
 const generarFolio = () => {
@@ -20,10 +21,35 @@ function haversine(lat1, lon1, lat2, lon2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-export default function MenuDigital({ modo: propModo, demoMenu, demoConfig, isDemo = true }) {
+export default function MenuDigital({
+  modo: propModo,
+  demoMenu,
+  demoConfig,
+  isDemo = true,
+  editMode = false,
+  onEditProduct,
+  onDeleteProduct,
+  onAddProduct,
+  onEditCategory,
+  onDeleteCategory,
+  onAddCategory,
+  onBannerFile,
+  onLogoFile,
+  onMessageSave,
+}) {
   const modo = propModo || (window.location.pathname.includes('/carta') ? 'carta' : 'pedir')
   const menu = demoMenu || []
   const config = demoConfig || {}
+
+  const trackEvent = useCallback((eventType, details) => {
+    if (editMode) return
+    trackMenuEvent(config, eventType, details)
+  }, [config.business_id, config.id, config.trialId, config.slug, editMode])
+
+  useEffect(() => {
+    if (editMode) return
+    trackMenuEvent(config, 'page_view')
+  }, [config.business_id, config.id, config.trialId, config.slug, editMode])
 
   const [catActiva, setCatActiva] = useState(menu[0]?.id || '')
 
@@ -37,7 +63,7 @@ export default function MenuDigital({ modo: propModo, demoMenu, demoConfig, isDe
     return dict
   }, [menu])
 
-  const catVisible = menu.filter(c => c.visible)
+  const catVisible = editMode ? menu : menu.filter(c => c.visible)
   const catsPlus = menu.filter(c => (c.esPlus || c.tipo === 'promo') && c.visible)
 
 const { subtotal, cantidadTotal } = useMemo(() => {
@@ -70,7 +96,7 @@ const { subtotal, cantidadTotal } = useMemo(() => {
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-32 font-sans relative">
       {/* Botón flotante CTA para contratar demo (Demostraciones) */}
-      {isDemo && (
+      {isDemo && !editMode && (
         <div className="fixed bottom-24 right-4 z-40">
           <a
             href={`https://wa.me/529613725386?text=${encodeURIComponent(`¡Hola! Estoy viendo la demostración de "${config.negocio || 'este menú'}" en StreetBoss y quiero contratar este menú digital para mi negocio.`)}`}
@@ -83,9 +109,23 @@ const { subtotal, cantidadTotal } = useMemo(() => {
         </div>
       )}
 
-      <MenuHeroProfile config={{ ...config, isDemo }} />
+      <MenuHeroProfile config={{ ...config, isDemo }} editMode={editMode} onBannerFile={onBannerFile} onLogoFile={onLogoFile} onMessageSave={onMessageSave} onTrackEvent={trackEvent} />
 
-      {catsPlus.length > 0 && (
+      {editMode && (
+        <div className="bg-white px-4 py-4 border-b border-gray-200">
+          <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+            <div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-orange-600">Modo edición</span>
+              <p className="text-sm font-black text-gray-900">Toca cualquier elemento para modificar tu menú</p>
+            </div>
+            <button type="button" onClick={onAddCategory} className="min-h-11 px-4 rounded-full bg-gray-900 text-white text-xs font-black flex items-center gap-2 active:scale-95">
+              <Plus size={16} /> Categoría
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!editMode && catsPlus.length > 0 && (
         <div className="p-4 bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border-b border-orange-100/50">
           <h2 className="font-black text-base text-gray-900 mb-3 flex items-center gap-2">
             🔥 Promociones & Especiales
@@ -142,13 +182,22 @@ const { subtotal, cantidadTotal } = useMemo(() => {
       <div className="p-4 space-y-8 max-w-5xl mx-auto">
         {catVisible.map(c => (
           <div key={c.id} id={`cat-${c.id}`} className="scroll-mt-36">
-            <h2 className="text-lg sm:text-xl font-black text-gray-900 mb-3 flex items-center gap-2">
-              {c.nombre}
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h2 className="text-lg sm:text-xl font-black text-gray-900 flex items-center gap-2">
+                {c.nombre}
               {c.tipo === 'promo' && <span className="text-[10px] font-black text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-full">🔥 Promo</span>}
               {c.tipo === 'especial' && <span className="text-[10px] font-black text-purple-700 bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-full">⭐ Especial</span>}
-            </h2>
+                {editMode && !c.visible && <span className="text-[10px] font-black text-gray-500 bg-gray-200 px-2 py-1 rounded-full">OCULTA</span>}
+              </h2>
+              {editMode && (
+                <div className="flex items-center gap-2">
+                  <button type="button" onClick={() => onEditCategory?.(c)} className="w-10 h-10 rounded-full bg-white text-gray-800 border border-gray-200 shadow-sm flex items-center justify-center" aria-label={`Editar categoría ${c.nombre}`}><Pencil size={16} /></button>
+                  <button type="button" onClick={() => onDeleteCategory?.(c.id)} className="w-10 h-10 rounded-full bg-red-50 text-red-600 border border-red-100 flex items-center justify-center" aria-label={`Eliminar categoría ${c.nombre}`}><Trash2 size={16} /></button>
+                </div>
+              )}
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-              {c.productos.filter(p => p.activo && !p.is_hidden && !p.oculto).map(prod => {
+              {c.productos.filter(p => editMode || (p.activo && !p.is_hidden && !p.oculto)).map(prod => {
                 const cant = carrito[prod.id] || 0
                 return (
                   <ProductoMenuCard 
@@ -158,9 +207,22 @@ const { subtotal, cantidadTotal } = useMemo(() => {
                     onAgregar={agregarProducto} 
                     onQuitar={quitarProducto}
                     colorMarca={config.colorMarca}
+                    editMode={editMode}
+                    onEdit={onEditProduct}
+                    onDelete={onDeleteProduct}
                   />
                 )
               })}
+              {editMode && (
+                <button
+                  type="button"
+                  onClick={() => onAddProduct?.(c.id)}
+                  className="min-h-48 rounded-3xl border-2 border-dashed border-orange-300 bg-orange-50 text-orange-700 flex flex-col items-center justify-center gap-2 font-black text-xs active:scale-[0.98]"
+                >
+                  <span className="w-12 h-12 rounded-2xl bg-orange-600 text-white flex items-center justify-center shadow-lg"><Plus size={24} /></span>
+                  + Agregar producto
+                </button>
+              )}
             </div>
           </div>
         ))}
@@ -177,7 +239,7 @@ const { subtotal, cantidadTotal } = useMemo(() => {
             <button
               type="button"
               disabled={config.is_open === false}
-              onClick={() => setCheckoutVis(true)}
+              onClick={() => { trackEvent('cart_open'); setCheckoutVis(true) }}
               className={`px-6 py-3 rounded-2xl font-black text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all ${
                 config.is_open !== false
                   ? 'bg-[#FF4B00] hover:bg-[#FF6A1A] text-white'
@@ -205,6 +267,7 @@ const { subtotal, cantidadTotal } = useMemo(() => {
         productosPorId={productosPorId}
         config={config}
         onClearCarrito={() => setCarrito({})}
+        onTrackEvent={trackEvent}
       />
     </div>
   )

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import {
   getBusinessBySlug,
   updateBusinessSettings,
+  saveBusinessSettings,
   saveCategory,
   deleteCategory,
   saveProduct,
@@ -16,14 +17,19 @@ import {
   subscribeCentralSync,
   syncOrdersFromSupabase,
   subscribeToOrdersRealtime,
-  resolveBusinessBySlug
+  resolveBusinessBySlug,
+  syncBusinessToSupabase
 } from '../services/crmV3Service'
 import { buscarPorCPSync, buscarPorColoniaSync } from '../data/sepomexTuxtla'
 import RestaurantCustomersTab from '../components/crm/RestaurantCustomersTab'
 import RestaurantOrdersTab from '../components/crm/RestaurantOrdersTab'
 import RestaurantPaymentMethodsTab from '../components/crm/RestaurantPaymentMethodsTab'
-import VersionFooterBadge from '../components/VersionFooterBadge'
+import RestaurantInsightsTab from '../components/crm/RestaurantInsightsTab'
+import TutorialLibrary from '../components/TutorialLibrary'
+import RestaurantSetupHome from '../components/RestaurantSetupHome'
+import MenuDigital from './MenuDigital'
 import {
+  Home,
   Store,
   Layers,
   Package,
@@ -47,7 +53,15 @@ import {
   Users,
   ShoppingBag,
   CreditCard,
-  ChevronRight
+  ChevronRight,
+  Copy,
+  Send,
+  UtensilsCrossed,
+  Truck,
+  Settings,
+  BarChart3,
+  MapPinned,
+  Video
 } from 'lucide-react'
 
 // Helper: Convert File object to Base64 WebP Data URL for local storage persistence
@@ -78,6 +92,9 @@ export default function ClientDashboard() {
   const [menuSubTab, setMenuSubTab] = useState('productos') // Sub-tab for menu management
   const [savedSuccess, setSavedSuccess] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [savingProfile, setSavingProfile] = useState(false)
+  const [savingStatus, setSavingStatus] = useState(false)
+  const profileDirty = useRef(false)
 
   // Information & RRSS Form
   const [infoForm, setInfoForm] = useState({})
@@ -109,12 +126,13 @@ export default function ClientDashboard() {
     const b = getBusinessBySlug(slug)
     if (b) {
       setBusiness(b)
-      setInfoForm({
+      if (!profileDirty.current) setInfoForm({
         name: b.name || '',
         description: b.description || '',
         whatsapp: b.whatsapp || '',
         phone: b.phone || '',
         address: b.address || '',
+        colonia: b.colonia || '',
         postal_code: b.postal_code || '',
         schedule_text: b.schedule_text || '',
         is_open: b.is_open !== false,
@@ -146,15 +164,30 @@ export default function ClientDashboard() {
   }
 
   useEffect(() => {
-    resolveBusinessBySlug(slug).then(() => {
-      loadData()
-    })
+    profileDirty.current = false
+    const resolveBusiness = () => {
+      if (document.visibilityState === 'hidden') return
+      resolveBusinessBySlug(slug).then(() => loadData())
+    }
+
+    resolveBusiness()
     const unsubscribe = subscribeCentralSync(() => {
-      resolveBusinessBySlug(slug).then(() => {
-        loadData()
-      })
+      resolveBusiness()
     })
-    return () => unsubscribe()
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') resolveBusiness()
+    }
+    window.addEventListener('online', resolveBusiness)
+    window.addEventListener('pageshow', resolveBusiness)
+    document.addEventListener('visibilitychange', handleVisibility)
+
+    return () => {
+      unsubscribe()
+      window.removeEventListener('online', resolveBusiness)
+      window.removeEventListener('pageshow', resolveBusiness)
+      document.removeEventListener('visibilitychange', handleVisibility)
+    }
   }, [slug])
 
   // Autenticación B2B por Contraseña
@@ -171,10 +204,17 @@ export default function ClientDashboard() {
   useEffect(() => {
     if (!business || !isAuthenticated) return
 
-    // Descargar historial inicial de órdenes
-    syncOrdersFromSupabase(business.business_id).then(() => {
-      loadData()
-    })
+    let refreshInFlight = null
+    const refreshCloudData = () => {
+      if (document.visibilityState === 'hidden' || refreshInFlight) return refreshInFlight
+      refreshInFlight = syncOrdersFromSupabase(business.business_id)
+        .then(() => loadData())
+        .finally(() => { refreshInFlight = null })
+      return refreshInFlight
+    }
+
+    // Descargar historial inicial y volver a sincronizar cuando el móvil despierta.
+    refreshCloudData()
 
     // Suscribirse al canal en tiempo real
     const unsubscribeRealtime = subscribeToOrdersRealtime(business.business_id, (newOrder, eventType) => {
@@ -207,8 +247,25 @@ export default function ClientDashboard() {
       }
     })
 
+    const handleResume = () => refreshCloudData()
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') refreshCloudData()
+    }
+    window.addEventListener('focus', handleResume)
+    window.addEventListener('online', handleResume)
+    window.addEventListener('pageshow', handleResume)
+    document.addEventListener('visibilitychange', handleVisibility)
+    const refreshTimer = window.setInterval(() => {
+      if (document.visibilityState === 'visible') refreshCloudData()
+    }, 45000)
+
     return () => {
       unsubscribeRealtime()
+      window.removeEventListener('focus', handleResume)
+      window.removeEventListener('online', handleResume)
+      window.removeEventListener('pageshow', handleResume)
+      document.removeEventListener('visibilitychange', handleVisibility)
+      window.clearInterval(refreshTimer)
     }
   }, [business?.business_id, isAuthenticated])
 
@@ -249,7 +306,7 @@ export default function ClientDashboard() {
             </div>
             <div>
               <span className="text-[10px] font-black text-[#FF6A1A] uppercase tracking-wider bg-[#FF4B00]/10 px-3 py-1 rounded-full border border-[#FF4B00]/20">
-                Dashboard B2B Protegido
+                Tu espacio privado
               </span>
               <h1 className="text-xl font-black text-white mt-2">{business.name}</h1>
               <p className="text-xs text-gray-400 mt-1">Ingresa tu contraseña para acceder a la administración.</p>
@@ -328,21 +385,54 @@ export default function ClientDashboard() {
   }
 
   // 1. Guardar Información General y Redes Sociales
-  const handleSaveInfo = (e) => {
+  const handleSaveInfo = async (e) => {
     e.preventDefault()
-    updateBusinessSettings(business.business_id, infoForm)
-    loadData()
-    showToast('Información y configuraciones actualizadas')
+    if (savingProfile) return
+    setSavingProfile(true)
+    const previousProfile = Object.fromEntries(Object.keys(infoForm).map(key => [key, business[key]]))
+    try {
+      await saveBusinessSettings(business.business_id, infoForm)
+      profileDirty.current = false
+      loadData()
+      showToast('Tu perfil quedó guardado')
+    } catch {
+      updateBusinessSettings(business.business_id, previousProfile, { sync: false, notify: false })
+      showError('No se pudo guardar el perfil. Revisa tu conexión e inténtalo de nuevo.')
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  const handleToggleOpen = async () => {
+    if (savingStatus) return
+    setSavingStatus(true)
+    const next = !infoForm.is_open
+    try {
+      await saveBusinessSettings(business.business_id, { is_open: next })
+      setInfoForm(previous => ({ ...previous, is_open: next }))
+      loadData()
+      showToast(next ? 'Tu negocio está abierto' : 'Tu negocio está pausado')
+    } catch {
+      updateBusinessSettings(business.business_id, { is_open: business.is_open }, { sync: false, notify: false })
+      showError('No se pudo cambiar el estado. Revisa tu conexión.')
+    } finally {
+      setSavingStatus(false)
+    }
   }
 
   // 2. Categorías
-  const handleSaveCat = (e) => {
+  const handleSaveCat = async (e) => {
     e.preventDefault()
     if (!editingCategory?.name) return
-    saveCategory(business.business_id, editingCategory)
-    setEditingCategory(null)
-    loadData()
-    showToast('Categoría guardada')
+    try {
+      await saveCategory(business.business_id, editingCategory)
+      setEditingCategory(null)
+      loadData()
+      showToast('Categoría guardada en línea')
+    } catch (error) {
+      loadData()
+      showError('No se pudo guardar la categoría en línea. Inténtalo nuevamente.')
+    }
   }
 
   const handleDeleteCat = (catId) => {
@@ -354,25 +444,39 @@ export default function ClientDashboard() {
   }
 
   // 3. Productos y Estados (Disponible, Agotado, Oculto)
-  const handleSaveProd = (e) => {
+  const handleSaveProd = async (e) => {
     e.preventDefault()
     if (!editingProduct?.name || !editingProduct?.category_id) return
-    saveProduct(business.business_id, editingProduct)
-    setEditingProduct(null)
-    loadData()
-    showToast('Producto guardado')
+    try {
+      await saveProduct(business.business_id, editingProduct)
+      setEditingProduct(null)
+      loadData()
+      showToast('Producto guardado en línea')
+    } catch (error) {
+      showError('No se pudo guardar el producto en línea. Inténtalo nuevamente.')
+    }
   }
 
-  const handleToggleAgotado = (prodId) => {
-    toggleProductAvailability(prodId)
-    loadData()
-    showToast('Estado del producto actualizado')
+  const handleToggleAgotado = async (prodId) => {
+    try {
+      await toggleProductAvailability(prodId)
+      loadData()
+      showToast('Disponibilidad actualizada en línea')
+    } catch (error) {
+      loadData()
+      showError('No se pudo actualizar la disponibilidad en línea.')
+    }
   }
 
-  const handleToggleOculto = (prodId) => {
-    toggleProductVisibility(prodId)
-    loadData()
-    showToast('Visibilidad del producto actualizada')
+  const handleToggleOculto = async (prodId) => {
+    try {
+      await toggleProductVisibility(prodId)
+      loadData()
+      showToast('Visibilidad actualizada en línea')
+    } catch (error) {
+      loadData()
+      showError('No se pudo actualizar la visibilidad en línea.')
+    }
   }
 
   const handleDeleteProd = (prodId) => {
@@ -383,14 +487,81 @@ export default function ClientDashboard() {
     }
   }
 
+  const handleMenuImageFile = async (file, field) => {
+    if (!file) return
+    try {
+      const dataUrl = await readFileAsDataURL(file)
+      updateBusinessSettings(business.business_id, { [field]: dataUrl })
+      setInfoForm(prev => ({ ...prev, [field]: dataUrl }))
+      loadData()
+      showToast(field === 'banner_url' ? 'Portada actualizada' : 'Logo actualizado')
+    } catch (err) {
+      showError(err.message)
+    }
+  }
+
+  const editableMenu = (business.categories || []).map(cat => ({
+    ...cat,
+    nombre: cat.name,
+    tipo: cat.category_type || 'normal',
+    esPlus: cat.is_plus || false,
+    visible: cat.is_visible !== false,
+    productos: (business.products || [])
+      .filter(prod => prod.category_id === cat.id)
+      .map(prod => ({
+        ...prod,
+        nombre: prod.name,
+        precio: Number(prod.price || 0),
+        descripcion: prod.description || '',
+        foto: prod.image_url || '',
+        agotado: prod.is_out_of_stock || false,
+        activo: prod.is_active !== false,
+        oculto: prod.is_hidden || false,
+      }))
+  }))
+
+  const editableMenuConfig = {
+    negocio: business.name,
+    description: infoForm.description || '',
+    logo: infoForm.logo_url,
+    banner: infoForm.banner_url,
+    colorMarca: infoForm.brand_color || '#FF4B00',
+    whatsapp: infoForm.whatsapp || infoForm.phone,
+    telefono: infoForm.phone,
+    mensajeClientes: infoForm.main_message,
+    orderCtaText: infoForm.schedule_daily?.order_cta_text || business.schedule_daily?.order_cta_text || '',
+    foodType: business.business_type || business.description,
+    is_open: infoForm.is_open,
+    direccion: infoForm.address,
+    horarios: infoForm.schedule_text,
+    urlMaps: infoForm.maps_url,
+    redes: {
+      facebook: infoForm.facebook_url,
+      instagram: infoForm.instagram_url,
+      tiktok: infoForm.tiktok_url,
+      youtube: infoForm.youtube_url,
+      website: infoForm.website_url,
+    },
+  }
+
   // 4. Zonas de Entrega (Tuxtla Gutiérrez Síncrono)
   const resultsByCP = cpSearch ? buscarPorCPSync(cpSearch) : []
   const resultsByColonia = coloniaSearch ? buscarPorColoniaSync(coloniaSearch) : []
+  const suggestedSettlements = (() => {
+    const byPostalCode = buscarPorCPSync(infoForm.postal_code || '')
+    if (byPostalCode.length) return byPostalCode.slice(0, 12)
 
-  const handleAddSettlement = (item, fee = 30) => {
+    const addressColonia = infoForm.colonia || String(infoForm.address || '')
+      .split(',')
+      .map(part => part.replace(/\b(col\.?|colonia)\b/gi, '').trim())
+      .find(part => buscarPorColoniaSync(part).length > 0)
+    return addressColonia ? buscarPorColoniaSync(addressColonia).slice(0, 12) : []
+  })()
+
+  const handleAddSettlement = async (item, fee = 30) => {
     const existing = zones.find(z => z.postal_code === item.cp && z.settlement_name === item.colonia)
     if (!existing) {
-      const finalFee = infoForm.free_delivery ? 0 : (infoForm.use_general_fee ? Number(infoForm.base_delivery_fee || 30) : fee)
+      const finalFee = infoForm.free_delivery ? 0 : (infoForm.use_general_fee ? Number(infoForm.base_delivery_fee ?? 30) : fee)
       const newZones = [
         ...zones,
         {
@@ -401,15 +572,19 @@ export default function ClientDashboard() {
           is_active: true,
         }
       ]
-      const saved = saveDeliveryZones(business.business_id, newZones)
-      setZones(saved)
-      showToast(`Colonia ${item.colonia} agregada`)
+      try {
+        const saved = await saveDeliveryZones(business.business_id, newZones)
+        setZones(saved)
+        showToast(`Colonia ${item.colonia} agregada en línea`)
+      } catch (error) {
+        showError('No se pudo guardar la colonia en línea.')
+      }
     }
   }
 
-  const handleAddAllFromCP = (cpItems) => {
+  const handleAddAllFromCP = async (cpItems) => {
     const newZones = [...zones]
-    const finalFee = infoForm.free_delivery ? 0 : Number(infoForm.base_delivery_fee || 30)
+    const finalFee = infoForm.free_delivery ? 0 : Number(infoForm.base_delivery_fee ?? 30)
     cpItems.forEach(item => {
       const exists = newZones.some(z => z.postal_code === item.cp && z.settlement_name === item.colonia)
       if (!exists) {
@@ -422,23 +597,53 @@ export default function ClientDashboard() {
         })
       }
     })
-    const saved = saveDeliveryZones(business.business_id, newZones)
-    setZones(saved)
-    showToast(`Colonias agregadas al reparto`)
+    try {
+      const saved = await saveDeliveryZones(business.business_id, newZones)
+      setZones(saved)
+      showToast('Colonias agregadas al reparto en línea')
+    } catch (error) {
+      showError('No se pudieron guardar las colonias en línea.')
+    }
   }
 
-  const handleRemoveZone = (zoneId) => {
+  const handleRemoveZone = async (zoneId) => {
     const filtered = zones.filter(z => z.id !== zoneId)
-    const saved = saveDeliveryZones(business.business_id, filtered)
-    setZones(saved)
+    try {
+      const saved = await saveDeliveryZones(business.business_id, filtered)
+      setZones(saved)
+      showToast('Colonia retirada del reparto')
+    } catch (error) {
+      showError('No se pudo retirar la colonia en línea.')
+    }
   }
 
-  const handleApplyBulkFee = () => {
+  const handleApplyBulkFee = async () => {
     if (selectedZoneKeys.length === 0) return
-    bulkUpdateZoneFees(business.business_id, selectedZoneKeys, bulkFee)
-    loadData()
-    setSelectedZoneKeys([])
-    showToast('Costo de envío masivo aplicado')
+    try {
+      const saved = await bulkUpdateZoneFees(business.business_id, selectedZoneKeys, bulkFee)
+      setZones(saved)
+      setSelectedZoneKeys([])
+      showToast('Costo de envío masivo aplicado en línea')
+    } catch (error) {
+      showError('No se pudo guardar el costo en línea.')
+    }
+  }
+
+  const handleZoneFeeChange = (zoneId, value) => {
+    const fee = Math.max(0, Number(value || 0))
+    setZones(current => current.map(zone =>
+      zone.id === zoneId ? { ...zone, delivery_fee: fee } : zone
+    ))
+  }
+
+  const handleZoneFeeSave = async () => {
+    try {
+      const saved = await saveDeliveryZones(business.business_id, zones)
+      setZones(saved)
+      showToast('Costo individual guardado en línea')
+    } catch (error) {
+      showError('No se pudo guardar el costo individual en línea.')
+    }
   }
 
   return (
@@ -458,18 +663,18 @@ export default function ClientDashboard() {
       )}
 
       {/* Header Superior del Dashboard Mobile First */}
-      <header className="bg-[#14161F] border-b border-white/5 px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sticky top-0 z-40">
-        <div className="flex items-center gap-3">
+      <header className="bg-[#14161F] border-b border-white/5 px-4 sm:px-8 py-4 flex flex-row justify-between items-center gap-3 relative z-40">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 flex items-center justify-center font-black text-[#FF4B00]">
             SB
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-black text-white">{business.name}</h1>
-            <p className="text-[11px] text-gray-400">Dashboard Privado del Restaurante</p>
+            <h1 className="break-words text-base sm:text-lg font-black text-white">{business.name}</h1>
+            <p className="text-[11px] text-gray-400">Mi restaurante</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+        <div className="flex shrink-0 items-center gap-3">
           <button
             onClick={handleLogout}
             className="flex items-center gap-1.5 bg-white/5 hover:bg-white/10 text-gray-300 px-3.5 py-2 rounded-xl text-xs font-bold border border-white/5 transition-transform active:scale-95"
@@ -479,13 +684,9 @@ export default function ClientDashboard() {
           </button>
 
           <button
-            onClick={() => {
-              const updatedStatus = !infoForm.is_open
-              setInfoForm(prev => ({ ...prev, is_open: updatedStatus }))
-              updateBusinessSettings(business.business_id, { is_open: updatedStatus })
-              showToast(updatedStatus ? 'Restaurante ABIERTO' : 'Restaurante CERRADO')
-            }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black transition-all ${
+            onClick={handleToggleOpen}
+            disabled={savingStatus}
+            className={`hidden sm:flex items-center gap-2 px-4 py-2 rounded-full text-xs font-black transition-all ${
               infoForm.is_open
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                 : 'bg-red-500/20 text-red-400 border border-red-500/30'
@@ -498,7 +699,7 @@ export default function ClientDashboard() {
           <button
             type="button"
             onClick={toggleFontSize}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-black border transition-transform active:scale-95 ${
+            className={`hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-black border transition-transform active:scale-95 ${
               fontSizePreference === 'large'
                 ? 'bg-[#FF4B00]/10 text-[#FF6A1A] border-[#FF4B00]/30 shadow-inner'
                 : 'bg-white/5 text-gray-300 border-white/5 hover:bg-white/10'
@@ -513,7 +714,7 @@ export default function ClientDashboard() {
             href={`/menu/${business.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1.5 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-4 py-2 rounded-full text-xs font-black shadow-lg"
+            className="hidden sm:flex items-center gap-1.5 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white px-4 py-2 rounded-full text-xs font-black shadow-lg"
           >
             <ExternalLink size={14} /> Ver Menú Público
           </a>
@@ -521,7 +722,7 @@ export default function ClientDashboard() {
       </header>
 
       {/* Navegación por Pestañas (Escritorio) */}
-      <nav className="hidden md:flex bg-[#14161F]/60 backdrop-blur border-b border-white/5 px-4 sm:px-8 py-3 gap-2 overflow-x-auto">
+      <nav className="hidden bg-[#14161F]/60 backdrop-blur border-b border-white/5 px-4 sm:px-8 py-3 gap-2 overflow-x-auto">
         <button
           onClick={() => setTab('inicio')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
@@ -529,6 +730,15 @@ export default function ClientDashboard() {
           }`}
         >
           <Home size={14} /> Inicio
+        </button>
+
+        <button
+          onClick={() => setTab('menu-editor')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'menu-editor' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <UtensilsCrossed size={14} /> Configurar menú
         </button>
 
         <button
@@ -573,16 +783,52 @@ export default function ClientDashboard() {
             tab === 'zonas' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <MapPin size={14} /> Servicio a Domicilio ({zones.length})
+          <MapPin size={14} /> Colonias de reparto ({zones.length})
         </button>
 
         <button
           onClick={() => setTab('pedidos')}
           className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
-            tab === 'pedidos' || tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+            tab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
           }`}
         >
-          <ShoppingBag size={14} /> Pedidos y Clientes
+          <ShoppingBag size={14} /> Pedidos
+        </button>
+
+        <button
+          onClick={() => setTab('clientes')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <Users size={14} /> Mis clientes
+        </button>
+
+        <button
+          onClick={() => setTab('platillos-top')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'platillos-top' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <BarChart3 size={14} /> Platillos más pedidos
+        </button>
+
+        <button
+          onClick={() => setTab('colonias-top')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'colonias-top' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <MapPinned size={14} /> Colonias que más piden
+        </button>
+
+        <button
+          onClick={() => setTab('pagos')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            tab === 'pagos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:bg-white/5'
+          }`}
+        >
+          <CreditCard size={14} /> Formas de pago
         </button>
 
         <button
@@ -697,6 +943,30 @@ export default function ClientDashboard() {
                   type="text"
                   value={infoForm.address}
                   onChange={e => setInfoForm({ ...infoForm, address: e.target.value })}
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Colonia del negocio</label>
+                <input
+                  type="text"
+                  value={infoForm.colonia}
+                  onChange={e => setInfoForm({ ...infoForm, colonia: e.target.value })}
+                  placeholder="Ej. Centro"
+                  className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block font-bold text-gray-300 mb-1">Código postal del negocio</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={5}
+                  value={infoForm.postal_code}
+                  onChange={e => setInfoForm({ ...infoForm, postal_code: e.target.value.replace(/\D/g, '').slice(0, 5) })}
+                  placeholder="Ej. 29000"
                   className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white"
                 />
               </div>
@@ -953,7 +1223,7 @@ export default function ClientDashboard() {
             {/* Controles Principales del Servicio a Domicilio */}
             <form onSubmit={handleSaveInfo} className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-6 shadow-xl">
               <h2 className="text-lg font-black text-white flex items-center gap-2 border-b border-white/5 pb-3">
-                <MapPin className="text-[#FF4B00]" size={20} /> Configuración de Servicio a Domicilio
+                <MapPin className="text-[#FF4B00]" size={20} /> Colonias y costos de reparto
               </h2>
 
               <div className="space-y-4 text-xs">
@@ -1049,6 +1319,40 @@ export default function ClientDashboard() {
                   <h3 className="text-base font-black text-white flex items-center gap-2">
                     <Search className="text-[#FF4B00]" size={18} /> Buscador de Colonias Oficiales (Tuxtla Gutiérrez)
                   </h3>
+
+                  <p className="text-xs leading-relaxed text-gray-400">
+                    Aquí seleccionas únicamente las colonias y sus costos. Los métodos de cobro están separados en <strong className="text-white">Formas de pago</strong>.
+                  </p>
+
+                  {suggestedSettlements.length > 0 && (
+                    <div className="rounded-xl border border-amber-400/20 bg-amber-400/10 p-4 text-xs">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="font-black text-amber-300">Sugerencias según la dirección del negocio</p>
+                          <p className="mt-1 text-white/55">Verifica tu alcance real antes de agregarlas.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleAddAllFromCP(suggestedSettlements)}
+                          className="shrink-0 rounded-lg bg-amber-400 px-3 py-2 font-black text-black"
+                        >
+                          Agregar sugeridas
+                        </button>
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {suggestedSettlements.map(item => (
+                          <button
+                            type="button"
+                            key={`${item.cp}-${item.colonia}`}
+                            onClick={() => handleAddSettlement(item)}
+                            className="rounded-lg border border-white/10 bg-black/20 px-2.5 py-1 text-white/80"
+                          >
+                            + {item.colonia} · CP {item.cp}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div>
@@ -1164,9 +1468,25 @@ export default function ClientDashboard() {
                             </div>
 
                             <div className="flex items-center gap-3">
-                              <span className="font-bold text-emerald-400 font-mono">
-                                {infoForm.free_delivery ? 'GRATIS' : `$${z.delivery_fee}`}
-                              </span>
+                              {infoForm.free_delivery ? (
+                                <span className="font-bold text-emerald-400 font-mono">GRATIS</span>
+                              ) : infoForm.use_general_fee ? (
+                                <span className="font-bold text-emerald-400 font-mono">${z.delivery_fee}</span>
+                              ) : (
+                                <label className="flex items-center gap-1 text-emerald-400 font-bold">
+                                  <span>$</span>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="1"
+                                    value={z.delivery_fee}
+                                    onChange={event => handleZoneFeeChange(z.id, event.target.value)}
+                                    onBlur={handleZoneFeeSave}
+                                    className="w-20 bg-black border border-white/20 rounded-lg px-2 py-1 text-emerald-400 font-mono font-bold"
+                                    aria-label={`Costo de envío para ${z.settlement_name}`}
+                                  />
+                                </label>
+                              )}
                               <button onClick={() => handleRemoveZone(z.id)} className="text-red-400 hover:text-red-300">
                                 <Trash2 size={14} />
                               </button>
@@ -1180,128 +1500,113 @@ export default function ClientDashboard() {
               </div>
             )}
 
-            {/* SECCIÓN EXTRA AL FINAL: CONFIGURACIÓN MÉTODOS DE PAGO */}
-            <div className="pt-8 border-t border-white/10">
-              <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={loadData} />
-            </div>
           </div>
         )}
 
-        {/* PESTAÑA UNIFICADA: PEDIDOS Y CLIENTES */}
-        {(tab === 'pedidos' || tab === 'clientes') && (
-          <div className="space-y-6">
-            <div className="flex bg-[#14161F] p-1.5 rounded-2xl border border-white/5 max-w-md">
-              <button
-                type="button"
-                onClick={() => setTab('pedidos')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  tab === 'pedidos' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <ShoppingBag size={14} /> Historial de Pedidos
-              </button>
-              <button
-                type="button"
-                onClick={() => setTab('clientes')}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  tab === 'clientes' ? 'bg-[#FF4B00] text-white shadow-lg' : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                <Users size={14} /> Base de Clientes
-              </button>
+        {/* PANTALLAS INDEPENDIENTES: PEDIDOS, CLIENTES Y PAGOS */}
+        {tab === 'pedidos' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-emerald-500/15 to-[#14161F] p-6">
+              <h2 className="text-xl font-black text-white flex items-center gap-2"><ShoppingBag size={22} className="text-emerald-400" /> Mis pedidos</h2>
+              <p className="mt-1 text-xs text-white/55">Consulta y atiende las órdenes recibidas desde tu menú.</p>
             </div>
-
-            {tab === 'pedidos' ? (
-              <RestaurantOrdersTab businessId={business.slug || business.business_id || business.id} businessName={business.name} />
-            ) : (
-              <RestaurantCustomersTab businessId={business.slug || business.business_id || business.id} businessName={business.name} />
-            )}
+            <RestaurantOrdersTab businessId={business.business_id || business.id || business.slug} businessName={business.name} />
           </div>
         )}
+
+        {tab === 'clientes' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-blue-500/15 to-[#14161F] p-6">
+              <h2 className="text-xl font-black text-white flex items-center gap-2"><Users size={22} className="text-blue-400" /> Mis clientes</h2>
+              <p className="mt-1 text-xs text-white/55">Tu directorio de clientes y su historial de pedidos.</p>
+            </div>
+            <RestaurantCustomersTab businessId={business.business_id || business.id || business.slug} businessName={business.name} />
+          </div>
+        )}
+
+        {tab === 'platillos-top' && (
+          <RestaurantInsightsTab businessId={business.business_id || business.id || business.slug} view="platillos" />
+        )}
+
+        {tab === 'colonias-top' && (
+          <RestaurantInsightsTab businessId={business.business_id || business.id || business.slug} view="colonias" />
+        )}
+
+        {tab === 'pagos' && (
+          <div className="space-y-4 animate-fade-in">
+            <div className="rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-violet-500/15 to-[#14161F] p-6">
+              <h2 className="text-xl font-black text-white flex items-center gap-2"><CreditCard size={22} className="text-violet-400" /> Formas de pago</h2>
+              <p className="mt-1 text-xs text-white/55">Configura cómo pueden pagar tus clientes.</p>
+            </div>
+            <RestaurantPaymentMethodsTab business={business} onUpdateBusiness={loadData} />
+          </div>
+        )}
+
+        {tab === 'tutoriales' && <TutorialLibrary />}
 
         {/* PESTAÑA NUEVA: INICIO (Dashboard Resumen & Control) */}
-        {tab === 'inicio' && (
-          <div className="space-y-6 animate-fade-in">
-            {/* Tarjeta de bienvenida y estado general */}
-            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/5 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#FF4B00]/10 border border-[#FF4B00]/30 flex items-center justify-center font-black text-[#FF4B00] text-lg">
-                    SB
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-black text-white">{business.name}</h2>
-                    <p className="text-xs text-gray-400">Resumen y Control Operativo</p>
-                  </div>
-                </div>
+        {tab === 'inicio' && <RestaurantSetupHome business={business} form={infoForm} setForm={update => { profileDirty.current = true; setInfoForm(update) }} onSave={handleSaveInfo} onImage={handleImageFileChange} saving={savingProfile} onToggleOpen={handleToggleOpen} savingStatus={savingStatus} navigate={target => { setTab(target); window.scrollTo({ top: 0, behavior: 'smooth' }) }} zones={zones} />}
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    const updatedStatus = !infoForm.is_open
-                    setInfoForm(prev => ({ ...prev, is_open: updatedStatus }))
-                    updateBusinessSettings(business.business_id, { is_open: updatedStatus })
-                    showToast(updatedStatus ? 'Restaurante ABIERTO' : 'Restaurante CERRADO')
-                  }}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-black transition-all ${
-                    infoForm.is_open
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                  }`}
-                >
-                  <Power size={14} /> {infoForm.is_open ? 'ABIERTO AHORA' : 'CERRADO (PAUSADO)'}
-                </button>
+        {/* CONFIGURAR MENÚ: el mismo menú público con controles de edición contextuales */}
+        {tab === 'menu-editor' && (
+          <section className="animate-fade-in overflow-hidden rounded-[2rem] border border-white/10 bg-white shadow-2xl">
+            <div className="flex flex-col gap-3 bg-[#14161F] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FF6A1A]">Configurar menú</p>
+                <h2 className="text-base font-black text-white">Así lo verán tus clientes</h2>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-2">
-                  <span className="text-gray-400 block font-bold uppercase tracking-wider text-[10px]">Menú Digital Público</span>
-                  <a
-                    href={`/menu/${business.slug}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-emerald-400 font-bold hover:underline flex items-center gap-1.5 text-sm"
-                  >
-                    <ExternalLink size={16} /> /menu/{business.slug}
-                  </a>
-                </div>
-
-                <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-2">
-                  <span className="text-gray-400 block font-bold uppercase tracking-wider text-[10px]">Horario de Atención</span>
-                  <span className="text-white font-medium text-sm block">{infoForm.schedule_text || 'Sin horario configurado'}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Configuración del Mensaje Destacado */}
-            <div className="bg-[#14161F] p-6 rounded-2xl border border-white/5 space-y-4 shadow-xl">
-              <h3 className="text-sm font-black text-white uppercase tracking-wider text-gray-300">Mensaje Destacado en Menú</h3>
-              <p className="text-xs text-gray-400">
-                Este mensaje aparece de manera fija en la parte superior del menú público. Límite de 80 caracteres.
-              </p>
-              
               <div className="flex gap-2">
-                <input
-                  type="text"
-                  maxLength={80}
-                  value={infoForm.main_message}
-                  onChange={e => setInfoForm({ ...infoForm, main_message: e.target.value })}
-                  placeholder="Ej. 🚀 Envío gratis en tu primer pedido / 🔥 Promoción especial hoy"
-                  className="flex-1 bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white text-xs focus:outline-none focus:border-[#FF4B00]"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    updateBusinessSettings(business.business_id, { main_message: infoForm.main_message })
-                    showToast('Mensaje destacado guardado')
-                  }}
-                  className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all active:scale-95"
-                >
-                  Guardar
-                </button>
+                <button type="button" onClick={() => setTab('inicio')} className="min-h-11 rounded-full bg-white/5 px-4 text-xs font-black text-white">Volver</button>
+                <a href={`/menu/${business.slug}`} target="_blank" rel="noreferrer" className="flex min-h-11 items-center gap-2 rounded-full bg-[#FF4B00] px-4 text-xs font-black text-white">
+                  <ExternalLink size={15} /> Ver público
+                </a>
               </div>
             </div>
-          </div>
+
+            <MenuDigital
+              modo="editar"
+              demoMenu={editableMenu}
+              demoConfig={editableMenuConfig}
+              isDemo={false}
+              editMode
+              onBannerFile={file => handleMenuImageFile(file, 'banner_url')}
+              onLogoFile={file => handleMenuImageFile(file, 'logo_url')}
+              onMessageSave={async message => {
+                const scheduleDaily = {
+                  ...(business.schedule_daily || {}),
+                  ...(infoForm.schedule_daily || {}),
+                  order_cta_text: message,
+                }
+                const updatedBusiness = updateBusinessSettings(business.business_id, { schedule_daily: scheduleDaily })
+                setInfoForm(prev => ({ ...prev, schedule_daily: scheduleDaily }))
+                await syncBusinessToSupabase(updatedBusiness)
+                await resolveBusinessBySlug(business.slug)
+                loadData()
+                showToast('Mensaje de pedidos actualizado')
+              }}
+              onAddCategory={() => setEditingCategory({ name: '', is_visible: true, is_plus: false })}
+              onEditCategory={cat => setEditingCategory({ ...cat, name: cat.name || cat.nombre })}
+              onDeleteCategory={handleDeleteCat}
+              onAddProduct={categoryId => setEditingProduct({
+                name: '',
+                price: 50,
+                description: '',
+                category_id: categoryId,
+                is_active: true,
+                is_out_of_stock: false,
+                is_hidden: false,
+                image_url: ''
+              })}
+              onEditProduct={prod => setEditingProduct({
+                ...prod,
+                name: prod.name || prod.nombre,
+                price: prod.price ?? prod.precio,
+                description: prod.description || prod.descripcion || '',
+                image_url: prod.image_url || prod.foto || ''
+              })}
+              onDeleteProduct={handleDeleteProd}
+            />
+          </section>
         )}
 
         {/* PESTAÑA NUEVA: COMPARTIR MENÚ (Preview & Share) */}
@@ -1320,12 +1625,12 @@ export default function ClientDashboard() {
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-gray-400 block uppercase tracking-wider">Previsualización Social (Open Graph)</span>
               <div className="bg-[#0D0E12] border border-white/10 rounded-2xl overflow-hidden max-w-sm shadow-inner text-xs">
-                {infoForm.banner_url ? (
-                  <div className="h-40 bg-black overflow-hidden relative">
-                    <img src={infoForm.banner_url} alt="Portada" className="w-full h-full object-cover" />
+                {infoForm.logo_url ? (
+                  <div className="h-52 bg-black overflow-hidden relative flex items-center justify-center">
+                    <img src={infoForm.logo_url} alt={`Foto de perfil de ${business.name}`} className="w-full h-full object-cover" />
                   </div>
                 ) : (
-                  <div className="h-40 bg-black/40 flex items-center justify-center text-gray-600">
+                  <div className="h-52 bg-black/40 flex items-center justify-center text-gray-600">
                     <ImageIcon size={32} />
                   </div>
                 )}
@@ -1333,7 +1638,7 @@ export default function ClientDashboard() {
                   <span className="text-emerald-500 font-mono text-[10px] block">streetboss.com.mx</span>
                   <strong className="text-white font-bold text-sm block">{business.name} — Menú Digital</strong>
                   <p className="text-gray-400 text-[11px] line-clamp-2">
-                    {infoForm.description || `Menú digital oficial de ${business.name}. Haz tu pedido al instante por WhatsApp sin comisiones.`}
+                    {infoForm.description || ''}
                   </p>
                 </div>
               </div>
@@ -1354,7 +1659,7 @@ export default function ClientDashboard() {
               </button>
 
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`¡Hola! Te comparto el menú digital de *${business.name}*. Entra aquí para ver nuestros productos y haz tu pedido directo por WhatsApp sin comisiones: https://streetboss.com.mx/menu/${business.slug}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`${business.name}\n${infoForm.description || ''}\nhttps://streetboss.com.mx/menu/${business.slug}`)}`}
                 target="_blank"
                 rel="noreferrer"
                 className="bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 text-emerald-400 px-4 py-3 rounded-xl text-xs font-bold transition-transform active:scale-95 flex items-center justify-center gap-2"
@@ -1367,7 +1672,7 @@ export default function ClientDashboard() {
                 onClick={() => {
                   const shareData = {
                     title: `${business.name} — Menú Digital`,
-                    text: `Te comparto el menú digital de ${business.name}. Haz tu pedido directo por WhatsApp sin comisiones.`,
+                    text: infoForm.description || business.name,
                     url: `https://streetboss.com.mx/menu/${business.slug}`
                   }
                   if (navigator.share) {
@@ -1625,8 +1930,6 @@ export default function ClientDashboard() {
           </div>
         )}
 
-        {/* Footer Discreto con Identificación de Versión */}
-        <VersionFooterBadge clientId={business.slug} userId={business.owner_username || 'b2b_owner'} />
       </main>
 
       {/* Modal Editar Categoría */}
@@ -1767,9 +2070,9 @@ export default function ClientDashboard() {
       )}
 
       {/* Barra de Navegación Inferior (Bottom Navigation) Mobile First */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#14161F] border-t border-white/5 px-2 py-2 flex justify-around items-center shadow-[0_-5px_20px_rgba(0,0,0,0.5)] pb-[calc(12px+env(safe-area-inset-bottom))]">
+      <nav className="fixed bottom-0 left-0 right-0 md:left-1/2 md:right-auto md:w-[620px] md:-translate-x-1/2 md:rounded-t-3xl z-50 bg-[#14161F] border-t border-white/5 px-2 py-2 flex justify-around items-center shadow-[0_-5px_20px_rgba(0,0,0,0.5)] pb-[calc(12px+env(safe-area-inset-bottom))]">
         <button
-          onClick={() => setTab('inicio')}
+          onClick={() => { setTab('inicio'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
             tab === 'inicio' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
           }`}
@@ -1779,17 +2082,17 @@ export default function ClientDashboard() {
         </button>
 
         <button
-          onClick={() => { setTab('menu'); if (menuSubTab === '') setMenuSubTab('productos') }}
+          onClick={() => { setTab('menu-editor'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
-            tab === 'menu' || tab === 'categorias' || tab === 'productos' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+            tab === 'menu-editor' || tab === 'menu' || tab === 'categorias' || tab === 'productos' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <Package size={20} />
+          <UtensilsCrossed size={20} />
           <span>Menú</span>
         </button>
 
         <button
-          onClick={() => setTab('info')}
+          onClick={() => { setTab('info'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
             tab === 'info' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
           }`}
@@ -1799,7 +2102,7 @@ export default function ClientDashboard() {
         </button>
 
         <button
-          onClick={() => setTab('pedidos')}
+          onClick={() => { setTab('pedidos'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
             tab === 'pedidos' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
           }`}
@@ -1809,13 +2112,13 @@ export default function ClientDashboard() {
         </button>
 
         <button
-          onClick={() => setTab('mas')}
+          onClick={() => { setTab('clientes'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           className={`flex flex-col items-center gap-1 text-[10px] font-bold transition-all py-1 px-3.5 rounded-xl ${
-            tab === 'mas' || tab === 'rrss' || tab === 'zonas' || tab === 'clientes' || tab === 'compartir' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
+            tab === 'clientes' ? 'text-[#FF4B00]' : 'text-gray-400 hover:text-white'
           }`}
         >
-          <Layers size={20} />
-          <span>Más</span>
+          <Users size={20} />
+          <span>Clientes</span>
         </button>
       </nav>
     </div>

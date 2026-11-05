@@ -1,0 +1,92 @@
+.landing-horizontal {
+  --landing-top: 86px;
+  --landing-bottom: 58px;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+.landing-header {
+  position: absolute;
+  z-index: 50;
+  inset: 0 0 auto;
+  height: var(--landing-top);
+  padding: 12px 3vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: linear-gradient(#050507 65%, #050507e8);
+}
+.landing-logo { display: block; width: 150px; flex-shrink: 0; }
+.landing-logo img { width: 100%; height: 60px; object-fit: contain; mix-blend-mode: screen; }
+.landing-section-nav { display: flex; align-items: center; gap: 5px; padding: 5px; border: 1px solid #ffffff0e; border-radius: 999px; background: #ffffff03; }
+.landing-section-link { position: relative; display: grid; place-items: center; width: 42px; height: 42px; flex-shrink: 0; color: #ffffff73; border: 1px solid transparent; border-radius: 50%; transition: color .2s, background .2s, border-color .2s; }
+.landing-section-link:hover { color: white; background: #ffffff09; }
+.landing-section-link.is-active { color: #ff8055; background: #ff4b1614; border-color: #ff4b163d; }
+.landing-section-link.is-active::after { content: ''; position: absolute; bottom: 3px; width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+.landing-horizontal a:focus-visible, .landing-horizontal button:focus-visible, .landing-scene-scroll:focus-visible { outline: 2px solid #ff8055; outline-offset: 3px; }
+.landing-track { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
+.landing-track::-webkit-scrollbar { display: none; }
+.landing-scene { flex: 0 0 100%; width: 100%; min-width: 0; height: 100%; padding-block: var(--landing-top) var(--landing-bottom); scroll-snap-align: start; scroll-snap-stop: always; }
+.landing-scene-scroll { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; scrollbar-width: thin; scrollbar-color: #ffffff20 transparent; }
+.landing-scene-scroll > section { min-height: 100%; width: 100%; padding-block: clamp(20px, 3vh, 40px); display: flex; align-items: center; }
+.landing-horizontal .reveal-on-scroll { opacity: 1; transform: none; transition: none; will-change: auto; }
+.landing-horizontal .landing-hero { min-height: 100%; padding-block: 30px; }
+.landing-hero h1 { font-size: clamp(2.8rem, 6.5vw, 6.2rem); }
+.landing-hero > .relative { width: 100%; }
+.landing-position { position: absolute; z-index: 40; bottom: 24px; left: 4vw; width: 100px; height: 2px; background: #ffffff15; overflow: hidden; border-radius: 999px; }
+.landing-position span { display: block; height: 100%; background: #ff6535; transition: width .3s; }
+.landing-direction { position: absolute; z-index: 40; bottom: 10px; right: 3vw; display: flex; gap: 6px; }
+.landing-direction button { width: 40px; height: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid #ffffff12; background: #0a0b0e; color: #ffffffb0; }
+.landing-direction button:hover { color: #ff8055; border-color: #ff4b1640; }
+.landing-direction button:disabled { opacity: .2; cursor: default; }
+/* Slides navigate sideways; every slide's content follows its natural vertical flow. */
+.landing-scene-scroll { touch-action: pan-x pan-y pinch-zoom; }
+.landing-scene-scroll > section { display: block; padding-block: 56px; }
+.landing-scene-scroll > section > div,
+.landing-experience > section > div { width: 100%; max-width: 800px; }
+.landing-horizontal .grid { grid-template-columns: minmax(0, 1fr); }
+.landing-horizontal .landing-hero { display: flex; padding-block: 48px; }
+.landing-hero .sm\:flex-row { flex-direction: column; }
+.landing-experience, .landing-faq { display: flex; flex-direction: column; min-height: 100%; }
+.landing-experience > section { width: 100%; padding-block: 56px; }
+.landing-experience .landing-reel-frame { width: min(100%, calc(78dvh * 9 / 16)); max-width: 440px; }
+.landing-horizontal #solucion > div > div:first-child,
+.landing-horizontal #dashboard > div > div:first-child { margin-bottom: 48px; }
+.landing-horizontal #precios .grid { gap: 48px; }
+.landing-horizontal #precios .grid .grid { gap: 16px; }
+.landing-horizontal #demos .grid { max-width: 560px; margin-inline: auto; }
+.landing-horizontal #demos .grid > a { padding: 20px; }
+.landing-horizontal #demos .grid img { max-height: 320px; }
+.landing-faq > section { padding-block: 56px; border: 0; }
+.landing-footer { width: min(800px, 100%); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 12px; color: #ffffff80; }
+.landing-footer a { display: grid; width: 40px; height: 40px; place-items: center; }
+@media (max-width: 767px) {
+  .landing-horizontal { --landing-top: 68px; --landing-bottom: 54px; }
+  .landing-header { padding: 8px 12px; gap: 6px; }
+  .landing-logo { width: 55px; }
+  .landing-logo img { height: 48px; object-fit: contain; }
+  .landing-section-nav { gap: 2px; padding: 3px; }
+  .landing-section-link { width: 32px; height: 36px; }
+  .landing-section-link svg { width: 16px; height: 16px; }
+  .landing-hero h1 { font-size: clamp(2.45rem, 10vw, 3.6rem); }
+  .landing-hero h2 { font-size: 12px; }
+  .landing-horizontal .landing-hero { padding-block: 36px; }
+  .landing-scene-scroll > section, .landing-experience > section, .landing-faq > section { padding-block: 36px; }
+  .landing-horizontal #solucion > div > div:first-child,
+  .landing-horizontal #dashboard > div > div:first-child { margin-bottom: 36px; }
+  .landing-horizontal #solucion .grid > div,
+  .landing-horizontal #dashboard article { padding: 24px; }
+  .landing-horizontal #precios .grid { gap: 32px; }
+  .landing-horizontal #precios .grid .grid { gap: 16px; }
+  .landing-footer { align-items: flex-start; flex-direction: column; gap: 16px; }
+}
+@media (max-width: 359px) {
+  .landing-logo { width: 36px; }
+  .landing-section-link { width: 28px; }
+  .landing-section-nav { gap: 1px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-position span, .landing-section-link { transition: none; }
+}

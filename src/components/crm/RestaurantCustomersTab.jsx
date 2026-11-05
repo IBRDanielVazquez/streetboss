@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getBusinessCustomers, updateCustomerPromoConsent } from '../../services/crmV3Service'
+import { deleteBusinessCustomer, getBusinessCustomers, updateCustomerPromoConsent } from '../../services/crmV3Service'
 import {
   Users,
   Search,
@@ -15,7 +15,8 @@ import {
   ShieldCheck,
   Copy,
   ChevronDown,
-  X
+  X,
+  Trash2
 } from 'lucide-react'
 
 export default function RestaurantCustomersTab({ businessId, businessName }) {
@@ -27,6 +28,7 @@ export default function RestaurantCustomersTab({ businessId, businessName }) {
   const [selectedTemplate, setSelectedTemplate] = useState('promo_dia')
   const [customMessage, setCustomMessage] = useState('')
   const [toastMsg, setToastMsg] = useState('')
+  const [deletingCustomerId, setDeletingCustomerId] = useState('')
 
   const loadCustomers = () => {
     const list = getBusinessCustomers(businessId)
@@ -35,6 +37,12 @@ export default function RestaurantCustomersTab({ businessId, businessName }) {
 
   useEffect(() => {
     loadCustomers()
+    window.addEventListener('sb_customers_updated', loadCustomers)
+    window.addEventListener('storage', loadCustomers)
+    return () => {
+      window.removeEventListener('sb_customers_updated', loadCustomers)
+      window.removeEventListener('storage', loadCustomers)
+    }
   }, [businessId])
 
   const showToast = (msg) => {
@@ -87,6 +95,24 @@ export default function RestaurantCustomersTab({ businessId, businessName }) {
     updateCustomerPromoConsent(customerId, !currentConsent)
     loadCustomers()
     showToast(!currentConsent ? 'Consentimiento de promociones activado' : 'Consentimiento desactivado')
+  }
+
+  const handleDeleteCustomer = async (customer) => {
+    const confirmed = window.confirm(`¿Eliminar a ${customer.name || 'este cliente'}? Se borrarán sus datos del directorio en todos tus dispositivos.`)
+    if (!confirmed) return
+
+    const customerId = customer.customer_id || customer.id
+    setDeletingCustomerId(customerId)
+    try {
+      await deleteBusinessCustomer(businessId, customer)
+      loadCustomers()
+      showToast('Cliente eliminado en todos tus dispositivos')
+    } catch (error) {
+      console.error('No se pudo eliminar el cliente:', error)
+      showToast('No se pudo eliminar. Intenta nuevamente.')
+    } finally {
+      setDeletingCustomerId('')
+    }
   }
 
   // Colonias únicas
@@ -237,6 +263,16 @@ export default function RestaurantCustomersTab({ businessId, businessName }) {
                     className="bg-white/5 hover:bg-white/10 text-gray-300 font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1 border border-white/5"
                   >
                     <MessageSquare size={13} /> Plantillas
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteCustomer(c)}
+                    disabled={deletingCustomerId === (c.customer_id || c.id)}
+                    className="min-h-9 min-w-10 bg-red-500/10 hover:bg-red-500/20 text-red-400 disabled:opacity-50 font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center border border-red-500/20"
+                    aria-label={`Eliminar a ${c.name || 'cliente'}`}
+                    title="Eliminar cliente"
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>

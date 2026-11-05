@@ -38,6 +38,12 @@ export default function RestaurantOrdersTab({ businessId, businessName }) {
 
   useEffect(() => {
     loadOrders()
+    window.addEventListener('sb_orders_updated', loadOrders)
+    window.addEventListener('storage', loadOrders)
+    return () => {
+      window.removeEventListener('sb_orders_updated', loadOrders)
+      window.removeEventListener('storage', loadOrders)
+    }
   }, [businessId])
 
   const showToast = (msg) => {

@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { DEMOS_OFICIALES } from '../../data/demoShowcase'
 
-export default function LandingDemosCTA() {
+export default function LandingDemosCTA({ horizontal = false }) {
   return (
     <section id="demos" className="bg-[#050507] border-y border-white/10 py-20 md:py-28 relative overflow-hidden reveal-on-scroll">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#ff4b16]/10 blur-[140px] rounded-full pointer-events-none" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <p className="text-xs font-black uppercase tracking-[0.35em] text-[#ff4b16] mb-3">
+          <p className="text-sm font-black uppercase tracking-[0.25em] text-[#ff6b3d] mb-3">
             ESCAPARATES EN VIVO
           </p>
           <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white mb-4">
@@ -22,7 +22,7 @@ export default function LandingDemosCTA() {
         </div>
 
         {/* Grid de 10 Demos Oficiales */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 mb-12">
+        <div className={horizontal ? "landing-demo-rail" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4 mb-12"} data-horizontal-rail={horizontal || undefined}>
           {DEMOS_OFICIALES.map((demo) => {
             const firstProduct = demo.menu?.[0]?.productos?.[0]?.foto || `/demos/${demo.id}/cover.jpg`
             return (
@@ -46,12 +46,12 @@ export default function LandingDemosCTA() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between gap-1">
-                    <h3 className="font-extrabold text-white text-xs md:text-sm truncate group-hover:text-[#ff4b16] transition-colors">
+                    <h3 className="font-extrabold text-white text-sm md:text-base truncate group-hover:text-[#ff4b16] transition-colors">
                       {demo.nombre}
                     </h3>
                     <ExternalLink size={12} className="text-gray-500 group-hover:text-[#ff4b16] shrink-0" />
                   </div>
-                  <p className="text-[11px] text-gray-400 mt-0.5">{demo.giro}</p>
+                  <p className="text-sm text-gray-300 mt-1">{demo.giro}</p>
                 </div>
               </Link>
             )
@@ -61,7 +61,7 @@ export default function LandingDemosCTA() {
         <div className="text-center">
           <Link
             to="/demos"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff4b16] px-8 py-4 text-sm md:text-base font-black text-white shadow-[0_0_30px_rgba(255,75,22,0.35)] transition-transform hover:scale-105"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#ff4b16] px-8 py-4 text-base md:text-lg font-black text-white shadow-[0_0_30px_rgba(255,75,22,0.35)] transition-transform hover:scale-105"
           >
             Explorar catálogo completo de demos <ArrowRight size={18} />
           </Link>

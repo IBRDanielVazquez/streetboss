@@ -5,8 +5,8 @@ import masterProspectsData from '../data/master_prospects.json'
 
 // Background helper to synchronize business data to Supabase
 export async function syncBusinessToSupabase(business) {
-  if (!isSupabaseConfigured) return
-  if (!business) return
+  if (!isSupabaseConfigured) throw new Error('La conexión central no está configurada.')
+  if (!business) throw new Error('No hay un negocio para sincronizar.')
   try {
     const client = getSupabaseClient(business.slug)
     const payload = {
@@ -35,6 +35,7 @@ export async function syncBusinessToSupabase(business) {
       facebook_url: business.facebook_url || '',
       instagram_url: business.instagram_url || '',
       tiktok_url: business.tiktok_url || '',
+      youtube_url: business.youtube_url || '',
       website_url: business.website_url || '',
       logo_url: business.logo_url || '',
       banner_url: business.banner_url || '',
@@ -42,11 +43,15 @@ export async function syncBusinessToSupabase(business) {
       main_message: business.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
       description: business.description || '',
       schedule_text: business.schedule_text || 'Lun a Dom · 9:00 am – 10:00 pm',
+      schedule_daily: business.schedule_daily || {},
       is_open: business.is_open !== false,
       has_delivery: business.has_delivery !== false,
       delivery_mode: business.delivery_mode || 'fijo',
       base_delivery_fee: Number(business.base_delivery_fee ?? 30.00),
       estimated_delivery_time: business.estimated_delivery_time || '30–40 min',
+      free_delivery: !!business.free_delivery,
+      use_general_fee: business.use_general_fee !== false,
+      payment_methods: business.payment_methods || {},
       owner_username: business.owner_username || '',
       temp_password: business.temp_password || '',
       updated_at: new Date().toISOString()
@@ -58,9 +63,40 @@ export async function syncBusinessToSupabase(business) {
 
     if (error) {
       console.error('[Supabase Sync Error] failed to upsert business to Supabase:', error.message)
+      throw error
     }
+    return payload
   } catch (err) {
     console.error('[Supabase Sync Exception] unexpected error during sync:', err)
+    throw err
+  }
+}
+
+async function syncMenuSnapshotToSupabase(business, categories, products) {
+  if (!isSupabaseConfigured || !business) return
+  await syncBusinessToSupabase(business)
+  const client = getSupabaseClient(business.slug)
+  const categoryPayload = categories.map(category => ({
+    id: category.id, business_id: business.business_id, name: category.name,
+    category_type: category.category_type || 'normal', is_plus: !!category.is_plus,
+    is_visible: category.is_visible !== false, position: Number(category.position || 0),
+    updated_at: new Date().toISOString(),
+  }))
+  const productPayload = products.map(product => ({
+    id: product.id, business_id: business.business_id, category_id: product.category_id,
+    name: product.name, price: Number(product.price || 0), description: product.description || '',
+    image_url: product.image_url || '', is_out_of_stock: !!product.is_out_of_stock,
+    is_hidden: !!product.is_hidden, is_active: product.is_active !== false,
+    is_featured: !!product.is_featured, is_promo: !!product.is_promo,
+    position: Number(product.position || 0), updated_at: new Date().toISOString(),
+  }))
+  if (categoryPayload.length) {
+    const { error } = await client.from('sb_menu_categories').upsert(categoryPayload, { onConflict: 'id' })
+    if (error) throw error
+  }
+  if (productPayload.length) {
+    const { error } = await client.from('sb_menu_products').upsert(productPayload, { onConflict: 'id' })
+    if (error) throw error
   }
 }
 
@@ -108,6 +144,24 @@ export function normalizeMexicanPhone(phone) {
     digits = digits.slice(1)
   }
   return digits.slice(-10)
+}
+
+function getBusinessIdentitySet(businessId) {
+  const businesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const business = businesses.find(item => item.business_id === businessId || item.id === businessId || item.slug === businessId)
+
+  return new Set([
+    businessId,
+    business?.id,
+    business?.business_id,
+    business?.slug,
+  ].filter(Boolean))
+}
+
+function getBusinessDataClient(businessId) {
+  const businesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+  const business = businesses.find(item => item.business_id === businessId || item.id === businessId || item.slug === businessId)
+  return getSupabaseClient(business?.slug || businessId)
 }
 
 // Helper: Generador de contraseña segura
@@ -210,28 +264,29 @@ function initLocalStore() {
       name: demo.nombre || demo.name,
       slug: demo.id,
       business_type: demo.giro || demo.badge || 'Restaurante',
-      is_demo: true,
+      is_demo: demo.is_demo !== false,
       demo_status: 'Activo',
       status: 'activo',
       template_version: '3.0',
       owner_name: 'Demostración Oficial',
-      phone: DEMO_CONTACTS.DEFAULT_PHONE,
-      whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
+      phone: demo.phone || DEMO_CONTACTS.DEFAULT_PHONE,
+      whatsapp: demo.whatsapp || DEMO_CONTACTS.DEFAULT_WHATSAPP,
       email: `demo.${demo.clave || demo.id}@streetboss.com.mx`,
-      address: 'Tuxtla Gutiérrez, Chiapas',
+      address: demo.address || 'Tuxtla Gutiérrez, Chiapas',
+      colonia: demo.colonia || '',
       city: 'Tuxtla Gutiérrez',
       state: 'Chiapas',
       banner_url: demo.banner_url || `/demos/${demo.id}/cover.jpg`,
       logo_url: demo.logo_url || `/demos/${demo.id}/profile.png`,
       brand_color: '#FF4B00',
-      description: `Demostración oficial de ${demo.nombre || demo.name} en StreetBoss.`,
-      schedule_text: 'Lun a Dom · 9:00 am – 10:00 pm',
+      description: demo.description || `Demostración oficial de ${demo.nombre || demo.name} en StreetBoss.`,
+      schedule_text: demo.schedule_text || 'Lun a Dom · 9:00 am – 10:00 pm',
       is_open: true,
       has_delivery: true,
       delivery_mode: 'fijo',
       base_delivery_fee: 30,
       temp_password: '', // REQUERIMIENTO 10: No se generan contraseñas automáticamente
-      payment_methods: {
+      payment_methods: demo.payment_methods || {
         efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500 },
         transferencia: {
           activo: true,
@@ -292,7 +347,10 @@ function initLocalStore() {
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(seededBusinesses))
     localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(seededCategories))
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(seededProducts))
-    localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify([]))
+    const seededZones = DEMO_SHOWCASE.flatMap(demo =>
+      (demo.delivery_zones || []).map(zone => ({ ...zone, business_id: demo.id }))
+    )
+    localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(seededZones))
     localStorage.setItem(STORAGE_KEYS.PROSPECTS, JSON.stringify([]))
     localStorage.setItem(STORAGE_KEYS.AUDIT, JSON.stringify([]))
   } else {
@@ -309,12 +367,16 @@ function initLocalStore() {
         return {
           ...b,
           name: bName,
-          phone: DEMO_CONTACTS.DEFAULT_PHONE,
-          whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
+          phone: official?.phone || DEMO_CONTACTS.DEFAULT_PHONE,
+          whatsapp: official?.whatsapp || DEMO_CONTACTS.DEFAULT_WHATSAPP,
+          address: official?.address || b.address,
+          colonia: official?.colonia || b.colonia,
+          description: official?.description || b.description,
+          schedule_text: official?.schedule_text || b.schedule_text,
           business_type: official?.giro || official?.badge || b.business_type,
           banner_url: b.banner_url || `/demos/${demoFolder}/cover.jpg`,
           logo_url: b.logo_url || `/demos/${demoFolder}/profile.png`,
-          payment_methods: {
+          payment_methods: official?.payment_methods || {
             efectivo: { activo: true, preguntar_cambio: true, limite_cambio_activo: false, max_cambio_monto: 500, ...(b.payment_methods?.efectivo || {}) },
             transferencia: {
               activo: true,
@@ -330,6 +392,60 @@ function initLocalStore() {
         }
       }
       return b
+    })
+
+    // Los menús reales preparados desde el catálogo también deben existir en
+    // Clientes para administrar datos y generar sus credenciales B2B.
+    const managedClients = DEMO_SHOWCASE.filter(demo => demo.is_demo === false)
+    managedClients.forEach(client => {
+      const alreadyRegistered = refreshedBusinesses.some(b =>
+        b.id === client.id || b.business_id === client.id || b.slug === client.id
+      )
+      if (alreadyRegistered) return
+
+      refreshedBusinesses.unshift({
+        id: client.id,
+        business_id: client.id,
+        name: client.nombre || client.name,
+        slug: client.id,
+        business_type: client.giro || client.badge || 'Restaurante',
+        is_demo: false,
+        demo_status: 'Inactivo',
+        status: 'activo',
+        template_version: '3.0',
+        base_demo_id: 'burger-house',
+        owner_name: '',
+        phone: client.phone || '',
+        whatsapp: client.whatsapp || client.phone || '',
+        email: '',
+        address: client.address || '',
+        ext_number: '',
+        int_number: '',
+        colonia: client.colonia || '',
+        postal_code: client.postal_code || '',
+        city: client.city || 'Tuxtla Gutiérrez',
+        municipality: client.city || 'Tuxtla Gutiérrez',
+        state: client.state || 'Chiapas',
+        logo_url: client.logo_url || `/demos/${client.id}/profile.png`,
+        banner_url: client.banner_url || `/demos/${client.id}/cover.jpg`,
+        brand_color: '#8B2F2F',
+        main_message: '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
+        description: client.description || '',
+        schedule_text: client.schedule_text || 'Horario por confirmar',
+        is_open: true,
+        has_delivery: true,
+        delivery_mode: client.delivery_mode || 'fijo',
+        base_delivery_fee: Number(client.base_delivery_fee ?? 30),
+        estimated_delivery_time: '30–40 min',
+        free_delivery: false,
+        use_general_fee: client.delivery_mode !== 'zonas',
+        payment_methods: client.payment_methods || {},
+        owner_username: '',
+        temp_password: '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      updated = true
     })
 
     // Sincronizar también productos e imágenes de los demos oficiales en localStorage
@@ -392,6 +508,18 @@ function initLocalStore() {
     if (productsUpdated) {
       localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(localCategories))
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(localProducts))
+    }
+
+    const configuredDemoIds = new Set(
+      DEMO_SHOWCASE.filter(demo => demo.delivery_zones?.length).map(demo => demo.id)
+    )
+    if (configuredDemoIds.size > 0) {
+      const existingZones = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
+        .filter(zone => !configuredDemoIds.has(zone.business_id))
+      const officialZones = DEMO_SHOWCASE.flatMap(demo =>
+        (demo.delivery_zones || []).map(zone => ({ ...zone, business_id: demo.id }))
+      )
+      localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify([...existingZones, ...officialZones]))
     }
   }
 }
@@ -482,13 +610,41 @@ export function deleteDemo(demoId) {
   }
 }
 
-export function deleteClient(businessId, deleteCustomers = false) {
+export async function deleteClient(businessId, deleteCustomers = false, deleteOrders = false) {
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
   const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId)
   if (idx !== -1) {
     const deletedBusiness = bList[idx]
     bList[idx].deleted_at = new Date().toISOString()
     bList[idx].status = 'eliminado'
+    if (isSupabaseConfigured) {
+      const client = getBusinessDataClient(businessId)
+      const deletedAt = new Date().toISOString()
+      const { data, error } = await client
+        .from('sb_businesses')
+        .update({ status: 'eliminado', deleted_at: deletedAt, updated_at: deletedAt })
+        .eq('business_id', deletedBusiness.business_id)
+        .select('business_id')
+      if (error) throw error
+      if (!data?.length) throw new Error('Supabase no confirmó la eliminación del negocio.')
+
+      if (deleteCustomers) {
+        const { error: customerError } = await client
+          .from('sb_business_customers')
+          .delete()
+          .eq('business_id', deletedBusiness.business_id)
+        if (customerError) throw customerError
+      }
+
+      if (deleteOrders) {
+        const { error: ordersError } = await client
+          .from('sb_orders')
+          .delete()
+          .eq('business_id', deletedBusiness.business_id)
+        if (ordersError) throw ordersError
+      }
+    }
+
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
 
     if (deleteCustomers) {
@@ -500,8 +656,15 @@ export function deleteClient(businessId, deleteCustomers = false) {
       localStorage.setItem(custKey, JSON.stringify(filteredCusts))
     }
 
-    logAuditAction('eliminar_cliente', businessId, { name: deletedBusiness.name, deleteCustomers })
-    notifyCentralSync('CLIENT_DELETED', { businessId, deleteCustomers })
+    if (deleteOrders) {
+      const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+      const validIds = new Set([businessId, deletedBusiness.business_id, deletedBusiness.id, deletedBusiness.slug].filter(Boolean))
+      localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders.filter(order => !validIds.has(order.business_id))))
+      window.dispatchEvent(new CustomEvent('sb_orders_updated', { detail: { businessId, eventType: 'DELETE_MANY' } }))
+    }
+
+    logAuditAction('eliminar_cliente', businessId, { name: deletedBusiness.name, deleteCustomers, deleteOrders })
+    notifyCentralSync('CLIENT_DELETED', { businessId, deleteCustomers, deleteOrders })
     return true
   }
   return false
@@ -510,7 +673,7 @@ export function deleteClient(businessId, deleteCustomers = false) {
 // ─────────────────────────────────────────────────────────────────────────────
 // CREAR NEGOCIO DESDE DEMO
 // ─────────────────────────────────────────────────────────────────────────────
-export function createBusinessFromDemo({ demoId, formData }) {
+export async function createBusinessFromDemo({ demoId, formData }) {
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
   const cList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
@@ -519,12 +682,41 @@ export function createBusinessFromDemo({ demoId, formData }) {
   if (!demo) throw new Error('Demo plantilla no encontrado.')
 
   const finalName = formData.name || demo.name
-  const finalSlug = slugify(formData.slug || finalName)
+  const requestedSlug = slugify(formData.slug || finalName)
+  if (!requestedSlug) throw new Error('Escribe un nombre o slug válido para el negocio.')
 
-  // Verify slug unique
-  const slugExists = bList.some(b => b.slug === finalSlug && !b.deleted_at)
-  if (slugExists) {
-    throw new Error(`El slug /menu/${finalSlug} ya está en uso por otro restaurante.`)
+  // La disponibilidad debe comprobarse en la nube. Otro dispositivo puede haber
+  // creado o eliminado antes el mismo slug sin que esta copia local lo conozca.
+  const isSlugReserved = async candidate => {
+    const existsLocally = bList.some(b => b.slug === candidate)
+    if (existsLocally) return true
+    if (!isSupabaseConfigured) return false
+    const { data, error } = await getSupabaseClient(candidate)
+      .from('sb_businesses')
+      .select('business_id')
+      .eq('slug', candidate)
+      .limit(1)
+    if (error) throw error
+    if ((data || []).length > 0) return true
+
+    // El directorio central también tiene una restricción única propia. Debe
+    // consultarse porque puede conservar el slug de un alta histórica aunque
+    // el registro principal ya no esté visible para este navegador.
+    const { data: directoryData, error: directoryError } = await supabase
+      .from('sb_business_directory')
+      .select('business_id')
+      .eq('slug', candidate)
+      .limit(1)
+    if (directoryError) throw directoryError
+    return (directoryData || []).length > 0
+  }
+
+  let finalSlug = requestedSlug
+  let slugCounter = 2
+  while (await isSlugReserved(finalSlug)) {
+    finalSlug = `${requestedSlug}-${slugCounter}`
+    slugCounter += 1
+    if (slugCounter > 100) throw new Error('No se pudo encontrar una dirección libre para este negocio.')
   }
 
   const newBusinessId = `biz_${finalSlug}_${Date.now().toString(36)}`
@@ -621,10 +813,27 @@ export function createBusinessFromDemo({ demoId, formData }) {
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
 
+  // No se confirma el alta hasta que negocio y menú estén en la fuente central.
+  let syncError = null
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      await syncMenuSnapshotToSupabase(newBusiness, newCategories, newProducts)
+      syncError = null
+      break
+    } catch (error) {
+      syncError = error
+      if (attempt < 3) await new Promise(resolve => setTimeout(resolve, attempt * 600))
+    }
+  }
+
+  if (syncError) {
+    localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList.filter(item => item.business_id !== newBusinessId)))
+    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList.filter(item => item.business_id !== newBusinessId)))
+    localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList.filter(item => item.business_id !== newBusinessId)))
+    throw new Error('No se pudo guardar el menú en la nube. No se creó una copia incompleta; inténtalo nuevamente.')
+  }
+
   logAuditAction('crear_cliente', newBusinessId, { name: finalName, owner: formData.owner_name })
-  
-  // Sync core business record to Supabase
-  syncBusinessToSupabase(newBusiness).catch(() => {})
 
   const menuUrl = `https://streetboss.com.mx/menu/${finalSlug}`
   const dashboardUrl = `https://streetboss.com.mx/panel/${finalSlug}`
@@ -654,6 +863,8 @@ _Vende directo. Manda tú._`
     username,
     password,
     whatsappMessage,
+    requestedSlug,
+    slugAdjusted: finalSlug !== requestedSlug,
   }
 }
 
@@ -810,7 +1021,66 @@ export function saveProspectCommercialData(prospectId, commercialData) {
   store[prospectId] = updated
   localStorage.setItem('sb_v3_commercial_prospect_states', JSON.stringify(store))
   notifyCentralSync('PROSPECT_COMMERCIAL_UPDATED', { prospectId, commercialData: updated })
+  if (isSupabaseConfigured) {
+    void supabase
+      .from('sb_hq_prospect_states')
+      .upsert({ prospect_id: String(prospectId), data: updated, updated_at: updated.updated_at }, { onConflict: 'prospect_id' })
+      .then(({ error }) => {
+        if (error) console.error('[Prospect Sync Error] No se pudo guardar el seguimiento central:', error.message)
+      })
+  }
   return updated
+}
+
+export async function syncProspectCommercialDataFromSupabase() {
+  if (!isSupabaseConfigured) return getProspectCommercialStore()
+
+  const localStore = getProspectCommercialStore()
+  const { data: rows, error } = await supabase
+    .from('sb_hq_prospect_states')
+    .select('prospect_id,data,updated_at')
+
+  if (error) throw error
+
+  const merged = { ...localStore }
+  const cloudIds = new Set()
+
+  for (const row of rows || []) {
+    const prospectId = String(row.prospect_id)
+    cloudIds.add(prospectId)
+    const cloudValue = { ...(row.data || {}), updated_at: row.updated_at || row.data?.updated_at }
+    const localValue = localStore[prospectId]
+    const cloudTime = Date.parse(cloudValue.updated_at || 0) || 0
+    const localTime = Date.parse(localValue?.updated_at || 0) || 0
+    if (!localValue || cloudTime >= localTime) merged[prospectId] = cloudValue
+  }
+
+  const pendingUploads = Object.entries(localStore)
+    .filter(([prospectId, value]) => {
+      if (!cloudIds.has(prospectId)) return true
+      const cloudRow = (rows || []).find(row => String(row.prospect_id) === prospectId)
+      return (Date.parse(value?.updated_at || 0) || 0) > (Date.parse(cloudRow?.updated_at || cloudRow?.data?.updated_at || 0) || 0)
+    })
+    .map(([prospectId, value]) => ({ prospect_id: prospectId, data: value, updated_at: value.updated_at || new Date().toISOString() }))
+
+  if (pendingUploads.length) {
+    const { error: uploadError } = await supabase
+      .from('sb_hq_prospect_states')
+      .upsert(pendingUploads, { onConflict: 'prospect_id' })
+    if (uploadError) throw uploadError
+  }
+
+  localStorage.setItem('sb_v3_commercial_prospect_states', JSON.stringify(merged))
+  notifyCentralSync('PROSPECT_COMMERCIAL_SYNCED', {})
+  return merged
+}
+
+function getProspectCommercialStore() {
+  try {
+    return JSON.parse(localStorage.getItem('sb_v3_commercial_prospect_states') || '{}')
+  } catch {
+    return {}
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -822,7 +1092,7 @@ export function getClients() {
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
   const zList = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
 
-  const clients = bList.filter(b => !b.is_demo && !b.deleted_at)
+  const clients = bList.filter(b => !b.is_demo && !b.deleted_at && b.status !== 'eliminado')
   return clients.map(client => {
     const categories = cList.filter(c => c.business_id === client.business_id)
     const products = pList.filter(p => p.business_id === client.business_id)
@@ -836,6 +1106,102 @@ export function getClients() {
       products,
     }
   })
+}
+
+// Descubre los negocios creados desde cualquier dispositivo y descarga cada
+// registro con su propio contexto multi-tenant. El directorio solo expone
+// datos públicos; la ficha completa nunca se obtiene mediante una consulta global.
+export async function syncClientsFromSupabase() {
+  if (!isSupabaseConfigured) return getClients()
+
+  try {
+    let { data: directory, error } = await supabase
+      .from('sb_business_directory')
+      .select('business_id, slug, updated_at')
+      .eq('status', 'activo')
+      .eq('is_demo', false)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+
+    // Recuperar altas históricas que sólo existen en este navegador y subirlas
+    // antes de descargar el directorio común.
+    const cloudBusinessIds = new Set((directory || []).map(entry => entry.business_id))
+    const cloudSlugs = new Set((directory || []).map(entry => entry.slug))
+    const localBusinesses = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
+    const localCategories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+    const localProducts = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+    const localZones = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
+    const possiblePendingBusinesses = localBusinesses.filter(item =>
+      !item.is_demo && !item.deleted_at && !cloudBusinessIds.has(item.business_id) && !cloudSlugs.has(item.slug)
+    )
+
+    // Antes de recuperar una alta que sólo existe en este navegador, comprobar
+    // si en realidad es una baja central. Una copia móvil antigua nunca debe
+    // volver a publicar un negocio eliminado en otro dispositivo.
+    const deletedBusinessIds = new Set()
+    const pendingBusinesses = []
+    for (const business of possiblePendingBusinesses) {
+      const client = getBusinessDataClient(business.slug || business.business_id)
+      const { data: cloudRows, error: lookupError } = await client
+        .from('sb_businesses')
+        .select('business_id, status, deleted_at')
+        .eq('business_id', business.business_id)
+        .limit(1)
+
+      if (lookupError) throw lookupError
+      const cloudBusiness = cloudRows?.[0]
+      if (cloudBusiness?.deleted_at || cloudBusiness?.status === 'eliminado') {
+        deletedBusinessIds.add(business.business_id)
+      } else if (!cloudBusiness) {
+        pendingBusinesses.push(business)
+      }
+    }
+
+    if (deletedBusinessIds.size) {
+      const deletedAt = new Date().toISOString()
+      const cleanedBusinesses = localBusinesses.map(item =>
+        deletedBusinessIds.has(item.business_id)
+          ? { ...item, status: 'eliminado', deleted_at: item.deleted_at || deletedAt }
+          : item
+      )
+      localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(cleanedBusinesses))
+    }
+
+    for (const business of pendingBusinesses) {
+      const businessCategories = localCategories.filter(item => item.business_id === business.business_id)
+      const businessProducts = localProducts.filter(item => item.business_id === business.business_id)
+      await syncMenuSnapshotToSupabase(business, businessCategories, businessProducts)
+      const businessZones = localZones.filter(item => item.business_id === business.business_id)
+      if (businessZones.length) {
+        const client = getSupabaseClient(business.slug)
+        const { error: zoneError } = await client
+          .from('sb_business_delivery_zones')
+          .upsert(businessZones, { onConflict: 'id' })
+        if (zoneError) throw zoneError
+      }
+    }
+
+    if (pendingBusinesses.length) {
+      const refreshed = await supabase
+        .from('sb_business_directory')
+        .select('business_id, slug, updated_at')
+        .eq('status', 'activo')
+        .eq('is_demo', false)
+        .order('created_at', { ascending: false })
+      if (refreshed.error) throw refreshed.error
+      directory = refreshed.data
+    }
+
+    await Promise.all(
+      (directory || []).map(entry => resolveBusinessBySlug(entry.slug))
+    )
+
+    return getClients()
+  } catch (error) {
+    console.error('[Supabase Client Directory Sync]', error.message)
+    return getClients()
+  }
 }
 
 export function getBusinessBySlug(slugOrId) {
@@ -1007,11 +1373,12 @@ export function getBusinessBySlug(slugOrId) {
   }
 }
 
-export async function downloadMenuFromSupabase(businessId) {
+export async function downloadMenuFromSupabase(businessId, businessSlug = '') {
   if (!isSupabaseConfigured) return
   try {
+    const client = getSupabaseClient(businessSlug || businessId)
     // 1. Descargar categorías
-    const { data: catData, error: catErr } = await supabase
+    const { data: catData, error: catErr } = await client
       .from('sb_menu_categories')
       .select('*')
       .eq('business_id', businessId)
@@ -1035,7 +1402,7 @@ export async function downloadMenuFromSupabase(businessId) {
     }
 
     // 2. Descargar productos
-    const { data: prodData, error: prodErr } = await supabase
+    const { data: prodData, error: prodErr } = await client
       .from('sb_menu_products')
       .select('*')
       .eq('business_id', businessId)
@@ -1054,6 +1421,7 @@ export async function downloadMenuFromSupabase(businessId) {
           description: dbProd.description || '',
           image_url: dbProd.image_url || '',
           is_out_of_stock: dbProd.is_out_of_stock || false,
+          is_hidden: dbProd.is_hidden || false,
           is_active: dbProd.is_active !== false,
           is_featured: dbProd.is_featured || false,
           is_promo: dbProd.is_promo || false,
@@ -1062,25 +1430,35 @@ export async function downloadMenuFromSupabase(businessId) {
       })
       localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(localProds))
     }
+
+    const { data: zoneData, error: zoneErr } = await client
+      .from('sb_business_delivery_zones')
+      .select('*')
+      .eq('business_id', businessId)
+    if (zoneErr) throw zoneErr
+    if (zoneData) {
+      let localZones = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
+      localZones = localZones.filter(zone => zone.business_id !== businessId)
+      localZones.push(...zoneData)
+      localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(localZones))
+    }
   } catch (err) {
     console.error('[Supabase Menu Sync Exception] failed to download categories or products:', err)
   }
 }
 
 export async function resolveBusinessBySlug(slugOrId) {
-  // Primero ver si existe localmente
+  // La copia local es respaldo; la nube es la fuente prioritaria entre dispositivos.
   const localB = getBusinessBySlug(slugOrId)
-  if (localB && !localB.is_demo) {
-    return localB
-  }
 
   // Si está en Supabase, descargarlo y guardarlo localmente
   if (isSupabaseConfigured) {
     try {
-      const { data, error } = await supabase
+      const client = getSupabaseClient(slugOrId)
+      const { data, error } = await client
         .from('sb_businesses')
         .select('*')
-        .or(`slug.eq.${slugOrId},business_id.eq.${slugOrId},id.eq.${slugOrId}`)
+        .or(`slug.eq.${slugOrId},business_id.eq.${slugOrId}`)
         .eq('status', 'activo')
         .is('deleted_at', null)
         .maybeSingle()
@@ -1088,7 +1466,7 @@ export async function resolveBusinessBySlug(slugOrId) {
       if (error) throw error
       if (data) {
         const mappedBiz = {
-          id: data.id,
+          id: data.id || data.business_id,
           business_id: data.business_id,
           name: data.name,
           slug: data.slug,
@@ -1122,8 +1500,11 @@ export async function resolveBusinessBySlug(slugOrId) {
           is_open: data.is_open !== false,
           has_delivery: data.has_delivery !== false,
           delivery_mode: data.delivery_mode || 'fijo',
-          base_delivery_fee: Number(data.base_delivery_fee || 30),
+          base_delivery_fee: Number(data.base_delivery_fee ?? 30),
           estimated_delivery_time: data.estimated_delivery_time || '30–40 min',
+          free_delivery: !!data.free_delivery,
+          use_general_fee: data.use_general_fee !== false,
+          payment_methods: data.payment_methods || {},
           owner_username: data.owner_username || '',
           temp_password: data.temp_password || 'StreetBoss2026!',
         }
@@ -1138,10 +1519,20 @@ export async function resolveBusinessBySlug(slugOrId) {
         localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
 
         // Descargar catálogo de menú en background
-        await downloadMenuFromSupabase(mappedBiz.business_id)
+        await downloadMenuFromSupabase(mappedBiz.business_id, mappedBiz.slug)
 
         // Retornar el negocio completo con sus categorías y productos cargados
         return getBusinessBySlug(mappedBiz.slug)
+      }
+
+      // Si es un alta histórica local, migrarla a la nube en vez de ocultarla.
+      if (localB && !localB.is_demo) {
+        const categories = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+          .filter(item => item.business_id === localB.business_id)
+        const products = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+          .filter(item => item.business_id === localB.business_id)
+        await syncMenuSnapshotToSupabase(localB, categories, products)
+        return localB
       }
     } catch (err) {
       console.error('[Supabase Resolve Business Exception] failed to download business details:', err)
@@ -1328,7 +1719,8 @@ export function importProspects(prospectArray) {
 // ─────────────────────────────────────────────────────────────────────────────
 // DASHBOARD DEL CLIENTE ENGINE (CRUD MENÚ & ZONAS)
 // ─────────────────────────────────────────────────────────────────────────────
-export function updateBusinessSettings(businessId, updates) {
+export function updateBusinessSettings(businessId, updates, options = {}) {
+  const { sync = true, notify = true } = options
   const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
   const idx = bList.findIndex(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
   if (idx !== -1) {
@@ -1338,11 +1730,19 @@ export function updateBusinessSettings(businessId, updates) {
       updated_at: new Date().toISOString(),
     }
     localStorage.setItem(STORAGE_KEYS.BUSINESSES, JSON.stringify(bList))
-    notifyCentralSync('BUSINESS_UPDATED', { businessId, updates })
-    syncBusinessToSupabase(bList[idx]).catch(() => {})
+    if (notify) notifyCentralSync('BUSINESS_UPDATED', { businessId, updates })
+    if (sync) syncBusinessToSupabase(bList[idx]).catch(() => {})
     return bList[idx]
   }
   return null
+}
+
+export async function saveBusinessSettings(businessId, updates) {
+  const updatedBusiness = updateBusinessSettings(businessId, updates, { sync: false, notify: false })
+  if (!updatedBusiness) throw new Error('No se encontró el negocio para guardar los cambios.')
+  await syncBusinessToSupabase(updatedBusiness)
+  notifyCentralSync('BUSINESS_UPDATED', { businessId, updates })
+  return updatedBusiness
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1399,8 +1799,9 @@ export function logoutHqAdmin() {
   notifyCentralSync('HQ_LOGOUT', {})
 }
 
-export function saveCategory(businessId, categoryData) {
+export async function saveCategory(businessId, categoryData) {
   const cList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
+  const previousList = structuredClone(cList)
   if (categoryData.id) {
     const idx = cList.findIndex(c => c.id === categoryData.id)
     if (idx !== -1) {
@@ -1420,19 +1821,51 @@ export function saveCategory(businessId, categoryData) {
     cList.push(newCat)
   }
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
+  const saved = categoryData.id ? cList.find(c => c.id === categoryData.id) : cList[cList.length - 1]
+  if (saved && isSupabaseConfigured) {
+    // El editor visual usa alias como nombre/tipo/visible. Enviar únicamente
+    // columnas reales evita que PostgREST rechace toda la edición.
+    const categoryPayload = {
+      id: saved.id,
+      business_id: saved.business_id || businessId,
+      name: saved.name || saved.nombre || '',
+      category_type: saved.category_type || saved.tipo || 'normal',
+      is_plus: !!(saved.is_plus ?? saved.esPlus),
+      is_visible: saved.is_visible ?? saved.visible ?? true,
+      position: Number(saved.position || 0),
+      created_at: saved.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    const { data, error } = await getBusinessDataClient(businessId)
+      .from('sb_menu_categories')
+      .upsert(categoryPayload, { onConflict: 'id' })
+      .select('id, name, is_visible')
+      .single()
+    if (error || !data) {
+      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(previousList))
+      throw error || new Error('Supabase no confirmó la categoría guardada.')
+    }
+  }
+  return saved
 }
 
 export function deleteCategory(categoryId) {
   let cList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CATEGORIES) || '[]')
   let pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+  const deleted = cList.find(c => c.id === categoryId)
   cList = cList.filter(c => c.id !== categoryId)
   pList = pList.filter(p => p.category_id !== categoryId)
   localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(cList))
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+  if (deleted && isSupabaseConfigured) {
+    getBusinessDataClient(deleted.business_id).from('sb_menu_categories').delete().eq('id', categoryId)
+      .then(({ error }) => error && console.error('[Supabase Category Delete]', error.message))
+  }
 }
 
-export function saveProduct(businessId, productData) {
+export async function saveProduct(businessId, productData) {
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+  const previousList = structuredClone(pList)
   if (productData.id) {
     const idx = pList.findIndex(p => p.id === productData.id)
     if (idx !== -1) {
@@ -1458,25 +1891,79 @@ export function saveProduct(businessId, productData) {
     pList.push(newProd)
   }
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+  const saved = productData.id ? pList.find(p => p.id === productData.id) : pList[pList.length - 1]
+  if (saved && isSupabaseConfigured) {
+    // El editor visual agrega alias de presentación (nombre, precio, foto,
+    // agotado, etc.). Nunca enviarlos a PostgREST: no son columnas reales.
+    const productPayload = {
+      id: saved.id,
+      business_id: saved.business_id || businessId,
+      category_id: saved.category_id,
+      name: saved.name || saved.nombre || '',
+      price: Number(saved.price ?? saved.precio ?? 0),
+      description: saved.description || saved.descripcion || '',
+      image_url: saved.image_url || saved.foto || '',
+      is_out_of_stock: !!(saved.is_out_of_stock ?? saved.agotado),
+      is_hidden: !!(saved.is_hidden ?? saved.oculto),
+      is_active: saved.is_active ?? saved.activo ?? true,
+      is_featured: !!saved.is_featured,
+      is_promo: !!saved.is_promo,
+      position: Number(saved.position || 0),
+      created_at: saved.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    const { data, error } = await getBusinessDataClient(businessId)
+      .from('sb_menu_products')
+      .upsert(productPayload, { onConflict: 'id' })
+      .select('id, is_out_of_stock, is_hidden')
+      .single()
+    if (error || !data) {
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(previousList))
+      throw error || new Error('Supabase no confirmó el producto guardado.')
+    }
+  }
+  return saved
 }
 
-export function toggleProductAvailability(productId) {
+export async function toggleProductAvailability(productId) {
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
   const idx = pList.findIndex(p => p.id === productId)
   if (idx !== -1) {
+    const previousValue = !!pList[idx].is_out_of_stock
     pList[idx].is_out_of_stock = !pList[idx].is_out_of_stock
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+    const { data, error } = await getBusinessDataClient(pList[idx].business_id).from('sb_menu_products')
+      .update({ is_out_of_stock: pList[idx].is_out_of_stock, updated_at: new Date().toISOString() })
+      .eq('id', productId)
+      .select('id, is_out_of_stock')
+      .single()
+    if (error || !data) {
+      pList[idx].is_out_of_stock = previousValue
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+      throw error || new Error('Supabase no confirmó la disponibilidad del producto.')
+    }
     return pList[idx]
   }
   return null
 }
 
-export function toggleProductVisibility(productId) {
+export async function toggleProductVisibility(productId) {
   const pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
   const idx = pList.findIndex(p => p.id === productId)
   if (idx !== -1) {
     pList[idx].is_hidden = !pList[idx].is_hidden
     localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+    const previousValue = !pList[idx].is_hidden
+    const { data, error } = await getBusinessDataClient(pList[idx].business_id).from('sb_menu_products')
+      .update({ is_hidden: pList[idx].is_hidden, updated_at: new Date().toISOString() })
+      .eq('id', productId)
+      .select('id, is_hidden')
+      .single()
+    if (error || !data) {
+      pList[idx].is_hidden = previousValue
+      localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+      throw error || new Error('Supabase no confirmó la visibilidad del producto.')
+    }
     return pList[idx]
   }
   return null
@@ -1484,8 +1971,13 @@ export function toggleProductVisibility(productId) {
 
 export function deleteProduct(productId) {
   let pList = JSON.parse(localStorage.getItem(STORAGE_KEYS.PRODUCTS) || '[]')
+  const deleted = pList.find(p => p.id === productId)
   pList = pList.filter(p => p.id !== productId)
   localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(pList))
+  if (deleted && isSupabaseConfigured) {
+    getBusinessDataClient(deleted.business_id).from('sb_menu_products').delete().eq('id', productId)
+      .then(({ error }) => error && console.error('[Supabase Product Delete]', error.message))
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1496,8 +1988,9 @@ export function getBusinessDeliveryZones(businessId) {
   return zList.filter(z => z.business_id === businessId)
 }
 
-export function saveDeliveryZones(businessId, zonesArray) {
+export async function saveDeliveryZones(businessId, zonesArray) {
   let zList = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
+  const previousList = structuredClone(zList)
   // remove old zones for business
   zList = zList.filter(z => z.business_id !== businessId)
 
@@ -1517,7 +2010,7 @@ export function saveDeliveryZones(businessId, zonesArray) {
         settlement_type: z.settlement_type || 'Colonia',
         municipality: z.municipality || 'Tuxtla Gutiérrez',
         state: z.state || 'Chiapas',
-        delivery_fee: Number(z.delivery_fee || 30),
+        delivery_fee: Number(z.delivery_fee ?? 30),
         minimum_order: Number(z.minimum_order || 0),
         estimated_minutes: Number(z.estimated_minutes || 35),
         is_active: z.is_active !== false,
@@ -1528,10 +2021,25 @@ export function saveDeliveryZones(businessId, zonesArray) {
 
   zList.push(...cleanZones)
   localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(zList))
+  if (isSupabaseConfigured) {
+    const client = getBusinessDataClient(businessId)
+    const { error: deleteError } = await client.from('sb_business_delivery_zones').delete().eq('business_id', businessId)
+    if (deleteError) {
+      localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(previousList))
+      throw deleteError
+    }
+    if (cleanZones.length) {
+      const { error: insertError } = await client.from('sb_business_delivery_zones').insert(cleanZones)
+      if (insertError) {
+        localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(previousList))
+        throw insertError
+      }
+    }
+  }
   return cleanZones
 }
 
-export function bulkUpdateZoneFees(businessId, selectedSettlementKeys, newFee) {
+export async function bulkUpdateZoneFees(businessId, selectedSettlementKeys, newFee) {
   const zList = JSON.parse(localStorage.getItem(STORAGE_KEYS.DELIVERY_ZONES) || '[]')
   const feeNum = Number(newFee || 0)
   
@@ -1545,7 +2053,8 @@ export function bulkUpdateZoneFees(businessId, selectedSettlementKeys, newFee) {
     }
   })
 
-  localStorage.setItem(STORAGE_KEYS.DELIVERY_ZONES, JSON.stringify(zList))
+  const businessZones = zList.filter(z => z.business_id === businessId)
+  return await saveDeliveryZones(businessId, businessZones)
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1572,7 +2081,7 @@ export function getAuditLogs() {
 // ─────────────────────────────────────────────────────────────────────────────
 // REGISTRO DE PEDIDOS Y CLIENTES DEL RESTAURANTE (MULTI-TENANT DEDUPLICADO)
 // ─────────────────────────────────────────────────────────────────────────────
-export function recordPublicOrder(orderPayload) {
+export async function recordPublicOrder(orderPayload) {
   const {
     business_id,
     business_name,
@@ -1697,12 +2206,14 @@ export function recordPublicOrder(orderPayload) {
 
   ordersList.unshift(newOrder)
   localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+  rebuildBusinessCustomersFromOrders(business_id)
 
   // Sincronizar pedido a Supabase
   if (isSupabaseConfigured) {
-    supabase
+    const tenantClient = getBusinessDataClient(business_id)
+    const { error: orderError } = await tenantClient
       .from('sb_orders')
-      .insert({
+      .upsert({
         order_id: newOrder.id,
         order_number: newOrder.order_number,
         business_id: newOrder.business_id,
@@ -1731,14 +2242,12 @@ export function recordPublicOrder(orderPayload) {
         pending_receipt: newOrder.pending_receipt,
         comentarios_internos: newOrder.comentarios_internos,
         observaciones: newOrder.observaciones,
-      })
-      .then(({ error }) => {
-        if (error) console.error('[Supabase Order Sync Error] failed to sync order:', error.message)
-      })
+      }, { onConflict: 'order_id' })
+    if (orderError) throw orderError
 
     const targetCustomer = existingCustomer || (customerList && customerList[0])
     if (targetCustomer) {
-      supabase
+      const { error: customerError } = await tenantClient
         .from('sb_business_customers')
         .upsert({
           customer_id: targetCustomer.id,
@@ -1757,10 +2266,8 @@ export function recordPublicOrder(orderPayload) {
           total_spent: targetCustomer.total_spent,
           promo_consent: targetCustomer.promo_consent,
           promo_consent_at: targetCustomer.promo_consent_at,
-        })
-        .then(({ error }) => {
-          if (error) console.error('[Supabase Customer Sync Error] failed to sync customer:', error.message)
-        })
+        }, { onConflict: 'customer_id' })
+      if (customerError) throw customerError
     }
   }
 
@@ -1768,17 +2275,244 @@ export function recordPublicOrder(orderPayload) {
 }
 
 export function getBusinessCustomers(businessId) {
-  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
-  const biz = bList.find(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
-  const validIds = new Set([
-    businessId,
-    biz?.id,
-    biz?.business_id,
-    biz?.slug
-  ].filter(Boolean))
+  const validIds = getBusinessIdentitySet(businessId)
 
   const customerList = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
   return customerList.filter(c => validIds.has(c.business_id))
+}
+
+const DELETED_CUSTOMER_MARKER = '__STREETBOSS_DELETED__'
+
+export async function deleteBusinessCustomer(businessId, customer) {
+  if (!businessId || !customer) throw new Error('No se pudo identificar al cliente.')
+
+  const validIds = getBusinessIdentitySet(businessId)
+  const canonicalBusinessId = [...validIds].find(id => String(id).startsWith('biz_')) || businessId
+  const customerId = customer.customer_id || customer.id
+  if (!customerId) throw new Error('El cliente no tiene un identificador válido.')
+
+  if (isSupabaseConfigured) {
+    const client = getBusinessDataClient(businessId)
+    const { error } = await client
+      .from('sb_business_customers')
+      .upsert({
+        customer_id: customerId,
+        business_id: canonicalBusinessId,
+        name: DELETED_CUSTOMER_MARKER,
+        phone: '',
+        whatsapp: '',
+        phone_normalized: '',
+        email: '',
+        colonia: '',
+        postal_code: '',
+        address: '',
+        orders_count: 0,
+        total_spent: 0,
+        promo_consent: false,
+        promo_consent_at: null,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'customer_id' })
+    if (error) throw error
+  }
+
+  const allCustomers = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  const remaining = allCustomers.filter(item => {
+    if (!validIds.has(item.business_id)) return true
+    return (item.customer_id || item.id) !== customerId
+  })
+  localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify(remaining))
+  window.dispatchEvent(new CustomEvent('sb_customers_updated', { detail: { businessId: canonicalBusinessId } }))
+  return true
+}
+
+export function rebuildBusinessCustomersFromOrders(businessId) {
+  if (!businessId) return []
+
+  const validIds = getBusinessIdentitySet(businessId)
+  const canonicalBusinessId = [...validIds].find(id => String(id).startsWith('biz_')) || businessId
+  const allCustomers = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  const existingForBusiness = allCustomers.filter(customer => validIds.has(customer.business_id))
+  const orders = getAllOrders()
+    .filter(order => validIds.has(order.business_id))
+    .sort((a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0))
+
+  const customerMap = new Map()
+
+  orders.forEach(order => {
+    const phoneNormalized = normalizeMexicanPhone(order.phone || order.whatsapp)
+    const emailNormalized = String(order.email || '').trim().toLowerCase()
+    const identity = phoneNormalized || emailNormalized || order.customer_id || order.customer_name
+    if (!identity) return
+
+    const existing = existingForBusiness.find(customer =>
+      (phoneNormalized && customer.phone_normalized === phoneNormalized) ||
+      (emailNormalized && String(customer.email || '').trim().toLowerCase() === emailNormalized) ||
+      customer.id === order.customer_id
+    )
+    const current = customerMap.get(identity)
+    const orderDate = order.created_at || new Date().toISOString()
+    const isCancelled = order.status === 'cancelado'
+
+    if (!current) {
+      customerMap.set(identity, {
+        id: existing?.id || order.customer_id || `cust_${canonicalBusinessId}_${identity}`,
+        business_id: canonicalBusinessId,
+        name: order.customer_name || existing?.name || 'Cliente',
+        phone: order.phone || existing?.phone || '',
+        whatsapp: order.whatsapp || order.phone || existing?.whatsapp || '',
+        phone_normalized: phoneNormalized,
+        email: order.email || existing?.email || '',
+        colonia: order.colonia || existing?.colonia || '',
+        postal_code: order.postal_code || existing?.postal_code || '',
+        address: order.address || existing?.address || '',
+        first_order_at: orderDate,
+        last_order_at: orderDate,
+        orders_count: 1,
+        total_spent: isCancelled ? 0 : Number(order.total || 0),
+        promo_consent: !!existing?.promo_consent,
+        promo_consent_at: existing?.promo_consent_at || null,
+        consent_details: existing?.consent_details || null,
+        created_at: existing?.created_at || orderDate,
+      })
+      return
+    }
+
+    current.name = order.customer_name || current.name
+    current.phone = order.phone || current.phone
+    current.whatsapp = order.whatsapp || order.phone || current.whatsapp
+    current.email = order.email || current.email
+    current.colonia = order.colonia || current.colonia
+    current.postal_code = order.postal_code || current.postal_code
+    current.address = order.address || current.address
+    current.last_order_at = orderDate
+    current.orders_count += 1
+    if (!isCancelled) current.total_spent += Number(order.total || 0)
+  })
+
+  const rebuiltCustomers = [...customerMap.values()]
+    .sort((a, b) => new Date(b.last_order_at || 0) - new Date(a.last_order_at || 0))
+  const customersFromOtherBusinesses = allCustomers.filter(customer => !validIds.has(customer.business_id))
+  localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify([...rebuiltCustomers, ...customersFromOtherBusinesses]))
+  window.dispatchEvent(new CustomEvent('sb_customers_updated', { detail: { businessId: canonicalBusinessId } }))
+  return rebuiltCustomers
+}
+
+function mergeCustomerRecords(current, incoming, canonicalBusinessId) {
+  if (!current) {
+    return {
+      ...incoming,
+      business_id: canonicalBusinessId,
+      phone_normalized: normalizeMexicanPhone(incoming.phone_normalized || incoming.phone || incoming.whatsapp),
+      orders_count: Number(incoming.orders_count || 0),
+      total_spent: Number(incoming.total_spent || 0),
+    }
+  }
+
+  const currentDate = new Date(current.last_order_at || current.updated_at || current.created_at || 0)
+  const incomingDate = new Date(incoming.last_order_at || incoming.updated_at || incoming.created_at || 0)
+  const newest = incomingDate >= currentDate ? incoming : current
+  const oldestFirstOrder = [current.first_order_at, incoming.first_order_at]
+    .filter(Boolean)
+    .sort()[0] || newest.first_order_at
+
+  return {
+    ...current,
+    ...incoming,
+    ...newest,
+    business_id: canonicalBusinessId,
+    phone_normalized: normalizeMexicanPhone(newest.phone_normalized || newest.phone || newest.whatsapp),
+    first_order_at: oldestFirstOrder,
+    orders_count: Math.max(Number(current.orders_count || 0), Number(incoming.orders_count || 0)),
+    total_spent: Math.max(Number(current.total_spent || 0), Number(incoming.total_spent || 0)),
+    promo_consent: !!(current.promo_consent || incoming.promo_consent),
+    promo_consent_at: current.promo_consent_at || incoming.promo_consent_at || null,
+  }
+}
+
+export async function syncBusinessCustomersFromSupabase(businessId) {
+  if (!isSupabaseConfigured || !businessId) return getBusinessCustomers(businessId)
+
+  const validIds = getBusinessIdentitySet(businessId)
+  const canonicalBusinessId = [...validIds].find(id => String(id).startsWith('biz_')) || businessId
+  const client = getBusinessDataClient(businessId)
+  const allCustomers = JSON.parse(localStorage.getItem(STORAGE_KEYS.CUSTOMERS) || '[]')
+  const localCustomers = allCustomers.filter(customer => validIds.has(customer.business_id))
+
+  try {
+    const { data: cloudCustomers, error } = await client
+      .from('sb_business_customers')
+      .select('*')
+      .in('business_id', [...validIds])
+
+    if (error) throw error
+
+    const deletedCustomerIds = new Set(
+      (cloudCustomers || [])
+        .filter(customer => customer.name === DELETED_CUSTOMER_MARKER)
+        .map(customer => customer.customer_id)
+    )
+    const merged = new Map()
+    const addCustomer = customer => {
+      if (customer.name === DELETED_CUSTOMER_MARKER) return
+      if (deletedCustomerIds.has(customer.customer_id || customer.id)) return
+      const normalizedPhone = normalizeMexicanPhone(customer.phone_normalized || customer.phone || customer.whatsapp)
+      const normalizedEmail = String(customer.email || '').trim().toLowerCase()
+      const identity = normalizedPhone || normalizedEmail || customer.customer_id || customer.id
+      if (!identity) return
+      const normalized = {
+        ...customer,
+        id: customer.id || customer.customer_id,
+        customer_id: customer.customer_id || customer.id,
+      }
+      merged.set(identity, mergeCustomerRecords(merged.get(identity), normalized, canonicalBusinessId))
+    }
+
+    localCustomers.forEach(addCustomer)
+    ;(cloudCustomers || []).forEach(addCustomer)
+
+    const unifiedCustomers = [...merged.values()]
+      .sort((a, b) => new Date(b.last_order_at || 0) - new Date(a.last_order_at || 0))
+
+    const payload = unifiedCustomers.map(customer => ({
+      customer_id: customer.customer_id || customer.id,
+      business_id: canonicalBusinessId,
+      name: customer.name || 'Cliente',
+      phone: customer.phone || '',
+      whatsapp: customer.whatsapp || customer.phone || '',
+      phone_normalized: normalizeMexicanPhone(customer.phone_normalized || customer.phone || customer.whatsapp),
+      email: customer.email || '',
+      colonia: customer.colonia || '',
+      postal_code: customer.postal_code || '',
+      address: customer.address || '',
+      first_order_at: customer.first_order_at || customer.created_at || new Date().toISOString(),
+      last_order_at: customer.last_order_at || customer.created_at || new Date().toISOString(),
+      orders_count: Number(customer.orders_count || 0),
+      total_spent: Number(customer.total_spent || 0),
+      promo_consent: !!customer.promo_consent,
+      promo_consent_at: customer.promo_consent_at || null,
+    }))
+
+    if (payload.length > 0) {
+      const { error: uploadError } = await client
+        .from('sb_business_customers')
+        .upsert(payload, { onConflict: 'customer_id' })
+      if (uploadError) throw uploadError
+    }
+
+    const otherBusinesses = allCustomers.filter(customer => !validIds.has(customer.business_id))
+    localStorage.setItem(STORAGE_KEYS.CUSTOMERS, JSON.stringify([...unifiedCustomers, ...otherBusinesses]))
+    window.dispatchEvent(new CustomEvent('sb_customers_updated', { detail: { businessId: canonicalBusinessId } }))
+    return unifiedCustomers
+  } catch (err) {
+    console.error('[Supabase Customers Sync Exception]', JSON.stringify({
+      code: err?.code || '',
+      message: err?.message || String(err),
+      details: err?.details || '',
+      hint: err?.hint || '',
+      businessId: canonicalBusinessId,
+    }))
+    return localCustomers
+  }
 }
 
 export function updateCustomerPromoConsent(customerId, hasConsent) {
@@ -1796,17 +2530,39 @@ export function getAllOrders() {
 }
 
 export function getOrdersByBusiness(businessId) {
-  const bList = JSON.parse(localStorage.getItem(STORAGE_KEYS.BUSINESSES) || '[]')
-  const biz = bList.find(b => b.business_id === businessId || b.id === businessId || b.slug === businessId)
-  const validIds = new Set([
-    businessId,
-    biz?.id,
-    biz?.business_id,
-    biz?.slug
-  ].filter(Boolean))
+  const validIds = getBusinessIdentitySet(businessId)
 
   const orders = getAllOrders()
   return orders.filter(o => validIds.has(o.business_id))
+}
+
+export async function deleteOrder(order) {
+  const orderId = order?.id || order?.order_id
+  const orderNumber = order?.order_number
+  const businessId = order?.business_id
+  if (!orderId && !orderNumber) throw new Error('El pedido no tiene una identidad válida.')
+  if (!businessId) throw new Error('El pedido no tiene un negocio asociado.')
+
+  if (isSupabaseConfigured) {
+    const client = getBusinessDataClient(businessId)
+    let query = client.from('sb_orders').delete().eq('business_id', businessId)
+    query = orderId ? query.eq('order_id', orderId) : query.eq('order_number', orderNumber)
+    const { data, error } = await query.select('order_id')
+    if (error) throw error
+    if (!data?.length) throw new Error('Supabase no confirmó la eliminación del pedido.')
+  }
+
+  const orders = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+  const remainingOrders = orders.filter(item => {
+    const sameId = orderId && (item.id === orderId || item.order_id === orderId)
+    const sameNumber = orderNumber && item.order_number === orderNumber
+    return !sameId && !sameNumber
+  })
+  localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(remainingOrders))
+  rebuildBusinessCustomersFromOrders(businessId)
+  logAuditAction('eliminar_pedido', businessId, { orderId, orderNumber })
+  window.dispatchEvent(new CustomEvent('sb_orders_updated', { detail: { order, eventType: 'DELETE' } }))
+  return true
 }
 
 export function updateOrderStatus(orderId, newStatus, extraData = {}) {
@@ -1844,14 +2600,17 @@ export function updateOrderStatus(orderId, newStatus, extraData = {}) {
 export async function syncOrdersFromSupabase(businessId) {
   if (!isSupabaseConfigured) return
   try {
-    const { data, error } = await supabase
+    const validIds = getBusinessIdentitySet(businessId)
+    const client = getBusinessDataClient(businessId)
+    const { data, error } = await client
       .from('sb_orders')
       .select('*')
-      .eq('business_id', businessId)
+      .in('business_id', [...validIds])
     
     if (error) throw error
-    if (data && data.length > 0) {
+    if (data) {
       let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
+        .filter(order => !validIds.has(order.business_id))
       data.forEach(dbOrder => {
         const localIdx = ordersList.findIndex(o => o.id === dbOrder.order_id || o.order_number === dbOrder.order_number)
         const formattedOrder = {
@@ -1893,9 +2652,18 @@ export async function syncOrdersFromSupabase(businessId) {
         }
       })
       localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+      rebuildBusinessCustomersFromOrders(businessId)
     }
   } catch (err) {
-    console.error('[Supabase Sync Orders Exception] failed to download orders:', err)
+    console.error('[Supabase Sync Orders Exception]', JSON.stringify({
+      code: err?.code || '',
+      message: err?.message || String(err),
+      details: err?.details || '',
+      hint: err?.hint || '',
+      businessId,
+    }))
+  } finally {
+    await syncBusinessCustomersFromSupabase(businessId)
   }
 }
 
@@ -1903,14 +2671,15 @@ export function subscribeToOrdersRealtime(businessId, onNewOrderCallback) {
   if (!isSupabaseConfigured) return () => {}
   
   console.log('[Supabase Realtime] Suscribiéndose a órdenes en tiempo real para:', businessId)
-  const channel = supabase
+  const client = getBusinessDataClient(businessId)
+  const channel = client
     .channel(`realtime:sb_orders:${businessId}`)
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'sb_orders', filter: `business_id=eq.${businessId}` },
       (payload) => {
         console.log('[Supabase Realtime Event] Recibido:', payload)
-        const dbOrder = payload.new
+        const dbOrder = payload.eventType === 'DELETE' ? payload.old : payload.new
         if (!dbOrder || !dbOrder.order_id) return
 
         let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
@@ -1957,6 +2726,7 @@ export function subscribeToOrdersRealtime(businessId, onNewOrderCallback) {
         }
 
         localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(ordersList))
+        rebuildBusinessCustomersFromOrders(businessId)
         
         if (onNewOrderCallback) {
           onNewOrderCallback(formattedOrder, payload.eventType)
@@ -1967,7 +2737,7 @@ export function subscribeToOrdersRealtime(businessId, onNewOrderCallback) {
 
   return () => {
     console.log('[Supabase Realtime] Desuscribiéndose de órdenes para:', businessId)
-    supabase.removeChannel(channel)
+    client.removeChannel(channel)
   }
 }
 
@@ -2006,11 +2776,16 @@ export function updateOrderPaymentStatus(orderId, newPaymentStatus, extraData = 
 export async function syncAllOrdersFromSupabase() {
   if (!isSupabaseConfigured) return
   try {
-    const { data, error } = await supabase
-      .from('sb_orders')
-      .select('*')
-    
-    if (error) throw error
+    const businesses = getClients()
+    const batches = await Promise.all(businesses.map(async business => {
+      const { data, error } = await getBusinessDataClient(business.business_id)
+        .from('sb_orders')
+        .select('*')
+        .eq('business_id', business.business_id)
+      if (error) throw error
+      return data || []
+    }))
+    const data = batches.flat()
     if (data && data.length > 0) {
       let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
       data.forEach(dbOrder => {
@@ -2062,16 +2837,17 @@ export async function syncAllOrdersFromSupabase() {
 
 export function subscribeToAllOrdersRealtime(onNewOrderCallback) {
   if (!isSupabaseConfigured) return () => {}
-  
-  console.log('[Supabase Realtime] Suscribiéndose a todas las órdenes en tiempo real')
-  const channel = supabase
-    .channel('realtime:all_sb_orders')
+  const businesses = getClients()
+  const subscriptions = businesses.map(business => {
+    const client = getBusinessDataClient(business.business_id)
+    const channel = client
+    .channel(`realtime:hq_orders:${business.business_id}`)
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'sb_orders' },
+      { event: '*', schema: 'public', table: 'sb_orders', filter: `business_id=eq.${business.business_id}` },
       (payload) => {
         console.log('[Supabase Realtime Event Global] Recibido:', payload)
-        const dbOrder = payload.new
+        const dbOrder = payload.eventType === 'DELETE' ? payload.old : payload.new
         if (!dbOrder || !dbOrder.order_id) return
 
         let ordersList = JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]')
@@ -2110,7 +2886,7 @@ export function subscribeToAllOrdersRealtime(onNewOrderCallback) {
 
         if (payload.eventType === 'DELETE') {
           const deletedId = payload.old?.order_id
-          ordersList = ordersList.filter(o => o.id !== deletedId)
+          ordersList = ordersList.filter(o => o.id !== deletedId && o.order_number !== payload.old?.order_number)
         } else if (localIdx !== -1) {
           ordersList[localIdx] = formattedOrder
         } else {
@@ -2125,10 +2901,11 @@ export function subscribeToAllOrdersRealtime(onNewOrderCallback) {
       }
     )
     .subscribe()
+    return { client, channel }
+  })
 
   return () => {
     console.log('[Supabase Realtime Global] Desuscribiéndose de todas las órdenes')
-    supabase.removeChannel(channel)
+    subscriptions.forEach(({ client, channel }) => client.removeChannel(channel))
   }
 }
-

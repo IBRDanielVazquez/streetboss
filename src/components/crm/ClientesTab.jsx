@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { DEMO_CONTACTS } from '../../data/demoFixtures'
-import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword, deleteClient } from '../../services/crmV3Service'
+import { getClients, syncClientsFromSupabase, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword, deleteClient } from '../../services/crmV3Service'
 import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck, Eye, EyeOff, X, Trash2 } from 'lucide-react'
 
 export default function ClientesTab() {
@@ -11,6 +11,8 @@ export default function ClientesTab() {
   const [deleteModal, setDeleteModal] = useState(null) // { client, confirmInput }
   const [copiedMsg, setCopiedMsg] = useState('')
   const [previewModal, setPreviewModal] = useState(null)
+  const [deleteError, setDeleteError] = useState('')
+  const [deletingClient, setDeletingClient] = useState(false)
 
   // FASE 2: Modal de contraseña — contraseña solo visible una vez
   const [passwordModal, setPasswordModal] = useState(null) // { client, generatedPassword, mode: 'generate' | 'set' }
@@ -19,12 +21,23 @@ export default function ClientesTab() {
   const [passwordError, setPasswordError] = useState('')
   const [showPasswordField, setShowPasswordField] = useState(false)
 
-  const reloadClients = () => {
+  const reloadClients = async () => {
     setClients(getClients())
+    const cloudClients = await syncClientsFromSupabase()
+    setClients(cloudClients)
   }
 
   useEffect(() => {
     reloadClients()
+    const refresh = () => reloadClients()
+    window.addEventListener('focus', refresh)
+    window.addEventListener('pageshow', refresh)
+    window.addEventListener('online', refresh)
+    return () => {
+      window.removeEventListener('focus', refresh)
+      window.removeEventListener('pageshow', refresh)
+      window.removeEventListener('online', refresh)
+    }
   }, [])
 
   const handleStatusChange = (clientBusinessId, newStatus) => {
@@ -203,6 +216,16 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
         </div>
       </div>
 
+      <div className="flex items-start gap-3 rounded-2xl border border-red-500/20 bg-red-500/10 p-4 text-red-100">
+        <Trash2 className="mt-0.5 shrink-0 text-red-400" size={18} />
+        <div>
+          <p className="font-black">Borrado de cuentas habilitado</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-red-100/70">
+            Usa <strong>Borrar cuenta</strong> en la tarjeta del restaurante. StreetBoss pedirá escribir ELIMINAR antes de ejecutar la baja central.
+          </p>
+        </div>
+      </div>
+
       {/* Lista Única de Clientes */}
       <div className="space-y-4">
         {filteredClients.length === 0 ? (
@@ -251,7 +274,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400">
                     <div className="flex items-center gap-1 bg-[#0D0E12] px-3 py-1.5 rounded-xl border border-white/5">
                       <Layers size={13} className="text-[#FF4B00]" />
                       <span>{client.categories_count || 0} Cat</span>
@@ -264,6 +287,14 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                       <MapPin size={13} className="text-[#FF4B00]" />
                       <span>{client.colonias_count || 0} Zonas</span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setDeleteModal({ client, confirmInput: '', deleteCustomers: false, deleteOrders: false })}
+                      className="flex min-h-9 items-center gap-1.5 rounded-xl border border-red-500/40 bg-red-600 px-3 font-black text-white shadow-lg shadow-red-950/30 transition-colors hover:bg-red-500"
+                      aria-label={`Borrar cuenta de ${client.name}`}
+                    >
+                      <Trash2 size={14} /> Borrar cuenta
+                    </button>
                   </div>
                 </div>
 
@@ -369,7 +400,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                     )}
 
                     <button
-                      onClick={() => setDeleteModal({ client, confirmInput: '' })}
+                      onClick={() => setDeleteModal({ client, confirmInput: '', deleteCustomers: false, deleteOrders: false })}
                       className="flex items-center gap-1 bg-red-600/20 hover:bg-red-600/30 text-red-400 font-bold text-xs px-3 py-2 rounded-xl border border-red-500/30"
                     >
                       <Trash2 size={13} /> Eliminar Cliente
@@ -624,6 +655,22 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                   </p>
                 </div>
               </label>
+              <label className="flex items-start gap-2.5 cursor-pointer text-xs font-bold text-gray-200 border-t border-white/10 pt-3">
+                <input
+                  type="checkbox"
+                  checked={deleteModal.deleteOrders || false}
+                  onChange={e => setDeleteModal({ ...deleteModal, deleteOrders: e.target.checked })}
+                  className="mt-0.5 rounded border-white/20 bg-black text-red-500 focus:ring-red-500"
+                />
+                <div>
+                  <span className="text-white font-black">Eliminar también todos los pedidos de este negocio</span>
+                  <p className="text-[11px] font-normal text-gray-400 mt-0.5">
+                    {deleteModal.deleteOrders
+                      ? '⚠️ Los pedidos dejarán de aparecer en el historial, métricas y rankings.'
+                      : 'Los pedidos se conservarán aunque se elimine la cuenta del negocio.'}
+                  </p>
+                </div>
+              </label>
             </div>
 
             <p className="text-[11px] text-gray-400">
@@ -643,17 +690,27 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                 Cancelar
               </button>
               <button
-                disabled={deleteModal.confirmInput !== 'ELIMINAR'}
-                onClick={() => {
-                  deleteClient(deleteModal.client.business_id, deleteModal.deleteCustomers || false)
-                  setDeleteModal(null)
-                  reloadClients()
+                disabled={deleteModal.confirmInput !== 'ELIMINAR' || deletingClient}
+                onClick={async () => {
+                  setDeletingClient(true)
+                  setDeleteError('')
+                  try {
+                    await deleteClient(deleteModal.client.business_id, deleteModal.deleteCustomers || false, deleteModal.deleteOrders || false)
+                    setDeleteModal(null)
+                    await reloadClients()
+                  } catch (error) {
+                    console.error('No se pudo eliminar el negocio:', error)
+                    setDeleteError('No se pudo eliminar en la base central. Intenta nuevamente.')
+                  } finally {
+                    setDeletingClient(false)
+                  }
                 }}
                 className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-black text-xs rounded-xl shadow transition-all"
               >
-                Confirmar Eliminación
+                {deletingClient ? 'Eliminando…' : 'Confirmar Eliminación'}
               </button>
             </div>
+            {deleteError && <p className="text-xs font-bold text-red-400">{deleteError}</p>}
           </div>
         </div>
       )}

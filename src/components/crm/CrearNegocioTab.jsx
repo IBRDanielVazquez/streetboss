@@ -38,6 +38,7 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
   const [copiedField, setCopiedField] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     const list = getDemos()
@@ -60,14 +61,15 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
+    setIsSaving(true)
     try {
       if (!demoSelectedId) throw new Error('Por favor selecciona una plantilla Demo base.')
       if (!formData.name.trim()) throw new Error('El nombre comercial del negocio es obligatorio.')
 
-      const created = createBusinessFromDemo({
+      const created = await createBusinessFromDemo({
         demoId: demoSelectedId,
         formData,
       })
@@ -76,6 +78,8 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
       if (onBusinessCreated) onBusinessCreated(created.business)
     } catch (err) {
       setError(err.message || 'Error al crear el negocio.')
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -109,6 +113,12 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
               <p className="text-xs text-gray-400">Instancia real independiente creada (is_demo = false).</p>
             </div>
           </div>
+
+          {result.slugAdjusted && (
+            <div className="bg-amber-500/10 border border-amber-500/25 text-amber-300 rounded-xl p-3 text-xs font-bold">
+              La dirección <span className="font-mono">/menu/{result.requestedSlug}</span> ya existía en otro dispositivo o perteneció a una cuenta eliminada. Se asignó automáticamente <span className="font-mono">/menu/{result.business.slug}</span>.
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div className="bg-[#0D0E12] p-4 rounded-xl border border-white/5 space-y-2">
@@ -358,9 +368,10 @@ export default function CrearNegocioTab({ selectedDemoId, onBusinessCreated }) {
           <div className="flex justify-end">
             <button
               type="submit"
-              className="flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black text-sm px-8 py-3.5 rounded-full shadow-[0_0_25px_rgba(255,75,0,0.4)] transition-all transform hover:scale-105"
+              disabled={isSaving}
+              className="flex items-center gap-2 bg-[#FF4B00] hover:bg-[#FF6A1A] disabled:opacity-60 disabled:cursor-wait text-white font-black text-sm px-8 py-3.5 rounded-full shadow-[0_0_25px_rgba(255,75,0,0.4)] transition-all transform hover:scale-105 disabled:hover:scale-100"
             >
-              <Sparkles size={18} /> Crear Negocio y Generar Menú
+              <Sparkles size={18} /> {isSaving ? 'Guardando en todos tus dispositivos…' : 'Crear Negocio y Generar Menú'}
             </button>
           </div>
         </form>

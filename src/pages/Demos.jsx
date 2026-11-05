@@ -4,7 +4,7 @@ import { DEMO_SHOWCASE } from '../data/demoShowcase'
 import { DEMO_CONTACTS } from '../data/demoFixtures'
 const FACEBOOK_URL = 'https://www.facebook.com/share/1Csqs8gKqt/?mibextid=wwXIfr'
 const INSTAGRAM_URL = 'https://www.instagram.com/streetboss.mx/'
-const VENTAS_URL = `https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}?text=Hola,%20quiero%20mi%20menu%20digital%20con%20la%20oferta%20de%2099%20pesos`
+const VENTAS_URL = `https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}?text=Hola,%20quiero%20StreetBoss%20por%20%24499%20MXN%20el%20primer%20a%C3%B1o`
 
 export default function Demos() {
   return (
@@ -63,7 +63,7 @@ export default function Demos() {
           </div>
 
           <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-5">
-            {DEMO_SHOWCASE.map((demo, index) => (
+            {DEMO_SHOWCASE.filter(demo => demo.is_demo !== false).map((demo, index) => (
               <article key={demo.id} className="group relative flex min-h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-black shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#ff4b16]/50 sm:rounded-[1.8rem]">
                 <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${demo.color} opacity-0 transition-opacity duration-500 group-hover:opacity-100`} />
                 <div className="relative h-32 overflow-hidden sm:h-44">
@@ -111,9 +111,9 @@ export default function Demos() {
         <div className="mx-auto grid max-w-6xl gap-6 rounded-[2rem] border border-[#f5b87a]/30 bg-gradient-to-br from-[#16100a] to-black p-6 shadow-[0_0_60px_rgba(255,75,22,0.14)] md:grid-cols-[1.1fr_0.9fr] md:p-10">
           <div>
             <p className="mb-3 text-xs font-black uppercase tracking-[0.3em] text-[#f5b87a]">Oferta de lanzamiento</p>
-            <h2 className="text-3xl font-black tracking-tight md:text-5xl">$99 MXN al mes durante tus primeros 3 meses.</h2>
+            <h2 className="text-3xl font-black tracking-tight md:text-5xl">Tu restaurante. Tu enlace. $499 MXN el primer año.</h2>
             <p className="mt-5 max-w-2xl text-gray-400">
-              Después $249 MXN al mes. Sin comisiones por venta. Sin intermediarios. El pedido llega directo al WhatsApp del negocio.
+              Un pago cubre 12 meses. Desde el segundo año: $99 MXN/mes o $990 MXN/año (pagas 10 meses y usas 12). Sin comisión por venta. Los pedidos llegan a tu WhatsApp.
             </p>
             <div className="mt-7 grid gap-3 text-sm text-gray-300 sm:grid-cols-2">
               {[
@@ -130,7 +130,7 @@ export default function Demos() {
             </div>
           </div>
           <div className="flex flex-col justify-center rounded-[1.5rem] border border-white/10 bg-black/50 p-5">
-            <p className="text-sm font-bold text-amber-300">Disponible únicamente para los primeros 10 negocios.</p>
+            <p className="text-sm font-bold text-amber-300">Elige pago mensual o anual a partir del segundo año.</p>
             <a href={VENTAS_URL} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-[#ff4b16] px-6 py-4 text-base font-black text-white shadow-[0_0_30px_rgba(255,75,22,0.35)] transition-transform hover:scale-105">
               <MessageCircle size={19} /> Quiero mi menú digital
             </a>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { getAllOrders } from '../../services/crmV3Service'
+import { deleteOrder, getAllOrders } from '../../services/crmV3Service'
 import {
   ShoppingBag,
   Search,
@@ -14,7 +14,9 @@ import {
   CheckCircle,
   Clock,
   MapPin,
-  X
+  X,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react'
 
 export default function PedidosCRMTab() {
@@ -24,6 +26,9 @@ export default function PedidosCRMTab() {
   const [filterDateRange, setFilterDateRange] = useState('todos') // 'todos', 'hoy', 'ayer', '7dias', 'mes'
   const [filterDeliveryType, setFilterDeliveryType] = useState('todos') // 'todos', 'domicilio', 'recoleccion'
   const [selectedOrder, setSelectedOrder] = useState(null)
+  const [deleteModal, setDeleteModal] = useState(null)
+  const [deletingOrder, setDeletingOrder] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
   const [toastMsg, setToastMsg] = useState('')
 
   const loadOrders = () => {
@@ -231,7 +236,7 @@ export default function PedidosCRMTab() {
 
         {filteredOrders.length === 0 ? (
           <p className="text-xs text-gray-400 text-center py-10">
-            No se han registrado pedidos en el período o criterios seleccionados. Realiza una prueba desde cualquier menú público.
+            No se han registrado pedidos en el período o con los criterios seleccionados.
           </p>
         ) : (
           <div className="space-y-3">
@@ -347,8 +352,63 @@ export default function PedidosCRMTab() {
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-white/5">
+            <div className="flex flex-wrap justify-between gap-2 pt-2 border-t border-white/5">
+              <button
+                onClick={() => {
+                  setDeleteError('')
+                  setDeleteModal({ order: selectedOrder, confirmInput: '' })
+                }}
+                className="px-4 py-2 rounded-xl bg-red-600/15 border border-red-500/30 text-red-400 hover:bg-red-600 hover:text-white font-black flex items-center gap-2"
+              >
+                <Trash2 size={14} /> Eliminar pedido
+              </button>
               <button onClick={() => setSelectedOrder(null)} className="px-4 py-2 rounded-xl bg-white/5 text-gray-300 font-bold">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteModal && (
+        <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#14161F] border border-red-500/30 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl text-xs">
+            <h3 className="text-base font-black text-red-400 flex items-center gap-2">
+              <AlertTriangle size={19} /> Eliminar pedido de forma permanente
+            </h3>
+            <p className="text-gray-300 leading-relaxed">
+              Se eliminará el pedido <strong className="text-white font-mono">{deleteModal.order.order_number}</strong> de <strong className="text-white">{deleteModal.order.business_name}</strong>. También desaparecerá de métricas y rankings.
+            </p>
+            <p className="text-gray-400">Escribe <strong className="text-red-400 font-mono">ELIMINAR</strong> para confirmar.</p>
+            <input
+              value={deleteModal.confirmInput}
+              onChange={event => setDeleteModal({ ...deleteModal, confirmInput: event.target.value })}
+              placeholder="Escribe ELIMINAR"
+              className="w-full bg-[#0D0E12] border border-white/10 rounded-xl px-4 py-2.5 text-white font-mono focus:border-red-500 focus:outline-none"
+            />
+            {deleteError && <p className="font-bold text-red-400">{deleteError}</p>}
+            <div className="flex justify-end gap-2">
+              <button disabled={deletingOrder} onClick={() => setDeleteModal(null)} className="px-4 py-2 bg-white/5 text-gray-300 font-bold rounded-xl">Cancelar</button>
+              <button
+                disabled={deleteModal.confirmInput !== 'ELIMINAR' || deletingOrder}
+                onClick={async () => {
+                  setDeletingOrder(true)
+                  setDeleteError('')
+                  try {
+                    await deleteOrder(deleteModal.order)
+                    setDeleteModal(null)
+                    setSelectedOrder(null)
+                    loadOrders()
+                    showToast('Pedido eliminado correctamente')
+                  } catch (error) {
+                    console.error('No se pudo eliminar el pedido:', error)
+                    setDeleteError('No se pudo eliminar en la base central. Intenta nuevamente.')
+                  } finally {
+                    setDeletingOrder(false)
+                  }
+                }}
+                className="px-5 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-40 text-white font-black rounded-xl"
+              >
+                {deletingOrder ? 'Eliminando…' : 'Eliminar definitivamente'}
+              </button>
             </div>
           </div>
         </div>

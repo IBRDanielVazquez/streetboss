@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react'
 import { X, CheckCircle, Store, Bike, Search, Send, Clock, AlertCircle, Copy, Check } from 'lucide-react'
 import { buscarPorCP, verificarCobertura } from '../data/sepomexTuxtla'
 import { recordPublicOrder, updateOrderStatus, normalizeMexicanPhone } from '../services/crmV3Service'
-import { DEMO_CONTACTS } from '../data/demoFixtures'
 
 // Genera folio único tipo SB-AXKF-7821
 const generarFolio = () => {
@@ -19,7 +18,8 @@ export default function CheckoutDrawer({
   productosPorId,
   config, 
   onClearCarrito,
-  onUpdateCartItem 
+  onUpdateCartItem,
+  onTrackEvent,
 }) {
   const [paso, setPaso] = useState(1) // 1: Entrega, 2: Datos, 3: Pago y Resumen
   const [datosCliente, setDatosCliente] = useState({ 
@@ -62,6 +62,12 @@ export default function CheckoutDrawer({
     }
   }, [config.payment_methods, config.formasPago])
 
+  const activePaymentMethods = useMemo(() => [
+    paymentMethodsConfig.efectivo?.activo !== false ? 'efectivo' : null,
+    paymentMethodsConfig.transferencia?.activo ? 'transferencia' : null,
+    paymentMethodsConfig.tarjeta?.activo ? 'tarjeta' : null,
+  ].filter(Boolean), [paymentMethodsConfig])
+
   // Cargar colonias disponibles (sin exigir CP inicial)
   useEffect(() => {
     if (zonasConfiguradas.length > 0) {
@@ -87,20 +93,22 @@ export default function CheckoutDrawer({
   useEffect(() => {
     const zonas = config.envio?.zonas || []
     if (datosCliente.colonia || zonas.length > 0) {
-      const cob = verificarCobertura(datosCliente.cp, datosCliente.colonia, zonas)
+      const cob = verificarCobertura(datosCliente.cp, datosCliente.colonia, zonas, {
+        tarifaBase: config.envio?.costoEnvio,
+        costoPorKm: config.envio?.costoPorKm,
+      })
       setCobertura(cob)
     } else {
       setCobertura({ cubierto: true, precioEnvio: 0 })
     }
-  }, [datosCliente.colonia, datosCliente.cp])
+  }, [datosCliente.colonia, datosCliente.cp, config.envio?.zonas, config.envio?.costoEnvio, config.envio?.costoPorKm])
 
   // Ajustar formaPago por defecto si la seleccionada no está activa
   useEffect(() => {
-    if (datosCliente.formaPago === 'efectivo' && paymentMethodsConfig.efectivo?.activo === false) {
-      if (paymentMethodsConfig.transferencia?.activo) setDatosCliente(d => ({ ...d, formaPago: 'transferencia' }))
-      else if (paymentMethodsConfig.tarjeta?.activo) setDatosCliente(d => ({ ...d, formaPago: 'tarjeta' }))
+    if (!activePaymentMethods.includes(datosCliente.formaPago)) {
+      setDatosCliente(d => ({ ...d, formaPago: activePaymentMethods[0] || '' }))
     }
-  }, [paymentMethodsConfig, datosCliente.formaPago])
+  }, [activePaymentMethods, datosCliente.formaPago])
 
   // Cálculos O(1) usando el diccionario memoizado
   const { subtotal, itemsCarrito } = useMemo(() => {
@@ -117,9 +125,11 @@ export default function CheckoutDrawer({
   }, [carrito, productosPorId])
 
   const costoEnvio = datosCliente.tipo === 'llevar'
-    ? (cobertura.precioEnvio || config.envio?.costoEnvio || 0)
+    ? (cobertura.precioEnvio ?? config.envio?.costoEnvio ?? 0)
     : 0
   const total = subtotal + costoEnvio
+  const cardMinimum = Math.max(0, Number(paymentMethodsConfig.tarjeta?.compra_minima ?? 0))
+  const cardMinimumMet = cardMinimum === 0 || total >= cardMinimum
   const [copiedCuenta, setCopiedCuenta] = useState(false)
 
   const handleCopyClabe = (clabe) => {
@@ -140,6 +150,12 @@ export default function CheckoutDrawer({
     if (isSubmitting) return
     if (!datosCliente.nombre.trim() || !datosCliente.whatsapp.trim()) return alert('Nombre y WhatsApp son obligatorios.')
     if (itemsCarrito.length === 0) return alert('El carrito está vacío.')
+    if (!activePaymentMethods.length || !activePaymentMethods.includes(datosCliente.formaPago)) {
+      return alert('Este negocio todavía no tiene una forma de pago disponible. Contacta al restaurante antes de enviar el pedido.')
+    }
+    if (datosCliente.formaPago === 'tarjeta' && !cardMinimumMet) {
+      return alert(`La compra mínima para pagar con tarjeta es de $${cardMinimum}. Agrega $${cardMinimum - total} más a tu pedido o selecciona otra forma de pago.`)
+    }
 
     if (datosCliente.tipo === 'llevar') {
       if (!datosCliente.calle.trim() || !datosCliente.numero.trim() || !datosCliente.colonia.trim()) {
@@ -195,7 +211,7 @@ export default function CheckoutDrawer({
     if (datosCliente.observaciones) msg += `📝 *Nota:* ${datosCliente.observaciones.trim()}\n`
 
     msg += `\n*RESUMEN:*\n💰 Subtotal: $${subtotal}\n`
-    if (esLlevar) msg += `🛵 Envío: $${costoEnvio === 0 ? 'GRATIS' : `$${costoEnvio}`}\n`
+    if (esLlevar) msg += `🛵 Envío: ${costoEnvio === 0 ? 'GRATIS' : `$${costoEnvio}`}\n`
     msg += `✅ *TOTAL: $${total}*\n\n`
     
     if (datosCliente.formaPago === 'efectivo') {
@@ -221,10 +237,31 @@ export default function CheckoutDrawer({
         : `💳 *Método de pago:* Pago con tarjeta al recibir. El restaurante llevará la terminal.\n`
     }
 
-    // 1. GUARDAR PEDIDO Y CLIENTE EN BD ANTES DE ABRIR WHATSAPP
+    const targetWhatsAppClean = normalizeMexicanPhone(config.whatsapp || config.telefono)
+    if (!targetWhatsAppClean) {
+      setIsSubmitting(false)
+      alert('Este negocio aún no ha configurado su número de WhatsApp. Contacta al establecimiento para completar tu pedido.')
+      return
+    }
+
+    // 1. ABRIR WHATSAPP DURANTE EL GESTO DEL USUARIO PARA EVITAR EL BLOQUEO DE SAFARI MÓVIL
+    const whatsappUrl = `https://wa.me/52${targetWhatsAppClean}?text=${encodeURIComponent(msg)}`
+    onTrackEvent?.('order_created')
+    onTrackEvent?.('whatsapp_click')
+
+    let whatsappWindow = null
+    try {
+      whatsappWindow = window.open(whatsappUrl, '_blank')
+      if (!whatsappWindow) window.location.assign(whatsappUrl)
+    } catch (e) {
+      console.warn('No se pudo abrir WhatsApp en una pestaña nueva:', e)
+      window.location.assign(whatsappUrl)
+    }
+
+    // 2. GUARDAR PEDIDO Y CLIENTE SIN INTERRUMPIR LA VENTA DIRECTA SI LA NUBE FALLA
     let savedOrderResult = null
     try {
-      savedOrderResult = recordPublicOrder({
+      savedOrderResult = await recordPublicOrder({
         business_id: config.business_id || config.id || config.trialId || 'tacos-el-guero',
         business_name: config.negocio || config.nombre || 'Restaurante',
         customer_name: datosCliente.nombre.trim(),
@@ -248,25 +285,12 @@ export default function CheckoutDrawer({
         whatsapp_status: 'pendiente_envio'
       })
     } catch (err) {
-      console.warn('Error guardando pedido público:', err)
+      console.error('Error guardando pedido público:', err)
     }
 
-    // 2. CONSTRUIR ENLACE INTERNACIONAL WHATSAPP FORMATO MÉXICO (52 + 10 DÍGITOS)
-    const targetWhatsAppClean = normalizeMexicanPhone(config.whatsapp || config.telefono || DEMO_CONTACTS.DEFAULT_PHONE)
-    const whatsappUrl = `https://wa.me/52${targetWhatsAppClean}?text=${encodeURIComponent(msg)}`
-
-    // 3. ABRIR WHATSAPP Y ACTUALIZAR ESTADO A ENVIADO_WA
-    let openSuccess = false
-    try {
-      const win = window.open(whatsappUrl, '_blank')
-      if (win) {
-        openSuccess = true
-        if (savedOrderResult?.order?.id) {
-          updateOrderStatus(savedOrderResult.order.id, 'enviado_wa', { whatsapp_status: 'enviado_wa' })
-        }
-      }
-    } catch (e) {
-      console.warn('No se pudo abrir automáticamente el popup de WhatsApp:', e)
+    // 3. ACTUALIZAR EL ESTADO CUANDO EL REGISTRO CENTRAL SÍ ESTUVO DISPONIBLE
+    if (savedOrderResult?.order?.id) {
+      updateOrderStatus(savedOrderResult.order.id, 'enviado_wa', { whatsapp_status: 'enviado_wa' })
     }
 
     // 4. BLOQUEAR MODIFICACIONES DEL PEDIDO, VACIAR CARRITO Y CERRAR
@@ -334,6 +358,7 @@ export default function CheckoutDrawer({
             {whatsappUrl && (
               <a
                 href={whatsappUrl}
+                onClick={() => onTrackEvent?.('whatsapp_click')}
                 target="_blank"
                 rel="noreferrer"
                 className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-black py-3 px-4 rounded-xl flex items-center justify-center gap-2 text-xs shadow-md transition-all active:scale-95"
@@ -531,6 +556,12 @@ export default function CheckoutDrawer({
                 <h4 className="font-bold text-gray-900 text-lg mb-1">Método de pago</h4>
                 <p className="text-sm text-gray-500 mb-4">Selecciona cómo vas a pagar</p>
 
+                {activePaymentMethods.length === 0 && (
+                  <div className="mb-4 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm font-bold text-amber-800">
+                    El restaurante aún no habilita una forma de pago. Comunícate directamente antes de enviar tu pedido.
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 gap-2 mb-6">
                   {/* Opción 1: EFECTIVO */}
                   {paymentMethodsConfig.efectivo?.activo !== false && (
@@ -653,11 +684,16 @@ export default function CheckoutDrawer({
                   {/* Opción 3: TARJETA AL RECIBIR / AL RECOGER */}
                   {paymentMethodsConfig.tarjeta?.activo && (
                     <div className="space-y-2">
-                      <label className={`p-4 rounded-xl border-2 flex items-center gap-3 cursor-pointer transition-all ${datosCliente.formaPago === 'tarjeta' ? 'border-gray-900 bg-gray-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                        <input type="radio" name="pago" checked={datosCliente.formaPago === 'tarjeta'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'tarjeta'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900" />
+                      <label className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${!cardMinimumMet ? 'cursor-not-allowed border-amber-200 bg-amber-50 opacity-80' : datosCliente.formaPago === 'tarjeta' ? 'cursor-pointer border-gray-900 bg-gray-50' : 'cursor-pointer border-gray-200 bg-white hover:border-gray-300'}`}>
+                        <input type="radio" name="pago" disabled={!cardMinimumMet} checked={datosCliente.formaPago === 'tarjeta'} onChange={() => setDatosCliente(d=>({...d, formaPago: 'tarjeta'}))} className="w-4 h-4 text-gray-900 focus:ring-gray-900 disabled:cursor-not-allowed" />
                         <div>
                           <p className="font-bold text-gray-900 text-sm">💳 {datosCliente.tipo === 'recoger' ? 'Tarjeta al recoger' : 'Tarjeta al recibir'}</p>
                           <p className="text-xs text-gray-500">{datosCliente.tipo === 'recoger' ? 'Pagas en terminal física al llegar al local' : 'El repartidor llevará una terminal física'}</p>
+                          {cardMinimum > 0 && (
+                            <p className={`mt-1 text-xs font-black ${cardMinimumMet ? 'text-emerald-600' : 'text-amber-700'}`}>
+                              Compra mínima con tarjeta: ${cardMinimum}{!cardMinimumMet ? ` · Faltan $${cardMinimum - total}` : ''}
+                            </p>
+                          )}
                         </div>
                       </label>
 
@@ -762,15 +798,19 @@ export default function CheckoutDrawer({
           ) : (
             <button 
               onClick={enviarPedido} 
-              disabled={isSubmitting || config.is_open === false}
+              disabled={isSubmitting || config.is_open === false || activePaymentMethods.length === 0 || (datosCliente.formaPago === 'tarjeta' && !cardMinimumMet)}
               className={`flex-1 font-black py-4 rounded-xl active:scale-95 transition-transform flex items-center justify-center gap-2 ${
-                config.is_open !== false
+                config.is_open !== false && activePaymentMethods.length > 0 && !(datosCliente.formaPago === 'tarjeta' && !cardMinimumMet)
                   ? 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/20'
                   : 'bg-red-500 text-white opacity-60 cursor-not-allowed'
               }`}
             >
               {isSubmitting 
                 ? 'Guardando Pedido...' 
+                : activePaymentMethods.length === 0
+                  ? 'SIN FORMA DE PAGO DISPONIBLE'
+                : datosCliente.formaPago === 'tarjeta' && !cardMinimumMet
+                  ? `MÍNIMO CON TARJETA $${cardMinimum}`
                 : config.is_open !== false 
                   ? 'Confirmar Pedido ✓' 
                   : 'CERRADO (NO SE ADMITEN PEDIDOS)'}

@@ -1,0 +1,19 @@
+# Deployment uses the Vite app, public assets and api/ from this project.
+.git/
+.vercel/
+node_modules/
+**/node_modules/
+dist/
+streetboss-web/
+brand-assets/
+brand-core/
+brand-operating-system/
+audits/
+docs/
+prompts/
+skills/
+supabase/
+.env
+.env.*
+**/.env
+**/.env.*

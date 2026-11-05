@@ -35,6 +35,16 @@
   - `sb_global_config`
   - `sb_memberships`
   - `sb_menu_publico`
+  - `sb_orders`
+  - `sb_business_customers`
+
+### Sincronización B2C multidispositivo
+
+- `sb_orders` es la fuente central para pedidos y para reconstruir el directorio visible de clientes del restaurante.
+- Al abrir el Dashboard B2B se descargan los pedidos de las identidades válidas del negocio y se reemplaza su copia local.
+- Los eventos Realtime de `sb_orders` actualizan pedidos, clientes y rankings en la sesión abierta.
+- Las lecturas B2B usan `getSupabaseClient(slug)` para incluir el contexto multi-tenant del restaurante.
+- En móviles, el dashboard ejecuta una descarga de recuperación en `pageshow`, `focus`, `online` y `visibilitychange`, además de una comprobación periódica mientras permanece visible.
 
 ---
 
@@ -60,6 +70,20 @@
 └── vite.config.js               → Configuración del empaquetador Vite
 ```
 
+### Biblioteca global de tutoriales
+
+- Metadatos y orden: `src/data/tutorials.js`.
+- Interfaz compartida: `src/components/TutorialLibrary.jsx`.
+- Vista pública individual: `src/pages/TutorialPublic.jsx` mediante `/tutoriales/:tutorialId`.
+- Única copia de medios: `public/tutoriales/01.mp4` a `public/tutoriales/07.mp4` (H.264/AVC + AAC, 592 × 1280).
+
+### Seguimiento comercial HQ
+
+- Catálogo base de prospectos: `src/data/master_prospects.json`.
+- Estado comercial central: `sb_hq_prospect_states`, identificado por `prospect_id` y almacenado como JSON versionado por `updated_at`.
+- `localStorage` mantiene respuesta inmediata y respaldo; al entrar o retomar HQ se reconcilia con Supabase conservando el cambio más reciente.
+- La biblioteca no recibe ni incorpora `business_id`, slug, usuario o tenant.
+
 ---
 
 ## Validaciones de Compilación
@@ -67,3 +91,11 @@
 - **`npm run build` (`vite build`):** ✅ APROBADO (2,040 módulos procesados en 11.23s).
 - **`npm run lint`:** ⚪ No configurado en `package.json`.
 - **`npm run test`:** ⚪ No configurado en `package.json`.
+
+### 2026-10-30 — Inicio guiado y PWA del restaurante
+
+- `RestaurantSetupHome.jsx`: perfil, edición de datos básicos, checklist derivado del negocio guardado y accesos a las herramientas existentes.
+- `RestaurantAppInstall.jsx`: manifest temporal en el documento autenticado, captura del diálogo de instalación, alternativa manual y limpieza al desmontar.
+- `api/panel-manifest.js`: metadatos públicos por slug validado; `id`, `start_url` y `scope` apuntan a `/panel/:slug`, sin query de sesión.
+- `public/panel-sw.js`: navegación de red sin caché; fallback sin datos cuando falla la conexión. Registro con alcance del panel. Cabecera `Service-Worker-Allowed: /panel/` en Vercel y preview local.
+- El handler del manifest se comparte entre Vercel y middleware de preview en Vite. Iconos existentes de marca, con derivado de 192 px para instalación.

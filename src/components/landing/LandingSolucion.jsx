@@ -1,7 +1,7 @@
 import React from 'react'
-import { MessageCircle, MapPin } from 'lucide-react'
+import { MessageCircle, MapPin, CreditCard, UtensilsCrossed } from 'lucide-react'
 
-export default function LandingSolucion() {
+export default function LandingSolucion({ horizontal = false }) {
   return (
     <section id="solucion" className="py-24 md:py-32 relative bg-[#050505] reveal-on-scroll">
       <div className="max-w-7xl mx-auto px-6">
@@ -14,8 +14,8 @@ export default function LandingSolucion() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2 bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 md:p-12 relative overflow-hidden group animate-fade-in-up">
+        <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${horizontal ? "landing-benefit-rail" : ""}`} data-horizontal-rail={horizontal || undefined}>
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 md:p-10 relative overflow-hidden group animate-fade-in-up">
             <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-green-500/10 blur-[100px] rounded-full group-hover:bg-green-500/20 transition-colors" />
             <div className="relative z-10">
               <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
@@ -34,11 +34,31 @@ export default function LandingSolucion() {
               <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
                 <MapPin className="text-blue-400" size={24} />
               </div>
-              <h3 className="text-xl font-bold mb-3">Envíos GPS Exactos.</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Configura tus zonas de envío. El sistema lee la ubicación del cliente y calcula la tarifa justa automáticamente.
+              <h3 className="text-xl font-bold mb-3">Reparto bajo tus reglas.</h3>
+              <p className="text-gray-300 text-base leading-relaxed">
+                Elige las colonias que atiendes y define para cada una su costo de envío y pedido mínimo.
               </p>
             </div>
+          </div>
+
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 relative overflow-hidden group">
+            <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+              <UtensilsCrossed className="text-orange-400" size={24} />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Tu menú siempre actualizado.</h3>
+            <p className="text-gray-300 text-base leading-relaxed">
+              Edita categorías, productos, fotografías y precios. Marca productos agotados u ocúltalos cuando lo necesites.
+            </p>
+          </div>
+
+          <div className="bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 relative overflow-hidden group">
+            <div className="w-12 h-12 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center mb-6">
+              <CreditCard className="text-violet-400" size={24} />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Tú eliges cómo cobrar.</h3>
+            <p className="text-gray-300 text-base leading-relaxed">
+              Activa únicamente las formas de pago que acepta tu negocio y muestra instrucciones claras al cliente.
+            </p>
           </div>
           
         </div>

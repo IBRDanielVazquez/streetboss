@@ -83,9 +83,12 @@ export const buscarPorColoniaSync = buscarColoniasSync
 /**
  * Verifica si un CP y Colonia están cubiertos en las zonas configuradas por un negocio
  */
-export function verificarCobertura(cp, colonia, zonas = []) {
+export function verificarCobertura(cp, colonia, zonas = [], pricing = {}) {
+  const tarifaBase = Math.max(0, Number(pricing.tarifaBase ?? 30))
+  const costoPorKm = Math.max(0, Number(pricing.costoPorKm ?? 0))
+
   if (!zonas || zonas.length === 0) {
-    return { cubierto: true, precioEnvio: 30, razon: 'tarifa_base' }
+    return { cubierto: true, precioEnvio: tarifaBase, razon: 'tarifa_base' }
   }
 
   const cpLimpio = String(cp || '').trim()
@@ -107,10 +110,17 @@ export function verificarCobertura(cp, colonia, zonas = []) {
     return { cubierto: false, precioEnvio: 0, razon: 'fuera_de_cobertura' }
   }
 
-  const fee = Number(zonaEncontrada.delivery_fee ?? zonaEncontrada.precioEnvio ?? 30)
+  const distanciaKm = Math.max(0, Number(zonaEncontrada.distance_km ?? zonaEncontrada.distancia_km ?? 0))
+  const feeCalculado = tarifaBase + (Math.ceil(distanciaKm) * costoPorKm)
+  const fee = costoPorKm > 0
+    ? feeCalculado
+    : Number(zonaEncontrada.delivery_fee ?? zonaEncontrada.precioEnvio ?? tarifaBase)
   return {
     cubierto: true,
     precioEnvio: fee,
+    distanciaKm,
+    tarifaBase,
+    costoPorKm,
     tiempoEstimado: zonaEncontrada.estimated_minutes ? `${zonaEncontrada.estimated_minutes} min` : (zonaEncontrada.tiempoEstimado || '30-45 min'),
     pedidoMinimo: Number(zonaEncontrada.minimum_order ?? zonaEncontrada.pedidoMinimo ?? 0)
   }

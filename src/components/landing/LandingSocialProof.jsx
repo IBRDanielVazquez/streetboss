@@ -1,18 +1,18 @@
 import React from 'react'
-import { MessageSquare, Smartphone, MapPin, QrCode } from 'lucide-react'
+import { MessageSquare, SlidersHorizontal, MapPin, Users } from 'lucide-react'
 
 export default function LandingSocialProof() {
   const features = [
-    { icon: MessageSquare, label: 'WhatsApp Directo', desc: 'Comandas estructuradas al instante' },
-    { icon: Smartphone, label: 'Menú Web Mobile-First', desc: 'Navegación ultra rápida sin apps' },
-    { icon: MapPin, label: 'Ubicación GPS', desc: 'Tarifa de envío calculada al momento' },
-    { icon: QrCode, label: 'Acceso QR Dinámico', desc: 'Para tus mesas, volantes o Instagram' }
+    { icon: MessageSquare, label: 'WhatsApp directo', desc: 'Pedidos estructurados sin intermediarios' },
+    { icon: SlidersHorizontal, label: 'Menú administrable', desc: 'Actualiza precios, fotos y agotados' },
+    { icon: MapPin, label: 'Reparto por colonias', desc: 'Define cobertura, tarifas y mínimos' },
+    { icon: Users, label: 'Pedidos y clientes', desc: 'Consulta historial y métricas del negocio' }
   ]
 
   return (
     <section className="border-y border-white/5 bg-[#07080A] py-12 reveal-on-scroll">
       <div className="max-w-7xl mx-auto px-6 text-center">
-        <p className="text-xs font-black text-[#ff4b16] uppercase tracking-[0.25em] mb-8">
+        <p className="text-sm font-black text-[#ff6b3d] uppercase tracking-[0.2em] mb-8">
           TODO LISTO PARA VENDER DIRECTO
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -20,15 +20,15 @@ export default function LandingSocialProof() {
             const Icon = item.icon
             return (
               <div 
-                key={idx} 
+                key={item.label}
                 className="bg-[#0D0E12] border border-white/5 hover:border-white/15 p-5 rounded-2xl flex items-center gap-4 text-left transition-all hover:bg-white/[0.02]"
               >
                 <div className="w-10 h-10 rounded-xl bg-[#ff4b16]/10 border border-[#ff4b16]/20 flex items-center justify-center shrink-0">
                   <Icon size={20} className="text-[#ff4b16]" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-white">{item.label}</h3>
-                  <p className="text-xs text-gray-400 mt-0.5">{item.desc}</p>
+                  <h3 className="text-base font-bold text-white">{item.label}</h3>
+                  <p className="text-sm leading-relaxed text-gray-300 mt-1">{item.desc}</p>
                 </div>
               </div>
             )

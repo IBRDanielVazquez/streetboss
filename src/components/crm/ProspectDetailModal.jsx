@@ -1,7 +1,24 @@
 import { useState } from 'react'
 import { DEMOS_OFICIALES } from '../../data/demoShowcase'
 import { getProspectCommercialData, saveProspectCommercialData } from '../../services/crmV3Service'
-import { X, Phone, MessageCircle, Facebook, Instagram, MapPin, Sparkles, Copy, Star, CheckSquare, Rocket, Send, Link, Key, User, ClipboardList, Globe } from 'lucide-react'
+import { X, Phone, MessageCircle, Facebook, Instagram, MapPin, Sparkles, Copy, Star, CheckSquare, Rocket, Send, Link, Key, User, ClipboardList, Globe, PhoneOff, Store } from 'lucide-react'
+
+const CONTACT_CLASSIFICATIONS = [
+  { value: 'CONTACTADO', label: 'Contactado', icon: CheckSquare, color: 'emerald' },
+  { value: 'NO_CONTESTA', label: 'No contesta', icon: PhoneOff, color: 'amber' },
+  { value: 'INTERESADO', label: 'Interesado', icon: Sparkles, color: 'blue' },
+  { value: 'DEMO_CREADO', label: 'Demo creado', icon: Rocket, color: 'purple' },
+  { value: 'CLIENTE', label: 'Es cliente', icon: Store, color: 'emerald' },
+  { value: 'NO_INTERESADO', label: 'No le interesó', icon: X, color: 'red' },
+]
+
+const CLASSIFICATION_STYLES = {
+  emerald: 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300',
+  amber: 'bg-amber-500/15 border-amber-500/40 text-amber-300',
+  blue: 'bg-blue-500/15 border-blue-500/40 text-blue-300',
+  purple: 'bg-purple-500/15 border-purple-500/40 text-purple-300',
+  red: 'bg-red-500/15 border-red-500/40 text-red-300',
+}
 
 // Utilidad para asignar el demo correcto basado en la categoría
 const getRecommendedDemo = (category = '') => {
@@ -86,6 +103,8 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
   const [notes, setNotes] = useState(prospect.notes || initialCommercial.notes || '')
   const [copied, setCopied] = useState(false)
   const [copiedProd, setCopiedProd] = useState(false)
+  const [noWhatsapp, setNoWhatsapp] = useState(initialCommercial.noWhatsapp === true)
+  const [personalProfile, setPersonalProfile] = useState(initialCommercial.personalProfile === true)
 
   // Datos INTERESADOS
   const [confName, setConfName] = useState(initialCommercial.confName || pName)
@@ -104,13 +123,15 @@ export default function ProspectDetailModal({ prospect, onClose, onUpdateProspec
 
 Estuve revisando su perfil y preparé una demostración de cómo podría verse su negocio utilizando StreetBoss.
 
+🔥 Su propio escaparate para recibir pedidos por WhatsApp: $499 MXN por todo el primer año. Desde el segundo: $99 MXN/mes o $990 MXN/año (12 meses por el precio de 10). Sin comisión por venta.
+
 👉 https://www.facebook.com/share/r/1K4Myg9LrS/?mibextid=wwXIfr
 
 ¡Tenemos más demos! También pueden conocer otras opciones y estilos disponibles aquí:
 
 👉 ${linkGeneralDemos}
 
-StreetBoss les permite tener un escaparate digital optimizado para celular y recibir los pedidos directamente por WhatsApp.
+StreetBoss les permite tener un escaparate digital optimizado para celular y recibir los pedidos directamente por WhatsApp, conservando el control de sus ventas y clientes.
 
 Si les interesa, podemos preparar una versión personalizada para su negocio.
 
@@ -140,8 +161,8 @@ Si necesita apoyo con cualquier ajuste, estamos pendientes.
 StreetBoss
 Vende directo. Manda tú.`
 
-  const waSendMsgUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMessage)}` : ''
-  const waDeliveryUrl = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(deliveryMessage)}` : ''
+  const waSendMsgUrl = whatsappNumber && !noWhatsapp ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(customMessage)}` : ''
+  const waDeliveryUrl = whatsappNumber && !noWhatsapp ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(deliveryMessage)}` : ''
 
   const getRatingStars = (score) => {
     if (score >= 85) return 5
@@ -179,6 +200,7 @@ Vende directo. Manda tú.`
     if (newStatus === 'CONTACTADO') { extraData.contact_date = now; extraData.last_contact = now; }
     if (newStatus === 'INTERESADO') extraData.fecha_interes = now;
     if (newStatus === 'PRODUCCION') extraData.fecha_inicio_produccion = now;
+    if (newStatus === 'DEMO_CREADO') extraData.fecha_demo_creado = now;
     if (newStatus === 'CLIENTE') extraData.fecha_alta_cliente = now;
     if (newStatus === 'NO_INTERESADO') extraData.fecha_no_interes = now;
 
@@ -199,6 +221,8 @@ Vende directo. Manda tú.`
   const handleSave = () => {
     saveProspectCommercialData(prospect.id, { 
       notes,
+      noWhatsapp,
+      personalProfile,
       confName, confCat, confPhone, confDemo,
       prodMenuLink, prodDashLink, prodUser, prodPass, prodStatus
     })
@@ -206,6 +230,22 @@ Vende directo. Manda tú.`
       onUpdateProspect({ ...prospect, __updateTrigger: Date.now() })
     }
     onClose()
+  }
+
+  const handleNoWhatsappChange = (checked) => {
+    setNoWhatsapp(checked)
+    saveProspectCommercialData(prospect.id, { noWhatsapp: checked })
+    if (onUpdateProspect) {
+      onUpdateProspect({ ...prospect, __updateTrigger: Date.now() })
+    }
+  }
+
+  const handlePersonalProfileChange = (checked) => {
+    setPersonalProfile(checked)
+    saveProspectCommercialData(prospect.id, { personalProfile: checked })
+    if (onUpdateProspect) {
+      onUpdateProspect({ ...prospect, __updateTrigger: Date.now() })
+    }
   }
 
   const renderProspectoCard = () => (
@@ -240,6 +280,55 @@ Vende directo. Manda tú.`
   const renderContactMatrix = () => (
     <div className="bg-[#0D0E12] p-4 rounded-2xl border border-white/10 space-y-3">
       <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Matriz de Contacto</h4>
+
+      <div className="space-y-2">
+        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Clasificación comercial</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {CONTACT_CLASSIFICATIONS.map(classification => {
+            const Icon = classification.icon
+            const isSelected = status === classification.value || (classification.value === 'DEMO_CREADO' && status === 'PRODUCCION')
+            return (
+              <button
+                key={classification.value}
+                type="button"
+                onClick={() => changeStatus(classification.value)}
+                aria-pressed={isSelected}
+                className={`min-h-11 flex items-center justify-center gap-1.5 rounded-xl border px-2 py-2 text-[10px] font-black transition-all ${isSelected ? CLASSIFICATION_STYLES[classification.color] : 'bg-[#14161F] border-white/10 text-gray-400 hover:border-white/25 hover:text-white'}`}
+              >
+                <Icon size={14} /> {classification.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <label className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 cursor-pointer transition-colors ${noWhatsapp ? 'bg-amber-500/10 border-amber-500/40 text-amber-300' : 'bg-[#14161F] border-white/10 text-gray-300'}`}>
+        <input
+          type="checkbox"
+          checked={noWhatsapp}
+          onChange={event => handleNoWhatsappChange(event.target.checked)}
+          className="h-4 w-4 accent-amber-500"
+        />
+        <span className="font-bold text-xs">No tiene WhatsApp</span>
+      </label>
+
+      {noWhatsapp && (
+        <p className="text-[10px] text-amber-300/80">Se ocultaron las acciones de WhatsApp. El número permanece disponible para llamadas.</p>
+      )}
+
+      <label className={`flex items-center gap-3 rounded-xl border px-3 py-2.5 cursor-pointer transition-colors ${personalProfile ? 'bg-blue-500/10 border-blue-500/40 text-blue-300' : 'bg-[#14161F] border-white/10 text-gray-300'}`}>
+        <input
+          type="checkbox"
+          checked={personalProfile}
+          onChange={event => handlePersonalProfileChange(event.target.checked)}
+          className="h-4 w-4 accent-blue-500"
+        />
+        <span className="font-bold text-xs">Perfil personal</span>
+      </label>
+
+      {personalProfile && (
+        <p className="text-[10px] text-blue-300/80">El perfil social parece personal o desactualizado. El teléfono se conserva como contacto de la empresa.</p>
+      )}
       
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
         {waSendMsgUrl && (
@@ -534,7 +623,7 @@ Vende directo. Manda tú.`
 
           {status === 'INTERESADO' && renderInteresadoForm()}
 
-          {status === 'PRODUCCION' && renderProduccionForm()}
+          {(status === 'PRODUCCION' || status === 'DEMO_CREADO') && renderProduccionForm()}
 
           {status === 'CLIENTE' && renderClienteCard()}
 

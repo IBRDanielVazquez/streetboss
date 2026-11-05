@@ -8,6 +8,7 @@ import MenuDigital from './MenuDigital'
 const DEMO_META_MAP = {
   'tacos-el-guero': { folder: 'tacos-el-guero', schedule: 'Lun a Dom · 6:00 pm – 2:00 am', foodType: 'Taquería · Tacos al Pastor y Especiales' },
   'burger-house': { folder: 'burger-house', schedule: 'Lun a Dom · 1:00 pm – 11:00 pm', foodType: 'Burgers · Papas · Malteadas' },
+  'la-vitola': { folder: 'la-vitola', schedule: 'Horario por confirmar', foodType: 'Hamburguesas · Hot dogs · Bebidas' },
   'pizza-house': { folder: 'pizza-house', schedule: 'Lun a Dom · 12:00 pm – 10:30 pm', foodType: 'Pizzas · Promos · Alitas' },
   'cafe-central': { folder: 'cafe-central', schedule: 'Lun a Dom · 7:00 am – 9:00 pm', foodType: 'Café · Panadería · Brunch' },
   'pollos-el-rey': { folder: 'pollos-el-rey', schedule: 'Lun a Dom · 10:00 am – 6:00 pm', foodType: 'Pollo rostizado · Carbón · Paquetes' },
@@ -22,6 +23,7 @@ function resolveDemoDetails(trialId, name) {
   const s = `${trialId || ''} ${name || ''}`.toLowerCase()
   let key = 'tacos-el-guero'
   if (s.includes('burger')) key = 'burger-house'
+  else if (s.includes('vitola')) key = 'la-vitola'
   else if (s.includes('pizza')) key = 'pizza-house'
   else if (s.includes('cafe') || s.includes('central')) key = 'cafe-central'
   else if (s.includes('pollo') || s.includes('rey')) key = 'pollos-el-rey'
@@ -43,6 +45,7 @@ function resolveDemoDetails(trialId, name) {
 
 export default function DemoPublicMenuWrapper() {
   const { trialId } = useParams()
+  const isClientMenu = trialId === 'la-vitola'
   const [refreshTick, setRefreshTick] = useState(0)
   const [businessData, setBusinessData] = useState(() => getBusinessBySlug(trialId))
 
@@ -88,7 +91,7 @@ export default function DemoPublicMenuWrapper() {
     const fullLogoUrl = activeLogo.startsWith('http') 
       ? activeLogo 
       : `${window.location.origin}${activeLogo.startsWith('/') ? '' : '/'}${activeLogo}`
-    const desc = businessData?.main_message || businessData?.description || `${activeDetails.foodType}. Haz tu pedido al instante por WhatsApp sin comisiones.`
+    const desc = businessData?.description || businessData?.main_message || `${activeDetails.foodType}. Haz tu pedido al instante por WhatsApp sin comisiones.`
 
     setMetaTag('meta[property="og:title"]', 'property', 'og:title', `${activeName} — Menú Digital`)
     setMetaTag('meta[property="og:description"]', 'property', 'og:description', desc)
@@ -129,14 +132,17 @@ export default function DemoPublicMenuWrapper() {
       : details.banner
 
     const businessConfig = {
+      business_id: businessData.business_id,
       trialId: businessData.slug || businessData.business_id,
       negocio: businessData.name,
+      description: businessData.description || '',
       logo: logoUrl,
       banner: bannerUrl,
       colorMarca: businessData.brand_color || '#FF4B00',
-      whatsapp: businessData.whatsapp || businessData.phone || DEMO_CONTACTS.DEFAULT_WHATSAPP,
-      telefono: businessData.phone || DEMO_CONTACTS.DEFAULT_PHONE,
+      whatsapp: isClientMenu ? '529613209433' : (businessData.whatsapp || businessData.phone || ''),
+      telefono: isClientMenu ? '9613209433' : (businessData.phone || businessData.whatsapp || ''),
       mensajeClientes: businessData.main_message || '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
+      orderCtaText: businessData.schedule_daily?.order_cta_text || '',
       foodType: details.foodType,
       is_open: businessData.is_open !== false,
       redes: {
@@ -154,7 +160,8 @@ export default function DemoPublicMenuWrapper() {
         zonas: businessData.delivery_zones || [], 
         pedidoMinimo: 0,
         modoEnvio: businessData.delivery_mode || 'fijo',
-        costoEnvio: Number(businessData.base_delivery_fee || 30),
+        costoEnvio: Number(businessData.base_delivery_fee ?? 30),
+        costoPorKm: Number(businessData.delivery_price_per_km ?? 0),
         tiempoEntrega: businessData.estimated_delivery_time || '30–40 min'
       },
       payment_methods: businessData.payment_methods || {
@@ -171,7 +178,7 @@ export default function DemoPublicMenuWrapper() {
 
     return (
       <MenuDigital 
-        isDemo={businessData.is_demo} 
+        isDemo={isClientMenu ? false : businessData.is_demo}
         demoMenu={formattedMenu} 
         demoConfig={businessConfig} 
         modo="pedir"
@@ -189,11 +196,12 @@ export default function DemoPublicMenuWrapper() {
   const demoConfig = {
     trialId: demo.id,
     negocio: demo.nombre || demo.name,
+    description: demo.description || demo.descripcion || '',
     logo: (demo.logo_url && !demo.logo_url.includes('SB_FAVICON')) ? demo.logo_url : details.logo,
     banner: (demo.banner_url && !demo.banner_url.includes('/demos/img/')) ? demo.banner_url : details.banner,
     colorMarca: '#FF4B00',
-    whatsapp: DEMO_CONTACTS.DEFAULT_WHATSAPP,
-    telefono: DEMO_CONTACTS.DEFAULT_PHONE,
+    whatsapp: isClientMenu ? '529613209433' : (demo.whatsapp || DEMO_CONTACTS.DEFAULT_WHATSAPP),
+    telefono: isClientMenu ? '9613209433' : (demo.phone || DEMO_CONTACTS.DEFAULT_PHONE),
     mensajeClientes: '¡Gracias por tu preferencia! Pedidos al instante por WhatsApp.',
     foodType: details.foodType,
     redes: {
@@ -201,28 +209,33 @@ export default function DemoPublicMenuWrapper() {
       instagram: 'https://instagram.com',
       tiktok: 'https://tiktok.com',
     },
-    direccion: 'Tuxtla Gutiérrez, Chiapas',
-    horarios: details.schedule,
-    urlMaps: 'https://maps.google.com',
+    direccion: demo.address || 'Tuxtla Gutiérrez, Chiapas',
+    horarios: demo.schedule_text || details.schedule,
+    urlMaps: '',
     envio: { 
       activo: true, 
-      zonas: [], 
+      zonas: demo.delivery_zones || [],
       pedidoMinimo: 0,
-      modoEnvio: 'fijo',
-      costoEnvio: 30,
+      modoEnvio: demo.delivery_mode || 'fijo',
+      costoEnvio: Number(demo.base_delivery_fee ?? 30),
+      costoPorKm: Number(demo.delivery_price_per_km ?? 0),
       tiempoEntrega: '30–40 min'
     },
-    payment_methods: {
+    payment_methods: demo.payment_methods || {
       efectivo: { activo: true, preguntar_cambio: true },
       transferencia: { activo: true, titular: 'Taquería El Güero S.A.', banco: 'BBVA Bancomer', clabe: '012180000123456789', numero_cuenta: '1234567890', texto_solicitar_comprobante: 'Realiza tu transferencia y adjunta el comprobante cuando envíes tu pedido por WhatsApp.' },
       tarjeta: { activo: true, instrucciones: 'Se aceptan tarjetas de crédito y débito Visa, MasterCard y Amex. El repartidor lleva terminal inalámbrica.' }
     },
-    formasPago: { efectivo: true, transferencia: true, tarjeta: true },
+    formasPago: {
+      efectivo: demo.payment_methods?.efectivo?.activo !== false,
+      transferencia: !!demo.payment_methods?.transferencia?.activo,
+      tarjeta: !!demo.payment_methods?.tarjeta?.activo,
+    },
   }
 
   return (
     <MenuDigital 
-      isDemo={true} 
+      isDemo={isClientMenu ? false : demo.is_demo !== false}
       demoMenu={demo.menu} 
       demoConfig={demoConfig} 
       modo="pedir"

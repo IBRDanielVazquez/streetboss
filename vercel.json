@@ -1,61 +1,85 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "headers": [
-    {
-      "source": "/central-hq(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/panel/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-cache, no-store, must-revalidate, max-age=0"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
-        }
-      ]
-    }
-  ],
   "routes": [
-    { "src": "/demo/admin(/.*)?", "status": 404, "dest": "/404.html" },
-    { "src": "/streetboss-crm(/.*)?", "status": 404, "dest": "/404.html" },
-    { "src": "/superadmin(/.*)?", "status": 404, "dest": "/404.html" },
-    { "src": "/streetboss-admin(/.*)?", "status": 404, "dest": "/404.html" },
-    { "src": "/demo-admin(/.*)?", "status": 404, "dest": "/404.html" },
-    { "src": "/internal(/.*)?", "status": 404, "dest": "/404.html" },
-    { "handle": "filesystem" },
-    { "src": "/menu/(.*)", "dest": "/api/menu" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/panel-sw\\.js",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Service-Worker-Allowed": "/panel/"
+      },
+      "continue": true
+    },
+    {
+      "src": "/central-hq(.*)",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow",
+        "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"
+      },
+      "continue": true
+    },
+    {
+      "src": "/panel/(.*)",
+      "headers": {
+        "X-Robots-Tag": "noindex, nofollow",
+        "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"
+      },
+      "continue": true
+    },
+    {
+      "src": "/index\\.html",
+      "headers": {
+        "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*)",
+      "headers": {
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      },
+      "continue": true
+    },
+    {
+      "src": "/demo/admin(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/streetboss-crm(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/superadmin(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/streetboss-admin(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/demo-admin(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/internal(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/menu/(.*)",
+      "dest": "/api/menu"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ]
 }

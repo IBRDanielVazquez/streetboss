@@ -23,6 +23,8 @@ const createDummyClient = () => ({
 
 export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabaseAnonKey) : createDummyClient();
 
+const scopedClients = new Map();
+
 /**
  * Returns a custom scoped Supabase client instance containing the x-client-slug header,
  * enabling Row Level Security (RLS) policies to isolate database operations per tenant.
@@ -30,11 +32,22 @@ export const supabase = isSupabaseConfigured ? createClient(supabaseUrl, supabas
 export const getSupabaseClient = (slug) => {
   if (!isSupabaseConfigured) return supabase;
   if (!slug) return supabase;
-  return createClient(supabaseUrl, supabaseAnonKey, {
+  const scope = String(slug).trim().toLowerCase();
+  if (scopedClients.has(scope)) return scopedClients.get(scope);
+
+  const client = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false,
+      storageKey: `sb-${scope}-auth`,
+    },
     global: {
       headers: {
-        'x-client-slug': slug,
+        'x-client-slug': scope,
       },
     },
   });
+  scopedClients.set(scope, client);
+  return client;
 };

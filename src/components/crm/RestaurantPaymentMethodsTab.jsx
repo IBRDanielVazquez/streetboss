@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { updateBusinessSettings } from '../../services/crmV3Service'
+import { saveBusinessSettings } from '../../services/crmV3Service'
 import { CreditCard, DollarSign, Send, Save, CheckCircle, HelpCircle, ShieldCheck } from 'lucide-react'
 
 export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBusiness }) {
@@ -44,21 +44,39 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
   const safeTarjeta = paymentMethods?.tarjeta || defaultMethods.tarjeta
 
   const [toastMsg, setToastMsg] = useState('')
+  const [saveError, setSaveError] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault()
+    if (isSaving) return
     const targetId = business.slug || business.business_id || business.id
-    if (targetId) {
-      updateBusinessSettings(targetId, {
+    if (!targetId) {
+      setSaveError('No fue posible identificar este negocio.')
+      return
+    }
+
+    setIsSaving(true)
+    setSaveError('')
+    setToastMsg('')
+    try {
+      const updatedBusiness = await saveBusinessSettings(targetId, {
         payment_methods: {
           efectivo: safeEfectivo,
           transferencia: safeTransferencia,
           tarjeta: safeTarjeta
         }
       })
+      if (!updatedBusiness) throw new Error('No se encontró el negocio para guardar los cambios.')
+
+      if (onUpdateBusiness) await onUpdateBusiness()
+      setToastMsg('Formas de pago guardadas y sincronizadas.')
+    } catch (error) {
+      console.error('[Payment Methods] No fue posible guardar:', error)
+      setSaveError('No se guardaron los cambios. Revisa tu conexión e inténtalo nuevamente.')
+    } finally {
+      setIsSaving(false)
     }
-    if (onUpdateBusiness) onUpdateBusiness()
-    setToastMsg('Configuración de Métodos de Pago guardada con éxito.')
     setTimeout(() => setToastMsg(''), 3000)
   }
 
@@ -67,6 +85,11 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
       {toastMsg && (
         <div className="fixed top-4 right-4 z-50 bg-emerald-600 text-white px-5 py-3 rounded-full font-bold text-xs shadow-2xl flex items-center gap-2">
           <CheckCircle size={16} /> {toastMsg}
+        </div>
+      )}
+      {saveError && (
+        <div className="bg-red-500/10 border border-red-500/30 text-red-300 px-4 py-3 rounded-xl font-bold">
+          {saveError}
         </div>
       )}
 
@@ -81,8 +104,8 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
               Activa los métodos de pago que acepta {business.name || 'tu negocio'}. Los cambios se reflejarán instantáneamente en tu menú digital público.
             </p>
           </div>
-          <button type="submit" className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition-transform active:scale-95">
-            <Save size={14} /> Guardar Cambios
+          <button type="submit" disabled={isSaving} className="bg-[#FF4B00] hover:bg-[#FF6A1A] disabled:opacity-60 text-white font-black px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg transition-transform active:scale-95">
+            <Save size={14} /> {isSaving ? 'Guardando…' : 'Guardar Cambios'}
           </button>
         </div>
       </div>
@@ -159,7 +182,7 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                       <label className="block text-gray-300 font-bold mb-1">Máximo de cambio disponible ($ MXN) *</label>
                       <input
                         type="number"
-                        value={safeEfectivo.max_cambio_monto || 500}
+                        value={safeEfectivo.max_cambio_monto ?? 500}
                         onChange={e => setPaymentMethods({
                           ...paymentMethods,
                           efectivo: { ...safeEfectivo, max_cambio_monto: Number(e.target.value) }
@@ -343,7 +366,7 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
                 <label className="block text-gray-300 font-bold mb-1">Compra Mínima para Pago con Tarjeta ($ MXN - Opcional)</label>
                 <input
                   type="number"
-                  value={safeTarjeta.compra_minima || 0}
+                  value={safeTarjeta.compra_minima ?? 0}
                   onChange={e => setPaymentMethods({
                     ...paymentMethods,
                     tarjeta: { ...safeTarjeta, compra_minima: Number(e.target.value) }
@@ -359,8 +382,8 @@ export default function RestaurantPaymentMethodsTab({ business = {}, onUpdateBus
       </div>
 
       <div className="flex justify-end pt-4">
-        <button type="submit" className="bg-[#FF4B00] hover:bg-[#FF6A1A] text-white font-black px-6 py-3 rounded-xl flex items-center gap-2 shadow-xl text-sm transition-transform active:scale-95">
-          <Save size={16} /> Guardar Configuración de Métodos de Pago
+        <button type="submit" disabled={isSaving} className="bg-[#FF4B00] hover:bg-[#FF6A1A] disabled:opacity-60 text-white font-black px-6 py-3 rounded-xl flex items-center gap-2 shadow-xl text-sm transition-transform active:scale-95">
+          <Save size={16} /> {isSaving ? 'Guardando y sincronizando…' : 'Guardar Configuración de Métodos de Pago'}
         </button>
       </div>
     </form>

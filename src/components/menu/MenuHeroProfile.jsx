@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe, Camera, Pencil, Check, X } from 'lucide-react'
 import { normalizeMexicanPhone } from '../../services/crmV3Service'
 
 // Ícono TikTok SVG inline (Lucide no tiene TikTok)
@@ -20,14 +20,35 @@ function WhatsAppIcon({ size = 16 }) {
   )
 }
 
-export default function MenuHeroProfile({ config }) {
+export default function MenuHeroProfile({ config, editMode = false, onBannerFile, onLogoFile, onMessageSave, onTrackEvent }) {
   const {
     negocio, logo, banner, direccion, horarios, urlMaps,
     whatsapp, telefono, redes = {}, colorMarca = '#FF4B00',
-    foodType, isDemo = true, is_open = true, mensajeClientes
+    foodType, description, isDemo = true, is_open = true, mensajeClientes, orderCtaText
   } = config
 
   const tieneHorarios = horarios && horarios.trim().length > 0
+  const defaultOrderMessage = '🚀 Pedidos directos a tu WhatsApp'
+  const visibleOrderMessage = orderCtaText?.trim() || defaultOrderMessage
+  const [editingMessage, setEditingMessage] = useState(false)
+  const [messageDraft, setMessageDraft] = useState(visibleOrderMessage)
+  const [savingMessage, setSavingMessage] = useState(false)
+
+  useEffect(() => {
+    if (!editingMessage) setMessageDraft(visibleOrderMessage)
+  }, [visibleOrderMessage, editingMessage])
+
+  const saveMessage = async () => {
+    const nextMessage = messageDraft.trim()
+    if (!nextMessage) return
+    setSavingMessage(true)
+    try {
+      await onMessageSave?.(nextMessage)
+      setEditingMessage(false)
+    } finally {
+      setSavingMessage(false)
+    }
+  }
 
   // Actualizar Open Graph metadata dinámicamente para previsualizaciones al compartir
   useEffect(() => {
@@ -45,15 +66,16 @@ export default function MenuHeroProfile({ config }) {
       }
 
       setMeta('og:title', `${negocio} - Menú Digital`)
-      setMeta('og:description', `${foodType || 'Pedidos al instante por WhatsApp.'} 📍 Tuxtla Gutiérrez, Chiapas.`)
+      setMeta('og:description', description || foodType || '')
       if (logo) {
         const fullLogoUrl = logo.startsWith('http') ? logo : `${window.location.origin}${logo}`
         setMeta('og:image', fullLogoUrl)
       }
     }
-  }, [negocio, logo, foodType])
+  }, [negocio, logo, description, foodType])
 
   const compartir = async () => {
+    onTrackEvent?.('share_click')
     const url = window.location.href
     const texto = `Mira el menú digital de ${negocio}: ${url}`
     if (navigator.share) {
@@ -70,8 +92,10 @@ export default function MenuHeroProfile({ config }) {
   const ytUrl = redes.youtube && redes.youtube.trim() !== '' ? redes.youtube : null
   const wsUrl = redes.website && redes.website.trim() !== '' ? redes.website : null
 
-  const cleanWaPhone = normalizeMexicanPhone(whatsapp || telefono || '9613725386')
-  const cleanTelPhone = normalizeMexicanPhone(telefono || whatsapp || '9613725386')
+  // El contacto público siempre pertenece al negocio. Si sólo capturó un
+  // número, se usa para ambas acciones; nunca se sustituye por StreetBoss.
+  const cleanWaPhone = normalizeMexicanPhone(whatsapp || telefono)
+  const cleanTelPhone = normalizeMexicanPhone(telefono || whatsapp)
 
   const redesActivas = [
     igUrl && { icon: <Instagram size={18} />, url: igUrl, label: 'Instagram' },
@@ -114,13 +138,20 @@ export default function MenuHeroProfile({ config }) {
 
         {/* Action icons top right */}
         <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
-          <button
-            onClick={compartir}
-            className="w-10 h-10 bg-black/40 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-black/60 active:scale-95 transition-all border border-white/20"
-            title="Compartir Menú"
-          >
-            <Share2 size={18} />
-          </button>
+          {editMode ? (
+            <label className="min-h-11 px-4 bg-black/70 backdrop-blur-md text-white rounded-full flex items-center justify-center gap-2 font-black text-xs cursor-pointer active:scale-95 border border-white/30 shadow-lg">
+              <Camera size={17} /> Cambiar portada
+              <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={e => onBannerFile?.(e.target.files?.[0])} />
+            </label>
+          ) : (
+            <button
+              onClick={compartir}
+              className="w-10 h-10 bg-black/40 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-black/60 active:scale-95 transition-all border border-white/20"
+              title="Compartir Menú"
+            >
+              <Share2 size={18} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -138,6 +169,12 @@ export default function MenuHeroProfile({ config }) {
               >
                 {(negocio || 'S')[0].toUpperCase()}
               </div>
+            )}
+            {editMode && (
+              <label className="absolute inset-x-1 bottom-1 min-h-9 bg-black/75 backdrop-blur text-white rounded-xl flex items-center justify-center gap-1 text-[10px] font-black cursor-pointer">
+                <Camera size={13} /> {logo ? 'Cambiar logo' : 'Agregar logo'}
+                <input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" className="hidden" onChange={e => onLogoFile?.(e.target.files?.[0])} />
+              </label>
             )}
           </div>
         </div>
@@ -161,9 +198,39 @@ export default function MenuHeroProfile({ config }) {
               {is_open !== false ? 'ABIERTO AHORA' : 'CERRADO POR EL MOMENTO'}
             </div>
 
-            <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gray-800 bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg">
-              🚀 Pedidos directos a tu WhatsApp
-            </div>
+            {editMode && editingMessage ? (
+              <div className="flex w-full max-w-xl items-center gap-2 rounded-xl border-2 border-orange-400 bg-orange-50 p-2 shadow-sm">
+                <input
+                  autoFocus
+                  type="text"
+                  maxLength={80}
+                  value={messageDraft}
+                  onChange={event => setMessageDraft(event.target.value)}
+                  onKeyDown={event => {
+                    if (event.key === 'Enter') saveMessage()
+                    if (event.key === 'Escape') setEditingMessage(false)
+                  }}
+                  aria-label="Mensaje de pedidos"
+                  className="min-w-0 flex-1 bg-transparent px-1 text-sm font-bold text-gray-900 outline-none"
+                />
+                <button type="button" onClick={saveMessage} disabled={!messageDraft.trim() || savingMessage} className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 text-white disabled:opacity-40" aria-label="Guardar mensaje">
+                  <Check size={18} />
+                </button>
+                <button type="button" onClick={() => setEditingMessage(false)} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-700" aria-label="Cancelar edición">
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => editMode && setEditingMessage(true)}
+                className={`inline-flex items-center gap-1.5 text-[11px] font-bold text-gray-800 bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg ${editMode ? 'cursor-pointer ring-2 ring-orange-400/50 hover:bg-orange-50' : 'cursor-default'}`}
+                aria-label={editMode ? 'Editar mensaje de pedidos' : undefined}
+              >
+                <span>{visibleOrderMessage}</span>
+                {editMode && <Pencil size={13} className="text-orange-600" />}
+              </button>
+            )}
           </div>
 
           {/* Dirección, Horarios y Ubicación */}
@@ -177,6 +244,7 @@ export default function MenuHeroProfile({ config }) {
                 {urlMaps && urlMaps.trim() !== '' && (
                   <a
                     href={urlMaps}
+                    onClick={() => onTrackEvent?.('maps_click')}
                     target="_blank"
                     rel="noreferrer"
                     className="bg-gray-100 hover:bg-gray-200 text-gray-900 font-extrabold px-3.5 py-1.5 rounded-full text-[11px] flex items-center gap-1.5 border border-gray-200 shrink-0 active:scale-95 transition-all shadow-2xs"
@@ -207,6 +275,10 @@ export default function MenuHeroProfile({ config }) {
                 target="_blank"
                 rel="noreferrer"
                 title={red.label}
+                onClick={() => {
+                  if (red.label === 'WhatsApp') onTrackEvent?.('whatsapp_click')
+                  if (red.label === 'Llamar') onTrackEvent?.('phone_click')
+                }}
                 className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-xs font-bold flex items-center gap-1.5 shrink-0 transition-transform active:scale-95"
               >
                 {red.icon} {red.label}
@@ -220,4 +292,3 @@ export default function MenuHeroProfile({ config }) {
     </div>
   )
 }
-

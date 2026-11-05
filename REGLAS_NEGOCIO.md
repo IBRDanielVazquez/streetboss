@@ -13,6 +13,7 @@
 1. El restaurante paga por el servicio, no por comisión sobre ventas.
 2. El cliente final del restaurante no paga extra por usar StreetBoss.
 3. No hay intermediarios en el flujo de pedido.
+4. La oferta vigente es un pago de $499 MXN por los primeros 12 meses. Desde el segundo año: $99 MXN al mes o $990 MXN por 12 meses (equivalente a 10 mensualidades). No se presume renovación automática.
 
 ## Flujo de Pedido
 
