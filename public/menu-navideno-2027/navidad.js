@@ -1,4 +1,4 @@
-import { businesses, categories, sample } from './catalogo.js'
+import { businesses, categories, demos } from './catalogo.js'
 
 const base = '/menu-navideno-2027/'
 const officialUrl = 'https://streetboss.com.mx' + base
@@ -10,6 +10,8 @@ const byId = id => document.getElementById(id)
 const filters = byId('filters')
 const search = byId('search-input')
 const dialog = byId('menu-dialog')
+const join = byId('join-link')
+const salesNumber = new URL(join.href).pathname.slice(1)
 let selectedCategory = all.id
 
 function element(tag, { className, text } = {}) {
@@ -32,12 +34,12 @@ function searchKey(text) {
   return text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim()
 }
 
-function card(entry, { label, subtitle, business = false, open }) {
-  const article = element('article', { className: business ? 'tile business-tile' : 'tile' })
-  const button = element('button', { className: 'tile-button' })
+function card(entry, { label, subtitle, action, open }) {
+  const article = element('article', { className: 'tile' })
+  const button = element('button', { className: 'tile-button', text: action })
   button.type = 'button'
   button.setAttribute('aria-haspopup', 'dialog')
-  button.setAttribute('aria-label', 'Ver ' + entry.name)
+  button.setAttribute('aria-label', action + ' · ' + entry.name)
   button.addEventListener('click', open)
 
   const media = element('div', { className: 'tile-media' })
@@ -46,15 +48,10 @@ function card(entry, { label, subtitle, business = false, open }) {
   if (label) media.append(element('span', { className: 'tile-category', text: label }))
 
   const content = element('div', { className: 'tile-content' })
-  const words = element('div')
-  words.append(element('h4', { className: 'tile-name', text: entry.name }))
-  if (subtitle) words.append(element('p', { className: 'tile-subtitle', text: subtitle }))
-  const arrow = element('span', { className: 'tile-arrow', text: '↗' })
-  arrow.setAttribute('aria-hidden', 'true')
-  content.append(words, arrow)
-
-  button.append(media, content)
-  article.append(button)
+  content.append(element('h3', { className: 'tile-name', text: entry.name }))
+  if (subtitle) content.append(element('p', { className: 'tile-subtitle', text: subtitle }))
+  content.append(button)
+  article.append(media, content)
   return article
 }
 
@@ -66,10 +63,6 @@ function render() {
   }
   const matchesCategory = ids => selectedCategory === all.id || ids.includes(selectedCategory)
 
-  const matchingItems = sample.items.filter(item =>
-    matchesCategory([item.category]) &&
-    matchesWords([sample.name, item.name, item.description, categoryNames.get(item.category)])
-  )
   const matchingBusinesses = businesses.filter(business => {
     const items = business.items ?? []
     const categoryIds = [...new Set([...(business.categories ?? []), ...items.map(item => item.category)])]
@@ -80,21 +73,14 @@ function render() {
     ])
   })
 
-  byId('sample-grid').replaceChildren(...matchingItems.map(item => card(item, {
-    label: categoryNames.get(item.category),
-    open: () => showMenu(sample, item),
-  })))
   byId('business-grid').replaceChildren(...matchingBusinesses.map(business => card(business, {
     label: (business.categories ?? []).map(id => categoryNames.get(id)).find(Boolean),
     subtitle: business.city,
-    business: true,
+    action: 'Ver menú',
     open: () => showMenu(business),
   })))
-  byId('sample-section').hidden = !matchingItems.length
-  byId('business-section').hidden = !matchingBusinesses.length
-  const count = matchingBusinesses.length + matchingItems.length
+  const count = matchingBusinesses.length
   byId('no-results').hidden = Boolean(count)
-  byId('opening-note').hidden = Boolean(businesses.length || terms.length || selectedCategory !== all.id)
   byId('search-status').textContent = count === 1 ? '1 resultado' : count + ' resultados'
 }
 
@@ -116,22 +102,111 @@ function whatsappUrl(number, message) {
   return 'https://wa.me/' + number + '?text=' + encodeURIComponent(message)
 }
 
-function showMenu(menu, dish) {
-  const isSample = menu === sample
+function leadUrl(demoName) {
+  const message = [
+    'Hola, quiero mi menú digital navideño con la superpromoción de noviembre de $199 MXN de StreetBoss.',
+    ...(demoName ? ['Me interesa un menú como el demo de ' + demoName + '.'] : []),
+    '',
+    'Nombre del negocio:',
+    'Ciudad:',
+    '¿Qué comida vendo?:',
+    'WhatsApp para recibir pedidos:',
+    '',
+    'Les puedo compartir mi carta, precios y fotos por aquí.',
+  ]
+  return whatsappUrl(salesNumber, message.join('\n'))
+}
+
+function demoOrder(menu) {
+  const quantities = menu.items.map(() => 0)
+  const panel = element('div')
+  const list = element('ul', { className: 'menu-list' })
+  const subtotal = element('p', { className: 'demo-subtotal' })
+  subtotal.setAttribute('role', 'status')
+  const preview = element('pre', { className: 'demo-message' })
+  preview.id = 'demo-message'
+  preview.hidden = true
+  const previewButton = element('button', { className: 'button button-secondary', text: 'Ver mensaje de pedido' })
+  previewButton.type = 'button'
+  previewButton.setAttribute('aria-controls', preview.id)
+  previewButton.setAttribute('aria-expanded', 'false')
+  const orderPanel = element('div', { className: 'demo-order-panel' })
+  orderPanel.append(subtotal, previewButton, preview)
+  previewButton.addEventListener('click', () => togglePreview(preview.hidden))
+
+  function togglePreview(visible) {
+    preview.hidden = !visible
+    previewButton.setAttribute('aria-expanded', String(visible))
+    previewButton.textContent = visible ? 'Ocultar mensaje' : 'Ver mensaje de pedido'
+  }
+
+  function updateOrder() {
+    const total = menu.items.reduce((sum, item, index) => sum + item.price * quantities[index], 0)
+    const count = quantities.reduce((sum, quantity) => sum + quantity, 0)
+    subtotal.textContent = 'Subtotal de ejemplo: ' + money.format(total) + ' MXN'
+    previewButton.disabled = count === 0
+    if (!count) togglePreview(false)
+    const lines = menu.items.flatMap((item, index) =>
+      quantities[index] ? [quantities[index] + ' × ' + item.name + ' — ' + money.format(quantities[index] * item.price)] : []
+    )
+    preview.textContent = ['Hola, me gustaría hacer un pedido navideño:', ...lines, '', subtotal.textContent, '¿Me confirmas disponibilidad y opciones de entrega?'].join('\n')
+  }
+
+  menu.items.forEach((item, index) => {
+    const row = menuRow(item)
+    const controls = element('div', { className: 'demo-quantity' })
+    const count = element('span', { text: '0' })
+    const decrease = element('button', { text: '−' })
+    const increase = element('button', { text: '+' })
+    decrease.type = increase.type = 'button'
+    decrease.setAttribute('aria-label', 'Quitar ' + item.name)
+    increase.setAttribute('aria-label', 'Agregar ' + item.name)
+    function changeQuantity(change) {
+      quantities[index] += change
+      const quantity = quantities[index]
+      count.textContent = String(quantity)
+      decrease.disabled = quantity === 0
+      updateOrder()
+    }
+    decrease.disabled = true
+    decrease.addEventListener('click', () => changeQuantity(-1))
+    increase.addEventListener('click', () => changeQuantity(1))
+    controls.append(decrease, count, increase)
+    row.append(controls)
+    list.append(row)
+  })
+  updateOrder()
+  panel.append(list, orderPanel)
+  return panel
+}
+
+function menuRow(item) {
+  const row = element('li', { className: 'menu-list-item' })
+  if (item.image) row.append(imageFor(item, 'menu-thumb'))
+  const copy = element('div', { className: 'menu-item-copy' })
+  copy.append(element('h3', { text: item.name }))
+  if (item.description) copy.append(element('p', { text: item.description }))
+  if (Number.isFinite(item.price)) {
+    copy.append(element('strong', { className: 'price', text: money.format(item.price) }))
+  }
+  row.append(copy)
+  return row
+}
+
+function showMenu(menu, isDemo = false) {
   const cover = byId('menu-cover')
   const details = byId('menu-details')
   const actions = byId('menu-actions')
-  const visual = dish ?? menu
   cover.replaceChildren()
   details.replaceChildren()
   actions.replaceChildren()
 
-  if (visual.image) cover.append(imageFor(visual, 'dialog-cover'))
-  byId('menu-meta').textContent = isSample ? 'Menú de muestra · Imágenes ilustrativas' : (menu.city ?? '')
-  byId('menu-title').textContent = dish?.name ?? menu.name
+  if (menu.image) cover.append(imageFor(menu, 'dialog-cover'))
+  byId('menu-meta').textContent = isDemo ? 'Demo · Precios e imágenes de ejemplo' : (menu.city ?? '')
+  byId('menu-title').textContent = menu.name
 
-  if (visual.description) details.append(element('p', { className: 'menu-description', text: visual.description }))
-  for (const sheet of dish ? [] : (menu.sheets ?? [])) {
+  if (!isDemo && menu.description) details.append(element('p', { className: 'menu-description', text: menu.description }))
+  for (const sheet of menu.sheets ?? []) {
     const img = imageFor(sheet, 'menu-sheet')
     const full = textLink('', img.src, 'menu-sheet-link')
     full.target = '_blank'
@@ -140,33 +215,18 @@ function showMenu(menu, dish) {
     full.append(img)
     details.append(full)
   }
-  if (!dish && menu.items?.length) {
-    const list = element('ul', { className: 'menu-list' })
-    for (const item of menu.items) {
-      const row = element('li', { className: 'menu-list-item' })
-      if (item.image) row.append(imageFor(item, 'menu-thumb'))
-      const copy = element('div')
-      copy.append(element('h3', { text: item.name }))
-      if (item.description) copy.append(element('p', { text: item.description }))
-      row.append(copy)
-      if (Number.isFinite(item.price)) row.append(element('strong', { className: 'price', text: money.format(item.price) }))
-      list.append(row)
-    }
-    details.append(list)
-  }
-
-  if (isSample) {
-    if (dish) {
-      const fullMenu = element('button', { className: 'button button-secondary', text: 'Ver menú completo' })
-      fullMenu.type = 'button'
-      fullMenu.addEventListener('click', () => showMenu(sample))
-      actions.append(fullMenu)
-    } else {
-      const join = textLink('Publica tu menú', '#participa', 'button button-primary')
-      join.addEventListener('click', () => dialog.close())
-      actions.append(join)
-    }
+  if (isDemo) {
+    details.append(demoOrder(menu))
+    const contact = textLink('Quiero un menú como este', leadUrl(menu.name), 'button button-primary')
+    contact.target = '_blank'
+    contact.rel = 'noopener noreferrer'
+    actions.append(contact)
   } else {
+    if (menu.items?.length) {
+      const list = element('ul', { className: 'menu-list' })
+      list.append(...menu.items.map(menuRow))
+      details.append(list)
+    }
     if (menu.menuUrl) {
       const url = new URL(menu.menuUrl, location.origin)
       if (['https:', 'http:'].includes(url.protocol)) {
@@ -195,7 +255,14 @@ for (const category of [all, ...categories]) {
   button.addEventListener('click', () => setCategory(category.id))
   filters.append(button)
 }
-setCategory(all.id)
+byId('cartelera').hidden = businesses.length === 0
+if (businesses.length) setCategory(all.id)
+byId('demo-grid').append(...demos.map(demo => card(demo, {
+  label: 'Demo',
+  subtitle: demo.description,
+  action: 'Probar demo',
+  open: () => showMenu(demo, true),
+})))
 
 byId('catalog-search').addEventListener('submit', event => event.preventDefault())
 search.addEventListener('input', render)
@@ -204,23 +271,11 @@ byId('clear-search').addEventListener('click', () => {
   setCategory(all.id)
   search.focus()
 })
-byId('open-sample').addEventListener('click', () => showMenu(sample))
 dialog.addEventListener('click', event => {
   if (event.target === dialog) dialog.close()
 })
 
-const join = byId('join-link')
-const businessInfo = [
-  'Hola, quiero aprovechar la superpromoción de noviembre de $199 MXN para publicar mi menú en Menú Navideño 2027 de StreetBoss.',
-  '',
-  'Nombre del negocio:',
-  'Ciudad:',
-  'WhatsApp para pedidos:',
-  'Platillos o paquetes:',
-  '',
-  'Adjuntaré las fotos y el menú.',
-]
-join.href = whatsappUrl(new URL(join.href).pathname.slice(1), businessInfo.join('\n'))
+join.href = leadUrl()
 byId('hero-join-link').href = join.href
 
 byId('share-button').addEventListener('click', async event => {

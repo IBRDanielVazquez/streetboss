@@ -6,6 +6,8 @@
 
 ## 2026-11-20 — Campaña Menú Navideño 2027
 
+- La landing se orientó a los vendedores de comida navideña. HTML, CSS y módulos en `public/menu-navideno-2027/`: tres demos interactivos, flujo de solicitud y WhatsApp con el demo elegido.
+- Las pruebas de demos usan cantidades, subtotales y mensajes de ejemplo. El alta real de negocios se gestiona desde la Central StreetBoss.
 - La portada destaca la superpromoción de noviembre de $199 MXN y dirige consultas de la oferta al WhatsApp de StreetBoss.
 - Agregada la página pública en `public/menu-navideno-2027/`, con catálogo editable, galería, buscador, filtros y contacto por WhatsApp.
 - Vinculada la campaña desde `src/pages/Landing.jsx` y registrada su ruta pública en `vercel.json`.
