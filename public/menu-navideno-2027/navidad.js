@@ -211,7 +211,7 @@ dialog.addEventListener('click', event => {
 
 const join = byId('join-link')
 const businessInfo = [
-  'Hola, quiero publicar mi menú en Menú Navideño 2027 de StreetBoss.',
+  'Hola, quiero aprovechar la superpromoción de noviembre de $199 MXN para publicar mi menú en Menú Navideño 2027 de StreetBoss.',
   '',
   'Nombre del negocio:',
   'Ciudad:',
@@ -221,6 +221,7 @@ const businessInfo = [
   'Adjuntaré las fotos y el menú.',
 ]
 join.href = whatsappUrl(new URL(join.href).pathname.slice(1), businessInfo.join('\n'))
+byId('hero-join-link').href = join.href
 
 byId('share-button').addEventListener('click', async event => {
   const button = event.currentTarget

@@ -91,12 +91,25 @@ button { color: inherit; cursor: pointer; }
 }
 .ornament { color: var(--gold); display: inline-block; font-size: .9rem; }
 .hero h1 {
-  font: 400 clamp(5rem, 9.3vw, 9.5rem)/.83 var(--display);
+  font: 400 clamp(4.65rem, 8.4vw, 8rem)/.83 var(--display);
   letter-spacing: -.078em;
-  margin: 26px 0 28px;
+  margin: 22px 0 26px;
 }
 .hero h1 em { font-weight: 400; color: #ffe5c4; }
-.hero-description { max-width: 360px; color: #f1ddca; font-size: 1.08rem; line-height: 1.55; margin-bottom: 26px; }
+.hero-promo { border-left: 2px solid var(--orange); padding-left: 14px; margin-bottom: 21px; }
+.hero-promo-label { color: var(--gold); font-size: .9rem; font-weight: 800; }
+.hero-description { color: #f1ddca; font-size: 1.02rem; margin-top: 5px; }
+.hero-price {
+  display: block;
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: clamp(3.15rem, 5.35vw, 5rem);
+  font-weight: 820;
+  line-height: .99;
+  letter-spacing: -.075em;
+}
+.hero-price span { color: var(--gold); font-size: .25em; letter-spacing: .05em; vertical-align: .18em; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .image-credit { position: absolute; right: 0; bottom: 15px; font-size: .75rem; border-radius: 4px; color: white; background: #20140ddc; padding: 5px 8px; }
 .button {
   border: 1px solid transparent;
@@ -298,7 +311,9 @@ body:has(dialog[open]) { overflow: hidden; }
                 linear-gradient(90deg,#1a0f0c66,transparent 87%);
   }
   .hero h1 { font-size: clamp(4.15rem, 16vw, 6.9rem); margin-block: 14px 16px; }
-  .hero-description { font-size: 1rem; margin-bottom: 18px; max-width: 320px; }
+  .hero-promo { margin-bottom: 16px; }
+  .hero-description { font-size: .95rem; }
+  .hero-actions .button { padding-inline: 11px; font-size: .86rem; }
   .image-credit { right: 0; top: 12px; bottom: auto; }
   .occasion-strip .shell { min-height: 42px; gap: clamp(8px, 3vw, 19px); }
   .occasion-strip span:not(.ornament) { font-size: .96rem; }

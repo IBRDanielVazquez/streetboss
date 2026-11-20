@@ -6,6 +6,7 @@
 
 ## 2026-11-20 — Campaña Menú Navideño 2027
 
+- La portada destaca la superpromoción de noviembre de $199 MXN y dirige consultas de la oferta al WhatsApp de StreetBoss.
 - Agregada la página pública en `public/menu-navideno-2027/`, con catálogo editable, galería, buscador, filtros y contacto por WhatsApp.
 - Vinculada la campaña desde `src/pages/Landing.jsx` y registrada su ruta pública en `vercel.json`.
 - La página se sirve como HTML estático con portada para compartir y fotos WebP. Las fichas enlazan directamente al menú o WhatsApp de cada negocio.
