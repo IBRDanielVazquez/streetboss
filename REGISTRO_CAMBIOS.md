@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-11-20 — Campaña Menú Navideño 2027
+
+- Agregada la página pública en `public/menu-navideno-2027/`, con catálogo editable, galería, buscador, filtros y contacto por WhatsApp.
+- Vinculada la campaña desde `src/pages/Landing.jsx` y registrada su ruta pública en `vercel.json`.
+- La página se sirve como HTML estático con portada para compartir y fotos WebP. Las fichas enlazan directamente al menú o WhatsApp de cada negocio.
+- Comprobaciones locales iniciales: `npm ci`, `npm run build`, `node --check` sobre los módulos y `git diff --check`.
+
+---
+
 ## 2026-08-17 — Sincronización Realtime, Corrección de Pruebas Clonadas y Accesibilidad iOS Dynamic Type
 
 **Hora:** 12:00 CST  

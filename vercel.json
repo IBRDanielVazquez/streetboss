@@ -54,6 +54,7 @@
     { "src": "/streetboss-admin(/.*)?", "status": 404, "dest": "/404.html" },
     { "src": "/demo-admin(/.*)?", "status": 404, "dest": "/404.html" },
     { "src": "/internal(/.*)?", "status": 404, "dest": "/404.html" },
+    { "src": "/menu-navideno-2027/?", "dest": "/menu-navideno-2027/index.html" },
     { "handle": "filesystem" },
     { "src": "/menu/(.*)", "dest": "/api/menu" },
     { "src": "/(.*)", "dest": "/index.html" }

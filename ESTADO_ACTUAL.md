@@ -1,5 +1,11 @@
 # ESTADO ACTUAL — STREETBOSS
 
+## Campaña Menú Navideño 2027
+
+- Ruta pública: `/menu-navideno-2027/`. La página incluye una galería de muestra, buscador, filtros y un contacto para recibir cartas de negocios por WhatsApp.
+- Las cartas confirmadas se agregan en `public/menu-navideno-2027/catalogo.js`. Cada ficha puede mostrar fotos, platillos, precios y un enlace al menú público de StreetBoss o al WhatsApp del negocio.
+- La selección inicial incluye únicamente el menú de muestra de StreetBoss.
+
 > Última actualización: 2026-08-17
 > Actualizado por: Antigravity (Google DeepMind)
 

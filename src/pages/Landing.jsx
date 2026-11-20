@@ -85,6 +85,12 @@ export default function Landing() {
           <p className="text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-normal animate-fade-in-up-delay-2">
             StreetBoss transforma tu negocio con un catálogo interactivo que recibe pedidos <strong className="text-white font-semibold">directo a tu WhatsApp</strong>, calcula envíos por GPS y no te cobra comisiones por venta.
           </p>
+          <a
+            href="/menu-navideno-2027/"
+            className="inline-flex min-h-11 items-center rounded-full border border-orange-400/40 bg-orange-400/10 px-5 text-sm font-bold text-orange-200 transition-colors hover:bg-orange-400/20"
+          >
+            Menú Navideño 2027
+          </a>
         </div>
       </section>
 
