@@ -56,3 +56,9 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - **Git Status:** Rama `remediacion-sbos-master-audit` activa, commit `fb7ff6643183e6ee4c90b0e52058353a8b9c3b40`.
 - **Build Local (`npm run build`):** ✅ Compilación exitosa en 6.07s procesando 1,644 módulos.
 - **Despliegue Vercel:** ✅ Producción activa aliased a `https://streetboss.com.mx`.
+
+## La Vitola · 21 de noviembre de 2026
+
+El JavaScript servido por el dominio de producción usa el proyecto oficial uszhdesbewkjvphipudw. Las reglas de proyecto de Vercel todavía resuelven la carta y el editor desde el sitio externo. El acceso vigente usa ChatGPT.
+
+La migración 20261121202412 conserva en Supabase el catálogo publicado (21 productos, cuatro categorías) y su borrador. Los 16 productos de la ficha operativa anterior se conservaron por separado. La base externa del editor no tenía filas al inspeccionarla. La tabla de administradores de La Vitola está vacía. Auth tenía correo habilitado y teléfono deshabilitado.

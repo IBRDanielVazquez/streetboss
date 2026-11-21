@@ -31,3 +31,7 @@
 ---
 
 > Registrar aquí toda decisión técnica o de negocio que impacte el proyecto.
+
+## 2026-11-21 · Datos y acceso de La Vitola
+
+Conservar pausado srrsyxyxyyfnqyfxbdtz. La consulta de inventario fue rechazada y no permite certificar equivalencia. Conservar los dos catálogos del negocio sin sobrescribir registros. La ficha comercial, sus datos de contacto y el número público de WhatsApp no otorgan acceso administrativo.

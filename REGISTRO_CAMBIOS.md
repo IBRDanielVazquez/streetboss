@@ -190,3 +190,7 @@
 - No se modificó Supabase, Vercel ni producción.
 
 ---
+
+## 2026-11-21 · La Vitola
+
+Se inspeccionaron las reescrituras activas, el catálogo de producción, el código desplegado, el esquema oficial y el estado de ambos proyectos Supabase. Se aplicó la migración la_vitola_catalogo. La lectura pública devuelve únicamente published. La edición comprueba la membresía por UUID y la revisión del borrador. El editor aislado conserva la configuración oficial y usa Supabase Auth para contraseña y recuperación. Se comprobó npm run build, el acceso público al catálogo y la restricción de acceso al borrador. El cambio de origen de las rutas queda pendiente de comprobar con el administrador autorizado.

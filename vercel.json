@@ -55,6 +55,8 @@
     { "src": "/demo-admin(/.*)?", "status": 404, "dest": "/404.html" },
     { "src": "/internal(/.*)?", "status": 404, "dest": "/404.html" },
     { "src": "/menu-navideno-2027/?", "dest": "/menu-navideno-2027/index.html" },
+    { "src": "/menu/la-vitola/acceso/?", "dest": "/vitola-admin/index.html" },
+    { "src": "/menu/la-vitola/menu\\.js", "dest": "/api/vitola-menu" },
     { "handle": "filesystem" },
     { "src": "/menu/(.*)", "dest": "/api/menu" },
     { "src": "/(.*)", "dest": "/index.html" }
