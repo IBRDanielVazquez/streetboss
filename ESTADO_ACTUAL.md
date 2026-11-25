@@ -1,5 +1,16 @@
 # ESTADO ACTUAL — STREETBOSS
 
+## La Vitola — cuenta aislada (2026-11-25)
+
+- Acceso privado: `/menu/la-vitola/acceso`. La ruta antigua de ChatGPT fue sustituida por una función Supabase `la-vitola-portal`.
+- El administrador utiliza su teléfono como identificador y establece personalmente la contraseña mediante una invitación de un solo uso, almacenada únicamente como hash SHA-256 y con caducidad.
+- El permiso se limita a `public.sb_vitola_admins`; no se registra ningún rol en `sb_memberships` ni se concede acceso a StreetBoss Central.
+- Editor de catálogo dedicado: `public.sb_vitola_catalog` con guardado de borrador y publicación. El catálogo público `/menu/la-vitola/menu.js` se sirve desde la versión publicada en Supabase.
+- La carta conserva 21 productos y 4 categorías. La landing pública, imágenes y carrito existentes no fueron reemplazados.
+- El propietario debe abrir el enlace privado y crear su contraseña para activar la primera cuenta. No se almacenan contraseñas en documentación ni se exige correo al propietario.
+- La recuperación automática de contraseña no está habilitada; requiere una nueva invitación administrada. Validar posteriormente el ciclo completo con el propietario.
+
+
 ## Campaña Menú Navideño 2027
 
 - Ruta pública: `/menu-navideno-2027/`. La portada ofrece la creación del menú digital navideño por $199 MXN en la superpromoción de noviembre.
