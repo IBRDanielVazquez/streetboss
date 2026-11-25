@@ -190,3 +190,15 @@
 - No se modificó Supabase, Vercel ni producción.
 
 ---
+
+
+## 2026-11-25 — Acceso aislado La Vitola
+
+- Supabase oficial: `streetboss-pos`, proyecto `uszhdesbewkjvphipudw`.
+- Se creó `public.sb_vitola_invites`, con RLS, sin permisos públicos y token SHA-256 de un solo uso, vigente 7 días.
+- Se desplegó `la-vitola-portal` (Edge Function): activación de contraseña, ingreso con número como usuario, sesiones HttpOnly, verificación contra `sb_vitola_admins`, editor de 21 productos y publicar/borrador.
+- Vercel: `/menu/la-vitola/acceso` dejó de apuntar al inicio de sesión de ChatGPT; `/menu/la-vitola/menu.js` sirve la carta publicada desde Supabase.
+- Se verificaron respuestas HTTP 200 del menú, catálogo y acceso. Comparación entre catálogo estático y publicado: sin diferencias.
+- La cuenta no se genera hasta que el titular utilice su invitación y cree una contraseña; no se concede acceso a `StreetBoss Central`.
+- Archivos nuevos: `supabase/functions/la-vitola-portal/index.ts` y `supabase/la-vitola-access.sql`.
+- Pendiente: probar primer ingreso con el titular, verificar flujo completo de guardado/publicación y definir recuperación de contraseñas.
