@@ -152,3 +152,13 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Como compatibilidad para accesos instalados anteriormente, cuando `/` o `/instalar` se abre en modo `standalone`, se redirige automáticamente a `/central-hq`; en Safari/Chrome normales la landing sigue siendo comercial y la página de instalación conserva sus instrucciones.
 - Las PWA de restaurantes siguen independientes, con inicio en sus propios menús `/menu/{slug}`.
 - Despliegue de producción `dpl_4pHaZd8gNzWPjNcovpCx9nLAWvS1` compilado y en estado READY. Respuestas HTTP 200 comprobadas para `/`, `/instalar`, `/central-hq` y `/manifest.json`, con `start_url=/central-hq`. Pendiente prueba de instalación real en dispositivos iOS/Android.
+
+
+## La Vitola — gestión de acceso desde el Hub (2026-11-25)
+
+- En **StreetBoss Central → Clientes → La Vitola** hay botones específicos **Enviar acceso** y **Cambiar contraseña**, dirigidos exclusivamente al administrador `+52 961 254 8354`. El WhatsApp de pedidos del restaurante sigue independiente y no se usa para entregar credenciales.
+- **Enviar acceso** prepara un mensaje WhatsApp con número de usuario y enlaces a menú y dashboard, sin exponer la contraseña existente.
+- **Cambiar contraseña** se realiza con una instancia independiente de Supabase Auth que primero verifica la contraseña actual y `app_metadata.business_slug=la-vitola`, y después ejecuta `auth.updateUser`. Permite crear una clave segura aleatoria o escribir una manual (mínimo 12 caracteres); solamente muestra la contraseña nueva una vez tras guardarla correctamente, y entonces ofrece compartirla por WhatsApp al número de administración.
+- La contraseña y la sesión temporal **no se guardan en localStorage, archivos, documentos ni otras tablas**. Cerrar el modal borra el valor mostrado; no se cambió contraseña de ningún usuario durante esta implementación.
+- No se concede acceso a StreetBoss Central ni se crea otro usuario. Se verificó que existe una única cuenta Auth activa asociada a `sb_vitola_admins` y al alias autorizado.
+- Seguridad: el Hub existente usa autenticación local en el navegador, **no es suficiente para emitir reseteos privilegiados sin conocer la contraseña anterior**. Por tanto NO se habilita restablecimiento forzado desde el cliente sin verificar primero la contraseña vigente; para habilitarlo será necesario un rol HQ validado por servidor.
