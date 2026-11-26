@@ -5,6 +5,7 @@ import NotFound from './pages/NotFound'
 
 const Demos = lazy(() => import('./pages/Demos'))
 const DemoPublicMenu = lazy(() => import('./pages/DemoPublicMenuWrapper'))
+const LaVitolaPublicMenu = lazy(() => import('./pages/LaVitolaPublicMenu'))
 const StreetBossCentral = lazy(() => import('./pages/StreetBossCentral'))
 const ClientDashboard = lazy(() => import('./pages/ClientDashboard'))
 
@@ -27,6 +28,7 @@ export default function App() {
           {/* Rutas Públicas */}
           <Route path="/" element={<Landing />} />
           <Route path="/demos" element={<Demos />} />
+          <Route path="/menu/la-vitola" element={<LaVitolaPublicMenu />} />
           <Route path="/menu/:trialId" element={<DemoPublicMenu />} />
           <Route path="/demo/:trialId" element={<DemoPublicMenu />} />
 
