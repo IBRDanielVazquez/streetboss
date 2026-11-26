@@ -154,7 +154,8 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
     reloadClients()
   }
 
-  const filteredClients = clients.filter(c => {
+  // Los menús con dashboard dedicado no deben recibir los controles de contraseña del panel genérico.
+  const filteredClients = clients.filter(c => c.slug !== 'la-vitola').filter(c => {
     const matchesStatus = filterStatus === 'todos' || c.status?.toLowerCase() === filterStatus.toLowerCase()
     const matchesSearch = c.name?.toLowerCase().includes(search.toLowerCase()) ||
                           c.owner_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -203,7 +204,41 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
         </div>
       </div>
 
-      {/* Lista Única de Clientes */}
+
+      {/* Menús digitales activos con panel dedicado: el acceso nunca usa credenciales de StreetBoss Central. */}
+      {(filterStatus === 'todos' || filterStatus === 'activo') &&
+        (!search.trim() || ['la vitola','la-vitola','9612548354','menu digital'].some(v => v.includes(search.trim().toLowerCase()))) && (
+        <section className="bg-[#14161F] border border-[#FF4B00]/30 rounded-2xl p-4 sm:p-6 space-y-4" aria-label="Clientes con menú digital activo">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <h3 className="text-lg font-black text-white">MENÚS DIGITALES ACTIVOS</h3>
+            <span className="bg-orange-500/15 text-orange-300 border border-orange-500/20 px-3 py-1.5 rounded-full text-[11px] font-extrabold">CLIENTES</span>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-[#0D0E12] p-4 flex flex-col sm:flex-row gap-4 items-start">
+            <img src="/demos/la-vitola/profile.svg" alt="La Vitola" className="w-16 h-16 rounded-2xl bg-[#181A21] object-cover border border-white/10" />
+            <div className="flex-1 w-full min-w-0 space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <h4 className="font-black text-base text-white">La Vitola</h4>
+                <span className="bg-emerald-500/15 border border-emerald-500/25 text-emerald-300 text-[10px] px-2 py-1 rounded-md font-bold">Menú publicado</span>
+              </div>
+              <p className="text-xs text-gray-400 leading-relaxed">Restaurante real · Panel privado independiente · Acceso del propietario: +52 961 254 8354</p>
+              <p className="text-[11px] text-gray-500">Los pedidos llegan al WhatsApp del restaurante. Esta cuenta no utiliza las contraseñas del panel genérico.</p>
+              <div className="flex flex-wrap gap-2 pt-2">
+                <a href="https://streetboss.com.mx/menu/la-vitola" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/10 px-3 py-2.5 text-xs font-bold text-white">
+                  <ExternalLink size={14} /> Ver menú
+                </a>
+                <a href="https://streetboss.com.mx/menu/la-vitola/acceso" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-xl bg-[#FF4B00] hover:bg-[#FF6A1A] px-3 py-2.5 text-xs font-black text-white">
+                  <Lock size={14} /> Dashboard La Vitola
+                </a>
+                <button type="button" onClick={() => copyText('https://streetboss.com.mx/menu/la-vitola/acceso', 'vitola-dashboard')} className="flex items-center gap-2 rounded-xl border border-white/20 bg-[#252832] px-3 py-2.5 text-xs font-bold text-white">
+                  <Copy size={14} /> {copiedMsg === 'vitola-dashboard' ? 'Copiado' : 'Copiar acceso'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+            {/* Lista Única de Clientes */}
       <div className="space-y-4">
         {filteredClients.length === 0 ? (
           <div className="bg-[#14161F] p-12 text-center rounded-2xl border border-white/5 space-y-3">
