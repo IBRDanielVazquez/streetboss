@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Plus, Minus, X, CheckCircle, Store, Bike, Share } from 'lucide-react'
 import ProductoMenuCard from '../components/ProductoMenuCard'
 import CheckoutDrawer from '../components/CheckoutDrawer'
+import LaVitolaCheckoutDrawer from '../components/menu/LaVitolaCheckoutDrawer'
 import MenuHeroProfile from '../components/menu/MenuHeroProfile'
 import { AlertTriangle } from 'lucide-react'
 
@@ -66,6 +67,8 @@ const { subtotal, cantidadTotal } = useMemo(() => {
       return n
     })
   }, [])
+
+  const ActiveCheckoutDrawer = config.checkoutMode === 'whatsapp_por_cotizar' ? LaVitolaCheckoutDrawer : CheckoutDrawer
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] pb-32 font-sans relative">
@@ -198,7 +201,7 @@ const { subtotal, cantidadTotal } = useMemo(() => {
         <div className="pb-12 text-center text-gray-500 text-sm">😊 Tu mesero te atenderá en un momento</div>
       )}
 
-      <CheckoutDrawer
+      <ActiveCheckoutDrawer
         isOpen={checkoutVis && modo === 'pedir'}
         onClose={() => setCheckoutVis(false)}
         carrito={carrito}
