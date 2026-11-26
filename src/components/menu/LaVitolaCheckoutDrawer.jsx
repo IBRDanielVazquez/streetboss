@@ -14,6 +14,8 @@ export default function LaVitolaCheckoutDrawer({
   const [references, setReferences] = useState('')
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
+  const [savingRequest, setSavingRequest] = useState(false)
+  const [marketingConsent, setMarketingConsent] = useState(false)
   const [totalConfirmado, setTotalConfirmado] = useState(false)
   const pagoTransferencia = config.pagos?.transferencia || {}
   const pagoTarjeta = config.pagos?.tarjeta || {}
@@ -26,8 +28,9 @@ export default function LaVitolaCheckoutDrawer({
 
   if (!isOpen) return null
 
-  const submit = event => {
+  const submit = async event => {
     event.preventDefault()
+    if (savingRequest) return
     const cleanPhone = phone.replace(/\D/g, '')
     const whatsapp = (config.whatsapp || '').replace(/\D/g, '')
     if (!name.trim() || cleanPhone.length !== 10) {
@@ -47,12 +50,42 @@ export default function LaVitolaCheckoutDrawer({
       items, subtotal: total, delivery, name, phone: cleanPhone, address, references, note,
     })
 
-    // El pedido va directamente al WhatsApp del restaurante, sin intermediarios.
+    // Registra una solicitud, nunca una venta confirmada: WhatsApp no confirma si se envió.
     const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`
     setError('')
+    setSavingRequest(true)
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 6000)
+    try {
+      const response = await fetch('https://uszhdesbewkjvphipudw.supabase.co/functions/v1/la-vitola-registrar-pedido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          externalId: crypto.randomUUID(),
+          name: name.trim(),
+          phone: cleanPhone,
+          delivery,
+          marketingConsent,
+          items: items.map(({ product, qty }) => ({
+            id: product.idOriginal || product.id,
+            qty,
+            addons: (product.adicionales || []).map(a => a.id),
+          })),
+        }),
+      })
+      if (response.status === 409) {
+        setError('El menú cambió. Actualiza la página y revisa los productos antes de pedir.')
+        return
+      }
+      // Aunque el historial no esté disponible, no bloqueamos el pedido directo por WhatsApp.
+    } catch {
+      // Sin red para el registro: el cliente conserva la salida a WhatsApp.
+    } finally {
+      clearTimeout(timeout)
+      setSavingRequest(false)
+    }
     window.location.assign(url)
-    // Conservamos el carrito: solo el restaurante puede confirmar el pedido.
-    // No marcamos un pedido como registrado en una base de datos inexistente.
   }
 
   return (
@@ -106,9 +139,17 @@ export default function LaVitolaCheckoutDrawer({
             <textarea className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm" rows={2} value={note} onChange={e=>setNote(e.target.value)} placeholder="Salsa, ingredientes, aclaraciones…" />
           </section>
 
+          <div className="rounded-xl bg-white border border-gray-200 p-3 text-xs text-gray-600">
+            Tus datos se utilizarán para atender tu solicitud. El restaurante podrá consultar el historial de solicitudes desde su panel.
+            <label className="flex items-start gap-2 mt-3 text-gray-800 leading-relaxed cursor-pointer">
+              <input type="checkbox" checked={marketingConsent} onChange={e => setMarketingConsent(e.target.checked)} className="mt-0.5 w-4 h-4 accent-[#FF4B00] flex-none" />
+              <span>Acepto recibir promociones de La Vitola por WhatsApp. <strong>Opcional.</strong></span>
+            </label>
+          </div>
+
           {error && <div role="alert" className="bg-red-50 text-red-800 border border-red-200 rounded-xl p-3 text-sm font-bold">{error}</div>}
-          <button type="submit" className="bg-[#FF4B00] text-white w-full rounded-2xl font-black py-4 flex items-center justify-center gap-2 shadow-lg active:scale-95">
-            <Send size={18} /> Solicitar confirmación por WhatsApp
+          <button type="submit" disabled={savingRequest} className="bg-[#FF4B00] text-white w-full rounded-2xl font-black py-4 flex items-center justify-center gap-2 shadow-lg active:scale-95">
+            <Send size={18} /> {savingRequest ? "Preparando pedido…" : "Solicitar confirmación por WhatsApp"}
           </button>
 
           <p className="text-center text-xs text-gray-500">La Vitola cotizará el envío, si aplica, y confirmará el total antes del pago.</p>
