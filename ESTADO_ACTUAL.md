@@ -106,3 +106,10 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - En domicilio solicita **solo el costo del envío a la dirección indicada**, sin texto de «pendiente por confirmar». Para recoger no solicita envío. Los extras se detallan sin sumarse dos veces al precio total.
 - Dashboard de La Vitola: corregida la omisión de los estilos `adminStyle` y `visualDashboardCss` en la respuesta HTML, principal causa de la visualización defectuosa. Añadidos estilos para iPhone, barra inferior con safe areas, tarjetas compactas de producto, categorías desplegables, ventanas de edición a tamaño táctil y campos de 16 px para evitar zoom automático.
 - No se modificaron la autenticación, las tablas, los roles, el contenido del catálogo ni el control de productos agotados.
+
+## La Vitola — categorías y registro de cliente (2026-11-25)
+
+- Desde el dashboard privado, en **Menú → Nueva categoría**, el propietario puede crear nuevas categorías con nombre propio. Se validan nombres vacíos/duplicados y un límite de 50 categorías; se generan IDs seguros y se preservan los 21 productos. Al publicar, la categoría estará disponible para añadir platillos; en el menú público aparece al tener productos visibles.
+- La cuenta sigue aislada en `sb_vitola_admins` y no obtiene rol de acceso a StreetBoss Central. El acceso para compartir es `https://streetboss.com.mx/menu/la-vitola/acceso`, con usuario telefónico y contraseña que ya creó el titular.
+- El restaurante se registró en `sb_clients` con `slug=la-vitola`. La ficha preexistente en `sb_businesses` fue normalizada sin crear duplicado: contacto del propietario, WhatsApp de pedidos desde el catálogo, logo, portada y tarifa de reparto por cotizar; se eliminaron los datos demostrativos obsoletos de esa ficha.
+- En **StreetBoss Central → Clientes** se presenta la sección **Menús digitales activos**, actualmente con La Vitola y botones específicos de menú, dashboard y copiar acceso. No se ofrece el flujo genérico de regeneración de contraseña para esta cuenta dedicada.
