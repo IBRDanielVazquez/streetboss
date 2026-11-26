@@ -66,7 +66,7 @@ function toDemoConfig(catalog) {
     // No afirmamos que esté abierto ahora sin consultar un horario operativo.
     hideAvailabilityBadge: true,
     // El precio de reparto no está definido: nunca presentarlo como gratis.
-    envio: { activo: catalog.entregas?.activo ?? delivery, modoEnvio: 'por_cotizar', costoEnvio: null, zonas: catalog.entregas?.zonas || [], indicaciones: catalog.entregas?.indicaciones || '' },
+    envio: { activo: catalog.entregas?.activo ?? delivery, modoEnvio: 'tarifa_por_colonia', costoEnvio: null, zonas: (catalog.entregas?.zonas || []).map(z => typeof z === 'string' ? { nombre: z, costo: null } : z).filter(z => z?.nombre), indicaciones: catalog.entregas?.indicaciones || '' },
     pagos: catalog.pagos || {},
     checkoutMode: 'whatsapp_por_cotizar',
     addonsEnabled: true,
