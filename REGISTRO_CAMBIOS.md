@@ -243,3 +243,11 @@
 - Cambios en `LaVitolaPublicMenu.jsx`, `ProductoMenuCard.jsx`, `MenuHeroProfile.jsx` y `LaVitolaCheckoutDrawer.jsx`: muestran fotos y aviso de ilustrativas, redes, Maps y ajustes de envíos; la solicitud de pedido va a WhatsApp antes del pago y, si el negocio configura medios, solo se muestran al marcar confirmación.
 - No se agregó pasarela de pago, no se reciben números de tarjeta, no se modifica autenticación de StreetBoss general, ni bases de prospectos.
 - Verificar en navegador con sesión de propietario las modificaciones, alta de productos y subida real de fotos antes de declarar el ciclo completo terminado.
+
+
+## 2026-11-25 — Disponibilidad administrada desde el menú
+
+- `LaVitolaCheckoutDrawer.jsx`: eliminadas las referencias a confirmación de disponibilidad en pedido y checkout; se conservan cotización del envío, total y forma de pago.
+- `LaVitolaPublicMenu.jsx`: un producto inactivo o agotado se presenta como agotado; los extras agotados quedan excluidos del selector.
+- `supabase/functions/la-vitola-portal/index.ts`: checkbox **Marcar como agotado**, persistencia en `producto.agotado`, sin ocultar el artículo. La acción inversa recupera disponibilidad al publicar.
+- Prueba aislada del handler: marcar como agotado produce `activo=true`, `agotado=true`, `oculto=false` en borrador y publicado.
