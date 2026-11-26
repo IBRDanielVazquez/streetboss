@@ -13,6 +13,10 @@ export default function LaVitolaCheckoutDrawer({
   const [references, setReferences] = useState('')
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
+  const [totalConfirmado, setTotalConfirmado] = useState(false)
+  const pagoTransferencia = config.pagos?.transferencia || {}
+  const pagoTarjeta = config.pagos?.tarjeta || {}
+  const pagosDisponibles = pagoTransferencia.activo || pagoTarjeta.activo
 
   const items = useMemo(() => Object.entries(carrito)
     .map(([id, qty]) => ({ product: productosPorId[id], qty }))
@@ -39,7 +43,7 @@ export default function LaVitolaCheckoutDrawer({
     }
 
     const lines = [
-      '🍔 *PEDIDO PARA LA VITOLA*',
+      '🍔 *SOLICITUD DE PEDIDO PARA LA VITOLA*',
       '',
       '*PRODUCTOS:*',
       ...items.flatMap(({ product, qty }) => [
@@ -60,7 +64,7 @@ export default function LaVitolaCheckoutDrawer({
       references.trim() ? `📌 Referencias: ${references.trim()}` : '',
       note.trim() ? `📝 Indicaciones: ${note.trim()}` : '',
       '',
-      'Por favor, confirma disponibilidad, importe final y forma de pago.',
+      '⚠️ PENDIENTE DE CONFIRMAR: disponibilidad, costo de envío, total final y forma de pago. Este mensaje no es un pago.',
     ].filter(Boolean).join('\n')
 
     // El pedido va directamente al WhatsApp del restaurante, sin intermediarios.
@@ -124,10 +128,38 @@ export default function LaVitolaCheckoutDrawer({
 
           {error && <div role="alert" className="bg-red-50 text-red-800 border border-red-200 rounded-xl p-3 text-sm font-bold">{error}</div>}
           <button type="submit" className="bg-[#FF4B00] text-white w-full rounded-2xl font-black py-4 flex items-center justify-center gap-2 shadow-lg active:scale-95">
-            <Send size={18} /> Enviar pedido por WhatsApp
+            <Send size={18} /> Solicitar confirmación por WhatsApp
           </button>
-          <p className="text-center text-xs text-gray-500">El restaurante confirmará disponibilidad, envío y total final.</p>
+
+          <p className="text-center text-xs text-gray-500">La Vitola confirmará disponibilidad, envío y total antes de que pagues.</p>
         </form>
+
+        {pagosDisponibles && (
+          <section className="mx-4 mb-5 bg-white rounded-2xl p-4 border border-gray-200 shadow-sm">
+            <h3 className="font-black text-gray-900 text-base mb-2">Pagar después de confirmar</h3>
+            <p className="text-xs text-gray-600 mb-3">Primero solicita tu pedido por WhatsApp y espera la confirmación del restaurante con el importe final, incluido el envío si aplica.</p>
+            <label className="flex items-start gap-3 text-sm font-bold text-gray-800">
+              <input type="checkbox" checked={totalConfirmado} onChange={e => setTotalConfirmado(e.target.checked)} className="mt-1 w-5 h-5 accent-[#FF4B00]" />
+              La Vitola ya confirmó mi pedido y el total que debo pagar.
+            </label>
+            {totalConfirmado && <div className="mt-4 space-y-3">
+              {pagoTransferencia.activo && <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <h4 className="font-black text-sm mb-2">🏦 Transferencia</h4>
+                <p className="text-sm text-gray-700">Banco: <b>{pagoTransferencia.banco}</b></p>
+                <p className="text-sm text-gray-700">Titular: <b>{pagoTransferencia.titular}</b></p>
+                <p className="text-sm text-gray-700 break-all">CLABE: <b>{pagoTransferencia.clabe}</b></p>
+                <button type="button" className="mt-3 bg-gray-900 text-white text-xs font-bold rounded-lg px-4 py-2" onClick={() => navigator.clipboard?.writeText(pagoTransferencia.clabe || '')}>Copiar CLABE</button>
+              </div>}
+              {pagoTarjeta.activo && pagoTarjeta.enlace?.startsWith('https://') && <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <h4 className="font-black text-sm mb-2">💳 Tarjeta</h4>
+                <p className="text-xs text-gray-600 mb-3">La página de cobro es externa. Comprueba el importe con La Vitola antes de pagar.</p>
+                <a className="block text-center bg-[#FF4B00] text-white rounded-xl py-3 font-black text-sm" href={pagoTarjeta.enlace} target="_blank" rel="noopener noreferrer">Abrir enlace del proveedor ↗</a>
+              </div>}
+              <p className="text-xs text-amber-800 bg-amber-50 p-3 rounded-lg">No envíes datos de tarjeta por WhatsApp. Confirma el importe antes de pagar.</p>
+            </div>}
+          </section>
+        }
+
       </div>
     </div>
   )
