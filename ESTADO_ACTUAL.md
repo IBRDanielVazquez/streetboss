@@ -93,3 +93,9 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Catálogo público inicial: 13 platillos/bebidas con imágenes ilustrativas diferenciadas y un perfil/portada provisionales. Los 8 extras se agregan únicamente dentro de la hamburguesa. Los materiales provisionales están etiquetados y el propietario puede reemplazarlos.
 - Supabase Edge Function `la-vitola-portal` v8, `sb_vitola_catalog`, Storage `la-vitola-media` (JPG/PNG/WebP 5 MB). El dashboard verifica sesión y permiso de `sb_vitola_admins` en cada escritura y mantiene CSRF.
 - Se verificó con pruebas aisladas la salida HTML para 21 editores, seis secciones, fotos, redes, envíos y pagos, además de simulaciones de crear producto, edición, links, cotización y validación de CLABE. Prueba autenticada final con usuario titular aún pendiente.
+
+## La Vitola — estado Agotado en el dashboard (2026-11-25)
+
+- El propietario puede activar **Marcar como agotado** por platillo desde el editor visual, y volver a desmarcarlo cuando esté disponible.
+- En el menú público el producto permanece visible con la etiqueta **Agotado**, pero no puede agregarse al carrito. Los extras agotados tampoco se ofrecen al personalizar hamburguesas.
+- El pedido por WhatsApp no solicita confirmar disponibilidad: solo se cotiza envío cuando aplica, se confirma el total y se acuerda la forma de pago.
