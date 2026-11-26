@@ -1,8 +1,8 @@
 {
   "name": "StreetBoss",
   "short_name": "StreetBoss",
-  "description": "Menú digital para vender directo por WhatsApp sin comisiones",
-  "start_url": "/",
+  "description": "Acceso administrativo privado a StreetBoss Central",
+  "start_url": "/central-hq",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111111",
