@@ -28,6 +28,8 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
           <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-amber-50 to-orange-50">{prod.emoji || '🌮'}</div>
         )}
         
+        {prod.foto_ilustrativa && <span className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-bold px-2 py-1 rounded-md">Foto ilustrativa</span>}
+
         {isAgotado && (
           <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center">
             <span className="bg-red-600 text-white font-black px-4 py-1.5 rounded-full text-[10px] tracking-widest uppercase shadow-md">
