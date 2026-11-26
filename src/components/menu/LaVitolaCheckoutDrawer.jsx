@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Bike, Store, X, Send, Minus, Plus } from 'lucide-react'
+import { Bike, Store, X, Send } from 'lucide-react'
+import { formatLaVitolaOrder } from '../../utils/formatLaVitolaOrder'
 
 // Checkout específico: el restaurante confirma por WhatsApp el costo de reparto.
 // No se inventan tarifas de entrega ni formas de pago.
@@ -42,35 +43,12 @@ export default function LaVitolaCheckoutDrawer({
       return
     }
 
-    const lines = [
-      '🍔 *SOLICITUD DE PEDIDO PARA LA VITOLA*',
-      '',
-      '*PRODUCTOS:*',
-      ...items.flatMap(({ product, qty }) => [
-        `${qty} × ${product.nombre} — $${(Number(product.precio) * qty).toFixed(2)}`,
-        ...(product.adicionales?.length
-          ? [`   + Extras: ${product.adicionales.map(a => a.nombre + " (+$" + Number(a.precio).toFixed(2) + ")").join(", ")}`]
-          : []),
-      ]),
-      '',
-      `*Subtotal de productos: $ ${total.toFixed(2)} MXN*`,
-      delivery ? '🛵 *Envío: por cotizar con el restaurante*' : '🏪 *Recoger en el local*',
-      delivery ? '*Total final pendiente de confirmar con envío*' : '',
-      '',
-      '*CLIENTE:*',
-      `👤 ${name.trim()}`,
-      `📱 ${cleanPhone}`,
-      delivery ? `📍 Dirección: ${address.trim()}` : '',
-      references.trim() ? `📌 Referencias: ${references.trim()}` : '',
-      note.trim() ? `📝 Indicaciones: ${note.trim()}` : '',
-      '',
-      delivery
-        ? '⚠️ PENDIENTE DE CONFIRMAR: costo de envío, total final y forma de pago. Este mensaje no es un pago.'
-        : '💬 Forma de pago a acordar con La Vitola. Este mensaje no es un pago.',
-    ].filter(Boolean).join('\n')
+    const message = formatLaVitolaOrder({
+      items, subtotal: total, delivery, name, phone: cleanPhone, address, references, note,
+    })
 
     // El pedido va directamente al WhatsApp del restaurante, sin intermediarios.
-    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(lines)}`
+    const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message)}`
     setError('')
     window.location.assign(url)
     // Conservamos el carrito: solo el restaurante puede confirmar el pedido.
