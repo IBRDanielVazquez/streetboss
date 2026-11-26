@@ -67,3 +67,11 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - **Git Status:** Rama `remediacion-sbos-master-audit` activa, commit `fb7ff6643183e6ee4c90b0e52058353a8b9c3b40`.
 - **Build Local (`npm run build`):** ✅ Compilación exitosa en 6.07s procesando 1,644 módulos.
 - **Despliegue Vercel:** ✅ Producción activa aliased a `https://streetboss.com.mx`.
+
+## La Vitola — menú unificado con los demos (25 noviembre 2026)
+
+- El menú público `/menu/la-vitola` se sirve con el mismo componente React `MenuDigital`, portada/perfil, barra de categorías, tarjetas en dos columnas y carrito flotante usados por los demos oficiales.
+- La página usa `LaVitolaPublicMenu.jsx` como adaptador del catálogo publicado `sb_vitola_catalog` a la UI oficial. No se duplican productos ni precios.
+- El checkout de La Vitola envía directamente por WhatsApp y cotiza el envío con el negocio; no se muestran costos de reparto inventados.
+- La ruta de acceso `/menu/la-vitola/acceso` y la función de autenticación privada no se modificaron.
+- Menú comprobado con 21 productos y 4 categorías. Las fotografías individuales de comida siguen pendientes de activos auténticos del restaurante; actualmente se muestran los iconos de respaldo del componente oficial.
