@@ -305,3 +305,12 @@
 - Validación final de publicación: Vercel `dpl_7eepxsXNAbMscFVFAVpvQVAr1Sz3` READY, compilación Vite aprobada.
 - Respuestas 200 verificadas: `/instalar`, `/manifest.json`, ícono StreetBoss 192, manifiestos e íconos 512 de `la-vitola` y `tacos-el-guero`, ambas páginas públicas y módulo de instalación.
 - Confirmadas identidades distintas en HTML inicial de iPhone: **StreetBoss**, **La Vitola** y **Tacos El Güero**, cada uno con manifiesto asociado a su propia ruta. Pendiente la prueba manual de instalación en dispositivos reales; no se afirma una instalación ejecutada.
+
+
+## 2026-11-25 — App StreetBoss abre acceso en lugar de landing
+
+- `src/pages/Landing.jsx`: se retiró el botón «Instalar app» del encabezado comercial y se añadió compatibilidad para accesos instalados que todavía abren `/`, redirigiéndolos a `/central-hq` únicamente en modo standalone.
+- `public/manifest.json`: `start_url` cambia a `/central-hq` sin alterar el `id` existente de la app.
+- `src/pages/InstalarStreetBoss.jsx`: especifica que el acceso de la app es administrativo; en el caso de accesos directos instalados en iOS que arranquen en la página de instalación, redirige al login.
+- No se cambiaron usuarios, contraseñas, autorización, permisos, bases de datos ni aplicaciones PWA específicas de los restaurantes.
+- Validación: compilación Vite aprobada; Vercel producción READY; cuatro endpoints principales respondieron 200; manifiesto verificado con `start_url=/central-hq`; landing sin CTA de instalación según código fuente. La interacción real de instalación debe probarse en dispositivos.
