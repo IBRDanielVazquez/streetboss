@@ -2,13 +2,25 @@
   "name": "StreetBoss",
   "short_name": "StreetBoss",
   "description": "Menú digital para vender directo por WhatsApp sin comisiones",
-  "start_url": "./",
-  "display": "browser",
+  "start_url": "/",
+  "display": "standalone",
   "orientation": "portrait",
   "background_color": "#111111",
-  "theme_color": "#ff4b16",
+  "theme_color": "#0D0E12",
   "icons": [
-    { "src": "/brand/SB_FAVICON_512x512_V01.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" },
-    { "src": "/brand/SB_APPLE_TOUCH_ICON_180x180_V01.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
-  ]
+    {
+      "src": "/brand/SB_FAVICON_512x512_V01.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/SB_APPLE_TOUCH_ICON_180x180_V01.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "id": "/",
+  "scope": "/"
 }
