@@ -28,7 +28,7 @@ export default function MenuDigital({ modo: propModo, demoMenu, demoConfig, isDe
   const config = demoConfig || {}
 
   // El manifiesto y el ícono pertenecen al negocio, no a StreetBoss general.
-  const appSlug = window.location.pathname.match(/^\\/(?:menu|demo)\\/([a-z0-9-]+)/)?.[1] || ''
+  const appSlug = window.location.pathname.match(new RegExp('^/(?:menu|demo)/([a-z0-9-]+)'))?.[1] || ''
   useEffect(() => {
     if (!appSlug) return undefined
     const manifest = document.querySelector('link[rel="manifest"]')
