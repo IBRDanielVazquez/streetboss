@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { MapPin, Clock, Phone, Share2, Instagram, Facebook, Youtube, Globe } from 'lucide-react'
 import { normalizeMexicanPhone } from '../../services/crmV3Service'
+import InstallAppButton from '../InstallAppButton'
 
 // Ícono TikTok SVG inline (Lucide no tiene TikTok)
 function TikTokIcon({ size = 16 }) {
@@ -166,6 +167,9 @@ export default function MenuHeroProfile({ config }) {
             <div className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gray-800 bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg">
               🚀 Pedidos directos a tu WhatsApp
             </div>
+          </div>
+          <div className="pt-2">
+            <InstallAppButton appName={negocio || 'este menú'} compact />
           </div>
 
           {/* Dirección, Horarios y Ubicación */}
