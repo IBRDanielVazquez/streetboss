@@ -39,8 +39,8 @@ function toDemoMenu(catalog) {
         foto: product.foto || product.imagen || '',
         foto_ilustrativa: product.foto_ilustrativa === true,
         emoji: icons[cat.id] || '🍽️',
-        activo: product.activo !== false,
-        agotado: product.agotado === true,
+        activo: true,
+        agotado: product.agotado === true || product.activo === false,
         oculto: product.oculto === true,
       })),
   }))
@@ -70,7 +70,7 @@ function toDemoConfig(catalog) {
     pagos: catalog.pagos || {},
     checkoutMode: 'whatsapp_por_cotizar',
     addonsEnabled: true,
-    addons: (catalog.productos || []).filter(p => p.categoria === 'extras' && p.activo !== false && p.oculto !== true).map(p => ({id:p.id,nombre:p.nombre,precio:Number(p.precio)})),
+    addons: (catalog.productos || []).filter(p => p.categoria === 'extras' && p.activo !== false && p.agotado !== true && p.oculto !== true).map(p => ({id:p.id,nombre:p.nombre,precio:Number(p.precio)})),
   }
 }
 
