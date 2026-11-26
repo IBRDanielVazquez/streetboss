@@ -78,6 +78,24 @@ export default async function handler(req, res) {
     } catch (err) {}
   }
 
+  const demoNames = {
+    'tacos-el-guero': 'Tacos El Güero',
+    'burger-house': 'Burger House',
+    'pizza-house': 'Pizza House',
+    'cafe-central': 'Café Central',
+    'pollos-el-rey': 'Pollos El Rey',
+    'parrilla-el-carbon': 'Parrilla El Carbón',
+    'tortas-el-barrio': 'Tortas El Barrio',
+    'birrieria-jalisco': 'Birriería Jalisco',
+    'mariscos-el-puerto': 'Mariscos El Puerto',
+    'china-express': 'China Express',
+  }
+  if (!foundBusiness && demoNames[trialId]) {
+    title = `${demoNames[trialId]} — Menú Digital`
+    description = `Menú demostrativo de ${demoNames[trialId]} creado en StreetBoss.`
+    logoPath = `/demos/${trialId}/profile.png`
+  }
+
   if (trialId === 'la-vitola') {
     title = 'La Vitola — Menú Digital'
     description = 'Tacos con papa, hamburguesas artesanales, extras y bebidas. Haz tu pedido directo por WhatsApp.'
