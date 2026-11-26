@@ -52,3 +52,7 @@ Cada agente debe dejar evidencia clara del estado final.
 ---
 
 > Estas reglas son obligatorias. Complementan las reglas globales de `~/Proyectos/AGENTS.md`.
+
+## Puerta de seguridad obligatoria
+
+Ningún restaurante, funcionalidad, dashboard o aplicación podrá publicarse si existen vulnerabilidades críticas o altas sin resolver que afecten su seguridad. Consultar `SEGURIDAD.md` y exigir evidencia de pruebas en entorno aislado antes de aprobar producción. Aplica a Antigravity, Codex, Claude y cualquier agente.
