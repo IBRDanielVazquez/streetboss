@@ -251,3 +251,12 @@
 - `LaVitolaPublicMenu.jsx`: un producto inactivo o agotado se presenta como agotado; los extras agotados quedan excluidos del selector.
 - `supabase/functions/la-vitola-portal/index.ts`: checkbox **Marcar como agotado**, persistencia en `producto.agotado`, sin ocultar el artículo. La acción inversa recupera disponibilidad al publicar.
 - Prueba aislada del handler: marcar como agotado produce `activo=true`, `agotado=true`, `oculto=false` en borrador y publicado.
+
+
+## 2026-11-25 — Ajuste de pedido WhatsApp y dashboard para iPhone
+
+- Nuevo: `src/utils/formatLaVitolaOrder.js`, plantilla de WhatsApp con espacios entre conceptos, base y extras desglosados, subtotal correcto y consulta exclusiva por costo de domicilio.
+- Actualizado: `src/components/menu/LaVitolaCheckoutDrawer.jsx`, utiliza la plantilla y conserva el envío directo por WhatsApp.
+- Actualizado: `supabase/functions/la-vitola-portal/index.ts`, incorpora CSS previamente no aplicado, categorías plegables, mejor distribución visual de tarjetas, barra iOS con área segura y cierre correcto de ventanas al omitir.
+- Verificación: 8 pruebas de salida de WhatsApp aprobadas (espacios, extras, subtotal, domicilio, retiro y ausencia de textos pendientes). Render del dashboard simulado con las 5 secciones, 4 grupos, 21 ventanas de producto, acciones de guardar/publicar y CSRF.
+- Pendiente: probar el dashboard en la sesión real del propietario y comprobar la publicación de un cambio desde iPhone.
