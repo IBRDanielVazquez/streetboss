@@ -83,3 +83,13 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - El acceso privado conserva la cuenta asociada al teléfono del restaurante. Función `la-vitola-portal` versión 5 con editor mobile-first de nombre, precio, descripción, disponibilidad y fotografías por producto, logo y portada, con borrador y publicación.
 - Se agregó el bucket público `la-vitola-media` con tipos JPG/PNG/WebP y límite por archivo de 5 MB. Las subidas pasan exclusivamente por la función autenticada que comprueba pertenencia a `sb_vitola_admins` y token CSRF; no se habilitaron subidas públicas.
 - Las imágenes generadas durante el trabajo todavía **no** forman parte del catálogo publicado: requieren identificación exacta de cada platillo para evitar fotografías incorrectas. El editor ya acepta imágenes del propietario.
+
+## La Vitola — editor visual y pago tras confirmación (2026-11-25)
+
+- Dashboard móvil privado `/menu/la-vitola/acceso` con portada, avatar, tarjetas con fotos y precio, vista previa de productos y navegación inferior iOS: Inicio, Menú, Agregar, Envíos, Pagos y Redes.
+- Edición por ventanas de portada, perfil, platillos y extras con previsualización local al seleccionar imagen. Admite crear productos en las cuatro categorías, actualizar descripciones, precios, disponibilidad y foto, además de omitir una sección sin guardar.
+- Gestión de WhatsApp, enlaces de Instagram, Facebook, TikTok, YouTube, página web y Google Maps; ajustes de envío con colonias opcionales.
+- Configuración optativa de datos para transferencia y enlace externo de pago con tarjeta, sin almacenar PAN/CVV ni pasarela propia. En el carrito, el comprador solicita confirmación de disponibilidad, costo de envío y total por WhatsApp **antes de pagar**. Los métodos configurados solo se muestran al marcar que el restaurante ya confirmó el importe.
+- Catálogo público inicial: 13 platillos/bebidas con imágenes ilustrativas diferenciadas y un perfil/portada provisionales. Los 8 extras se agregan únicamente dentro de la hamburguesa. Los materiales provisionales están etiquetados y el propietario puede reemplazarlos.
+- Supabase Edge Function `la-vitola-portal` v8, `sb_vitola_catalog`, Storage `la-vitola-media` (JPG/PNG/WebP 5 MB). El dashboard verifica sesión y permiso de `sb_vitola_admins` en cada escritura y mantiene CSRF.
+- Se verificó con pruebas aisladas la salida HTML para 21 editores, seis secciones, fotos, redes, envíos y pagos, además de simulaciones de crear producto, edición, links, cotización y validación de CLABE. Prueba autenticada final con usuario titular aún pendiente.
