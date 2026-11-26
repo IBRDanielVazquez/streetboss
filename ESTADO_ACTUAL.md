@@ -122,3 +122,13 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Hay consentimiento **opcional, desmarcado por defecto**, para futuras promociones por WhatsApp. No se implementó envío masivo, automatización ni importación de conversaciones de WhatsApp. La gestión futura de exclusión y consentimiento debe verificarse antes de enviar campañas.
 - Los datos se almacenan en `public.sb_vitola_requests` con RLS forzada y ningún acceso directo de `anon` o `authenticated`: solamente las funciones backend pueden registrar, y el portal verifica la cuenta autorizada antes de leer o actualizar. No se modifican las tablas de prospectos ni la autenticación de StreetBoss Central.
 - El historial previo de La Vitola no existe en `sb_orders`; no se reconstruyeron ventas pasadas a partir de capturas ni se crearon registros de prueba en producción.
+
+
+## La Vitola — app instalable y tarifas por colonia (2026-11-25)
+
+- El propietario proporcionó el logotipo original de La Vitola; quedó instalado sin rediseño como archivos binarios propios `public/la-vitola/icon-192.png` y `icon-512.png`. La ruta PWA privada usa `public/la-vitola/manifest.webmanifest`, nombre `La Vitola`, `start_url=/menu/la-vitola/acceso`, modo standalone, favicon y Apple touch icon exclusivos. No se sustituye el branding general de StreetBoss.
+- En el dashboard privado: **Envíos → + Agregar colonia**, editable por filas **Colonia / Costo de envío**, con botón eliminar y vista previa automática. Se permiten costos definidos (incluido $0) o dejar el campo vacío para cotizar por WhatsApp. Validación de valores y duplicados al guardar/publicar, sin necesidad de escribir tarifas en notas.
+- Se recuperó la información ya capturada «Terán - $25» y se publicó como tarifa estructurada `{nombre:'Terán',costo:25}`, preservando el catálogo del negocio.
+- Checkout: al elegir envío aparece selector de colonia; muestra su tarifa y total con envío en tiempo real, y los envía desglosados a WhatsApp. Si una colonia no tiene tarifa configurada se solicita solo el costo de envío.
+- La Edge Function `la-vitola-registrar-pedido` valida la colonia y tarifa contra el catálogo publicado (no confía en importes del cliente). La tabla `sb_vitola_requests` contiene opcionalmente `delivery_zone` y `delivery_fee` para el historial privado.
+- La PWA privada se puede añadir a pantalla de inicio en iOS desde Safari y en dispositivos compatibles sin distribuirla por tiendas. Las sesiones y permisos existentes del propietario se mantienen.
