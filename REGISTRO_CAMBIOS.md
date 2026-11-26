@@ -211,3 +211,13 @@
 - Gestión autenticada: protegida con token CSRF independiente guardado en cookie HttpOnly, Secure y SameSite=Lax y validado en guardar, publicar y cerrar sesión.
 - Desplegada versión 4 de `la-vitola-portal` y actualizado el código fuente oficial.
 - Verificado HTTP 200 y HTML en el enlace público de acceso. Invitación de La Vitola comprobada: coincide con hash, no utilizada y vigente. La prueba completa de alta con contraseña debe hacerla el titular.
+
+
+## 2026-11-25 — Corrección de formato del menú de La Vitola
+
+- Se detectó que La Vitola usaba HTML independiente de un micrositio en lugar del componente de menú utilizado en los demos de StreetBoss.
+- Se añadió `src/pages/LaVitolaPublicMenu.jsx` para adaptar el catálogo publicado de Supabase al componente existente `MenuDigital`.
+- Se añadió `src/components/menu/LaVitolaCheckoutDrawer.jsx` para recopilar el pedido sin inventar la tarifa de envío y enviarlo al WhatsApp confirmado del restaurante.
+- Cambios mínimos en `src/App.jsx`, `src/pages/MenuDigital.jsx`, `src/components/ProductoMenuCard.jsx`, `src/components/menu/MenuHeroProfile.jsx` y `api/menu.js`.
+- Vercel: la ruta `/menu/la-vitola` ahora utiliza `/api/menu` y el frontend oficial. `menu.js` sigue sirviendo el catálogo de Supabase y `/menu/la-vitola/acceso` mantiene el acceso privado.
+- Validación: dos compilaciones Vite exitosas, respuesta 200 del HTML React, catálogo de 21 productos y 4 categorías renderizado en navegador. No se añadieron productos, fotografías ni precios.
