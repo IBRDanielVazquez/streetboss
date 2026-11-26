@@ -142,3 +142,13 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Cada menú `/menu/{slug}` recibe su propio manifiesto `/api/menu-app?slug={slug}`: `id`, `start_url` y `scope` exclusivos, nombre del restaurante e íconos PNG cuadrados de 192 y 512 píxeles generados a partir del logo disponible. En La Vitola se usa su logo oficial; en demos, los logos disponibles; en negocios reales, su logo público de Supabase. Cuando el logo es inaccesible se utiliza temporalmente el ícono de StreetBoss.
 - `api/menu.js` inyecta estos metadatos en el HTML inicial y `MenuDigital.jsx` los mantiene al navegar por React, sin reemplazar la identidad de StreetBoss general.
 - No se implementaron compras dentro de app, notificaciones, acceso a datos de otros negocios, service workers que cacheen datos privados ni distribución por tiendas.
+
+
+## StreetBoss Central PWA — acceso separado de la landing (2026-11-25)
+
+- La página raíz `/` permanece como **landing comercial** y ya no muestra el botón «Instalar app» ni enlaces al acceso administrativo.
+- El enlace exclusivo para instalar StreetBoss es `https://streetboss.com.mx/instalar`, con instrucciones visibles para iPhone (Safari → Compartir → Agregar a pantalla de inicio) y Android (instalar desde navegador).
+- El manifiesto general conserva su identificador `/`, para mantener la identidad de instalaciones anteriores, pero cambia `start_url` a **`/central-hq`**, donde existe el formulario administrativo de usuario y contraseña. Se mantiene la configuración de autenticación existente sin alterarla.
+- Como compatibilidad para accesos instalados anteriormente, cuando `/` o `/instalar` se abre en modo `standalone`, se redirige automáticamente a `/central-hq`; en Safari/Chrome normales la landing sigue siendo comercial y la página de instalación conserva sus instrucciones.
+- Las PWA de restaurantes siguen independientes, con inicio en sus propios menús `/menu/{slug}`.
+- Despliegue de producción `dpl_4pHaZd8gNzWPjNcovpCx9nLAWvS1` compilado y en estado READY. Respuestas HTTP 200 comprobadas para `/`, `/instalar`, `/central-hq` y `/manifest.json`, con `start_url=/central-hq`. Pendiente prueba de instalación real en dispositivos iOS/Android.
