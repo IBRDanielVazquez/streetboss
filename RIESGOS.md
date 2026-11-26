@@ -23,3 +23,6 @@
 ---
 
 > Actualizar este archivo cuando se identifiquen nuevos riesgos o cambien los existentes.
+
+## RSK-003 — Autorización manipulable (P0, abierto, 2026-11-26)
+Dashboard genérico confía en URL y almacenamiento; políticas RLS genéricas confían en cabecera comercial; estados de prospectos admiten acceso anónimo; grants TRUNCATE excesivos. Credenciales temporales manejadas en cliente. Remediación requiere staging y pruebas de compatibilidad. Ver SEGURIDAD.md. No se verificó explotación ni fuga de datos.
