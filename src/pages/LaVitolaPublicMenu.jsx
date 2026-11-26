@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import MenuDigital from './MenuDigital'
 
 const CATALOG_URL = '/menu/la-vitola/menu.js'
-const MENU_FOTO = '/menu/la-vitola/assets/fotos/carta-la-vitola.jpeg'
 
 // Esta vista utiliza los mismos componentes que los diez demos oficiales.
 // La carta publicada de La Vitola sigue siendo la fuente de verdad.
@@ -24,7 +23,7 @@ const icons = {
 }
 
 function toDemoMenu(catalog) {
-  return catalog.categorias.map(cat => ({
+  return catalog.categorias.filter(cat => cat.id !== 'extras').map(cat => ({
     id: cat.id,
     nombre: cat.nombre,
     visible: cat.visible !== false,
@@ -33,6 +32,7 @@ function toDemoMenu(catalog) {
       .filter(product => product.categoria === cat.id)
       .map(product => ({
         id: product.id,
+        categoria: product.categoria,
         nombre: product.nombre,
         precio: Number(product.precio),
         descripcion: product.descripcion || '',
@@ -51,8 +51,8 @@ function toDemoConfig(catalog) {
   return {
     trialId: 'la-vitola',
     negocio: r.nombre || 'La Vitola',
-    logo: MENU_FOTO,
-    banner: '',
+    logo: r.logo || '',
+    banner: r.portada || '',
     colorMarca: '#FF4B00',
     whatsapp: r.whatsapp || '',
     telefono: r.whatsapp || '',
@@ -65,6 +65,8 @@ function toDemoConfig(catalog) {
     // El precio de reparto no está definido: nunca presentarlo como gratis.
     envio: { activo: delivery, modoEnvio: 'por_cotizar', costoEnvio: null, zonas: [] },
     checkoutMode: 'whatsapp_por_cotizar',
+    addonsEnabled: true,
+    addons: (catalog.productos || []).filter(p => p.categoria === 'extras' && p.activo !== false && p.oculto !== true).map(p => ({id:p.id,nombre:p.nombre,precio:Number(p.precio)})),
   }
 }
 
