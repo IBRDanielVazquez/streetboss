@@ -271,3 +271,13 @@
 - Pruebas aisladas: nueva categoría agregada al catálogo de prueba (4→5), preservación de los 21 productos, detección de duplicado, render de formulario con CSRF.
 
 - `src/App.jsx`: la URL heredada `/panel/la-vitola` redirige a `/menu/la-vitola/acceso`, para que La Vitola utilice únicamente su autenticación privada y no el panel genérico.
+
+## 2026-11-25 — Historial privado de clientes y solicitudes de La Vitola
+
+- `supabase/sql/la-vitola-requests.sql`: nueva tabla aislada con teléfono, nombre, fecha de solicitud, productos y extras, subtotal, total final, estado y consentimiento promocional opcional; sin GRANT ni políticas directas para usuarios públicos.
+- `supabase/functions/la-vitola-registrar-pedido/index.ts`: registra solicitudes iniciales tras validación de catálogo publicado y precios, límites por cantidades, origen CORS e intentos recientes.
+- `src/components/menu/LaVitolaCheckoutDrawer.jsx`: registra la solicitud antes de abrir WhatsApp y muestra aceptación promocional opcional; preserva la venta directa incluso ante errores del historial.
+- `supabase/functions/la-vitola-portal/index.ts`: nueva pestaña móvil **Clientes**, estadísticas, búsqueda, filtro por estado, fecha y subtotal, desglose de productos, total final y estado editable únicamente por el usuario privado con CSRF.
+- `supabase/functions/la-vitola-portal/index.ts`: se corrigió la serialización del script de filtros antes del despliegue; versión desplegada 12.
+- Validaciones: render SSR con 21 editores previos, pestaña Clientes, estado vacío y datos simulados sin insertarlos; validación de totales e importe requerido al confirmar; RLS y permisos SQL comprobados; build Vite aprobado.
+- Límites: los datos pasados de WhatsApp no están disponibles; los nuevos registros son solicitudes iniciadas, no una confirmación de entrega del mensaje ni venta final.
