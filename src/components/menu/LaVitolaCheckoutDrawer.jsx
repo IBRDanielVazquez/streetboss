@@ -64,7 +64,9 @@ export default function LaVitolaCheckoutDrawer({
       references.trim() ? `📌 Referencias: ${references.trim()}` : '',
       note.trim() ? `📝 Indicaciones: ${note.trim()}` : '',
       '',
-      '⚠️ PENDIENTE DE CONFIRMAR: disponibilidad, costo de envío, total final y forma de pago. Este mensaje no es un pago.',
+      delivery
+        ? '⚠️ PENDIENTE DE CONFIRMAR: costo de envío, total final y forma de pago. Este mensaje no es un pago.'
+        : '💬 Forma de pago a acordar con La Vitola. Este mensaje no es un pago.',
     ].filter(Boolean).join('\n')
 
     // El pedido va directamente al WhatsApp del restaurante, sin intermediarios.
@@ -131,7 +133,7 @@ export default function LaVitolaCheckoutDrawer({
             <Send size={18} /> Solicitar confirmación por WhatsApp
           </button>
 
-          <p className="text-center text-xs text-gray-500">La Vitola confirmará disponibilidad, envío y total antes de que pagues.</p>
+          <p className="text-center text-xs text-gray-500">La Vitola cotizará el envío, si aplica, y confirmará el total antes del pago.</p>
         </form>
 
         {pagosDisponibles && (
