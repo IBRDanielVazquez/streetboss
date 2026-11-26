@@ -291,3 +291,13 @@
 - `supabase/functions/la-vitola-registrar-pedido/index.ts`: validación server-side de colonia/costo según menú publicado y registro en `sb_vitola_requests`.
 - Supabase: columnas `delivery_zone` y `delivery_fee` con restricción del precio. Datos existentes «Terán - $25» migrados en el catálogo a `Terán: $25` en borrador y publicado, sin inventar otras colonias.
 - Validación: render del editor y campos Terán/25, ejecución aislada del guardado de dos colonias, script de interacción compilado, mensajes de WhatsApp con y sin tarifa, despliegue en Supabase. Validación de despliegue Vercel y prueba de usuario real se anotan según resultados finales.
+
+
+## 2026-11-25 — Instalar StreetBoss y cada menú como app
+
+- `public/manifest.json`: StreetBoss instalable como app standalone con identidad propia.
+- `src/pages/InstalarStreetBoss.jsx`, `src/App.jsx`, `src/pages/Landing.jsx`: nueva página y CTA general `/instalar`.
+- `src/components/InstallAppButton.jsx`, `src/components/menu/MenuHeroProfile.jsx`: botón reusable «Instalar app» en todas las cabeceras de menús, con guía Android/iOS.
+- `api/menu-app.js`: endpoint dinámico de manifiesto e íconos por slug; solo obtiene logos desde rutas internas y almacenamiento de Supabase autorizado, con fallback seguro, sin solicitudes arbitrarias a terceros.
+- `api/menu.js`, `src/pages/MenuDigital.jsx`: identidad de instalación aislada para `/menu/{slug}` y `/demo/{slug}`. La Vitola conserva su ícono oficial, independiente de StreetBoss Central.
+- Comprobación pendiente según despliegue: respuesta 200 de `/instalar`, `/manifest.json`, manifiestos e íconos por La Vitola y demo, y compilación Vite.
