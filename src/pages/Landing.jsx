@@ -50,7 +50,8 @@ export default function Landing() {
             <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
           </div>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/instalar" className="rounded-full border border-white/20 px-3 py-2.5 text-xs font-black text-white hover:border-[#FF4B00] sm:px-5 sm:py-3.5">Instalar app</Link>
             <a 
               href={`https://wa.me/${DEMO_CONTACTS.SALES_WHATSAPP}`} 
               target="_blank" 
