@@ -78,6 +78,12 @@ export default async function handler(req, res) {
     } catch (err) {}
   }
 
+  if (trialId === 'la-vitola') {
+    title = 'La Vitola — Menú Digital'
+    description = 'Tacos con papa, hamburguesas artesanales, extras y bebidas. Haz tu pedido directo por WhatsApp.'
+    logoPath = '/menu/la-vitola/assets/fotos/carta-la-vitola.jpeg'
+  }
+
   // Ensure absolute URLs for social sharing crawlers
   const getAbsoluteUrl = (p) => {
     if (!p) return ''
