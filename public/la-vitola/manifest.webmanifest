@@ -1,0 +1,27 @@
+{
+  "id": "/menu/la-vitola/acceso",
+  "name": "La Vitola · Panel",
+  "short_name": "La Vitola",
+  "description": "Administración privada del menú digital de La Vitola",
+  "start_url": "/menu/la-vitola/acceso",
+  "scope": "/menu/la-vitola/acceso",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0e12",
+  "theme_color": "#0d0e12",
+  "lang": "es-MX",
+  "icons": [
+    {
+      "src": "/la-vitola/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/la-vitola/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
