@@ -152,3 +152,6 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Como compatibilidad para accesos instalados anteriormente, cuando `/` o `/instalar` se abre en modo `standalone`, se redirige automáticamente a `/central-hq`; en Safari/Chrome normales la landing sigue siendo comercial y la página de instalación conserva sus instrucciones.
 - Las PWA de restaurantes siguen independientes, con inicio en sus propios menús `/menu/{slug}`.
 - Despliegue de producción `dpl_4pHaZd8gNzWPjNcovpCx9nLAWvS1` compilado y en estado READY. Respuestas HTTP 200 comprobadas para `/`, `/instalar`, `/central-hq` y `/manifest.json`, con `start_url=/central-hq`. Pendiente prueba de instalación real en dispositivos iOS/Android.
+
+## Auditoría de seguridad — 2026-11-26
+NO APROBADO. Hallazgos P0 de autenticación de dashboard, aislamiento RLS y acceso anónimo a estados de prospectos. Rama security/audit-2026-11-26; no se han aplicado correcciones de runtime ni desplegado cambios. PR #1 de La Vitola abierto. Ver SEGURIDAD.md.
