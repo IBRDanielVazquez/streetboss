@@ -198,9 +198,17 @@ function dashboard(c,csrf,requests=[]){
  html+='<form method="post" action="'+ROOT+'">'+formHead('envios');
  html+='<div class="settingsCard"><label class="switchRow"><input type="checkbox" name="delivery_enabled" '+(delivery.activo!==false&&(c.draft.modalidades||[]).includes('domicilio')?'checked':'')+'> Ofrecer envío a domicilio</label>';
  html+='<p class="hint">Si no activas el envío, los clientes solo podrán recoger en el local.</p>';
- html+=field('delivery_zones','Colonias de cobertura (opcional)',(delivery.zonas||[]).join('\n'),{kind:'textarea',help:'Una colonia por línea. Se confirma cobertura por WhatsApp.'});
+ const zones=(Array.isArray(delivery.zonas)?delivery.zonas:[]).map(z=>typeof z==='string'?{nombre:z,costo:null}:z).filter(z=>z&&z.nombre);
+ html+='<div class="deliveryTitle"><h3>📍 Colonias y costos de envío</h3><p>Agrega una colonia y su tarifa. Puedes modificar o eliminar cada una.</p></div>';
+ html+='<div id="deliveryZoneRows" class="deliveryZones">';
+ for(const zone of zones){
+   const price=zone.costo===null||zone.costo===undefined?'':Number(zone.costo).toFixed(2);
+   html+='<div class="deliveryZoneRow"><label><span>Colonia</span><input name="delivery_zone_name" maxlength="100" value="'+esc(zone.nombre)+'" placeholder="Ej. Centro"></label><label><span>Costo de envío (MXN)</span><input name="delivery_zone_price" type="number" min="0" max="10000" step="0.01" inputmode="decimal" value="'+esc(price)+'" placeholder="Ej. 35.00"></label><button type="button" class="removeZone" data-remove-zone="1" aria-label="Eliminar colonia">✕</button></div>';
+ }
+ html+='</div><button type="button" id="addDeliveryZone" class="addZoneButton">＋ Agregar colonia</button>';
+ html+='<p class="hint">Si dejas el precio vacío, el envío para esa colonia quedará por cotizar.</p><div class="zonePreview"><b>Vista previa para el cliente</b><div id="zonePreviewItems"></div></div>';
  html+=field('delivery_notes','Indicaciones para la entrega',delivery.indicaciones||'',{kind:'textarea',help:'Puedes dejarlo vacío; se cotiza el envío antes de pagar.'});
- html+='<div class="notice">✓ El cliente envía su pedido por WhatsApp. El negocio confirma el costo del envío, si aplica, y el total. Después se acuerda el pago.</div></div>';
+ html+='<div class="notice">✓ El cliente verá los costos definidos y el total sumado al carrito. Una colonia sin costo definido quedará por cotizar. El pago se acuerda con el negocio.</div></div>';
  html+=footer('pagos')+'</form></section>';
  // Pagos: solo datos para pago posterior a confirmación, no captura de tarjeta.
  html+=section('pagos','Datos para cobrar','Configura cómo recibir pagos después de confirmar el pedido y el envío.');
@@ -352,8 +360,26 @@ async function save(f,publish){
   }
   if(section==='envios'){
    const active=f.has('delivery_enabled');
-   const zones=String(f.get('delivery_zones')||'').split(/\r?\n/).map(s=>s.trim().slice(0,100)).filter(Boolean);
-   draft.entregas={activo:active,zonas:[...new Set(zones)].slice(0,100),indicaciones:String(f.get('delivery_notes')||'').trim().slice(0,500),cotizacionObligatoria:true};
+   const names=f.getAll('delivery_zone_name'),prices=f.getAll('delivery_zone_price');
+   if(names.length!==prices.length||names.length>60)throw new Error('Revisa la lista de colonias; máximo 60.');
+   const zones=[],seen=new Set();
+   for(let i=0;i<names.length;i++){
+     const nombre=String(names[i]??'').trim().replace(/\s+/g,' ').slice(0,100);
+     const raw=String(prices[i]??'').trim();
+     if(!nombre&&!raw)continue;
+     if(nombre.length<2)throw new Error('Escribe el nombre de la colonia.');
+     const key=nombre.normalize('NFKC').toLocaleLowerCase('es-MX');
+     if(seen.has(key))throw new Error('Colonia duplicada: '+nombre);
+     seen.add(key);
+     let costo=null;
+     if(raw){
+       const value=Number(raw);
+       if(!Number.isFinite(value)||value<0||value>10000)throw new Error('Costo de envío inválido: '+nombre);
+       costo=Math.round(value*100)/100;
+     }
+     zones.push({nombre,costo});
+   }
+   draft.entregas={activo:active,zonas,indicaciones:String(f.get('delivery_notes')||'').trim().slice(0,500),cotizacionObligatoria:zones.length===0||zones.some(z=>z.costo===null)};
    const modes=Array.isArray(draft.modalidades)?draft.modalidades:[];
    draft.modalidades=[...new Set([...modes.filter(m=>m!=='domicilio'),...(active?['domicilio']:[])])];
   }
