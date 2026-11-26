@@ -99,3 +99,10 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - El propietario puede activar **Marcar como agotado** por platillo desde el editor visual, y volver a desmarcarlo cuando esté disponible.
 - En el menú público el producto permanece visible con la etiqueta **Agotado**, pero no puede agregarse al carrito. Los extras agotados tampoco se ofrecen al personalizar hamburguesas.
 - El pedido por WhatsApp no solicita confirmar disponibilidad: solo se cotiza envío cuando aplica, se confirma el total y se acuerda la forma de pago.
+
+## La Vitola — legibilidad de WhatsApp y dashboard móvil (2026-11-25)
+
+- El mensaje de pedido enviado a WhatsApp ahora respeta saltos de línea reales entre productos, extras, subtotal, modalidad de entrega y datos del cliente. La plantilla se centralizó en `src/utils/formatLaVitolaOrder.js` y elimina la antigua llamada a `.filter(Boolean)` que borraba los renglones vacíos.
+- En domicilio solicita **solo el costo del envío a la dirección indicada**, sin texto de «pendiente por confirmar». Para recoger no solicita envío. Los extras se detallan sin sumarse dos veces al precio total.
+- Dashboard de La Vitola: corregida la omisión de los estilos `adminStyle` y `visualDashboardCss` en la respuesta HTML, principal causa de la visualización defectuosa. Añadidos estilos para iPhone, barra inferior con safe areas, tarjetas compactas de producto, categorías desplegables, ventanas de edición a tamaño táctil y campos de 16 px para evitar zoom automático.
+- No se modificaron la autenticación, las tablas, los roles, el contenido del catálogo ni el control de productos agotados.
