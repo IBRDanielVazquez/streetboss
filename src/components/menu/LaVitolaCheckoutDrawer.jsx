@@ -43,9 +43,11 @@ export default function LaVitolaCheckoutDrawer({
       '',
       '*PRODUCTOS:*',
       ...items.flatMap(({ product, qty }) => [
-        `${qty} × ${product.nombre} — ${(Number(product.precio) * qty).toFixed(2)}`,
+        `${qty} × ${product.nombre} — $${(Number(product.precio) * qty).toFixed(2)}`,
         ...(product.adicionales?.length
-          ? [`   + Extras: ${product.adicionales.map(a => a.nombre + ' (+
+          ? [`   + Extras: ${product.adicionales.map(a => a.nombre + " (+$" + Number(a.precio).toFixed(2) + ")").join(", ")}`]
+          : []),
+      ]),
       '',
       `*Subtotal de productos: $ ${total.toFixed(2)} MXN*`,
       delivery ? '🛵 *Envío: por cotizar con el restaurante*' : '🏪 *Recoger en el local*',
