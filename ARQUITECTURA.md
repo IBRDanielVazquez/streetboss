@@ -67,3 +67,6 @@
 - **`npm run build` (`vite build`):** ✅ APROBADO (2,040 módulos procesados en 11.23s).
 - **`npm run lint`:** ⚪ No configurado en `package.json`.
 - **`npm run test`:** ⚪ No configurado en `package.json`.
+
+## Arquitectura de seguridad objetivo — 2026-11-26 (pendiente)
+Supabase Auth como identidad central; alias comercial resuelto en servidor; membresías por usuario, negocio y sucursal; RLS con permisos mínimos, catálogo público separado, API de pedidos con precios recalculados, MFA Central, auditoría protegida y PWA privadas sin caché sensible. No usar slug/cabecera/almacenamiento como credencial. Ver SEGURIDAD.md.
