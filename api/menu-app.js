@@ -30,6 +30,7 @@ function safePath(value) {
 }
 
 async function details(slug) {
+  if (slug === 'streetboss') return { name: 'StreetBoss', logo: '/brand/SB_FAVICON_512x512_V01.png' }
   if (slug === 'la-vitola') return {
     name: 'La Vitola', logo: '/la-vitola/icon-512.png',
   }
@@ -87,6 +88,10 @@ export default async function handler(req, res) {
   const slug = typeof req.query.slug === 'string' ? req.query.slug : ''
   if (!/^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$/.test(slug)) {
     return res.status(400).json({ error: 'Menú no válido' })
+  }
+  // StreetBoss uses this endpoint exclusively for its 192px brand icon.
+  if (slug === 'streetboss' && req.query.asset !== 'icon') {
+    return res.status(404).json({ error: 'Menú no encontrado' })
   }
   const business = await details(slug)
   if (!business) return res.status(404).json({ error: 'Menú no encontrado' })
