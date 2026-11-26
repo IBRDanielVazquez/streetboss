@@ -4,6 +4,7 @@ import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
 const Demos = lazy(() => import('./pages/Demos'))
+const InstalarStreetBoss = lazy(() => import('./pages/InstalarStreetBoss'))
 const DemoPublicMenu = lazy(() => import('./pages/DemoPublicMenuWrapper'))
 const LaVitolaPublicMenu = lazy(() => import('./pages/LaVitolaPublicMenu'))
 const StreetBossCentral = lazy(() => import('./pages/StreetBossCentral'))
@@ -27,6 +28,7 @@ export default function App() {
         <Routes>
           {/* Rutas Públicas */}
           <Route path="/" element={<Landing />} />
+          <Route path="/instalar" element={<InstalarStreetBoss />} />
           <Route path="/demos" element={<Demos />} />
           <Route path="/menu/la-vitola" element={<LaVitolaPublicMenu />} />
           <Route path="/menu/:trialId" element={<DemoPublicMenu />} />
