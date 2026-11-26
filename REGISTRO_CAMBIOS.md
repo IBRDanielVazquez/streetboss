@@ -314,3 +314,6 @@
 - `src/pages/InstalarStreetBoss.jsx`: especifica que el acceso de la app es administrativo; en el caso de accesos directos instalados en iOS que arranquen en la página de instalación, redirige al login.
 - No se cambiaron usuarios, contraseñas, autorización, permisos, bases de datos ni aplicaciones PWA específicas de los restaurantes.
 - Validación: compilación Vite aprobada; Vercel producción READY; cuatro endpoints principales respondieron 200; manifiesto verificado con `start_url=/central-hq`; landing sin CTA de instalación según código fuente. La interacción real de instalación debe probarse en dispositivos.
+
+## 2026-11-26 — Auditoría inicial de seguridad
+Consultados GitHub main, Vercel producción, advisors Supabase y catálogos pg_tables, pg_policies, pg_proc, grants y definición de vista. Creada rama aislada y documentación de hallazgos/gate. Sin cambios en producción ni pruebas dinámicas. Ver SEGURIDAD.md.
