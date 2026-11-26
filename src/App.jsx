@@ -7,8 +7,8 @@ const Demos = lazy(() => import('./pages/Demos'))
 const InstalarStreetBoss = lazy(() => import('./pages/InstalarStreetBoss'))
 const DemoPublicMenu = lazy(() => import('./pages/DemoPublicMenuWrapper'))
 const LaVitolaPublicMenu = lazy(() => import('./pages/LaVitolaPublicMenu'))
-const StreetBossCentral = lazy(() => import('./pages/StreetBossCentral'))
-const ClientDashboard = lazy(() => import('./pages/ClientDashboard'))
+
+
 
 function RouteLoader() {
   return (
@@ -18,6 +18,19 @@ function RouteLoader() {
         <p className="text-sm font-bold text-gray-300">Cargando StreetBoss...</p>
       </div>
     </div>
+  )
+}
+
+// Temporary fail-closed containment. The legacy dashboards must not be mounted
+// until Auth, server authorization and tenant isolation pass integration tests.
+function AdminSecurityMaintenance() {
+  return (
+    <main className="min-h-screen bg-[#0D0E12] text-white flex items-center justify-center p-6">
+      <section className="max-w-sm text-center space-y-3" role="status">
+        <h1 className="text-xl font-bold">Acceso administrativo en mantenimiento</h1>
+        <p className="text-sm text-gray-300">El acceso se restablecerá cuando se complete la actualización de seguridad.</p>
+      </section>
+    </main>
   )
 }
 
@@ -35,11 +48,11 @@ export default function App() {
           <Route path="/demo/:trialId" element={<DemoPublicMenu />} />
 
           {/* Nueva Ruta Interna Segura del CRM */}
-          <Route path="/central-hq" element={<StreetBossCentral />} />
+          <Route path="/central-hq" element={<AdminSecurityMaintenance />} />
 
           {/* Dashboard Privado Sencillo del Cliente */}
           <Route path="/panel/la-vitola" element={<Navigate to="/menu/la-vitola/acceso" replace />} />
-          <Route path="/panel/:slug" element={<ClientDashboard />} />
+          <Route path="/panel/:slug" element={<AdminSecurityMaintenance />} />
 
           {/* Página 404 Oficial para Cualquier Otra Ruta */}
           <Route path="*" element={<NotFound />} />
