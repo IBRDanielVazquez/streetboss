@@ -380,7 +380,7 @@ async function save(f,publish){
      }
      zones.push({nombre,costo});
    }
-   draft.entregas={activo:active,zonas,indicaciones:String(f.get('delivery_notes')||'').trim().slice(0,500),cotizacionObligatoria:zones.length===0||zones.some(z=>z.costo===null)};
+   draft.entregas={activo:active,zonas:zones,indicaciones:String(f.get('delivery_notes')||'').trim().slice(0,500),cotizacionObligatoria:zones.length===0||zones.some(z=>z.costo===null)};
    const modes=Array.isArray(draft.modalidades)?draft.modalidades:[];
    draft.modalidades=[...new Set([...modes.filter(m=>m!=='domicilio'),...(active?['domicilio']:[])])];
   }
