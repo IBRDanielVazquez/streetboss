@@ -1,8 +1,17 @@
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, CheckCircle2, Smartphone } from 'lucide-react'
 import InstallAppButton from '../components/InstallAppButton'
 
 export default function InstalarStreetBoss() {
+  useEffect(() => {
+    // iOS home-screen shortcuts may start at the installation page instead
+    // of the manifest start_url; installed apps must always open the HQ login.
+    if (window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+      window.location.replace('/central-hq')
+    }
+  }, [])
+
   return (
     <main className="min-h-screen bg-[#0D0E12] px-5 pb-16 pt-7 text-white">
       <div className="mx-auto max-w-lg">
@@ -17,7 +26,7 @@ export default function InstalarStreetBoss() {
           />
           <h1 className="mt-6 text-4xl font-black tracking-tight">Instala StreetBoss</h1>
           <p className="mt-3 max-w-sm text-base leading-relaxed text-gray-300">
-            Abre StreetBoss desde la pantalla de inicio de tu celular, como una aplicación.
+            Instala el acceso administrativo de StreetBoss. Al tocar el ícono, abrirás directamente la pantalla para iniciar sesión con tu usuario y contraseña.
           </p>
           <div className="mt-8 flex w-full justify-center">
             <InstallAppButton appName="StreetBoss" dark />
@@ -28,7 +37,7 @@ export default function InstalarStreetBoss() {
             <h2 className="mt-6 flex items-center gap-2 text-lg font-black"><CheckCircle2 size={20} className="text-[#FF4B00]" /> En Android</h2>
             <p className="mt-2 text-sm leading-relaxed text-gray-300">Toca <strong>Instalar app</strong>. Si tu navegador no muestra la instalación automática, entra al menú ⋮ y selecciona <strong>Instalar app</strong> o <strong>Agregar a pantalla principal</strong>.</p>
           </div>
-          <p className="mt-6 text-xs text-gray-400">Los menús de cada restaurante tienen su propio botón de instalación e identidad independiente.</p>
+          <p className="mt-6 text-xs text-gray-400">Este acceso es para StreetBoss Central. Los menús de cada restaurante conservan su propia aplicación y acceso independiente.</p>
         </div>
       </div>
     </main>
