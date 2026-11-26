@@ -1,5 +1,5 @@
 // Formato legible en WhatsApp: cada platillo y sección va separado por un renglón vacío.
-export function formatLaVitolaOrder({ items, subtotal, delivery, name, phone, address, references, note }) {
+export function formatLaVitolaOrder({ items, subtotal, delivery, name, phone, address, references, note, colonia = '', deliveryFee = null }) {
   const money = value => '$' + Number(value).toFixed(2);
   const productLines = items.map(({ product, qty }) => {
     const extras = product.adicionales || [];
@@ -20,6 +20,7 @@ export function formatLaVitolaOrder({ items, subtotal, delivery, name, phone, ad
     '👤 *DATOS DEL CLIENTE*',
     'Nombre: ' + name.trim(),
     'WhatsApp: ' + phone,
+    delivery && colonia ? 'Colonia: ' + colonia : '',
     delivery ? 'Dirección: ' + address.trim() : '',
     references?.trim() ? 'Referencias: ' + references.trim() : '',
     note?.trim() ? 'Indicaciones: ' + note.trim() : '',
@@ -30,7 +31,9 @@ export function formatLaVitolaOrder({ items, subtotal, delivery, name, phone, ad
     '🧾 *PRODUCTOS*\n\n' + productLines.join('\n\n'),
     '*SUBTOTAL DE PRODUCTOS*\n' + money(subtotal) + ' MXN',
     delivery
-      ? '🛵 *SERVICIO A DOMICILIO*\n¿Cuál es el costo de envío a esta dirección?'
+      ? deliveryFee !== null && Number.isFinite(Number(deliveryFee))
+        ? '🛵 *SERVICIO A DOMICILIO*\nCosto de envío: ' + money(deliveryFee) + '\n*TOTAL CON ENVÍO*\n' + money(Number(subtotal) + Number(deliveryFee)) + ' MXN'
+        : '🛵 *SERVICIO A DOMICILIO*\n¿Cuál es el costo de envío a esta dirección?'
       : '🏪 *RECOGER EN EL LOCAL*',
     customer,
   ].join('\n\n');
