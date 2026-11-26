@@ -63,8 +63,7 @@ export default function LaVitolaCheckoutDrawer({
     // El pedido va directamente al WhatsApp del restaurante, sin intermediarios.
     const url = `https://wa.me/${whatsapp}?text=${encodeURIComponent(lines)}`
     setError('')
-    const popup = window.open(url, '_blank', 'noopener,noreferrer')
-    if (!popup) window.location.assign(url)
+    window.location.assign(url)
     // Conservamos el carrito: solo el restaurante puede confirmar el pedido.
     // No marcamos un pedido como registrado en una base de datos inexistente.
   }
