@@ -281,3 +281,13 @@
 - `supabase/functions/la-vitola-portal/index.ts`: se corrigió la serialización del script de filtros antes del despliegue; versión desplegada 12.
 - Validaciones: render SSR con 21 editores previos, pestaña Clientes, estado vacío y datos simulados sin insertarlos; validación de totales e importe requerido al confirmar; RLS y permisos SQL comprobados; build Vite aprobado.
 - Límites: los datos pasados de WhatsApp no están disponibles; los nuevos registros son solicitudes iniciadas, no una confirmación de entrega del mensaje ni venta final.
+
+
+## 2026-11-25 — Logo oficial de La Vitola, PWA privada y reparto por colonia
+
+- `public/la-vitola/icon-192.png`, `icon-512.png` y `manifest.webmanifest`: íconos binarios reales creados desde la imagen subida por el usuario, PWA aislada de StreetBoss general.
+- `supabase/functions/la-vitola-portal/index.ts`: metadatos iOS/PWA, CSP manifest-src; editor de zonas dinámico con filas, botón añadir/quitar, preview y persistencia de tarifas, validación de duplicados y límite de registros. Se corrigió un error detectado por prueba de persistencia.
+- `src/pages/LaVitolaPublicMenu.jsx`, `src/components/menu/LaVitolaCheckoutDrawer.jsx`, `src/utils/formatLaVitolaOrder.js`: selector de colonia, costos en carrito, subtotal + reparto, y mensaje de WhatsApp con desglose.
+- `supabase/functions/la-vitola-registrar-pedido/index.ts`: validación server-side de colonia/costo según menú publicado y registro en `sb_vitola_requests`.
+- Supabase: columnas `delivery_zone` y `delivery_fee` con restricción del precio. Datos existentes «Terán - $25» migrados en el catálogo a `Terán: $25` en borrador y publicado, sin inventar otras colonias.
+- Validación: render del editor y campos Terán/25, ejecución aislada del guardado de dos colonias, script de interacción compilado, mensajes de WhatsApp con y sin tarifa, despliegue en Supabase. Validación de despliegue Vercel y prueba de usuario real se anotan según resultados finales.
