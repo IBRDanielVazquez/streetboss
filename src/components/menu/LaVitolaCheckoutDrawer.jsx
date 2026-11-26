@@ -146,7 +146,11 @@ export default function LaVitolaCheckoutDrawer({
                 <label className="block text-xs font-bold mb-1" htmlFor="colonia-vitola">Selecciona tu colonia *</label>
                 <select id="colonia-vitola" value={selectedColonia} onChange={e => setSelectedColonia(e.target.value)} required className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 mb-4 text-base">
                   <option value="">Elige tu colonia</option>
-                  {zonas.map(zona => <option key={zona.nombre} value={zona.nombre}>{zona.nombre} — {zona.costo == null ? 'Por cotizar' : '
+                  {zonas.map(zona => <option key={zona.nombre} value={zona.nombre}>{zona.nombre} — {zona.costo == null ? 'Por cotizar' : '$' + zona.costo.toFixed(2) + ' MXN'}</option>)}
+                </select>
+              </>}
+              <label className="block text-xs font-bold mb-1">{zonas.length ? 'Calle, número y CP *' : 'Dirección completa y colonia *'}</label>
+              <textarea className="w-full rounded-xl border border-gray-300 px-4 py-3 mb-4 text-base" rows={2} value={address} onChange={e=>setAddress(e.target.value)} required placeholder={zonas.length ? 'Calle, número y código postal' : 'Calle, número, colonia y CP'} />
               <label className="block text-xs font-bold mb-1">Referencias (opcional)</label>
               <input className="w-full rounded-xl border border-gray-300 px-4 py-3 mb-4 text-sm" value={references} onChange={e=>setReferences(e.target.value)} placeholder="Entre calles, color de fachada…" />
             </>}
