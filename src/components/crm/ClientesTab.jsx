@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
 import { DEMO_CONTACTS } from '../../data/demoFixtures'
 import { getClients, updateClientStatus, getAdministrativeAccessUrl, updateBusinessSettings, normalizeMexicanPhone, logAuditAction, regenerateClientPassword, setBusinessPassword, deleteClient } from '../../services/crmV3Service'
 import { Users, ExternalLink, Key, RefreshCw, Lock, Shield, Layers, Package, MapPin, Copy, PauseCircle, PlayCircle, Edit3, Send, Check, DollarSign, Calendar, CreditCard, ShieldCheck, Eye, EyeOff, X, Trash2 } from 'lucide-react'
@@ -19,6 +20,15 @@ export default function ClientesTab() {
   const [passwordError, setPasswordError] = useState('')
   const [showPasswordField, setShowPasswordField] = useState(false)
 
+  // La Vitola usa Supabase Auth real. Nunca guardar su contraseña en localStorage.
+  const [vitolaPasswordOpen, setVitolaPasswordOpen] = useState(false)
+  const [vitolaCurrent, setVitolaCurrent] = useState('')
+  const [vitolaNew, setVitolaNew] = useState('')
+  const [vitolaConfirm, setVitolaConfirm] = useState('')
+  const [vitolaWorking, setVitolaWorking] = useState(false)
+  const [vitolaError, setVitolaError] = useState('')
+  const [vitolaReadyPassword, setVitolaReadyPassword] = useState('')
+
   const reloadClients = () => {
     setClients(getClients())
   }
@@ -36,6 +46,98 @@ export default function ClientesTab() {
     navigator.clipboard.writeText(text)
     setCopiedMsg(tag)
     setTimeout(() => setCopiedMsg(''), 2500)
+  }
+
+
+  const vitolaPhone = '+52 961 254 8354'
+  const vitolaAdminDigits = '529612548354'
+  const vitolaAccessUrl = 'https://streetboss.com.mx/menu/la-vitola/acceso'
+  const vitolaMenuUrl = 'https://streetboss.com.mx/menu/la-vitola'
+
+  const sendVitolaAccess = (password = '') => {
+    const message = [
+      '🍔 *LA VITOLA — ACCESO A TU MENÚ DIGITAL*',
+      '',
+      '*Usuario:* ' + vitolaPhone,
+      '*Dashboard privado:*',
+      vitolaAccessUrl,
+      '',
+      '*Menú público:*',
+      vitolaMenuUrl,
+      '',
+      password ? '*Contraseña nueva:* ' + password : '*Contraseña:* utiliza la que ya configuraste.',
+      '',
+      'Este acceso es exclusivo para La Vitola. No permite entrar a StreetBoss Central.',
+    ].join('\n')
+    window.open('https://wa.me/' + vitolaAdminDigits + '?text=' + encodeURIComponent(message), '_blank', 'noopener,noreferrer')
+    logAuditAction('preparar_envio_acceso_vitola', 'la-vitola', { destination: vitolaAdminDigits, hasNewPassword: !!password })
+  }
+
+  const generateVitolaPassword = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*'
+    const bytes = crypto.getRandomValues(new Uint8Array(20))
+    const generated = Array.from(bytes, b => chars[b % chars.length]).join('')
+    setVitolaNew(generated)
+    setVitolaConfirm(generated)
+    setVitolaError('')
+  }
+
+  const closeVitolaPassword = () => {
+    if (vitolaWorking) return
+    setVitolaPasswordOpen(false)
+    setVitolaCurrent('')
+    setVitolaNew('')
+    setVitolaConfirm('')
+    setVitolaReadyPassword('')
+    setVitolaError('')
+  }
+
+  const updateVitolaPassword = async event => {
+    event.preventDefault()
+    if (vitolaWorking) return
+    if (!vitolaCurrent || vitolaNew.length < 12 || vitolaNew.length > 128 || vitolaNew !== vitolaConfirm) {
+      setVitolaError('Escribe la contraseña actual y una nueva de al menos 12 caracteres; confirma que coincidan.')
+      return
+    }
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+    if (!supabaseUrl || !anonKey) {
+      setVitolaError('La autenticación no está configurada en esta instalación.')
+      return
+    }
+    setVitolaWorking(true)
+    setVitolaError('')
+    const client = createClient(supabaseUrl, anonKey, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    })
+    try {
+      const { data, error } = await client.auth.signInWithPassword({
+        email: 'la-vitola-9612548354@streetboss.com.mx',
+        password: vitolaCurrent,
+      })
+      if (error || !data?.user || data.user.app_metadata?.business_slug !== 'la-vitola') {
+        setVitolaError('La contraseña actual no es válida. La contraseña existente se conserva sin cambios.')
+        return
+      }
+      const result = await client.auth.updateUser({
+        password: vitolaNew,
+        current_password: vitolaCurrent,
+      })
+      if (result.error) {
+        setVitolaError('No se pudo cambiar la contraseña. La anterior continúa vigente. ' + result.error.message)
+        return
+      }
+      logAuditAction('cambio_password_vitola_con_autenticacion', 'la-vitola', { destination: vitolaAdminDigits })
+      setVitolaReadyPassword(vitolaNew)
+      setVitolaCurrent('')
+      setVitolaNew('')
+      setVitolaConfirm('')
+    } catch {
+      setVitolaError('No se pudo verificar la cuenta. No se realizó ningún cambio.')
+    } finally {
+      await client.auth.signOut().catch(() => {})
+      setVitolaWorking(false)
+    }
   }
 
   // FASE 2: Generar contraseña automática y mostrar modal
@@ -216,7 +318,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
             <span className="bg-orange-500/15 text-orange-300 border border-orange-500/20 px-3 py-1.5 rounded-full text-[11px] font-extrabold">CLIENTES</span>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#0D0E12] p-4 flex flex-col sm:flex-row gap-4 items-start">
-            <img src="/demos/la-vitola/profile.svg" alt="La Vitola" className="w-16 h-16 rounded-2xl bg-[#181A21] object-cover border border-white/10" />
+            <img src="/la-vitola/icon-192.png" alt="La Vitola" className="w-16 h-16 rounded-2xl bg-[#181A21] object-cover border border-white/10" />
             <div className="flex-1 w-full min-w-0 space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <h4 className="font-black text-base text-white">La Vitola</h4>
@@ -234,10 +336,57 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                 <button type="button" onClick={() => copyText('https://streetboss.com.mx/menu/la-vitola/acceso', 'vitola-dashboard')} className="flex items-center gap-2 rounded-xl border border-white/20 bg-[#252832] px-3 py-2.5 text-xs font-bold text-white">
                   <Copy size={14} /> {copiedMsg === 'vitola-dashboard' ? 'Copiado' : 'Copiar acceso'}
                 </button>
+                <button type="button" onClick={() => sendVitolaAccess()} className="flex items-center gap-2 rounded-xl border border-emerald-600/40 bg-emerald-950/30 px-3 py-2.5 text-xs font-bold text-emerald-200">
+                  <Send size={14} /> Enviar acceso a {vitolaPhone}
+                </button>
+                <button type="button" onClick={() => { setVitolaPasswordOpen(true); setVitolaError(''); setVitolaReadyPassword('') }} className="flex items-center gap-2 rounded-xl border border-[#FF4B00]/40 bg-[#FF4B00]/10 px-3 py-2.5 text-xs font-bold text-orange-200">
+                  <Key size={14} /> Cambiar contraseña
+                </button>
               </div>
             </div>
           </div>
         </section>
+      )}
+
+      {vitolaPasswordOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4" role="presentation">
+          <section role="dialog" aria-modal="true" aria-labelledby="vitola-password-heading" className="max-h-[92dvh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/15 bg-[#171922] p-5 text-white shadow-2xl sm:p-7">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="vitola-password-heading" className="text-lg font-black">Contraseña de La Vitola</h2>
+              <button type="button" onClick={closeVitolaPassword} disabled={vitolaWorking} aria-label="Cerrar" className="rounded-lg bg-white/10 p-2"><X size={18} /></button>
+            </div>
+            <p className="mt-3 text-sm text-gray-300">Usuario: <strong>{vitolaPhone}</strong>. Esta cuenta es exclusiva del restaurante.</p>
+            {vitolaReadyPassword ? (
+              <div className="mt-5 space-y-4">
+                <p className="rounded-xl border border-emerald-500/30 bg-emerald-950/30 p-3 text-sm text-emerald-200">Contraseña cambiada correctamente en Supabase Auth. Compártela ahora; se mostrará solo hasta cerrar esta ventana.</p>
+                <div className="break-all rounded-xl border border-white/15 bg-black/30 p-4 font-mono text-base">{vitolaReadyPassword}</div>
+                <button type="button" onClick={() => sendVitolaAccess(vitolaReadyPassword)} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 p-3 text-sm font-black"><Send size={16}/> Enviar usuario, contraseña y enlace por WhatsApp</button>
+                <button type="button" onClick={closeVitolaPassword} className="w-full rounded-xl bg-white/10 p-3 font-bold">Cerrar y borrar contraseña visible</button>
+              </div>
+            ) : (
+              <form onSubmit={updateVitolaPassword} className="mt-4 space-y-4">
+                <p className="text-xs leading-relaxed text-gray-400">Por seguridad, el Hub debe verificar la contraseña vigente antes de crear una nueva. No se restablece sin esa verificación y no se almacena ninguna contraseña aquí.</p>
+                <label className="block space-y-1 text-sm font-bold">
+                  <span>Contraseña actual *</span>
+                  <input type="password" autoComplete="off" required value={vitolaCurrent} onChange={e => setVitolaCurrent(e.target.value)} className="w-full rounded-xl border border-white/20 bg-[#0D0E12] p-3 text-base" />
+                </label>
+                <label className="block space-y-1 text-sm font-bold">
+                  <span>Nueva contraseña *</span>
+                  <input type="text" autoComplete="off" minLength={12} maxLength={128} required value={vitolaNew} onChange={e => setVitolaNew(e.target.value)} className="w-full rounded-xl border border-white/20 bg-[#0D0E12] p-3 font-mono text-base" />
+                </label>
+                <label className="block space-y-1 text-sm font-bold">
+                  <span>Confirmar nueva contraseña *</span>
+                  <input type="password" autoComplete="off" minLength={12} maxLength={128} required value={vitolaConfirm} onChange={e => setVitolaConfirm(e.target.value)} className="w-full rounded-xl border border-white/20 bg-[#0D0E12] p-3 text-base" />
+                </label>
+                {vitolaError && <p role="alert" className="rounded-lg bg-red-950/70 p-3 text-xs text-red-200">{vitolaError}</p>}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button type="button" onClick={generateVitolaPassword} className="rounded-xl border border-white/20 bg-white/10 p-3 text-sm font-bold">Generar contraseña segura</button>
+                  <button type="submit" disabled={vitolaWorking} className="rounded-xl bg-[#FF4B00] p-3 text-sm font-black disabled:opacity-60">{vitolaWorking ? 'Verificando…' : 'Guardar en La Vitola'}</button>
+                </div>
+              </form>
+            )}
+          </section>
+        </div>
       )}
 
             {/* Lista Única de Clientes */}
