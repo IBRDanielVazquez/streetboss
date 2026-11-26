@@ -314,3 +314,11 @@
 - `src/pages/InstalarStreetBoss.jsx`: especifica que el acceso de la app es administrativo; en el caso de accesos directos instalados en iOS que arranquen en la página de instalación, redirige al login.
 - No se cambiaron usuarios, contraseñas, autorización, permisos, bases de datos ni aplicaciones PWA específicas de los restaurantes.
 - Validación: compilación Vite aprobada; Vercel producción READY; cuatro endpoints principales respondieron 200; manifiesto verificado con `start_url=/central-hq`; landing sin CTA de instalación según código fuente. La interacción real de instalación debe probarse en dispositivos.
+
+
+## 2026-11-25 — Entrega de acceso y cambio de contraseña del administrador de La Vitola
+
+- `src/components/crm/ClientesTab.jsx`: en Clientes / La Vitola se añaden WhatsApp de entrega a `529612548354`, formulario para crear una nueva contraseña a partir de la contraseña actual verificada en Supabase Auth y botón para compartir la nueva credencial una única vez tras éxito.
+- No se emplea el cambio de contraseña genérico de `crmV3Service.js`, pues modificaría solamente `localStorage` y no la cuenta real de La Vitola. No se modifica `sb_memberships` ni la contraseña vigente.
+- Validación: producción `dpl_4Umnvc1guE9WJxbL7AwPxtq9BsUB` en estado READY; Vite compiló correctamente, `/central-hq` y `/menu/la-vitola/acceso` responden 200, módulo JS publicado contiene los controles y el número del administrador, y la cuenta de Auth coincide con la lista de acceso privado.
+- Pendiente: prueba presencial con contraseña actual, y configuración posterior de identidad administrativa de HQ en servidor para restablecer sin contraseña anterior. Advisories de Supabase reportan advertencias heredadas que no fueron modificadas en esta tarea.
