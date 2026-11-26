@@ -152,7 +152,7 @@ export default function MenuHeroProfile({ config }) {
 
           {/* Badges de Estado Operativo */}
           <div className="flex gap-2 flex-wrap items-center">
-            <div className={`inline-flex items-center gap-1.5 text-[11px] font-black px-3 py-1 rounded-lg border ${
+            <div style={config.hideAvailabilityBadge ? { display: 'none' } : undefined} className={`inline-flex items-center gap-1.5 text-[11px] font-black px-3 py-1 rounded-lg border ${
               is_open !== false
                 ? 'text-emerald-800 bg-emerald-50 border-emerald-200'
                 : 'text-red-800 bg-red-50 border-red-200'
