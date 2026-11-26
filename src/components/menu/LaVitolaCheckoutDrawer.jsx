@@ -158,7 +158,7 @@ export default function LaVitolaCheckoutDrawer({
               <p className="text-xs text-amber-800 bg-amber-50 p-3 rounded-lg">No envíes datos de tarjeta por WhatsApp. Confirma el importe antes de pagar.</p>
             </div>}
           </section>
-        }
+        )}
 
       </div>
     </div>
