@@ -25,7 +25,7 @@ const ProductoMenuCard = React.memo(function ProductoMenuCard({ prod, cant, onAg
             decoding="async"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-amber-50 to-orange-50">🌮</div>
+          <div className="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-amber-50 to-orange-50">{prod.emoji || '🌮'}</div>
         )}
         
         {isAgotado && (
