@@ -3,6 +3,7 @@ import { Plus, Minus, X, CheckCircle, Store, Bike, Share } from 'lucide-react'
 import ProductoMenuCard from '../components/ProductoMenuCard'
 import CheckoutDrawer from '../components/CheckoutDrawer'
 import LaVitolaCheckoutDrawer from '../components/menu/LaVitolaCheckoutDrawer'
+import LaVitolaAddonModal from '../components/menu/LaVitolaAddonModal'
 import MenuHeroProfile from '../components/menu/MenuHeroProfile'
 import { AlertTriangle } from 'lucide-react'
 
@@ -31,12 +32,15 @@ export default function MenuDigital({ modo: propModo, demoMenu, demoConfig, isDe
   // Estado del carrito: { prodId: cantidad }
   const [carrito, setCarrito] = useState({})
   const [checkoutVis, setCheckoutVis] = useState(false)
+  const [personalizando, setPersonalizando] = useState(null)
+  const [variantes, setVariantes] = useState({})
+  const admiteExtras = config.addonsEnabled === true
 
   const productosPorId = useMemo(() => {
     const dict = {}
     menu.forEach(c => c.productos.forEach(p => dict[p.id] = p))
-    return dict
-  }, [menu])
+    return { ...dict, ...variantes }
+  }, [menu, variantes])
 
   const catVisible = menu.filter(c => c.visible)
   const catsPlus = menu.filter(c => (c.esPlus || c.tipo === 'promo') && c.visible)
@@ -56,15 +60,36 @@ const { subtotal, cantidadTotal } = useMemo(() => {
 
   const agregarProducto = useCallback((prod) => {
     if (prod.agotado) return
+    if (admiteExtras && prod.categoria === 'hamburguesas') {
+      setPersonalizando(prod)
+      return
+    }
     setCarrito(prev => ({ ...prev, [prod.id]: (prev[prod.id] || 0) + 1 }))
-  }, [])
+  }, [admiteExtras])
+
+  const confirmarHamburguesa = useCallback((hamburguesa, elegidos) => {
+    const extras = (config.addons || []).filter(e => elegidos.some(x => x.id === e.id))
+    const variantId = hamburguesa.id + '::' + extras.map(e => e.id).sort().join(',')
+    const variant = {
+      ...hamburguesa,
+      id: variantId,
+      idOriginal: hamburguesa.id,
+      adicionales: extras.map(e => ({ id: e.id, nombre: e.nombre, precio: Number(e.precio) })),
+      precio: Number(hamburguesa.precio) + extras.reduce((sum, e) => sum + Number(e.precio), 0),
+    }
+    setVariantes(prev => ({ ...prev, [variantId]: variant }))
+    setCarrito(prev => ({ ...prev, [variantId]: (prev[variantId] || 0) + 1 }))
+    setPersonalizando(null)
+  }, [config.addons])
 
   const quitarProducto = useCallback((prodId) => {
     setCarrito(prev => {
-      const n = { ...prev }
-      if (n[prodId] > 1) n[prodId]--
-      else delete n[prodId]
-      return n
+      const next = { ...prev }
+      const key = next[prodId] ? prodId : Object.keys(next).reverse().find(k => k.startsWith(prodId + '::'))
+      if (!key) return prev
+      if (next[key] > 1) next[key] -= 1
+      else delete next[key]
+      return next
     })
   }, [])
 
@@ -152,7 +177,9 @@ const { subtotal, cantidadTotal } = useMemo(() => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
               {c.productos.filter(p => p.activo && !p.is_hidden && !p.oculto).map(prod => {
-                const cant = carrito[prod.id] || 0
+                const cant = admiteExtras && prod.categoria === 'hamburguesas'
+                  ? Object.entries(carrito).reduce((count, [id, qty]) => count + (id.startsWith(prod.id + '::') ? qty : 0), 0)
+                  : (carrito[prod.id] || 0)
                 return (
                   <ProductoMenuCard 
                     key={prod.id} 
@@ -199,6 +226,10 @@ const { subtotal, cantidadTotal } = useMemo(() => {
 
       {modo === 'carta' && (
         <div className="pb-12 text-center text-gray-500 text-sm">😊 Tu mesero te atenderá en un momento</div>
+      )}
+
+      {admiteExtras && (
+        <LaVitolaAddonModal burger={personalizando} options={config.addons || []} onClose={() => setPersonalizando(null)} onAdd={confirmarHamburguesa} />
       )}
 
       <ActiveCheckoutDrawer
