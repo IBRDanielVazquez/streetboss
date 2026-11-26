@@ -202,3 +202,12 @@
 - La cuenta no se genera hasta que el titular utilice su invitación y cree una contraseña; no se concede acceso a `StreetBoss Central`.
 - Archivos nuevos: `supabase/functions/la-vitola-portal/index.ts` y `supabase/la-vitola-access.sql`.
 - Pendiente: probar primer ingreso con el titular, verificar flujo completo de guardado/publicación y definir recuperación de contraseñas.
+
+
+## 2026-11-25 — Corrección del formulario de La Vitola
+
+- Corregido error 403 «Origen no autorizado» en el envío de formularios por el proxy de Vercel a Supabase Edge Functions.
+- Activación: protegida por invitación aleatoria de un solo uso validada por SHA-256 y caducidad.
+- Gestión autenticada: protegida con token CSRF independiente guardado en cookie HttpOnly, Secure y SameSite=Lax y validado en guardar, publicar y cerrar sesión.
+- Desplegada versión 4 de `la-vitola-portal` y actualizado el código fuente oficial.
+- Verificado HTTP 200 y HTML en el enlace público de acceso. Invitación de La Vitola comprobada: coincide con hash, no utilizada y vigente. La prueba completa de alta con contraseña debe hacerla el titular.
