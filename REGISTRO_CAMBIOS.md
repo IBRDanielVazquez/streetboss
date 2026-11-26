@@ -269,3 +269,5 @@
 - `src/components/crm/ClientesTab.jsx`: tarjeta del cliente real La Vitola dentro de **Clientes → Menús digitales activos**, con enlace público y entrada al dashboard exclusivo (sin exponer controles de autenticación general).
 - Supabase `streetboss-pos`: registro `sb_clients` creado y ficha `sb_businesses` ya existente corregida con datos del catálogo; `sb_memberships` sin cambios. Cuenta en `sb_vitola_admins` conservada.
 - Pruebas aisladas: nueva categoría agregada al catálogo de prueba (4→5), preservación de los 21 productos, detección de duplicado, render de formulario con CSRF.
+
+- `src/App.jsx`: la URL heredada `/panel/la-vitola` redirige a `/menu/la-vitola/acceso`, para que La Vitola utilice únicamente su autenticación privada y no el panel genérico.
