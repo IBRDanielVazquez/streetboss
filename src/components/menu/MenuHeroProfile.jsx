@@ -24,7 +24,7 @@ export default function MenuHeroProfile({ config }) {
   const {
     negocio, logo, banner, direccion, horarios, urlMaps,
     whatsapp, telefono, redes = {}, colorMarca = '#FF4B00',
-    foodType, isDemo = true, is_open = true, mensajeClientes
+    foodType, isDemo = true, is_open = true, mensajeClientes, bannerIllustrative = false
   } = config
 
   const tieneHorarios = horarios && horarios.trim().length > 0
@@ -111,6 +111,8 @@ export default function MenuHeroProfile({ config }) {
         )}
         {/* Shadow overlays */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+
+        {bannerIllustrative && <span className="absolute bottom-3 right-3 z-10 bg-black/70 text-white text-[10px] font-bold rounded-lg px-2 py-1">Fotografía ilustrativa</span>}
 
         {/* Action icons top right */}
         <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
