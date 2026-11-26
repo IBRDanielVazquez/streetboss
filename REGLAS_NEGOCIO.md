@@ -36,3 +36,6 @@
 ---
 
 > Actualizar este archivo cuando cambien las reglas de negocio.
+
+## Seguridad de negocios
+Cada usuario solo puede acceder a negocios y sucursales asignados por membresía verificada. Identificador comercial no es credencial. No publicar con vulnerabilidades críticas o altas abiertas. Consentimiento promocional independiente y solicitudes de pedido separadas de ventas confirmadas.
