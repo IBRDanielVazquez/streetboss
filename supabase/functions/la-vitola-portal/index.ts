@@ -20,7 +20,10 @@ function respond(content, status=200, cookies=[]) {
 function fail(message,status=400){return respond('<section class="card"><h1>No se pudo completar</h1><div class="error">'+e(message)+'</div><p><a href="'+ROOT+'">Volver al acceso</a></p></section>',status);}
 function cookie(name,val,max){return name+'='+encodeURIComponent(val)+'; HttpOnly; Secure; SameSite=Lax; Path='+COOK_PATH+'; Max-Age='+max;}
 function sessionCookies(session){return [cookie('sbv_access',session.access_token,session.expires_in||3600),cookie('sbv_refresh',session.refresh_token,864000)];}
-function clearCookies(){return [cookie('sbv_access','',0),cookie('sbv_refresh','',0)];}
+function clearCookies(){return [cookie('sbv_access','',0),cookie('sbv_refresh','',0),cookie('sbv_csrf','',0)];}
+function csrfToken(req){const old=readCookies(req).sbv_csrf;return /^[a-f0-9]{64}$/.test(old||'')?old:Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');}
+function csrfField(value){return '<input type="hidden" name="csrf" value="'+e(value)+'">';}
+function hasCsrf(req,form){const saved=readCookies(req).sbv_csrf;return !!saved&&/^[a-f0-9]{64}$/.test(saved)&&saved===String(form.get('csrf')||'');}
 function redirect(cookies=[]){const h=new Headers({'Location':ROOT,'Cache-Control':'no-store'});cookies.forEach(c=>h.append('Set-Cookie',c));return new Response(null,{status:303,headers:h});}
 function readCookies(req){return Object.fromEntries((req.headers.get('cookie')||'').split(';').filter(Boolean).map(s=>{const i=s.indexOf('=');return [s.slice(0,i).trim(),decodeURIComponent(s.slice(i+1))]}));}
 async function whitelisted(id){const {data}=await api.from('sb_vitola_admins').select('user_id').eq('user_id',id).maybeSingle();return !!data;}
@@ -31,11 +34,11 @@ async function current(req){
  return null;
 }
 function login(message=''){
- return respond('<section class="card" id="login"><h1>Acceso a La Vitola</h1><p>Solo para la cuenta autorizada de este restaurante. No da acceso a StreetBoss Central.</p>'+(message?'<div class="error">'+e(message)+'</div>':'')+'<form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="login"><label>Número de teléfono</label><input type="tel" name="phone" value="+52 961 254 8354" autocomplete="username" required><label>Contraseña</label><input type="password" name="password" autocomplete="current-password" required><button>Entrar a mi cuenta</button></form><p>Para el primer acceso, abre el enlace privado de activación.</p></section><section class="card" id="activate" hidden><h1>Crea tu contraseña</h1><p>Esta invitación es de un solo uso y permite administrar únicamente La Vitola.</p><form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="activate"><input type="hidden" name="token" id="token"><label>Contraseña nueva (mínimo 12 caracteres)</label><input type="password" name="password" minlength="12" maxlength="128" required autocomplete="new-password"><label>Repite la contraseña</label><input type="password" name="confirm" minlength="12" maxlength="128" required autocomplete="new-password"><button>Crear mi contraseña</button></form></section><script>const t=new URLSearchParams(location.hash.slice(1)).get("activar");if(t&&/^[a-zA-Z0-9_-]{32,150}$/.test(t)){document.getElementById("token").value=t;document.getElementById("login").hidden=true;document.getElementById("activate").hidden=false}</script>');
+ return respond('<section class="card" id="login"><h1>Acceso a La Vitola</h1><p>Solo para la cuenta autorizada de este restaurante. No da acceso a StreetBoss Central.</p>'+(message?'<div class="error">'+e(message)+'</div>':'')+'<form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="login"><label>Número de teléfono</label><input type="tel" name="phone" placeholder="Número de teléfono" autocomplete="username" required><label>Contraseña</label><input type="password" name="password" autocomplete="current-password" required><button>Entrar a mi cuenta</button></form><p>Para el primer acceso, abre el enlace privado de activación.</p></section><section class="card" id="activate" hidden><h1>Crea tu contraseña</h1><p>Esta invitación es de un solo uso y permite administrar únicamente La Vitola.</p><form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="activate"><input type="hidden" name="token" id="token"><label>Contraseña nueva (mínimo 12 caracteres)</label><input type="password" name="password" minlength="12" maxlength="128" required autocomplete="new-password"><label>Repite la contraseña</label><input type="password" name="confirm" minlength="12" maxlength="128" required autocomplete="new-password"><button>Crear mi contraseña</button></form></section><script>const t=new URLSearchParams(location.hash.slice(1)).get("activar");if(t&&/^[a-zA-Z0-9_-]{32,150}$/.test(t)){document.getElementById("token").value=t;document.getElementById("login").hidden=true;document.getElementById("activate").hidden=false}</script>');
 }
 async function catalog(){const {data,error}=await api.from('sb_vitola_catalog').select('slug,revision,draft,published').eq('slug','la-vitola').single();if(error||!data)throw new Error('Catalog unavailable');return data;}
 async function publishedMenu(){const c=await catalog();return new Response('window.STREETBOSS_MENU = '+JSON.stringify(c.published)+';',{headers:{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'public,max-age=30,s-maxage=30','X-Content-Type-Options':'nosniff'}});}
-function dashboard(c){
+function dashboard(c,csrf){
  const r=c.draft.restaurante||{};const cats=c.draft.categorias||[];const prods=c.draft.productos||[];
  let s='<section class="card"><h1>Menú de La Vitola</h1><p>'+prods.length+' productos · revisión '+c.revision+'. Guarda tus cambios o publícalos para actualizar el menú público.</p><form method="post" action="'+ROOT+'"><input type="hidden" name="revision" value="'+c.revision+'"><h2>Datos del restaurante</h2>';
  [['nombre','rest_name','Nombre'],['whatsapp','rest_whatsapp','WhatsApp de pedidos'],['descripcion','rest_description','Descripción'],['horario','rest_schedule','Horario'],['direccion','rest_address','Dirección']].forEach(x=>s+='<label>'+x[2]+'</label><input name="'+x[1]+'" value="'+e(r[x[0]]||'')+'" maxlength="300" required>');
@@ -44,7 +47,7 @@ function dashboard(c){
   s+='<div class="category">'+e(cat.nombre)+'</div>';
   prods.filter(p=>p.categoria===cat.id).forEach(p=>{const id=e(p.id);s+='<div class="row product"><div><label>Nombre</label><input name="prod_'+id+'_name" value="'+e(p.nombre)+'" required maxlength="120"></div><div><label>Precio MXN</label><input name="prod_'+id+'_price" type="number" step=".01" min="0" max="100000" value="'+e(p.precio)+'" required></div></div>';});
  });
- s+='<div style="margin-top:24px"><button type="submit" name="action" value="save" class="subtle">Guardar borrador</button><button type="submit" name="action" value="publish">Guardar y publicar</button></div></form><p>Los cambios publicados corresponden exclusivamente a La Vitola.</p></section><form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="logout"><button class="subtle">Cerrar sesión</button> <a class="btn subtle" href="'+PUBLIC+'" target="_blank" rel="noreferrer">Ver menú</a></form>';return s;
+ s+='<div style="margin-top:24px"><button type="submit" name="action" value="save" class="subtle">Guardar borrador</button><button type="submit" name="action" value="publish">Guardar y publicar</button></div></form><p>Los cambios publicados corresponden exclusivamente a La Vitola.</p></section><form method="post" action="'+ROOT+'"><input type="hidden" name="action" value="logout"><button class="subtle">Cerrar sesión</button> <a class="btn subtle" href="'+PUBLIC+'" target="_blank" rel="noreferrer">Ver menú</a></form>';return s.replaceAll('<form method="post" action="'+ROOT+'">','<form method="post" action="'+ROOT+'">'+csrfField(csrf));
 }
 async function claim(f){
  const token=String(f.get('token')||'');const pass=String(f.get('password')||'');const confirm=String(f.get('confirm')||'');
@@ -99,12 +102,12 @@ Deno.serve(async req=>{
   if(!SB_URL||!SERVICE||!ANON)return fail('Servicio no disponible.',503);
   const u=new URL(req.url);
   if(req.method==='GET'&&u.searchParams.get('menu')==='1')return publishedMenu();
-  if(req.method==='GET'){const s=await current(req);if(!s)return login();return respond(dashboard(await catalog()),200,s.cookies);}
+  if(req.method==='GET'){const s=await current(req);if(!s)return login();const csrf=csrfToken(req);return respond(dashboard(await catalog(),csrf),200,[...s.cookies,cookie('sbv_csrf',csrf,3600)]);}
   if(req.method!=='POST')return new Response('Method Not Allowed',{status:405});
-  const origin=req.headers.get('origin');if(origin&&!['https://streetboss.com.mx',SB_URL].includes(origin))return fail('Origen no autorizado.',403);
   const f=await req.formData();const action=String(f.get('action')||'');
   if(action==='activate')return claim(f);
   if(action==='login')return doLogin(f);
+  if(!hasCsrf(req,f))return fail('El formulario no es válido o venció. Vuelve al panel e inténtalo otra vez.',403);
   if(action==='logout')return redirect(clearCookies());
   const s=await current(req);if(!s)return fail('Tu sesión terminó. Vuelve a ingresar.',401);
   if(action==='save'||action==='publish')return save(f,action==='publish');
