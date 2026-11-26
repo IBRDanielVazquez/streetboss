@@ -109,7 +109,7 @@ function dashboard(c,csrf){
     if(!/^[a-z0-9-]{1,80}$/.test(id))continue;
     const display=p.foto||p.imagen||'',name='prod_'+id;
     html+='<button type="button" class="itemCard" data-dialog="product-'+id+'">'+img(display,p.nombre,'productPhoto')+'<span class="itemName">'+esc(p.nombre)+'</span><span class="itemPrice">$'+Number(p.precio).toFixed(2)+'</span>';
-    if(p.activo===false)html+='<span class="unavailable">No disponible</span>';
+    if(p.agotado===true||p.activo===false)html+='<span class="unavailable">Agotado</span>';
     if(p.foto_ilustrativa)html+='<span class="photoTag">Imagen ilustrativa</span>';
     html+='</button>';
    }
@@ -125,9 +125,9 @@ function dashboard(c,csrf){
   html+=field(name+'_name','Nombre',p.nombre,{max:120});
   html+=field(name+'_price','Precio en pesos',p.precio,{kind:'number'});
   if(p.categoria!=='extras')html+=field(name+'_description','Descripción',p.descripcion||'',{kind:'textarea'});
-  html+='<label class="switchRow"><input type="checkbox" name="'+name+'_active" '+(p.activo!==false?'checked':'')+'> Disponible para pedidos</label>';
+  html+='<label class="switchRow"><input type="checkbox" name="'+name+'_agotado" '+(p.agotado===true||p.activo===false?'checked':'')+'> Marcar como agotado (no se puede pedir)</label>';
   html+='<label class="switchRow"><input type="checkbox" name="'+name+'_remove" value="yes"> Ocultar este producto del menú</label>';
-  html+='<p class="hint">La fotografía, precio y disponibilidad se actualizan al publicar.</p>';
+  html+='<p class="hint">Los productos agotados siguen visibles con la etiqueta «Agotado», sin opción de agregarlos al carrito. Al publicar se actualiza el estado.</p>';
   html+='<button type="button" class="sheetDone" data-close="1">Listo, seguir editando</button></div></dialog>';
  }
  html+=footer('envios')+'</form></section>';
@@ -149,7 +149,7 @@ function dashboard(c,csrf){
  html+='<p class="hint">Si no activas el envío, los clientes solo podrán recoger en el local.</p>';
  html+=field('delivery_zones','Colonias de cobertura (opcional)',(delivery.zonas||[]).join('\n'),{kind:'textarea',help:'Una colonia por línea. Se confirma cobertura por WhatsApp.'});
  html+=field('delivery_notes','Indicaciones para la entrega',delivery.indicaciones||'',{kind:'textarea',help:'Puedes dejarlo vacío; se cotiza el envío antes de pagar.'});
- html+='<div class="notice">✓ El cliente envía su pedido por WhatsApp. El negocio confirma disponibilidad, costo del envío y total. Después se acuerda el pago.</div></div>';
+ html+='<div class="notice">✓ El cliente envía su pedido por WhatsApp. El negocio confirma el costo del envío, si aplica, y el total. Después se acuerda el pago.</div></div>';
  html+=footer('pagos')+'</form></section>';
  // Pagos: solo datos para pago posterior a confirmación, no captura de tarjeta.
  html+=section('pagos','Datos para cobrar','Configura cómo recibir pagos después de confirmar el pedido y el envío.');
@@ -268,7 +268,8 @@ async function save(f,publish){
     if(!name)throw new Error('Cada producto necesita un nombre.');
     product.nombre=name;
     product.precio=validMoney(f.get(prefix+'_price'));
-    product.activo=f.has(prefix+'_active');
+    product.agotado=f.has(prefix+'_agotado');
+    product.activo=true;
     product.oculto=f.has(prefix+'_remove');
     if(product.categoria!=='extras')product.descripcion=String(f.get(prefix+'_description')||'').trim().slice(0,500);
     if(f.has(prefix+'_delete')){product.foto='';product.foto_ilustrativa=false;}
@@ -286,7 +287,7 @@ async function save(f,publish){
    const image=await storePhoto(f.get('new_prod_photo'),'productos');
    const categoryDefaults={tacos:'/demos/tacos-el-guero/products/taco-campechano.jpg',hamburguesas:'/demos/burger-house/products/burger-clasica.jpg',bebidas:'/demos/tacos-el-guero/products/agua-jamaica.jpg',extras:'/demos/burger-house/products/burger-clasica.jpg'};
    const id='producto-'+crypto.randomUUID();
-   ps.push({id,nombre:name,precio:price,categoria:category,descripcion:String(f.get('new_description')||'').trim().slice(0,500),foto:image||categoryDefaults[category]||'',activo:true,oculto:false,foto_ilustrativa:!image});
+   ps.push({id,nombre:name,precio:price,categoria:category,descripcion:String(f.get('new_description')||'').trim().slice(0,500),foto:image||categoryDefaults[category]||'',activo:true,agotado:false,oculto:false,foto_ilustrativa:!image});
   }
   if(section==='envios'){
    const active=f.has('delivery_enabled');
