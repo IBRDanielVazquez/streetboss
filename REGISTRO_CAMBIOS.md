@@ -233,3 +233,13 @@
 - Supabase: bucket público `la-vitola-media`, tipos JPG/PNG/WebP, máximo 5 MB; la escritura permanece limitada a la función privada.
 - Vercel: compilación Vite exitosa, versión publicada desde el commit `9f9e875`; verificadas respuestas 200 de menú, acceso, catálogo y bundles.
 - Validación manual de flujo autenticado de subida y publicación pendiente; no se solicitaron ni utilizaron contraseñas del propietario.
+
+
+## 2026-11-25 — La Vitola, dashboard visual y fotos preinstaladas
+
+- Se añadieron `public/demos/la-vitola/profile.svg` y `public/demos/la-vitola/agua-pura.svg` como activos provisionales sustituibles.
+- Se usaron imágenes existentes del repositorio para asignar visuales a los 13 productos públicos de La Vitola sin sobrescribir fotos reales. Se anotan como ilustrativas. Logo/portada provisionales y banderas declaradas en borrador y publicado de `sb_vitola_catalog`.
+- Se reescribió el dashboard de `supabase/functions/la-vitola-portal/index.ts` con navegación inferior, tarjetas de imagen, ventanas de edición, vista previa local, alta de producto, datos de negocio, redes, mapas, zonas de reparto y métodos para recibir pagos después de confirmar el pedido.
+- Cambios en `LaVitolaPublicMenu.jsx`, `ProductoMenuCard.jsx`, `MenuHeroProfile.jsx` y `LaVitolaCheckoutDrawer.jsx`: muestran fotos y aviso de ilustrativas, redes, Maps y ajustes de envíos; la solicitud de pedido va a WhatsApp antes del pago y, si el negocio configura medios, solo se muestran al marcar confirmación.
+- No se agregó pasarela de pago, no se reciben números de tarjeta, no se modifica autenticación de StreetBoss general, ni bases de prospectos.
+- Verificar en navegador con sesión de propietario las modificaciones, alta de productos y subida real de fotos antes de declarar el ciclo completo terminado.
