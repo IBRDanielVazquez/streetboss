@@ -221,3 +221,15 @@
 - Cambios mínimos en `src/App.jsx`, `src/pages/MenuDigital.jsx`, `src/components/ProductoMenuCard.jsx`, `src/components/menu/MenuHeroProfile.jsx` y `api/menu.js`.
 - Vercel: la ruta `/menu/la-vitola` ahora utiliza `/api/menu` y el frontend oficial. `menu.js` sigue sirviendo el catálogo de Supabase y `/menu/la-vitola/acceso` mantiene el acceso privado.
 - Validación: dos compilaciones Vite exitosas, respuesta 200 del HTML React, catálogo de 21 productos y 4 categorías renderizado en navegador. No se añadieron productos, fotografías ni precios.
+
+
+## 2026-11-25 — Corrección de extras y administración visual en La Vitola
+
+- `src/pages/LaVitolaPublicMenu.jsx`: la categoría extras deja de ser visible y sus ocho elementos se pasan como opciones asociadas a hamburguesas. Se conectó logo/portada desde el catálogo editable.
+- `src/components/menu/LaVitolaAddonModal.jsx`: modal táctil para elegir cero o varios extras, con desglose y precio en tiempo real.
+- `src/pages/MenuDigital.jsx`: variantes de hamburguesa en carrito y cálculo de subtotales por combinación; no afecta otros demos.
+- `src/components/menu/LaVitolaCheckoutDrawer.jsx`: desglose de extras y de sus costos al enviar la orden por WhatsApp.
+- `supabase/functions/la-vitola-portal/index.ts`: editor por categorías, vista de fotografías, subida protegida de archivos y controles de disponibilidad, guardado en borrador y publicación; función versionada 5.
+- Supabase: bucket público `la-vitola-media`, tipos JPG/PNG/WebP, máximo 5 MB; la escritura permanece limitada a la función privada.
+- Vercel: compilación Vite exitosa, versión publicada desde el commit `9f9e875`; verificadas respuestas 200 de menú, acceso, catálogo y bundles.
+- Validación manual de flujo autenticado de subida y publicación pendiente; no se solicitaron ni utilizaron contraseñas del propietario.
