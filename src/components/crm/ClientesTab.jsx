@@ -154,6 +154,9 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
     reloadClients()
   }
 
+  const showDedicatedClient = (filterStatus === 'todos' || filterStatus === 'activo') &&
+    (!search.trim() || ['la vitola', 'la-vitola', '9612548354', 'menu digital'].some(v => v.includes(search.trim().toLowerCase())))
+
   // Los menús con dashboard dedicado no deben recibir los controles de contraseña del panel genérico.
   const filteredClients = clients.filter(c => c.slug !== 'la-vitola').filter(c => {
     const matchesStatus = filterStatus === 'todos' || c.status?.toLowerCase() === filterStatus.toLowerCase()
@@ -206,8 +209,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
 
 
       {/* Menús digitales activos con panel dedicado: el acceso nunca usa credenciales de StreetBoss Central. */}
-      {(filterStatus === 'todos' || filterStatus === 'activo') &&
-        (!search.trim() || ['la vitola','la-vitola','9612548354','menu digital'].some(v => v.includes(search.trim().toLowerCase()))) && (
+      {showDedicatedClient && (
         <section className="bg-[#14161F] border border-[#FF4B00]/30 rounded-2xl p-4 sm:p-6 space-y-4" aria-label="Clientes con menú digital activo">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <h3 className="text-lg font-black text-white">MENÚS DIGITALES ACTIVOS</h3>
@@ -241,7 +243,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
             {/* Lista Única de Clientes */}
       <div className="space-y-4">
         {filteredClients.length === 0 ? (
-          <div className="bg-[#14161F] p-12 text-center rounded-2xl border border-white/5 space-y-3">
+          showDedicatedClient ? null : <div className="bg-[#14161F] p-12 text-center rounded-2xl border border-white/5 space-y-3">
             <span className="text-4xl block">🏪</span>
             <h3 className="text-white font-bold text-lg">No se encontraron clientes</h3>
             <p className="text-gray-400 text-xs">Crea tu primer negocio real desde la pestaña "+ Crear Negocio".</p>
