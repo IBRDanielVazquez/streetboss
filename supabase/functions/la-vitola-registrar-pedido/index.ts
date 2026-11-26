@@ -39,6 +39,7 @@ Deno.serve(async request => {
     const name = String(body.name || '').trim().replace(/\s+/g, ' ').slice(0, 120)
     const phone = String(body.phone || '').replace(/\D/g, '')
     const delivery = body.delivery === true
+    const deliveryZoneName = delivery ? String(body.colonia || '').trim().slice(0,100) : ''
     const items = body.items
     const marketing = body.marketingConsent === true
 
@@ -61,6 +62,24 @@ Deno.serve(async request => {
       .eq('slug', 'la-vitola').single()
     if (catalogError || !catalog) return err('No se pudo validar el catálogo.', 503)
     const products = new Map((catalog.published.productos || []).map((p: any) => [p.id, p]))
+    const deliveryConfig = catalog.published.entregas || {}
+    const availableZones = (Array.isArray(deliveryConfig.zonas) ? deliveryConfig.zonas : [])
+      .map((z: any) => typeof z === 'string' ? { nombre: z, costo: null } : z)
+      .filter((z: any) => z && typeof z.nombre === 'string')
+    let shippingFee: number | null = null
+    if (delivery) {
+      if (!deliveryConfig.activo) return err('El servicio a domicilio no está disponible.', 409)
+      if (availableZones.length) {
+        const selected: any = availableZones.find((z: any) => z.nombre === deliveryZoneName)
+        if (!selected) return err('La colonia seleccionada no tiene cobertura. Actualiza el menú.', 409)
+        if (selected.costo !== null && selected.costo !== undefined && selected.costo !== '') {
+          const parsed = Number(selected.costo)
+          if (!Number.isFinite(parsed) || parsed < 0 || parsed > 10000)
+            return err('Tarifa de envío no válida.', 503)
+          shippingFee = amount(parsed)
+        }
+      }
+    }
     const safeItems: any[] = []
     let subtotal = 0
     let count = 0
@@ -103,6 +122,8 @@ Deno.serve(async request => {
       customer_name: name,
       customer_phone: phone,
       delivery_type: delivery ? 'domicilio' : 'recoger',
+      delivery_zone: deliveryZoneName || null,
+      delivery_fee: shippingFee,
       items: safeItems,
       subtotal,
       status: 'solicitud',
@@ -113,7 +134,7 @@ Deno.serve(async request => {
       console.error('vitola-register', error.code)
       return err('No se pudo guardar la solicitud.', 503)
     }
-    return json({ ok: true, id: data.id, requestedAt: data.requested_at, subtotal: data.subtotal, status: 'solicitud' })
+    return json({ ok: true, id: data.id, requestedAt: data.requested_at, subtotal: data.subtotal, deliveryFee: shippingFee, totalEstimate: shippingFee === null ? null : amount(subtotal + shippingFee), status: 'solicitud' })
   } catch (error) {
     console.error('vitola-register', error instanceof Error ? error.message : 'failed')
     return err('No se pudo procesar la solicitud.', 400)
