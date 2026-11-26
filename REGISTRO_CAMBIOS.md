@@ -301,3 +301,7 @@
 - `api/menu-app.js`: endpoint dinámico de manifiesto e íconos por slug; solo obtiene logos desde rutas internas y almacenamiento de Supabase autorizado, con fallback seguro, sin solicitudes arbitrarias a terceros.
 - `api/menu.js`, `src/pages/MenuDigital.jsx`: identidad de instalación aislada para `/menu/{slug}` y `/demo/{slug}`. La Vitola conserva su ícono oficial, independiente de StreetBoss Central.
 - Comprobación pendiente según despliegue: respuesta 200 de `/instalar`, `/manifest.json`, manifiestos e íconos por La Vitola y demo, y compilación Vite.
+
+- Validación final de publicación: Vercel `dpl_7eepxsXNAbMscFVFAVpvQVAr1Sz3` READY, compilación Vite aprobada.
+- Respuestas 200 verificadas: `/instalar`, `/manifest.json`, ícono StreetBoss 192, manifiestos e íconos 512 de `la-vitola` y `tacos-el-guero`, ambas páginas públicas y módulo de instalación.
+- Confirmadas identidades distintas en HTML inicial de iPhone: **StreetBoss**, **La Vitola** y **Tacos El Güero**, cada uno con manifiesto asociado a su propia ruta. Pendiente la prueba manual de instalación en dispositivos reales; no se afirma una instalación ejecutada.
