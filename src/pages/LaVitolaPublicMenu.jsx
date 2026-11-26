@@ -23,7 +23,7 @@ const icons = {
 }
 
 function toDemoMenu(catalog) {
-  return catalog.categorias.filter(cat => cat.id !== 'extras').map(cat => ({
+  return catalog.categorias.filter(cat => cat.id !== 'extras' && catalog.productos.some(product => product.categoria === cat.id && product.oculto !== true)).map(cat => ({
     id: cat.id,
     nombre: cat.nombre,
     visible: cat.visible !== false,
