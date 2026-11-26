@@ -260,3 +260,12 @@
 - Actualizado: `supabase/functions/la-vitola-portal/index.ts`, incorpora CSS previamente no aplicado, categorías plegables, mejor distribución visual de tarjetas, barra iOS con área segura y cierre correcto de ventanas al omitir.
 - Verificación: 8 pruebas de salida de WhatsApp aprobadas (espacios, extras, subtotal, domicilio, retiro y ausencia de textos pendientes). Render del dashboard simulado con las 5 secciones, 4 grupos, 21 ventanas de producto, acciones de guardar/publicar y CSRF.
 - Pendiente: probar el dashboard en la sesión real del propietario y comprobar la publicación de un cambio desde iPhone.
+
+
+## 2026-11-25 — Nueva categoría y cliente La Vitola en Central
+
+- `supabase/functions/la-vitola-portal/index.ts`: ventana para agregar categoría desde el dashboard; validación de duplicados, tope de 50, publicación con revisión y CSRF existente.
+- `src/pages/LaVitolaPublicMenu.jsx`: las categorías nuevas vacías no aparecen al público hasta contener productos activos visibles.
+- `src/components/crm/ClientesTab.jsx`: tarjeta del cliente real La Vitola dentro de **Clientes → Menús digitales activos**, con enlace público y entrada al dashboard exclusivo (sin exponer controles de autenticación general).
+- Supabase `streetboss-pos`: registro `sb_clients` creado y ficha `sb_businesses` ya existente corregida con datos del catálogo; `sb_memberships` sin cambios. Cuenta en `sb_vitola_admins` conservada.
+- Pruebas aisladas: nueva categoría agregada al catálogo de prueba (4→5), preservación de los 21 productos, detección de duplicado, render de formulario con CSRF.
