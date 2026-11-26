@@ -81,7 +81,7 @@ export default async function handler(req, res) {
   if (trialId === 'la-vitola') {
     title = 'La Vitola — Menú Digital'
     description = 'Tacos con papa, hamburguesas artesanales, extras y bebidas. Haz tu pedido directo por WhatsApp.'
-    logoPath = '/menu/la-vitola/assets/fotos/carta-la-vitola.jpeg'
+    logoPath = '/la-vitola/icon-512.png'
   }
 
   // Ensure absolute URLs for social sharing crawlers
@@ -105,6 +105,17 @@ export default async function handler(req, res) {
     } catch (e) {
       html = `<!DOCTYPE html><html lang="es"><head><title>${title}</title><meta property="og:title" content="${title}" /><meta property="og:description" content="${description}" /><meta property="og:image" content="${imageUrl}" /><meta property="og:url" content="${ogUrl}" /></head><body><div id="root"></div></body></html>`
     }
+  }
+
+  // Each restaurant has its own installable identity, independent from StreetBoss.
+  if (/^[a-z0-9][a-z0-9-]{0,62}[a-z0-9]$/.test(trialId)) {
+    const appPath = `/api/menu-app?slug=${encodeURIComponent(trialId)}`
+    const iconPath = appPath + '&asset=icon&size=192'
+    html = html.replace(/<link rel="manifest"[^>]*>/i, `<link rel="manifest" href="${appPath}" />`)
+    html = html.replace(/<link rel="apple-touch-icon"[^>]*>/i, `<link rel="apple-touch-icon" sizes="192x192" href="${iconPath}" />`)
+    html = html.replace(/<link rel="icon"[^>]*>/i, `<link rel="icon" type="image/png" href="${iconPath}" />`)
+    html = html.replace(/<meta name="apple-mobile-web-app-title"[^>]*>/i,
+      `<meta name="apple-mobile-web-app-title" content="${String(title).split(' — ')[0].replace(/[&<>"']/g, '')}" />`)
   }
 
   // Inject meta tags via replacement
