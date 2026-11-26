@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { Plus, Minus, X, CheckCircle, Store, Bike, Share } from 'lucide-react'
 import ProductoMenuCard from '../components/ProductoMenuCard'
 import CheckoutDrawer from '../components/CheckoutDrawer'
@@ -26,6 +26,27 @@ export default function MenuDigital({ modo: propModo, demoMenu, demoConfig, isDe
   const modo = propModo || (window.location.pathname.includes('/carta') ? 'carta' : 'pedir')
   const menu = demoMenu || []
   const config = demoConfig || {}
+
+  // El manifiesto y el ícono pertenecen al negocio, no a StreetBoss general.
+  const appSlug = window.location.pathname.match(/^\\/(?:menu|demo)\\/([a-z0-9-]+)/)?.[1] || ''
+  useEffect(() => {
+    if (!appSlug) return undefined
+    const manifest = document.querySelector('link[rel="manifest"]')
+    const appleIcon = document.querySelector('link[rel="apple-touch-icon"]')
+    const favicon = document.querySelector('link[rel="icon"]')
+    const appleName = document.querySelector('meta[name="apple-mobile-web-app-title"]')
+    const suffix = encodeURIComponent(appSlug)
+    manifest?.setAttribute('href', `/api/menu-app?slug=${suffix}`)
+    appleIcon?.setAttribute('href', `/api/menu-app?slug=${suffix}&asset=icon&size=192`)
+    favicon?.setAttribute('href', `/api/menu-app?slug=${suffix}&asset=icon&size=192`)
+    appleName?.setAttribute('content', config.negocio || 'Menú digital')
+    return () => {
+      manifest?.setAttribute('href', '/manifest.json')
+      appleIcon?.setAttribute('href', '/brand/SB_APPLE_TOUCH_ICON_180x180_V01.png')
+      favicon?.setAttribute('href', '/brand/SB_FAVICON_512x512_V01.png')
+      appleName?.setAttribute('content', 'StreetBoss')
+    }
+  }, [appSlug, config.negocio])
 
   const [catActiva, setCatActiva] = useState(menu[0]?.id || '')
 
