@@ -372,7 +372,7 @@ https://wa.me/${DEMO_CONTACTS.SUPPORT_WHATSAPP}`
                 </label>
                 <label className="block space-y-1 text-sm font-bold">
                   <span>Nueva contraseña *</span>
-                  <input type="text" autoComplete="off" minLength={12} maxLength={128} required value={vitolaNew} onChange={e => setVitolaNew(e.target.value)} className="w-full rounded-xl border border-white/20 bg-[#0D0E12] p-3 font-mono text-base" />
+                  <input type="password" autoComplete="new-password" minLength={12} maxLength={128} required value={vitolaNew} onChange={e => setVitolaNew(e.target.value)} className="w-full rounded-xl border border-white/20 bg-[#0D0E12] p-3 font-mono text-base" />
                 </label>
                 <label className="block space-y-1 text-sm font-bold">
                   <span>Confirmar nueva contraseña *</span>
