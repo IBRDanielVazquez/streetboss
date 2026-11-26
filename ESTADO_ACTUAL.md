@@ -132,3 +132,13 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - Checkout: al elegir envío aparece selector de colonia; muestra su tarifa y total con envío en tiempo real, y los envía desglosados a WhatsApp. Si una colonia no tiene tarifa configurada se solicita solo el costo de envío.
 - La Edge Function `la-vitola-registrar-pedido` valida la colonia y tarifa contra el catálogo publicado (no confía en importes del cliente). La tabla `sb_vitola_requests` contiene opcionalmente `delivery_zone` y `delivery_fee` para el historial privado.
 - La PWA privada se puede añadir a pantalla de inicio en iOS desde Safari y en dispositivos compatibles sin distribuirla por tiendas. Las sesiones y permisos existentes del propietario se mantienen.
+
+
+## PWA — instalación de StreetBoss y menús independientes (2026-11-25)
+
+- StreetBoss general se instala desde `https://streetboss.com.mx/instalar`, con manifiesto `/manifest.json` actualizado a `display: standalone`, identificador y ruta inicial `/`.
+- Componente reutilizable `src/components/InstallAppButton.jsx`: botón «Instalar app». En navegadores que ofrecen instalación utiliza `beforeinstallprompt`; en iPhone muestra instrucciones para Compartir → Agregar a pantalla de inicio.
+- Se agregó el botón a la cabecera de todos los menús renderizados con `MenuHeroProfile`, incluidos los demos y La Vitola.
+- Cada menú `/menu/{slug}` recibe su propio manifiesto `/api/menu-app?slug={slug}`: `id`, `start_url` y `scope` exclusivos, nombre del restaurante e íconos PNG cuadrados de 192 y 512 píxeles generados a partir del logo disponible. En La Vitola se usa su logo oficial; en demos, los logos disponibles; en negocios reales, su logo público de Supabase. Cuando el logo es inaccesible se utiliza temporalmente el ícono de StreetBoss.
+- `api/menu.js` inyecta estos metadatos en el HTML inicial y `MenuDigital.jsx` los mantiene al navegar por React, sin reemplazar la identidad de StreetBoss general.
+- No se implementaron compras dentro de app, notificaciones, acceso a datos de otros negocios, service workers que cacheen datos privados ni distribución por tiendas.
