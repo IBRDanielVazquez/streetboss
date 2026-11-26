@@ -9,6 +9,12 @@
   "theme_color": "#0D0E12",
   "icons": [
     {
+      "src": "/api/menu-app?slug=streetboss&asset=icon&size=192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/brand/SB_FAVICON_512x512_V01.png",
       "sizes": "512x512",
       "type": "image/png",
