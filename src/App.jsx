@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
@@ -36,6 +36,7 @@ export default function App() {
           <Route path="/central-hq" element={<StreetBossCentral />} />
 
           {/* Dashboard Privado Sencillo del Cliente */}
+          <Route path="/panel/la-vitola" element={<Navigate to="/menu/la-vitola/acceso" replace />} />
           <Route path="/panel/:slug" element={<ClientDashboard />} />
 
           {/* Página 404 Oficial para Cualquier Otra Ruta */}
