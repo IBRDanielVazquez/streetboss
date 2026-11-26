@@ -75,3 +75,11 @@ Se ha finalizado y desplegado en producción la sincronización en caliente y la
 - El checkout de La Vitola envía directamente por WhatsApp y cotiza el envío con el negocio; no se muestran costos de reparto inventados.
 - La ruta de acceso `/menu/la-vitola/acceso` y la función de autenticación privada no se modificaron.
 - Menú comprobado con 21 productos y 4 categorías. Las fotografías individuales de comida siguen pendientes de activos auténticos del restaurante; actualmente se muestran los iconos de respaldo del componente oficial.
+
+## La Vitola — hamburguesas configurables y editor de fotografías (2026-11-25)
+
+- Las ocho opciones de la categoría `extras` ahora se ofrecen **solo** al seleccionar una hamburguesa; esa categoría ya no se renderiza en el menú de compras.
+- Las combinaciones de extras generan variantes específicas de cada hamburguesa, con precio adicional incluido en carrito, subtotal y pedido por WhatsApp. Tacos y bebidas permanecen como productos independientes.
+- El acceso privado conserva la cuenta asociada al teléfono del restaurante. Función `la-vitola-portal` versión 5 con editor mobile-first de nombre, precio, descripción, disponibilidad y fotografías por producto, logo y portada, con borrador y publicación.
+- Se agregó el bucket público `la-vitola-media` con tipos JPG/PNG/WebP y límite por archivo de 5 MB. Las subidas pasan exclusivamente por la función autenticada que comprueba pertenencia a `sb_vitola_admins` y token CSRF; no se habilitaron subidas públicas.
+- Las imágenes generadas durante el trabajo todavía **no** forman parte del catálogo publicado: requieren identificación exacta de cada platillo para evitar fotografías incorrectas. El editor ya acepta imágenes del propietario.
